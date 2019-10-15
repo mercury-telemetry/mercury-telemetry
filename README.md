@@ -35,5 +35,4 @@ Create a Procfile containing the following line
 Create a requirements.txt containing the following lines
     gunicorn
     django-heroku
-7) Add someone on the team as a review or share your URL to the Slack channel.
 
