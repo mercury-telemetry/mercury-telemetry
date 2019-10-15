@@ -1,8 +1,10 @@
 # Team Project repo
+Heroku Production URI: [https://nyu-mercury.herokuapp.com](https://nyu-mercury.herokuapp.com)
 
+Heroku Dashboard: [https://dashboard.heroku.com/apps/nyu-mercury](https://dashboard.heroku.com/apps/nyu-mercury)
 # HOWTO Contribute to this repo
 
-N.B.: `<something>` means you need to change the `something` text within the angle brackets.
+N.B.: `<something>` means you need to change the `something` text within the angle brackets (and do not include the include brackets in your command).
 1) Make a feature branch
 `git checkout -b <new_branch_name>`
 2) Make your changes
@@ -20,6 +22,9 @@ python manage.py runserver
 3) heroku git:remote -a nyu-mercury
 Repo now has a remote called "heroku" that can be pushed to using "git push heroku"
 
+# HOWTO Push to Heroku
+Assuming you have setup a Git remote called `heroku`, you can run `git push heroku <local_branch>:master` if you _really_ need to test your local changes on the Heroku app.
+
 # HOWTO configure Django app for deployment
 Add the following lines to settings.py
     import django_heroku
@@ -29,3 +34,5 @@ Create a Procfile containing the following line
 Create a requirements.txt containing the following lines
     gunicorn
     django-heroku
+7) Add someone on the team as a review or share your URL to the Slack channel.
+
