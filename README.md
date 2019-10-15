@@ -1,5 +1,7 @@
 # Team Project repo
+Heroku Production URI: [https://nyu-mercury.herokuapp.com](https://nyu-mercury.herokuapp.com)
 
+Heroku Dashboard: [https://dashboard.heroku.com/apps/nyu-mercury](https://dashboard.heroku.com/apps/nyu-mercury)
 # HOWTO Contribute to this repo
 
 N.B.: `<something>` means you need to change the `something` text within the angle brackets (and do not include the include brackets in your command).
