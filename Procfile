@@ -1,1 +1,1 @@
-web: gunicorn nyutelemetry:app.wsgi
+web: gunicorn app.wsgi
