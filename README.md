@@ -20,7 +20,7 @@ python manage.py runserver
 # HOWTO prepare to push to Heroku
 You should only have to complete this once (to configure your local repo to have the Heroku remote)
 1) heroku login
-3) heroku git:remote -a nyu-mercury
+2) heroku git:remote -a nyu-mercury
 Repo now has a remote called "heroku" that can be pushed to using "git push heroku"
 
 # HOWTO Push to Heroku
