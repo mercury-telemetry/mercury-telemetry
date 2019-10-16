@@ -34,11 +34,11 @@ You should only have to complete this once (to configure your local repo to have
 Repo now has a remote called "heroku" that can be pushed to using "git push heroku"
 
 ## HOWTO configure Django app for deployment
-- Add the following lines to settings.py
---    `import django_heroku`
---    `django_heroku.settings(locals())`
-- Create a Procfile containing the following line
---    `web: gunicorn <project-name>.wsgi`
-- Create a requirements.txt containing the following lines
--- `gunicorn`
--- `django_heroku`
+* Add the following lines to settings.py
+  * `import django_heroku`
+  * `django_heroku.settings(locals())`
+* Create a Procfile containing the following line
+  * `web: gunicorn <project-name>.wsgi`
+* Create a requirements.txt containing the following lines
+  * `gunicorn`
+  * `django_heroku`
