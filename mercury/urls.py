@@ -3,6 +3,6 @@ from . import views
 
 app_name = 'mercury'
 urlpatterns = [
-               path('', views.HomePageView.as_view()),
-               path('about/', views.AboutPageView.as_view()),
+               path('', views.HomePageView.as_view(), name="index"),
+               path('about/', views.AboutPageView.as_view(), name="about"),
                ]
