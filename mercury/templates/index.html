@@ -7,5 +7,21 @@
     <body>
         <h1>This is our telemetry page!</h1>
      <a href="/about/">Learn about us</a>
+        <br>
+        <br>
+
+        {% block title %}<b>Login Details</b>{% endblock %}
+
+    {% block content %}
+        <br>
+    {% if user.is_authenticated %}
+      Hi user: {{ user.username }}!
+      <p><a href="{% url 'logout' %}">logout</a></p>
+    {% else %}
+      <p>You are not logged in</p>
+      <a href="{% url 'login' %}">login</a>
+    {% endif %}
+    {% endblock %}
+
     </body>
 </html>
