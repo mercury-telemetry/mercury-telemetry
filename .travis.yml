@@ -14,7 +14,7 @@ before_script:
 - python manage.py collectstatic --noinput
 
 script:
-- black --check .
+- black --check mysite mercury
 - flake8 .
 - coverage run --source='mysite,mercury' manage.py test mysite
 
