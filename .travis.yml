@@ -15,7 +15,7 @@ before_script:
 
 script:
 - black --check mysite mercury
-- flake8 .
+- flake8 mysite mercury
 - coverage run --source='mysite,mercury' manage.py test mysite
 
 after_script:
