@@ -20,3 +20,7 @@ script:
 
 after_script:
 - coveralls
+
+notifications:
+    slack: gcivil-nyu:ahgpmz0a0XgrrUU3E9kPk9kZ
+
