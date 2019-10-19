@@ -21,6 +21,9 @@ script:
 after_script:
 - coveralls
 
+service_name: travis-pro
+repo_token: dtqDTsFmrLQICyftkzUpekQIoh1kQBzKL
+
 notifications:
     slack: gcivil-nyu:ahgpmz0a0XgrrUU3E9kPk9kZ
 
