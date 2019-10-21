@@ -39,8 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "mercury.apps.MercuryConfig",
-    "simulator.apps.SimulatorConfig",
-    "dashboard.apps.DashboardConfig",
 ]
 
 MIDDLEWARE = [
