@@ -2,7 +2,6 @@ language: python
 
 python:
 - '3.6'
-- '3.7'
 
 install:
 - pip install --upgrade pip
@@ -20,9 +19,6 @@ script:
 
 after_script:
 - coveralls
-
-service_name: travis-pro
-repo_token: dtqDTsFmrLQICyftkzUpekQIoh1kQBzKL
 
 notifications:
     slack: gcivil-nyu:ahgpmz0a0XgrrUU3E9kPk9kZ
