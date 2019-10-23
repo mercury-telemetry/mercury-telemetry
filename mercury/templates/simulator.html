@@ -53,6 +53,13 @@
 </head>
 <body>
 	<h1 align ="center">Simulator Panels</h1>
+<form action="" method="post">
+    Vehicle Information
+    <br>
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
 
 	<br>
 	<br>
@@ -117,6 +124,5 @@
 		  output4.innerHTML = this.value;
 		}
 	</script>
-
 </body>
 </html>
