@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors.svg?token=YtfCuazTkWZrw19nZ9s6&branch=develop)](https://travis-ci.com/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors)
+[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors?branch=develop)
 # Team Project repo
 
 Heroku Production (master) URI: [https://nyu-mercury-prod.herokuapp.com/](https://nyu-mercury-prod.herokuapp.com/)
