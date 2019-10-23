@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+<h1>This is the page for Dashboard</h1>
+<div>
+    {% for item in all_vehicles %}
+        <p>
+            {{  item.id }} -> {{ item.name }} is owned by {{  item.owner }}
+        </p>
+    {%  endfor %}
+</div>
+</body>
+</html>
