@@ -3,8 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>Simulator</title>
+
+	<style>
+		.container{
+		  padding-top: 10px;  
+		  position: relative;
+		  display: inline-block;
+		  top: 100%;
+		  left: 5%;
+		  padding-bottom: 10px;
+		}
+
+		.panel{
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+
+		.slider {
+		  -webkit-appearance: none;
+		  width: 200px;
+		  height: 8px;
+		  border-radius: 5px;  
+		  background: #d3d3d3;
+		  outline: none;
+		  opacity: 0.7;
+		  -webkit-transition: .2s;
+		  transition: opacity .2s;
+		}
+
+		.slider::-webkit-slider-thumb {
+		  -webkit-appearance: none;
+		  appearance: none;
+		  width: 15px;
+		  height: 15px;
+		  border-radius: 50%; 
+		  background: #4CAF50;
+		  cursor: pointer;
+		}
+
+		.slider::-moz-range-thumb {
+		  width: 25px;
+		  height: 25px;
+		  border-radius: 50%;
+		  background: #4CAF50;
+		  cursor: pointer;
+		}
+
+	</style>
 </head>
 <body>
-<h1>This is the page for Simulator</h1>
+	<h1 align ="center">Simulator Panels</h1>
+
+	<br>
+	<br>
+
+	<div class="container">
+
+		<h1 align="center"> Wheel Speed </h1>
+
+		<div class = "panel">
+		  FL: <input name = "FL" type="range" min="1" max="100" value="50" class="slider" id="FL">
+		</div>
+
+		<div class ="panel">
+		  FR: <input type="range" min="1" max="100" value="50" class="slider" id="FR">
+		</div>
+
+		<div class="panel">
+		  RL: <input type="range" min="1" max="100" value="50" class="slider" id="RL">
+		</div>
+
+		<div class="panel">
+		  RR: <input type="range" min="1" max="100" value="50" class="slider" id="RR">
+		</div>
+
+		<p>Front Left: <span id="FL_value"></span></p>
+		<p>Front Right: <span id="FR_value"></span></p>
+		<p>Rear Left: <span id="RL_value"></span></p>
+		<p>Rear Right: <span id="RR_value"></span></p>
+
+	</div>
+
+	<script>
+		var slider1 = document.getElementById("FL");
+		var output1 = document.getElementById("FL_value");
+		output1.innerHTML = slider1.value;
+
+		var slider2 = document.getElementById("FR");
+		var output2 = document.getElementById("FR_value");
+		output2.innerHTML = slider2.value;
+
+		var slider3 = document.getElementById("RL");
+		var output3 = document.getElementById("RL_value");
+		output3.innerHTML = slider3.value;
+
+		var slider4 = document.getElementById("RR");
+		var output4 = document.getElementById("RR_value");
+		output4.innerHTML = slider4.value;
+
+		slider1.oninput = function() {
+		  output1.innerHTML = this.value;
+		}
+
+		slider2.oninput = function() {
+		  output2.innerHTML = this.value;
+		}
+
+		slider3.oninput = function() {
+		  output3.innerHTML = this.value;
+		}
+
+		slider4.oninput = function() {
+		  output4.innerHTML = this.value;
+		}
+	</script>
+
 </body>
 </html>
