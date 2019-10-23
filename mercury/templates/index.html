@@ -4,29 +4,39 @@
     <head>
         <meta charset="utf-8">
         <title>Mercury - NYU Tandon Telemetry</title>
+        <script>
+            function RedirectSimulator() {
+                window.location="/simulator/";
+            }
+            function RedirectDashboard() {
+                window.location="/dashboard/";
+            }            
+        </script>
     </head>
     <body>
+
         <h1>NYU Motorsports Telemetry</h1>
         <h2>TODO: Simulator Panels</h2>
     <a href="/about/">About Telemetry</a>
         <br>
         <br>
 
-    <a href="/simulator/">Simulator
-    <br>
-    <br>
-    <a href="/dashboard/">Dashboard </a>
-    <br>
-    <br>
 
-
-
-        {% block title %}<b>Login Page</b>{% endblock %}
+    {% block title %}<b>Login Page</b>{% endblock %}
 
     {% block content %}
         <br>
     {% if user.is_authenticated %}
+    <br>
       Hi user: {{ user.username }}!
+      <br>
+      <br>
+      <button onclick="RedirectSimulator();">Simulator</button>
+      <br>
+      <br>
+      <button onclick="RedirectDashboard();">Dashboard</button>
+      <br>
+      <br>
       <p><a href="{% url 'logout' %}">logout</a></p>
     {% else %}
       <p>You are not logged in</p>
