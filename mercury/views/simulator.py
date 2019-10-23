@@ -18,4 +18,4 @@ class SimulatorView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial={"created_at": datetime.datetime.now()})
-        return render(request, "simulator.html", {"form": form})
+        return render(request, self.template_name, {"form": form})
