@@ -1,13 +1,17 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
-from ..forms import VehicleForm
+
+# from ..forms import VehicleForm, SuspensionForm
+from ..forms import SimulatorForm
 import datetime
+
+# from mercury.models import Vehicle,SuspensionSensor
 
 
 class SimulatorView(TemplateView):
     template_name = "simulator.html"
-    form_class = VehicleForm
+    form_class = SimulatorForm
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
