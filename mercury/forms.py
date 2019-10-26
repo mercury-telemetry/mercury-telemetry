@@ -1,12 +1,10 @@
 from django import forms
-
-# from mercury.models import Vehicle, SuspensionSensor
 from mercury.models import SimulatedData
 
-# from django.forms.widgets import NumberInput
 # for our slider
-# class RangeInput(NumberInput):
-#     input_type = 'range'
+from django.forms.widgets import NumberInput
+class RangeInput(NumberInput):
+    input_type = 'range'
 
 
 class SimulatorForm(forms.ModelForm):
@@ -30,37 +28,53 @@ class SimulatorForm(forms.ModelForm):
     suspension_bl = forms.FloatField()
 
     # Fuel Supply Panel
-    initial_fuel = forms.FloatField()
+    #initial_fuel = forms.FloatField()
     fuel_decrease_rate = forms.FloatField()
 
     # Oil Supply/Level Panel
     initial_oil = forms.FloatField()
     oil_decrease_rate = forms.FloatField()
 
+    def __init__(self, *args, **kwargs):
+        super(SimulatorForm, self).__init__(*args, **kwargs)
+        # snip the other fields for the sake of brevity
+        # Adding content to the form
+        self.fields['oil_decrease_rate'].help_text = "oil_decrease_rate here"
+        self.fields['oil_decrease_rate'].label = "Oil Decrease Rate"
+        self.fields['oil_decrease_rate'].widget = RangeInput(attrs={'max': 1,'min': 0, 'step': 0.1})
     class Meta:
         model = SimulatedData
-        fields = "__all__"
+        # fields = "__all__"
 
-        # fields = [
-        #     "name",
-        #     "owner",
-        #     "temperature",
-        #     "acceleration_x",
-        #     "acceleration_y",
-        #     "acceleration_z",
-        #     "wheel_speed_fr",
-        #     "wheel_speed_fl",
-        #     "wheel_speed_br",
-        #     "wheel_speed_bl",
-        #     "suspension_fr",
-        #     "suspension_fl",
-        #     "suspension_br",
-        #     "suspension_bl",
-        #     # "initial_fuel",
-        #     # "fuel_decrease_rate",
-        #     # "initial_oil",
-        #     # "oil_decrease_rate"
-        #     "created_at"]
+        widgets = {
+            'initial_fuel': RangeInput(attrs={'max': 1,
+                                        'min': 0,
+                                        'step': 0.1}),
+
+        }
+
+        fields = [
+            "name",
+            "owner",
+            "temperature",
+            "acceleration_x",
+            "acceleration_y",
+            "acceleration_z",
+            "wheel_speed_fr",
+            "wheel_speed_fl",
+            "wheel_speed_br",
+            "wheel_speed_bl",
+            "suspension_fr",
+            "suspension_fl",
+            "suspension_br",
+            "suspension_bl",
+            "initial_fuel",
+            "fuel_decrease_rate",
+            "initial_oil",
+            "oil_decrease_rate",
+            "created_at",]
+
+
 
 
 #
