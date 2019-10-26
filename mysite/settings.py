@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "crispy_forms",
     "mercury.apps.MercuryConfig",
 ]
 
@@ -111,6 +112,8 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -118,6 +121,9 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
 # django_heroku.settings(locals())
+
+# Crispy Form settings
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # redirecting the user to this URL upon logging in
 LOGIN_REDIRECT_URL = "/"
