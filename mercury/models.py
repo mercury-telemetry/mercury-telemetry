@@ -39,7 +39,6 @@ class SimulatedData(models.Model):
     initial_oil = models.FloatField()
     oil_decrease_rate = models.FloatField()
 
-
     def __str__(self):
         return self.name
 
