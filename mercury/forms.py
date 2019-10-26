@@ -29,27 +29,38 @@ class SimulatorForm(forms.ModelForm):
     suspension_br = forms.FloatField()
     suspension_bl = forms.FloatField()
 
+    # Fuel Supply Panel
+    initial_fuel = forms.FloatField()
+    fuel_decrease_rate = forms.FloatField()
+
+    # Oil Supply/Level Panel
+    initial_oil = forms.FloatField()
+    oil_decrease_rate = forms.FloatField()
+
     class Meta:
         model = SimulatedData
-        # fields = "__all__"
+        fields = "__all__"
 
-        fields = [
-            "name",
-            "owner",
-            "temperature",
-            "acceleration_x",
-            "acceleration_y",
-            "acceleration_z",
-            "wheel_speed_fr",
-            "wheel_speed_fl",
-            "wheel_speed_br",
-            "wheel_speed_bl",
-            "suspension_fr",
-            "suspension_fl",
-            "suspension_br",
-            "suspension_bl",
-            "created_at",
-        ]
+        # fields = [
+        #     "name",
+        #     "owner",
+        #     "temperature",
+        #     "acceleration_x",
+        #     "acceleration_y",
+        #     "acceleration_z",
+        #     "wheel_speed_fr",
+        #     "wheel_speed_fl",
+        #     "wheel_speed_br",
+        #     "wheel_speed_bl",
+        #     "suspension_fr",
+        #     "suspension_fl",
+        #     "suspension_br",
+        #     "suspension_bl",
+        #     # "initial_fuel",
+        #     # "fuel_decrease_rate",
+        #     # "initial_oil",
+        #     # "oil_decrease_rate"
+        #     "created_at"]
 
 
 #
