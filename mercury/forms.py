@@ -51,6 +51,7 @@ class SimulatorForm(forms.ModelForm):
             "created_at",
         ]
 
+
 #
 # class VehicleForm(ModelForm):
 #
