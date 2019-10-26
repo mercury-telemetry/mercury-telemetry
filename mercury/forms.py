@@ -13,21 +13,21 @@ class SimulatorForm(forms.ModelForm):
     name = forms.CharField(max_length=150, strip=True)
     owner = forms.CharField(max_length=150, strip=True)
 
-    temperature = forms.IntegerField()
+    temperature = forms.FloatField()
 
-    acceleration_x = forms.IntegerField()
-    acceleration_y = forms.IntegerField()
-    acceleration_z = forms.IntegerField()
+    acceleration_x = forms.FloatField()
+    acceleration_y = forms.FloatField()
+    acceleration_z = forms.FloatField()
 
-    wheel_speed_fr = forms.IntegerField()
-    wheel_speed_fl = forms.IntegerField()
-    wheel_speed_br = forms.IntegerField()
-    wheel_speed_bl = forms.IntegerField()
+    wheel_speed_fr = forms.FloatField()
+    wheel_speed_fl = forms.FloatField()
+    wheel_speed_br = forms.FloatField()
+    wheel_speed_bl = forms.FloatField()
 
-    suspension_fr = forms.IntegerField()
-    suspension_fl = forms.IntegerField()
-    suspension_br = forms.IntegerField()
-    suspension_bl = forms.IntegerField()
+    suspension_fr = forms.FloatField()
+    suspension_fl = forms.FloatField()
+    suspension_br = forms.FloatField()
+    suspension_bl = forms.FloatField()
 
     class Meta:
         model = SimulatedData

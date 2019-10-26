@@ -10,21 +10,21 @@ class SimulatedData(models.Model):
     owner = models.CharField(max_length=30)
     created_at = models.DateTimeField()
 
-    temperature = models.IntegerField()
+    temperature = models.FloatField()
 
-    acceleration_x = models.IntegerField()
-    acceleration_y = models.IntegerField()
-    acceleration_z = models.IntegerField()
+    acceleration_x = models.FloatField()
+    acceleration_y = models.FloatField()
+    acceleration_z = models.FloatField()
 
-    wheel_speed_fr = models.IntegerField()
-    wheel_speed_fl = models.IntegerField()
-    wheel_speed_br = models.IntegerField()
-    wheel_speed_bl = models.IntegerField()
+    wheel_speed_fr = models.FloatField()
+    wheel_speed_fl = models.FloatField()
+    wheel_speed_br = models.FloatField()
+    wheel_speed_bl = models.FloatField()
 
-    suspension_fr = models.IntegerField()
-    suspension_fl = models.IntegerField()
-    suspension_br = models.IntegerField()
-    suspension_bl = models.IntegerField()
+    suspension_fr = models.FloatField()
+    suspension_fl = models.FloatField()
+    suspension_br = models.FloatField()
+    suspension_bl = models.FloatField()
 
     def __str__(self):
         return self.name
