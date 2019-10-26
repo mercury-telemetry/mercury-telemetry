@@ -117,7 +117,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
 
 # redirecting the user to this URL upon logging in
 LOGIN_REDIRECT_URL = "/"
