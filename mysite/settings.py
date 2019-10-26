@@ -119,9 +119,12 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
 django_heroku.settings(locals())
+<<<<<<< HEAD
 
 # Crispy Form settings
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+=======
+>>>>>>> 96cd87e74519b454ae2ddc62612995a4bd0a8a16
 
 # redirecting the user to this URL upon logging in
 LOGIN_REDIRECT_URL = "/"
