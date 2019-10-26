@@ -5,11 +5,29 @@
     <title>Dashboard</title>
 </head>
 <body>
-<h1>This is the page for Dashboard</h1>
+
+<h1>Dashboard</h1>
+
+<h3>The Simulated Data for each data packet sent is shown:</h3>
+
+
 <div>
-    {% for item in all_vehicles %}
+    The simulated data for each data package is shown below:<br><br>
+    {% for item in all_data %}
         <p>
-            {{  item.id }} -> {{ item.name }} is owned by {{  item.owner }}
+
+            Data Package ID: {{  item.id }}<br>
+            Name of the sender: {{ item.name }} <br>
+            Owner of the vehicle: {{  item.owner }}<br>
+            Time at which data was sent: {{ item.created_at }}<br>
+            Temperature of the vehicle: {{ item.temperature }}<br>
+            Acceleration of the vehicle: x-axis:  {{ item.acceleration_x }} , y-axis: {{item.acceleration_y  }}, z-axis: {{ item.acceleration_z }}<br>
+            Wheel Speed (4 Wheels): FR: {{item.wheel_speed_fr}}, FL: {{item.wheel_speed_fl}}, BR: {{item.wheel_speed_br}}, BL: {{item.wheel_speed_bl}}<br>
+            Compression/Suspension of the 4 Wheels: FR: {{item.suspension_fr}}, FL: {{item.suspension_fr}}, BR: {{item.suspension_fr}}, BL: {{item.suspension_fr}}<br>
+
+        <br>
+        <br>
+
         </p>
     {%  endfor %}
 </div>
