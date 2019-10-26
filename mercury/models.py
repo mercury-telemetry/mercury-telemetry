@@ -6,25 +6,38 @@ from django.db import models
 # Create your models here.
 class SimulatedData(models.Model):
 
+    # basic information about the user
     name = models.CharField(max_length=30)
     owner = models.CharField(max_length=30)
     created_at = models.DateTimeField()
 
-    temperature = models.IntegerField()
+    # temperature panel
+    temperature = models.FloatField()
 
-    acceleration_x = models.IntegerField()
-    acceleration_y = models.IntegerField()
-    acceleration_z = models.IntegerField()
+    # Acceleration Panel
+    acceleration_x = models.FloatField()
+    acceleration_y = models.FloatField()
+    acceleration_z = models.FloatField()
 
-    wheel_speed_fr = models.IntegerField()
-    wheel_speed_fl = models.IntegerField()
-    wheel_speed_br = models.IntegerField()
-    wheel_speed_bl = models.IntegerField()
+    # Wheel Speed Panel for each of the four wheels
+    wheel_speed_fr = models.FloatField()
+    wheel_speed_fl = models.FloatField()
+    wheel_speed_br = models.FloatField()
+    wheel_speed_bl = models.FloatField()
 
-    suspension_fr = models.IntegerField()
-    suspension_fl = models.IntegerField()
-    suspension_br = models.IntegerField()
-    suspension_bl = models.IntegerField()
+    # Suspension/Compression Panel for each of the four wheels
+    suspension_fr = models.FloatField()
+    suspension_fl = models.FloatField()
+    suspension_br = models.FloatField()
+    suspension_bl = models.FloatField()
+
+    # Fuel Supply Panel
+    initial_fuel = models.FloatField()
+    fuel_decrease_rate = models.FloatField()
+
+    # Oil Supply/Level Panel
+    initial_oil = models.FloatField()
+    oil_decrease_rate = models.FloatField()
 
     def __str__(self):
         return self.name
