@@ -12,32 +12,32 @@ class SimulatedData(models.Model):
     created_at = models.DateTimeField()
 
     # temperature panel
-    temperature = models.FloatField()
+    temperature = models.FloatField(default=0)
 
     # Acceleration Panel
-    acceleration_x = models.FloatField()
-    acceleration_y = models.FloatField()
-    acceleration_z = models.FloatField()
+    acceleration_x = models.FloatField(default=0)
+    acceleration_y = models.FloatField(default=0)
+    acceleration_z = models.FloatField(default=0)
 
     # Wheel Speed Panel for each of the four wheels
-    wheel_speed_fr = models.FloatField()
-    wheel_speed_fl = models.FloatField()
-    wheel_speed_br = models.FloatField()
-    wheel_speed_bl = models.FloatField()
+    wheel_speed_fr = models.FloatField(default=0)
+    wheel_speed_fl = models.FloatField(default=0)
+    wheel_speed_br = models.FloatField(default=0)
+    wheel_speed_bl = models.FloatField(default=0)
 
     # Suspension/Compression Panel for each of the four wheels
-    suspension_fr = models.FloatField()
-    suspension_fl = models.FloatField()
-    suspension_br = models.FloatField()
-    suspension_bl = models.FloatField()
+    suspension_fr = models.FloatField(default=0)
+    suspension_fl = models.FloatField(default=0)
+    suspension_br = models.FloatField(default=0)
+    suspension_bl = models.FloatField(default=0)
 
     # Fuel Supply Panel
-    initial_fuel = models.FloatField()
-    fuel_decrease_rate = models.FloatField()
+    initial_fuel = models.FloatField(default=0)
+    fuel_decrease_rate = models.FloatField(default=0)
 
     # Oil Supply/Level Panel
-    initial_oil = models.FloatField()
-    oil_decrease_rate = models.FloatField()
+    initial_oil = models.FloatField(default=0)
+    oil_decrease_rate = models.FloatField(default=0)
 
     def __str__(self):
         return self.name

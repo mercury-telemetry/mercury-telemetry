@@ -15,7 +15,7 @@ before_script:
 script:
 - black --check mysite mercury
 - flake8 mysite mercury
-- coverage run --source='mysite,mercury' manage.py test mysite
+- coverage run --source=mysite,mercury --omit="mercury/migrations/*","mysite/wsgi.py","mercury/tests.py" manage.py test
 
 after_script:
 - coveralls
