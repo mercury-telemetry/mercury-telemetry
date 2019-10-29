@@ -39,7 +39,7 @@ class SimulatedData(models.Model):
     initial_oil = models.FloatField(default=0)
     oil_decrease_rate = models.FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return self.name
 
 
