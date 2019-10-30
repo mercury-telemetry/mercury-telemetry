@@ -3,19 +3,23 @@ language: python
 python:
 - '3.6'
 
+services:
+- postgresql
+
 install:
 - pip install --upgrade pip
 - pip install -r requirements.txt
 - pip install -r test-requirements.txt
 
 before_script:
+- psql -c 'create database mercury;' -U postgres
 - python manage.py migrate
 - python manage.py collectstatic --noinput
 
 script:
-- black --check mysite mercury
+- black --check --exclude "migrations/" mysite mercury
 - flake8 mysite mercury
-- coverage run --source='mysite,mercury' manage.py test mysite
+- coverage run --source=mysite,mercury --omit="mercury/migrations/*","mysite/wsgi.py" manage.py test
 
 after_script:
 - coveralls
