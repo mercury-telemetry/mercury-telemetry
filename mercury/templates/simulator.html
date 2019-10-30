@@ -72,11 +72,12 @@
             {% if form %}
             <form method="POST" action="">
                 {%  csrf_token %}
-                {{ form|crispy }}
+                <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Test Values</button>
                 <input type="submit" class="btn btn-primary" value="Submit">
+                {{ form|crispy }}
             </form>
             {% endif %}
-        <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Random Values</button>
+{#        <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Test Values</button>#}
         </div>
     </div>
 </div>
