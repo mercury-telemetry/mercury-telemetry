@@ -7,4 +7,7 @@ urlpatterns = [
     path("about/", views.AboutPageView.as_view(), name="about"),
     path("simulator/", simulator.SimulatorView.as_view(), name="simulator"),
     path("dashboard/", dashboard.DashboardView.as_view(), name="dashboard"),
+    path(
+        "dashboard-live/", dashboard.DashboardLiveView.as_view(), name="dashboard-live"
+    ),
 ]
