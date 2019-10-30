@@ -5,89 +5,87 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('mercury', '0001_initial'),
-    ]
+    dependencies = [("mercury", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='simulateddata',
-            name='acceleration_x',
+            model_name="simulateddata",
+            name="acceleration_x",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='acceleration_y',
+            model_name="simulateddata",
+            name="acceleration_y",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='acceleration_z',
+            model_name="simulateddata",
+            name="acceleration_z",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='fuel_decrease_rate',
+            model_name="simulateddata",
+            name="fuel_decrease_rate",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='initial_fuel',
+            model_name="simulateddata",
+            name="initial_fuel",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='initial_oil',
+            model_name="simulateddata",
+            name="initial_oil",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='oil_decrease_rate',
+            model_name="simulateddata",
+            name="oil_decrease_rate",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='suspension_bl',
+            model_name="simulateddata",
+            name="suspension_bl",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='suspension_br',
+            model_name="simulateddata",
+            name="suspension_br",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='suspension_fl',
+            model_name="simulateddata",
+            name="suspension_fl",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='suspension_fr',
+            model_name="simulateddata",
+            name="suspension_fr",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='temperature',
+            model_name="simulateddata",
+            name="temperature",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='wheel_speed_bl',
+            model_name="simulateddata",
+            name="wheel_speed_bl",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='wheel_speed_br',
+            model_name="simulateddata",
+            name="wheel_speed_br",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='wheel_speed_fl',
+            model_name="simulateddata",
+            name="wheel_speed_fl",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='simulateddata',
-            name='wheel_speed_fr',
+            model_name="simulateddata",
+            name="wheel_speed_fr",
             field=models.FloatField(default=0),
         ),
     ]

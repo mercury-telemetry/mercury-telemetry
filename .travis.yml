@@ -13,7 +13,7 @@ before_script:
 - python manage.py collectstatic --noinput
 
 script:
-- black --check mysite mercury
+- black --check --exclude "migrations/" mysite mercury
 - flake8 mysite mercury
 - coverage run --source=mysite,mercury --omit="mercury/migrations/*","mysite/wsgi.py" manage.py test
 
