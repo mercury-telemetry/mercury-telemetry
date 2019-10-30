@@ -19,9 +19,6 @@ import dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
 
 
 # Quick-start development settings - unsuitable for production
@@ -96,6 +93,9 @@ if "TRAVIS" in os.environ:
             "PORT": "5432",
         }
     }
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 
 # Password validation
@@ -141,4 +141,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # redirecting the user to this URL upon logging in
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
-# del DATABASES["default"]["OPTIONS"]["sslmode"]
+if "OPTIONS" in DATABASES["default"]:
+    del DATABASES["default"]["OPTIONS"]["sslmode"]
