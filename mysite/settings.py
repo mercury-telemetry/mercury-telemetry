@@ -141,4 +141,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # redirecting the user to this URL upon logging in
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
-del DATABASES["default"]["OPTIONS"]["sslmode"]
+# del DATABASES["default"]["OPTIONS"]["sslmode"]
