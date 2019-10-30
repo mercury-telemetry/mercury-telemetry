@@ -17,3 +17,8 @@ class TestViews(TestCase):
         client = Client()
         response = client.get(reverse("mercury:simulator"))
         self.assertEqual(response.status_code, 200)
+
+    def test_index(self):
+        client = Client()
+        response = client.get(reverse("mercury:index"))
+        self.assertEqual(response.status_code, 200)
