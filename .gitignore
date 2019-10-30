@@ -129,4 +129,4 @@ dmypy.json
 .DS_Store
 env/
 
-.vscode/.env
+.vscode/
