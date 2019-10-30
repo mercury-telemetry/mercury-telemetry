@@ -1,6 +1,6 @@
-django
+Django==2.2.6
 gunicorn
-django-heroku
-django-crispy-forms
-django-tastypie
-python-dotenv
+django-heroku==0.3.1
+django-crispy-forms==1.8.0
+django-tastypie==0.14.2
+python-dotenv==0.10.3
