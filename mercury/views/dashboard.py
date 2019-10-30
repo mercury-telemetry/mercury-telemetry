@@ -10,3 +10,11 @@ class DashboardView(TemplateView):
     def get(self, request, *args, **kwargs):
         all_data = SimulatedData.objects.all()
         return render(request, self.template_name, {"all_data": all_data})
+
+
+class DashboardLiveView(TemplateView):
+    template_name = "dashboard-live.html"
+
+    def get(self, request, *args, **kwargs):
+        all_data = SimulatedData.objects.all()
+        return render(request, self.template_name, {"all_data": all_data})
