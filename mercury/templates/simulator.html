@@ -76,6 +76,7 @@
                 <input type="submit" class="btn btn-primary" value="Submit">
             </form>
             {% endif %}
+        <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Random Values</button>
         </div>
     </div>
 </div>
@@ -84,7 +85,16 @@
 
 
 	<br>
+
+	<br><br>
+	<br><br>
+	<br><br>
+	<br><br>
 	<br>
+
+
+
+
 
 	<div class="container">
 
@@ -114,6 +124,29 @@
 	</div>
 
 	<script>
+        function random(mn, mx) {
+            return Math.random() * (mx - mn) + mn;
+        }
+
+        function GetRandom()
+        {
+                var inputs = document.querySelectorAll('input[type=number]');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].value = ((Math.random())*10).toFixed(2)
+
+                }
+
+                var name_arr = ["Lally", "Muneeb Afzal", "Lally", "Dave","Rajeev"];
+                var owner_arr = ["BMW", "Toyota", "Suzuki", "Audi"];
+
+                var name = document.getElementById("id_name")
+                name.value = name_arr[Math.floor(random(1, 6))-1]
+
+                var owner = document.getElementById("id_owner")
+                owner.value = owner_arr[Math.floor(random(1, 5))-1]
+            }
+
+
 		var slider1 = document.getElementById("FL");
 		var output1 = document.getElementById("FL_value");
 		output1.innerHTML = slider1.value;
