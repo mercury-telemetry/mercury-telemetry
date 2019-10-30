@@ -118,7 +118,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), test_runner=False)
 
 
 # Crispy Form settings
