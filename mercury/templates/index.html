@@ -19,7 +19,7 @@
     <body>
 
         <h1>NYU Motorsports Telemetry</h1>
-        <h2>TODO: Simulator Panels</h2>
+
     <a href="/about/">About Telemetry</a>
         <br>
         <br>
@@ -34,10 +34,10 @@
       Hi user: {{ user.username }}!
       <br>
       <br>
-      <button onclick="RedirectSimulator();">Simulator</button>
+      <button onclick="RedirectSimulator();" class="btn btn-primary">Simulator</button>
       <br>
       <br>
-      <button onclick="RedirectDashboard();">Dashboard</button>
+      <button onclick="RedirectDashboard();" class="btn btn-primary">Dashboard</button>
       <br>
       <br>
       <p><a href="{% url 'logout' %}">logout</a></p>
