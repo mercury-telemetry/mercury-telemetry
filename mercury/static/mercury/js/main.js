@@ -14,7 +14,7 @@ $(function() {
         event.preventDefault();
         if(buttonpressed == "Continuous"){
             create_post();
-            interval_var = setInterval(create_post, 10000);
+            interval_var = setInterval(create_post, 8000);
         }
         else if(buttonpressed == "Once"){
             if(interval_var){
@@ -87,7 +87,6 @@ $(function() {
         var suspension_fl = parseInt($('#post-suspension-fl').val());
         var suspension_br = parseInt($('#post-suspension-br').val());
         var suspension_bl = parseInt($('#post-suspension-bl').val());
-        $('#post-temperature').val(temperature+random_int);
         $('#post-acceleration-X').val(acceleration_x+random_int);
         $('#post-acceleration-Y').val(acceleration_y+random_int);
         $('#post-acceleration-Z').val(acceleration_z+random_int);
@@ -99,7 +98,6 @@ $(function() {
         $('#post-suspension-fl').val(suspension_fl+random_int);
         $('#post-suspension-br').val(suspension_br+random_int);
         $('#post-suspension-bl').val(suspension_bl+random_int);
-
     }
 
     // This function gets cookie with a given name
