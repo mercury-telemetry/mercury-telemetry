@@ -4,10 +4,9 @@ from django.http import HttpResponseRedirect
 
 # from ..forms import VehicleForm, SuspensionForm
 from ..forms import SimulatorForm
-from mercury.models import SimulatedData    
+from mercury.models import SimulatedData
 import datetime
 
-# from mercury.models import Vehicle,SuspensionSensor
 
 # Modified by: Rajeev
 # User story: #95 Continuous Submission for simulator UI
@@ -36,27 +35,25 @@ class SimulatorView(TemplateView):
         post_fuel_decrease_rate = request.POST.get('the_fuel_decrease_rate')
         post_initial_oil = request.POST.get('the_initial_oil')
         post_oil_decrease_rate = request.POST.get('the_oil_decrease_rate')
-
-        sim_data = SimulatedData(name = post_name, 
-                    owner = post_owner,
-                    created_at = post_created_at,
-                    temperature = post_temperature,
-                    acceleration_x= post_acceleration_x,
-                    acceleration_y =post_acceleration_y,
-                    acceleration_z=post_acceleration_z,
-                    wheel_speed_fr =post_wheel_speed_fr,
-                    wheel_speed_fl=post_wheel_speed_fl,
-                    wheel_speed_br=post_wheel_speed_br,
-                    wheel_speed_bl=post_wheel_speed_bl,
-                    suspension_fr =post_suspension_fr,
-                    suspension_fl =post_suspension_fl,
-                    suspension_br =post_suspension_br,
-                    suspension_bl =post_suspension_bl,
-                    initial_fuel=post_initial_fuel,
-                    fuel_decrease_rate=post_fuel_decrease_rate,
-                    initial_oil=post_initial_oil,
-                    oil_decrease_rate=post_oil_decrease_rate,
-                    )
+        sim_data = SimulatedData(name=post_name,
+                                 owner=post_owner,
+                                 created_at=post_created_at,
+                                 temperature=post_temperature,
+                                 acceleration_x=post_acceleration_x,
+                                 acceleration_y=post_acceleration_y,
+                                 acceleration_z=post_acceleration_z,
+                                 wheel_speed_fr=post_wheel_speed_fr,
+                                 wheel_speed_fl=post_wheel_speed_fl,
+                                 wheel_speed_br=post_wheel_speed_br,
+                                 wheel_speed_bl=post_wheel_speed_bl,
+                                 suspension_fr=post_suspension_fr,
+                                 suspension_fl=post_suspension_fl,
+                                 suspension_br=post_suspension_br,
+                                 suspension_bl=post_suspension_bl,
+                                 initial_fuel=post_initial_fuel,
+                                 fuel_decrease_rate=post_fuel_decrease_rate,
+                                 initial_oil=post_initial_oil,
+                                 oil_decrease_rate=post_oil_decrease_rate)
         sim_data.save()
         return HttpResponseRedirect("/simulator/")
 

@@ -106,16 +106,12 @@ class SimulatorForm(forms.ModelForm):
     #         attrs={"max": 1, "min": 0, "step": 0.1}
     #     )
 
+    # Created by: Rajeev
+    # User story: #95 Continuous Submission for simulator UI
+    # begin
 
-# Created by: Rajeev
-# User story: #95 Continuous Submission for simulator UI
-# begin
     class Meta:
         model = SimulatedData
-        # fields = "__all__"
-
-        #widgets = {"fuel_decrease_rate": RangeInput(attrs={"max": 1, "min": 0, "step": 0.1})}
-
         fields = [
             "name",
             "owner",
@@ -143,71 +139,72 @@ class SimulatorForm(forms.ModelForm):
             ),
 
             'owner': forms.TextInput(
-                attrs={'id': 'post-owner', 'required': True, 'placeholder': 'Enter Name of the owner'}
+                attrs={'id': 'post-owner', 'required': True,
+                       'placeholder': 'Enter Name of the owner'}
             ),
 
             'temperature': forms.NumberInput(
-                attrs={'id': 'post-temperature', 'required': True, 'placeholder': 'Enter temperature value'}
+                attrs={'id': 'post-temperature', 'required': True}
             ),
 
             'acceleration_x': forms.NumberInput(
-                attrs={'id': 'post-acceleration-X', 'required': True, 'placeholder': 'Enter acceleration in X direction'}
+                attrs={'id': 'post-acceleration-X', 'required': True}
             ),
 
             'acceleration_y': forms.NumberInput(
-                attrs={'id': 'post-acceleration-Y', 'required': True, 'placeholder': 'Enter acceleration in Y direction'}
+                attrs={'id': 'post-acceleration-Y', 'required': True}
             ),
 
             'acceleration_z': forms.NumberInput(
-                attrs={'id': 'post-acceleration-Z', 'required': True, 'placeholder': 'Enter acceleration in Z direction'}
+                attrs={'id': 'post-acceleration-Z', 'required': True}
             ),
 
             'wheel_speed_fr': forms.NumberInput(
-                attrs={'id': 'post-wheel-speed-fr', 'required': True, 'placeholder': 'Enter speed of Front right wheel'}
+                attrs={'id': 'post-wheel-speed-fr', 'required': True}
             ),
 
             'wheel_speed_fl': forms.NumberInput(
-                attrs={'id': 'post-wheel-speed-fl', 'required': True, 'placeholder': 'Enter speed of Front left wheel'}
+                attrs={'id': 'post-wheel-speed-fl', 'required': True}
             ),
 
             'wheel_speed_br': forms.NumberInput(
-                attrs={'id': 'post-wheel-speed-br', 'required': True, 'placeholder': 'Enter speed of Rear right wheel'}
+                attrs={'id': 'post-wheel-speed-br', 'required': True}
             ),
 
             'wheel_speed_bl': forms.NumberInput(
-                attrs={'id': 'post-wheel-speed-bl', 'required': True, 'placeholder': 'Enter speed of Rear left wheel'}
+                attrs={'id': 'post-wheel-speed-bl', 'required': True}
             ),
 
             'suspension_fr': forms.NumberInput(
-                attrs={'id': 'post-suspension-fr', 'required': True, 'placeholder': 'Enter Suspension Pressure of front right wheel'}
+                attrs={'id': 'post-suspension-fr', 'required': True}
             ),
 
             'suspension_fl': forms.NumberInput(
-                attrs={'id': 'post-suspension-fl', 'required': True, 'placeholder': 'Enter Suspension Pressure of front left wheel'}
+                attrs={'id': 'post-suspension-fl', 'required': True}
             ),
 
             'suspension_br': forms.NumberInput(
-                attrs={'id': 'post-suspension-br', 'required': True, 'placeholder': 'Enter Suspension Pressure of Rear right wheel'}
+                attrs={'id': 'post-suspension-br', 'required': True}
             ),
 
             'suspension_bl': forms.NumberInput(
-                attrs={'id': 'post-suspension-bl', 'required': True, 'placeholder': 'Enter Suspension Pressure of Rear left wheel'}
+                attrs={'id': 'post-suspension-bl', 'required': True}
             ),
 
             'initial_fuel': forms.NumberInput(
-                attrs={'id': 'post-initial-fuel', 'required': True, 'placeholder': 'Enter initial Fuel level'}
+                attrs={'id': 'post-initial-fuel', 'required': True}
             ),
 
             'fuel_decrease_rate': forms.NumberInput(
-                attrs={'id': 'post-fuel-decrease-rate', 'required': True, 'placeholder': 'Enter rate of decrease of fuel level'}
+                attrs={'id': 'post-fuel-decrease-rate', 'required': True}
             ),
 
             'initial_oil': forms.NumberInput(
-                attrs={'id': 'post-initial-oil', 'required': True, 'placeholder': 'Enter initial oil level'}
+                attrs={'id': 'post-initial-oil', 'required': True}
             ),
 
             'oil_decrease_rate': forms.NumberInput(
-                attrs={'id': 'post-oil-decrease-rate', 'required': True, 'placeholder': 'Enter rate of decrease of fuel level'}
+                attrs={'id': 'post-oil-decrease-rate', 'required': True}
             ),
 
             'created_at': forms.DateTimeInput(
