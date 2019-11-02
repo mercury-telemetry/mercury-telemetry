@@ -64,35 +64,40 @@
 {#    <input type="submit" value="Submit">#}
 {#</form>#}
 {% load crispy_forms_tags %}
-
+{%  load static %}
+<script src="{%  static "mercury/js/jquery-3.4.1.js" %}"></script>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6 justify-content-center">
             <h1>Simulating Mock Data</h1>
             {% if form %}
-            <form method="POST" action="">
+            <form method="POST" action="" id="SimulatorForm">
                 {%  csrf_token %}
-                <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Test Values</button>
-                <input type="submit" class="btn btn-primary" value="Submit">
                 {{ form|crispy }}
+                <!-- Modified by: Rajeev
+                     User story: #95 Continuous Submission for simulator UI
+                     begin-->
+                <input type="submit" class="submitbutton" name="Continuous" value="Continuous Submission">
+                <input type="submit" class="submitbutton" name="Once" value="Submit Once">
+                <input type="submit" class="submitbutton" name="Stop" value="Stop Submission">
+                 <!--User story: #95 Continuous Submission for simulator UI
+                     end-->
+
+
+
+
             </form>
             {% endif %}
-{#        <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Test Values</button>#}
         </div>
     </div>
 </div>
 
+
+<script src="{%  static "mercury/js/main.js" %}"></script>
+
 	<br>
-	<br><br>
-	<br><br>
-	<br><br>
-	<br><br>
-
-
-
-
-
-
+	<br>
+<!-- 
 	<div class="container">
 
 		<h1 align="center"> Wheel Speed </h1>
@@ -121,29 +126,6 @@
 	</div>
 
 	<script>
-        function random(mn, mx) {
-            return Math.random() * (mx - mn) + mn;
-        }
-
-        function GetRandom()
-        {
-                var inputs = document.querySelectorAll('input[type=number]');
-                for (var i = 0; i < inputs.length; i++) {
-                    inputs[i].value = ((Math.random())*10).toFixed(2)
-
-                }
-
-                var name_field ="The Fast Car";
-                var owner_field = "Moon Survivors";
-
-                var name = document.getElementById("id_name")
-                name.value = name_field
-
-                var owner = document.getElementById("id_owner")
-                owner.value = owner_field
-            }
-
-
 		var slider1 = document.getElementById("FL");
 		var output1 = document.getElementById("FL_value");
 		output1.innerHTML = slider1.value;
@@ -175,6 +157,6 @@
 		slider4.oninput = function() {
 		  output4.innerHTML = this.value;
 		}
-	</script>
+	</script> -->
 </body>
 </html>
