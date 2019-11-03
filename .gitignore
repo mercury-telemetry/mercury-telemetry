@@ -131,3 +131,4 @@ env/
 
 .vscode/
 staticfiles/
+db.sqlite3
