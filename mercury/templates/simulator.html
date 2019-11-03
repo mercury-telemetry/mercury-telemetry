@@ -5,176 +5,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Simulator</title>
-
-{#	<style>#}
-{#		.container{#}
-{#		  padding-top: 10px;  #}
-{#		  position: relative;#}
-{#		  display: inline-block;#}
-{#		  top: 100%;#}
-{#		  left: 5%;#}
-{#		  padding-bottom: 10px;#}
-{#		}#}
-{##}
-{#		.panel{#}
-{#			padding-top: 10px;#}
-{#			padding-bottom: 10px;#}
-{#		}#}
-{##}
-{#		.slider {#}
-{#		  -webkit-appearance: none;#}
-{#		  width: 200px;#}
-{#		  height: 8px;#}
-{#		  border-radius: 5px;  #}
-{#		  background: #d3d3d3;#}
-{#		  outline: none;#}
-{#		  opacity: 0.7;#}
-{#		  -webkit-transition: .2s;#}
-{#		  transition: opacity .2s;#}
-{#		}#}
-{##}
-{#		.slider::-webkit-slider-thumb {#}
-{#		  -webkit-appearance: none;#}
-{#		  appearance: none;#}
-{#		  width: 15px;#}
-{#		  height: 15px;#}
-{#		  border-radius: 50%; #}
-{#		  background: #4CAF50;#}
-{#		  cursor: pointer;#}
-{#		}#}
-{##}
-{#		.slider::-moz-range-thumb {#}
-{#		  width: 25px;#}
-{#		  height: 25px;#}
-{#		  border-radius: 50%;#}
-{#		  background: #4CAF50;#}
-{#		  cursor: pointer;#}
-{#		}#}
-{##}
-{#	</style>#}
 </head>
 <body>
 	<h1 align ="center">Simulator Panels</h1>
 
-{#<form action="" method="post">#}
-{#    Vehicle Information#}
-{#    <br>#}
-{#    {% csrf_token %}#}
-{#    {{ form }}#}
-{#    <input type="submit" value="Submit">#}
-{#</form>#}
 {% load crispy_forms_tags %}
-
+<script src="{%  static "mercury/js/jquery-3.4.1.js" %}"></script>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6 justify-content-center">
             <h1>Simulating Mock Data</h1>
             {% if form %}
-            <form method="POST" action="">
+            <form method="POST" action="" id="SimulatorForm">
                 {%  csrf_token %}
-                <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Test Values</button>
-                <input type="submit" class="btn btn-primary" value="Submit">
                 {{ form|crispy }}
+                
+                <input type="submit" class="submitbutton" name="Continuous" value="Continuous Submission">
+                <input type="submit" class="submitbutton" name="Once" value="Submit Once">
+                <input type="submit" class="submitbutton" name="Stop" value="Stop Submission">
             </form>
             {% endif %}
-{#        <button OnClick="GetRandom()" type="button" class="btn btn-primary">Generate Test Values</button>#}
         </div>
     </div>
 </div>
-
-	<br>
-	<br><br>
-	<br><br>
-	<br><br>
-	<br><br>
-
-
-
-
-
-
-	<div class="container">
-
-		<h1 align="center"> Wheel Speed </h1>
-
-		<div class = "panel">
-		  FL: <input name = "FL" type="range" min="1" max="100" value="50" class="slider" id="FL">
-		</div>
-
-		<div class ="panel">
-		  FR: <input type="range" min="1" max="100" value="50" class="slider" id="FR">
-		</div>
-
-		<div class="panel">
-		  RL: <input type="range" min="1" max="100" value="50" class="slider" id="RL">
-		</div>
-
-		<div class="panel">
-		  RR: <input type="range" min="1" max="100" value="50" class="slider" id="RR">
-		</div>
-
-		<p>Front Left: <span id="FL_value"></span></p>
-		<p>Front Right: <span id="FR_value"></span></p>
-		<p>Rear Left: <span id="RL_value"></span></p>
-		<p>Rear Right: <span id="RR_value"></span></p>
-
-	</div>
-
-	<script>
-        function random(mn, mx) {
-            return Math.random() * (mx - mn) + mn;
-        }
-
-        function GetRandom()
-        {
-                var inputs = document.querySelectorAll('input[type=number]');
-                for (var i = 0; i < inputs.length; i++) {
-                    inputs[i].value = ((Math.random())*10).toFixed(2)
-
-                }
-
-                var name_field ="The Fast Car";
-                var owner_field = "Moon Survivors";
-
-                var name = document.getElementById("id_name")
-                name.value = name_field
-
-                var owner = document.getElementById("id_owner")
-                owner.value = owner_field
-            }
-
-
-		var slider1 = document.getElementById("FL");
-		var output1 = document.getElementById("FL_value");
-		output1.innerHTML = slider1.value;
-
-		var slider2 = document.getElementById("FR");
-		var output2 = document.getElementById("FR_value");
-		output2.innerHTML = slider2.value;
-
-		var slider3 = document.getElementById("RL");
-		var output3 = document.getElementById("RL_value");
-		output3.innerHTML = slider3.value;
-
-		var slider4 = document.getElementById("RR");
-		var output4 = document.getElementById("RR_value");
-		output4.innerHTML = slider4.value;
-
-		slider1.oninput = function() {
-		  output1.innerHTML = this.value;
-		}
-
-		slider2.oninput = function() {
-		  output2.innerHTML = this.value;
-		}
-
-		slider3.oninput = function() {
-		  output3.innerHTML = this.value;
-		}
-
-		slider4.oninput = function() {
-		  output4.innerHTML = this.value;
-		}
-	</script>
+<script src="{%  static "mercury/js/main.js" %}"></script>
 </body>
 </html>
