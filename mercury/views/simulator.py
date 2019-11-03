@@ -15,6 +15,7 @@ class SimulatorView(TemplateView):
     template_name = "simulator.html"
     form_class = SimulatorForm
 
+    # Persists form data into DB
     def post(self, request, *args, **kwargs):
         post_name = request.POST.get("the_name")
         post_owner = request.POST.get("the_owner")
@@ -58,12 +59,6 @@ class SimulatorView(TemplateView):
         )
         sim_data.save()
         return HttpResponseRedirect("/simulator/")
-
-        # form = self.form_class(request.POST)
-        # if form.is_valid():
-        #     form.save()
-        #     return HttpResponseRedirect("/simulator/")
-        # return render(request, self.template_name, {"form": form})
 
     # Modified by: Rajeev
     # User story: #95 Continuous Submission for simulator UI
