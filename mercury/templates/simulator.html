@@ -19,14 +19,10 @@
             <form method="POST" action="" id="SimulatorForm">
                 {%  csrf_token %}
                 {{ form|crispy }}
-                <!-- Modified by: Rajeev
-                     User story: #95 Continuous Submission for simulator UI
-                     begin-->
+                
                 <input type="submit" class="submitbutton" name="Continuous" value="Continuous Submission">
                 <input type="submit" class="submitbutton" name="Once" value="Submit Once">
                 <input type="submit" class="submitbutton" name="Stop" value="Stop Submission">
-                 <!--User story: #95 Continuous Submission for simulator UI
-                     end-->
             </form>
             {% endif %}
         </div>

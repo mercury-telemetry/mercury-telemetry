@@ -1,7 +1,3 @@
-/* Created by: Rajeev
-   User story: #95 Continuous Submission for simulator UI
-   begin
-*/
 $(function() {
 
     var buttonpressed;
@@ -153,7 +149,3 @@ $(function() {
     });
 
     });
-
-/* User story: #95 Continuous Submission for simulator UI
-   End
-*/

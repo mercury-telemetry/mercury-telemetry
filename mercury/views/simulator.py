@@ -8,9 +8,6 @@ from mercury.models import SimulatedData
 import datetime
 
 
-# Modified by: Rajeev
-# User story: #95 Continuous Submission for simulator UI
-# begin
 class SimulatorView(TemplateView):
     template_name = "simulator.html"
     form_class = SimulatorForm
@@ -59,10 +56,6 @@ class SimulatorView(TemplateView):
         )
         sim_data.save()
         return HttpResponseRedirect("/simulator/")
-
-    # Modified by: Rajeev
-    # User story: #95 Continuous Submission for simulator UI
-    # end
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial={"created_at": datetime.datetime.now()})

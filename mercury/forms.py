@@ -10,10 +10,6 @@ class RangeInput(NumberInput):
 
 
 class SimulatorForm(forms.ModelForm):
-    # Created by: Rajeev
-    # User story: #95 Continuous Submission for simulator UI
-    # begin
-
     class Meta:
         model = SimulatedData
         fields = [
@@ -100,7 +96,3 @@ class SimulatorForm(forms.ModelForm):
                 attrs={"id": "post-created-at", "required": True}
             ),
         }
-
-
-# User story: #95 Continuous Submission for simulator UI
-# end
