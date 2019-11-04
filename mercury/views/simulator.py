@@ -11,7 +11,7 @@ class SimulatorView(TemplateView):
     template_name = "simulator.html"
 
     def post(self, request, *args, **kwargs):
-        """Used by AJAX method in the main.js file to save data from the simulator UI"""
+        """Used by AJAX method in the simulator.js file to save data from the simulator UI"""
         post_name = request.POST.get("name")
         post_owner = request.POST.get("owner")
         post_created_at = request.POST.get("created_at")
