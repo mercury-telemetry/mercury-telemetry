@@ -12,27 +12,7 @@ class RangeInput(NumberInput):
 class SimulatorForm(forms.ModelForm):
     class Meta:
         model = SimulatedData
-        fields = [
-            "name",
-            "owner",
-            "temperature",
-            "acceleration_x",
-            "acceleration_y",
-            "acceleration_z",
-            "wheel_speed_fr",
-            "wheel_speed_fl",
-            "wheel_speed_br",
-            "wheel_speed_bl",
-            "suspension_fr",
-            "suspension_fl",
-            "suspension_br",
-            "suspension_bl",
-            "initial_fuel",
-            "fuel_decrease_rate",
-            "initial_oil",
-            "oil_decrease_rate",
-            "created_at",
-        ]
+        fields = "__all__"
         widgets = {
             "name": forms.TextInput(
                 attrs={"id": "post-name", "required": True, "placeholder": "Enter Name"}

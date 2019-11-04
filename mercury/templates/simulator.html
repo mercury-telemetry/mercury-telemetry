@@ -5,29 +5,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Simulator</title>
+    <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+    <script src="{% static "mercury/js/simulator.js" %}"></script>
 </head>
 <body>
-	<h1 align ="center">Simulator Panels</h1>
-
-{% load crispy_forms_tags %}
-<script src="{%  static "mercury/js/jquery-3.4.1.js" %}"></script>
+<h1 align="center">Simulator Panels</h1>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6 justify-content-center">
             <h1>Simulating Mock Data</h1>
             {% if form %}
-            <form method="POST" action="" id="SimulatorForm">
-                {%  csrf_token %}
-                {{ form|crispy }}
-                
-                <input type="submit" class="submitbutton" name="Continuous" value="Continuous Submission">
-                <input type="submit" class="submitbutton" name="Once" value="Submit Once">
-                <input type="submit" class="submitbutton" name="Stop" value="Stop Submission">
-            </form>
+                <form method="POST" action="" id="SimulatorForm">
+                    {% csrf_token %}
+                    {% load crispy_forms_tags %}
+                    {{ form|crispy }}
+                    <input type="submit" class="submitbutton" name="Continuous" value="Continuous Submission">
+                    <input type="submit" class="submitbutton" name="Once" value="Submit Once">
+                    <input type="submit" class="submitbutton" name="Stop" value="Stop Submission">
+                </form>
             {% endif %}
         </div>
     </div>
 </div>
-<script src="{%  static "mercury/js/main.js" %}"></script>
 </body>
 </html>
