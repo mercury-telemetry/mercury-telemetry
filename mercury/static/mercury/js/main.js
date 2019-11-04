@@ -1,7 +1,7 @@
 $(function() {
 
-    var buttonpressed;
-    var interval_var
+    let buttonpressed;
+    let interval_var;
     // Submit post on submit
     $('.submitbutton').click(function() {
         buttonpressed = $(this).attr('name')
@@ -27,36 +27,35 @@ $(function() {
 
     // AJAX for posting
     function create_post() {
-    console.log("create post is working!"); // sanity check
+    console.log("Entered create_post() function."); // sanity check
     $.ajax({
         url : "", // the endpoint
         type : "POST", // http method
-        data : { the_name : $('#post-name').val(),
-        the_owner : $('#post-owner').val(),
-        the_temperature : $('#post-temperature').val(),
-        the_acceleration_x : $('#post-acceleration-X').val(),
-        the_acceleration_y : $('#post-acceleration-Y').val(),
-        the_acceleration_z : $('#post-acceleration-Z').val(),
-        the_wheel_speed_fr : $('#post-wheel-speed-fr').val(),
-        the_wheel_speed_fl : $('#post-wheel-speed-fl').val(),
-        the_wheel_speed_br : $('#post-wheel-speed-br').val(),
-        the_wheel_speed_bl : $('#post-wheel-speed-bl').val(),
-        the_suspension_fr : $('#post-suspension-fr').val(),
-        the_suspension_fl : $('#post-suspension-fl').val(),
-        the_suspension_br : $('#post-suspension-br').val(),
-        the_suspension_bl : $('#post-suspension-bl').val(),
-        the_initial_fuel : $('#post-initial-fuel').val(),
-        the_fuel_decrease_rate : $('#post-fuel-decrease-rate').val(),
-        the_initial_oil : $('#post-initial-oil').val(),
-        the_oil_decrease_rate : $('#post-oil-decrease-rate').val(),
-        the_created_at : $('#post-created-at').val()
+        data : { name : $('#post-name').val(),
+        owner : $('#post-owner').val(),
+        temperature : $('#post-temperature').val(),
+        acceleration_x : $('#post-acceleration-X').val(),
+        acceleration_y : $('#post-acceleration-Y').val(),
+        acceleration_z : $('#post-acceleration-Z').val(),
+        wheel_speed_fr : $('#post-wheel-speed-fr').val(),
+        wheel_speed_fl : $('#post-wheel-speed-fl').val(),
+        wheel_speed_br : $('#post-wheel-speed-br').val(),
+        wheel_speed_bl : $('#post-wheel-speed-bl').val(),
+        suspension_fr : $('#post-suspension-fr').val(),
+        suspension_fl : $('#post-suspension-fl').val(),
+        suspension_br : $('#post-suspension-br').val(),
+        suspension_bl : $('#post-suspension-bl').val(),
+        initial_fuel : $('#post-initial-fuel').val(),
+        fuel_decrease_rate : $('#post-fuel-decrease-rate').val(),
+        initial_oil : $('#post-initial-oil').val(),
+        oil_decrease_rate : $('#post-oil-decrease-rate').val(),
+        created_at : $('#post-created-at').val()
                  }, // data sent with the post request
 
         // handle a successful response
-        success : function(json) {
-            generateValues()
-            console.log(json); // log the returned json to the console
-            console.log("success"); // another sanity check
+        success : function() {
+            generateValues();
+            console.log("POSTing was successful."); // another sanity check
         },
 
         // handle a non-successful response
