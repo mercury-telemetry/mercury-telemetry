@@ -84,6 +84,11 @@ $(function () {
         var suspension_fl = parseInt($('#post-suspension-fl').val());
         var suspension_br = parseInt($('#post-suspension-br').val());
         var suspension_bl = parseInt($('#post-suspension-bl').val());
+        var today = new Date();
+        var date = today.getFullYear()+'-'+("0"+(today.getMonth()+1)).slice(-2)+'-'+("0"+today.getDate()).slice(-2);
+        var time = ("0"+today.getHours()).slice(-2) + ":" + ("0"+today.getMinutes()).slice(-2) + ":" + ("0"+today.getSeconds()).slice(-2);
+        var dateTime = date+' '+time;
+        $("#post-created-at").val(dateTime);
         $('#post-temperature').val(temperature + random_int);
         $('#post-acceleration-X').val(acceleration_x + random_int);
         $('#post-acceleration-Y').val(acceleration_y + random_int);
