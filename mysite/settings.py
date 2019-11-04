@@ -122,7 +122,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# Changed from default True until we use TZ in out data model
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
