@@ -84,11 +84,7 @@ $(function () {
         var suspension_fl = parseInt($('#post-suspension-fl').val());
         var suspension_br = parseInt($('#post-suspension-br').val());
         var suspension_bl = parseInt($('#post-suspension-bl').val());
-        var today = new Date();
-        var date = today.getFullYear()+'-'+("0"+(today.getMonth()+1)).slice(-2)+'-'+("0"+today.getDate()).slice(-2);
-        var time = ("0"+today.getHours()).slice(-2) + ":" + ("0"+today.getMinutes()).slice(-2) + ":" + ("0"+today.getSeconds()).slice(-2);
-        var dateTime = date+' '+time;
-        $("#post-created-at").val(dateTime);
+        $("#post-created-at").val(getDateTimenow());
         $('#post-temperature').val(temperature + random_int);
         $('#post-acceleration-X').val(acceleration_x + random_int);
         $('#post-acceleration-Y').val(acceleration_y + random_int);
@@ -102,6 +98,20 @@ $(function () {
         $('#post-suspension-br').val(suspension_br + random_int);
         $('#post-suspension-bl').val(suspension_bl + random_int);
     }
+
+    function getDateTimenow(){
+        var now = new Date();
+        var yyyy = now.getFullYear();
+        var mm = ("0" + (now.getMonth() + 1)).slice(-2);
+        var dd = ("0" + now.getDate()).slice(-2);
+        var hours = ("0" + now.getHours()).slice(-2);
+        var minutes = ("0" + now.getMinutes()).slice(-2);
+        var seconds = ("0" + now.getSeconds()).slice(-2);
+        var curr_date = yyyy + '-' + mm + '-' + dd;
+        var curr_time = hours + ':' + minutes + ':' + seconds;
+        return curr_date + " " + curr_time;
+    }
+
 
     // This function gets cookie with a given name
     function getCookie(name) {
