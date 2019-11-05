@@ -13,8 +13,6 @@ class SimulatorView(TemplateView):
     def post(self, request, *args, **kwargs):
         """Used by AJAX method in the simulator.js file to save data
         from the simulator UI."""
-        post_name = request.POST.get("name")
-        post_owner = request.POST.get("owner")
         post_created_at = request.POST.get("created_at")
         post_temperature = request.POST.get("temperature")
         post_acceleration_x = request.POST.get("acceleration_x")
@@ -28,13 +26,8 @@ class SimulatorView(TemplateView):
         post_suspension_fl = request.POST.get("suspension_fl")
         post_suspension_br = request.POST.get("suspension_br")
         post_suspension_bl = request.POST.get("suspension_bl")
-        post_initial_fuel = request.POST.get("initial_fuel")
-        post_fuel_decrease_rate = request.POST.get("fuel_decrease_rate")
-        post_initial_oil = request.POST.get("initial_oil")
-        post_oil_decrease_rate = request.POST.get("oil_decrease_rate")
+        post_current_fuel_level = request.POST.get("current_fuel_level")
         sim_data = SimulatedData(
-            name=post_name,
-            owner=post_owner,
             created_at=post_created_at,
             temperature=post_temperature,
             acceleration_x=post_acceleration_x,
@@ -48,10 +41,7 @@ class SimulatorView(TemplateView):
             suspension_fl=post_suspension_fl,
             suspension_br=post_suspension_br,
             suspension_bl=post_suspension_bl,
-            initial_fuel=post_initial_fuel,
-            fuel_decrease_rate=post_fuel_decrease_rate,
-            initial_oil=post_initial_oil,
-            oil_decrease_rate=post_oil_decrease_rate,
+            current_fuel_level=post_current_fuel_level,
         )
         sim_data.save()
         return HttpResponse(status=201)
