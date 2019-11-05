@@ -11,7 +11,7 @@ $(function () {
         if (buttonpressed == "Continuous") {
             console.log("Continuous Submission button was pressed.");
             create_post();
-            interval_var = setInterval(create_post, 5000);
+            interval_var = setInterval(create_post, 2000);
         } else if (buttonpressed == "Once") {
             console.log("Submit Once button was pressed.");
             if (interval_var) {
@@ -67,7 +67,6 @@ $(function () {
 
     // Processes the form data and assigns the value to corresponding fields in the UI
     function generateValues() {
-        let random_int = Math.ceil(Math.random() * 4);
         let temperature = parseFloat($('#post-temperature').val());
         let acceleration_x = parseFloat($('#post-acceleration-X').val());
         let acceleration_y = parseFloat($('#post-acceleration-Y').val());
@@ -81,6 +80,13 @@ $(function () {
         let suspension_br = parseFloat($('#post-suspension-br').val());
         let suspension_bl = parseFloat($('#post-suspension-bl').val());
         let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
+        let random_int = Math.ceil(Math.random() * 10)-5;
+        if(current_fuel_level<=10){
+            current_fuel_level+=90;
+        }
+        else{
+            current_fuel_level-=Math.ceil(Math.random()*10);
+        }
         $('#post-created-at').val(getDateTimenow());
         $('#post-temperature').val(temperature + random_int);
         $('#post-acceleration-X').val(acceleration_x + random_int);
@@ -94,7 +100,7 @@ $(function () {
         $('#post-suspension-fl').val(suspension_fl + random_int);
         $('#post-suspension-br').val(suspension_br + random_int);
         $('#post-suspension-bl').val(suspension_bl + random_int);
-        $('#post-current-fuel-level').val(current_fuel_level + random_int);
+        $('#post-current-fuel-level').val(current_fuel_level);
     }
 
     function getDateTimenow(){
