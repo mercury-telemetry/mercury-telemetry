@@ -4,8 +4,11 @@ import datetime
 
 TEST_TEMP = 999.0
 
+
 def create_simulated_data():
-    SimulatedData.objects.create(temperature=TEST_TEMP, created_at=datetime.datetime.now())
+    SimulatedData.objects.create(
+        temperature=TEST_TEMP, created_at=datetime.datetime.now()
+    )
 
 
 class TestSimulatedData(TestCase):
