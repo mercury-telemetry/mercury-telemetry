@@ -81,6 +81,7 @@ $(function () {
         let suspension_br = parseFloat($('#post-suspension-br').val());
         let suspension_bl = parseFloat($('#post-suspension-bl').val());
         let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
+        $('#post-created-at').val(getDateTimenow());
         $('#post-temperature').val(temperature + random_int);
         $('#post-acceleration-X').val(acceleration_x + random_int);
         $('#post-acceleration-Y').val(acceleration_y + random_int);
