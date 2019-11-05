@@ -26,31 +26,6 @@ $(function () {
         }
     });
 
-    function getDateTimeNow() {
-        /* This function produces a datetime timestamp for _now_ in the format of
-        "YYYY-MM-DD HH:MM:SS" */
-        let date = new Date();
-        const yyyy = date.getFullYear();
-        let dd = date.getDate();
-        let mm = (date.getMonth() + 1);
-        if (dd < 10)
-            dd = "0" + dd;
-        if (mm < 10)
-            mm = "0" + mm;
-        const cur_date = yyyy + "-" + mm + "-" + dd;
-        let hours = date.getHours()
-        let minutes = date.getMinutes()
-        let seconds = date.getSeconds();
-        if (hours < 10)
-            hours = "0" + hours;
-        if (minutes < 10)
-            minutes = "0" + minutes;
-        if (seconds < 10)
-            seconds = "0" + seconds;
-        const cur_time = hours + ":" + minutes + ":" + seconds;
-        return cur_date + " " + cur_time;
-    }
-    
     // AJAX for posting
     function create_post() {
         console.log("Entered create_post() function."); // sanity check
@@ -97,6 +72,24 @@ $(function () {
 
     // Processes the form data and assigns the value to corresponding fields in the UI
     function generateValues() {
+        /* This function produces a datetime timestamp for _now_ in the format of
+        "YYYY-MM-DD HH:MM:SS" */
+        let date = new Date();
+        const yyyy = date.getFullYear();
+        let dd = date.getDate();
+        let mm = (date.getMonth() + 1);
+        dd = ("0" + dd).slice(-2)
+        mm = ("0" + mm).slice(-2)
+        const cur_date = yyyy + "-" + mm + "-" + dd;
+        let hours = date.getHours()
+        let minutes = date.getMinutes()
+        let seconds = date.getSeconds();
+        hours = ("0" + hours).slice(-2);
+        minutes = ("0" + minutes).slice(-2);
+        seconds = ("0" + seconds).slice(-2);
+        const cur_time = hours + ":" + minutes + ":" + seconds;
+        var dateTime = cur_date + " " + cur_time;
+        
         var random_int = Math.ceil(Math.random() * 4);
         var temperature = parseInt($('#post-temperature').val());
         var acceleration_x = parseInt($('#post-acceleration-X').val());
@@ -110,7 +103,6 @@ $(function () {
         var suspension_fl = parseInt($('#post-suspension-fl').val());
         var suspension_br = parseInt($('#post-suspension-br').val());
         var suspension_bl = parseInt($('#post-suspension-bl').val());
-        var dateTime = getDateTimeNow()
         $("#post-created-at").val(dateTime);
         $('#post-temperature').val(temperature + random_int);
         $('#post-acceleration-X').val(acceleration_x + random_int);
