@@ -25,7 +25,7 @@ $(function () {
             }
         }
     });
-
+    
     // AJAX for posting
     function create_post() {
         console.log("Entered create_post() function."); // sanity check
@@ -64,6 +64,7 @@ $(function () {
         });
 
     }
+
     // Processes the form data and assigns the value to corresponding fields in the UI
     function generateValues() {
         let random_int = Math.ceil(Math.random() * 4);
@@ -94,6 +95,20 @@ $(function () {
         $('#post-suspension-bl').val(suspension_bl + random_int);
         $('#post-current-fuel-level').val(current_fuel_level + random_int);
     }
+
+    function getDateTimenow(){
+        var now = new Date();
+        var yyyy = now.getFullYear();
+        var mm = ("0" + (now.getMonth() + 1)).slice(-2);
+        var dd = ("0" + now.getDate()).slice(-2);
+        var hours = ("0" + now.getHours()).slice(-2);
+        var minutes = ("0" + now.getMinutes()).slice(-2);
+        var seconds = ("0" + now.getSeconds()).slice(-2);
+        var curr_date = yyyy + '-' + mm + '-' + dd;
+        var curr_time = hours + ':' + minutes + ':' + seconds;
+        return curr_date + " " + curr_time;
+    }
+
 
     // This function gets cookie with a given name
     function getCookie(name) {
