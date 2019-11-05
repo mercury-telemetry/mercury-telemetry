@@ -14,16 +14,6 @@ class SimulatorForm(forms.ModelForm):
         model = SimulatedData
         fields = "__all__"
         widgets = {
-            "name": forms.TextInput(
-                attrs={"id": "post-name", "required": True, "placeholder": "Enter Name"}
-            ),
-            "owner": forms.TextInput(
-                attrs={
-                    "id": "post-owner",
-                    "required": True,
-                    "placeholder": "Enter Name of the owner",
-                }
-            ),
             "temperature": forms.NumberInput(
                 attrs={"id": "post-temperature", "required": True}
             ),
@@ -60,17 +50,8 @@ class SimulatorForm(forms.ModelForm):
             "suspension_bl": forms.NumberInput(
                 attrs={"id": "post-suspension-bl", "required": True}
             ),
-            "initial_fuel": forms.NumberInput(
-                attrs={"id": "post-initial-fuel", "required": True}
-            ),
-            "fuel_decrease_rate": forms.NumberInput(
-                attrs={"id": "post-fuel-decrease-rate", "required": True}
-            ),
-            "initial_oil": forms.NumberInput(
-                attrs={"id": "post-initial-oil", "required": True}
-            ),
-            "oil_decrease_rate": forms.NumberInput(
-                attrs={"id": "post-oil-decrease-rate", "required": True}
+            "current_fuel_level": forms.NumberInput(
+                attrs={"id": "post-current-fuel-level", "required": True}
             ),
             "created_at": forms.DateTimeInput(
                 attrs={"id": "post-created-at", "required": True}

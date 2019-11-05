@@ -33,8 +33,6 @@ $(function () {
             url: "", // the endpoint
             type: "POST", // http method
             data: {
-                name: $('#post-name').val(),
-                owner: $('#post-owner').val(),
                 temperature: $('#post-temperature').val(),
                 acceleration_x: $('#post-acceleration-X').val(),
                 acceleration_y: $('#post-acceleration-Y').val(),
@@ -47,10 +45,7 @@ $(function () {
                 suspension_fl: $('#post-suspension-fl').val(),
                 suspension_br: $('#post-suspension-br').val(),
                 suspension_bl: $('#post-suspension-bl').val(),
-                initial_fuel: $('#post-initial-fuel').val(),
-                fuel_decrease_rate: $('#post-fuel-decrease-rate').val(),
-                initial_oil: $('#post-initial-oil').val(),
-                oil_decrease_rate: $('#post-oil-decrease-rate').val(),
+                current_fuel_level: $('#post-current-fuel-level').val(),
                 created_at: $('#post-created-at').val()
             }, // data sent with the post request
 
@@ -72,20 +67,20 @@ $(function () {
 
     // Processes the form data and assigns the value to corresponding fields in the UI
     function generateValues() {
-        var random_int = Math.ceil(Math.random() * 4);
-        var temperature = parseInt($('#post-temperature').val());
-        var acceleration_x = parseInt($('#post-acceleration-X').val());
-        var acceleration_y = parseInt($('#post-acceleration-Y').val());
-        var acceleration_z = parseInt($('#post-acceleration-Z').val());
-        var wheel_speed_fr = parseInt($('#post-wheel-speed-fr').val());
-        var wheel_speed_fl = parseInt($('#post-wheel-speed-fl').val());
-        var wheel_speed_br = parseInt($('#post-wheel-speed-br').val());
-        var wheel_speed_bl = parseInt($('#post-wheel-speed-bl').val());
-        var suspension_fr = parseInt($('#post-suspension-fr').val());
-        var suspension_fl = parseInt($('#post-suspension-fl').val());
-        var suspension_br = parseInt($('#post-suspension-br').val());
-        var suspension_bl = parseInt($('#post-suspension-bl').val());
-        $("#post-created-at").val(getDateTimenow());
+        let random_int = Math.ceil(Math.random() * 4);
+        let temperature = parseFloat($('#post-temperature').val());
+        let acceleration_x = parseFloat($('#post-acceleration-X').val());
+        let acceleration_y = parseFloat($('#post-acceleration-Y').val());
+        let acceleration_z = parseFloat($('#post-acceleration-Z').val());
+        let wheel_speed_fr = parseFloat($('#post-wheel-speed-fr').val());
+        let wheel_speed_fl = parseFloat($('#post-wheel-speed-fl').val());
+        let wheel_speed_br = parseFloat($('#post-wheel-speed-br').val());
+        let wheel_speed_bl = parseFloat($('#post-wheel-speed-bl').val());
+        let suspension_fr = parseFloat($('#post-suspension-fr').val());
+        let suspension_fl = parseFloat($('#post-suspension-fl').val());
+        let suspension_br = parseFloat($('#post-suspension-br').val());
+        let suspension_bl = parseFloat($('#post-suspension-bl').val());
+        let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
         $('#post-temperature').val(temperature + random_int);
         $('#post-acceleration-X').val(acceleration_x + random_int);
         $('#post-acceleration-Y').val(acceleration_y + random_int);
@@ -98,6 +93,7 @@ $(function () {
         $('#post-suspension-fl').val(suspension_fl + random_int);
         $('#post-suspension-br').val(suspension_br + random_int);
         $('#post-suspension-bl').val(suspension_bl + random_int);
+        $('#post-current-fuel-level').val(current_fuel_level + random_int);
     }
 
     function getDateTimenow(){
