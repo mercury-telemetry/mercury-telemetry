@@ -7,6 +7,7 @@ from ..models import SimulatedData
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+
 class DashboardView(TemplateView):
     template_name = "dashboard.html"
 

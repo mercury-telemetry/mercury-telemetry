@@ -10,6 +10,5 @@ urlpatterns = [
     path(
         "dashboard-live/", dashboard.DashboardLiveView.as_view(), name="dashboard-live"
     ),
-    path("api/chart/data/",dashboard.ChartData.as_view(), name = "api-chart-data")
-
+    path("api/chart/data/", dashboard.ChartData.as_view(), name="api-chart-data"),
 ]
