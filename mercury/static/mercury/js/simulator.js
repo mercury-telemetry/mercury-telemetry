@@ -102,7 +102,7 @@ $(function () {
         $('#post-current-fuel-level').val(current_fuel_level);
     }
 
-    // This function returns current date time in the format "yyyy-mm-dd hh:min:sec"
+    // This function returns current date time in the format "yyyy-mm-dd hh:min:ss"
     function getDateTimenow(){
         var now = new Date();
         var yyyy = now.getFullYear();
