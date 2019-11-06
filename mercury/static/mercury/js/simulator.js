@@ -83,7 +83,6 @@ $(function () {
             current_fuel_level += 90;
         }
         else{
-            //current_fuel_level -= parseFloat((Math.random() * 10).toFixed(2));
             current_fuel_level -= getRandomNumber(0,5);
         }
         $('#post-created-at').val(getDateTimenow());
