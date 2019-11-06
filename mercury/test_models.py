@@ -18,3 +18,8 @@ class TestSimulatedData(TestCase):
     def test_vehicle_temp(self):
         foo = SimulatedData.objects.get(temperature=TEST_TEMP)
         self.assertEqual(foo.temperature, TEST_TEMP)
+
+    def test_vehicle_temp_method(self):
+        foo = SimulatedData()
+        foo.temperature = 987
+        self.assertEqual(foo.temp(), 987)

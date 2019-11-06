@@ -5,38 +5,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('mercury', '0002_auto_20191029_2219'),
-    ]
+    dependencies = [("mercury", "0002_auto_20191029_2219")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='simulateddata',
-            name='fuel_decrease_rate',
-        ),
-        migrations.RemoveField(
-            model_name='simulateddata',
-            name='initial_fuel',
-        ),
-        migrations.RemoveField(
-            model_name='simulateddata',
-            name='initial_oil',
-        ),
-        migrations.RemoveField(
-            model_name='simulateddata',
-            name='name',
-        ),
-        migrations.RemoveField(
-            model_name='simulateddata',
-            name='oil_decrease_rate',
-        ),
-        migrations.RemoveField(
-            model_name='simulateddata',
-            name='owner',
-        ),
+        migrations.RemoveField(model_name="simulateddata", name="fuel_decrease_rate"),
+        migrations.RemoveField(model_name="simulateddata", name="initial_fuel"),
+        migrations.RemoveField(model_name="simulateddata", name="initial_oil"),
+        migrations.RemoveField(model_name="simulateddata", name="name"),
+        migrations.RemoveField(model_name="simulateddata", name="oil_decrease_rate"),
+        migrations.RemoveField(model_name="simulateddata", name="owner"),
         migrations.AddField(
-            model_name='simulateddata',
-            name='current_fuel_level',
+            model_name="simulateddata",
+            name="current_fuel_level",
             field=models.FloatField(default=0),
         ),
     ]

@@ -36,7 +36,7 @@ class TestViews(TestCase):
             "suspension_fl": 0,
             "suspension_br": 0,
             "suspension_bl": 0,
-            "current_fuel_level": 0
+            "current_fuel_level": 0,
         }
         response = client.post(reverse("mercury:simulator"), data=test_data)
         self.assertEqual(response.status_code, 201)
