@@ -11,7 +11,7 @@ $(function () {
         if (buttonpressed == "Continuous") {
             console.log("Continuous Submission button was pressed.");
             create_post();
-            interval_var = setInterval(create_post, 5000);
+            interval_var = setInterval(create_post, 2000);
         } else if (buttonpressed == "Once") {
             console.log("Submit Once button was pressed.");
             if (interval_var) {
@@ -25,16 +25,14 @@ $(function () {
             }
         }
     });
-
+    
     // AJAX for posting
     function create_post() {
-        console.log("Entered create_post() function."); // sanity check
+        console.log("Entered create_post() function.");
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
             data: {
-                name: $('#post-name').val(),
-                owner: $('#post-owner').val(),
                 temperature: $('#post-temperature').val(),
                 acceleration_x: $('#post-acceleration-X').val(),
                 acceleration_y: $('#post-acceleration-Y').val(),
@@ -47,10 +45,7 @@ $(function () {
                 suspension_fl: $('#post-suspension-fl').val(),
                 suspension_br: $('#post-suspension-br').val(),
                 suspension_bl: $('#post-suspension-bl').val(),
-                initial_fuel: $('#post-initial-fuel').val(),
-                fuel_decrease_rate: $('#post-fuel-decrease-rate').val(),
-                initial_oil: $('#post-initial-oil').val(),
-                oil_decrease_rate: $('#post-oil-decrease-rate').val(),
+                current_fuel_level: $('#post-current-fuel-level').val(),
                 created_at: $('#post-created-at').val()
             }, // data sent with the post request
 
@@ -67,36 +62,81 @@ $(function () {
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
-
     }
+
     // Processes the form data and assigns the value to corresponding fields in the UI
     function generateValues() {
-        var random_int = Math.ceil(Math.random() * 4);
-        var temperature = parseInt($('#post-temperature').val());
-        var acceleration_x = parseInt($('#post-acceleration-X').val());
-        var acceleration_y = parseInt($('#post-acceleration-Y').val());
-        var acceleration_z = parseInt($('#post-acceleration-Z').val());
-        var wheel_speed_fr = parseInt($('#post-wheel-speed-fr').val());
-        var wheel_speed_fl = parseInt($('#post-wheel-speed-fl').val());
-        var wheel_speed_br = parseInt($('#post-wheel-speed-br').val());
-        var wheel_speed_bl = parseInt($('#post-wheel-speed-bl').val());
-        var suspension_fr = parseInt($('#post-suspension-fr').val());
-        var suspension_fl = parseInt($('#post-suspension-fl').val());
-        var suspension_br = parseInt($('#post-suspension-br').val());
-        var suspension_bl = parseInt($('#post-suspension-bl').val());
-        $('#post-temperature').val(temperature + random_int);
-        $('#post-acceleration-X').val(acceleration_x + random_int);
-        $('#post-acceleration-Y').val(acceleration_y + random_int);
-        $('#post-acceleration-Z').val(acceleration_z + random_int);
-        $('#post-wheel-speed-fr').val(wheel_speed_fr + random_int);
-        $('#post-wheel-speed-fl').val(wheel_speed_fl + random_int);
-        $('#post-wheel-speed-br').val(wheel_speed_br + random_int);
-        $('#post-wheel-speed-bl').val(wheel_speed_bl + random_int);
-        $('#post-suspension-fr').val(suspension_fr + random_int);
-        $('#post-suspension-fl').val(suspension_fl + random_int);
-        $('#post-suspension-br').val(suspension_br + random_int);
-        $('#post-suspension-bl').val(suspension_bl + random_int);
+        let temperature = parseFloat($('#post-temperature').val());
+        let acceleration_x = parseFloat($('#post-acceleration-X').val());
+        let acceleration_y = parseFloat($('#post-acceleration-Y').val());
+        let acceleration_z = parseFloat($('#post-acceleration-Z').val());
+        let wheel_speed_fr = parseFloat($('#post-wheel-speed-fr').val());
+        let wheel_speed_fl = parseFloat($('#post-wheel-speed-fl').val());
+        let wheel_speed_br = parseFloat($('#post-wheel-speed-br').val());
+        let wheel_speed_bl = parseFloat($('#post-wheel-speed-bl').val());
+        let suspension_fr = parseFloat($('#post-suspension-fr').val());
+        let suspension_fl = parseFloat($('#post-suspension-fl').val());
+        let suspension_br = parseFloat($('#post-suspension-br').val());
+        let suspension_bl = parseFloat($('#post-suspension-bl').val());
+        let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
+        if(current_fuel_level <= 10){
+            current_fuel_level += 90;
+        }
+        else{
+            current_fuel_level -= getRandomNumber(0,5);
+        }
+        $('#post-created-at').val(getDateTimenow());
+        $('#post-temperature').val(getNextValue(temperature,-5,5));
+        $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
+        $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
+        $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
+        $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
+        $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
+        $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
+        $('#post-wheel-speed-bl').val(getNextValue(wheel_speed_bl,-5,5));
+        $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
+        $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
+        $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
+        $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
+        $('#post-current-fuel-level').val(current_fuel_level);
     }
+
+    // This function returns current date time in the format "yyyy-mm-dd hh:min:ss"
+    function getDateTimenow(){
+        var now = new Date();
+        var yyyy = now.getFullYear();
+        var mm = ("0" + (now.getMonth() + 1)).slice(-2);
+        var dd = ("0" + now.getDate()).slice(-2);
+        var hours = ("0" + now.getHours()).slice(-2);
+        var minutes = ("0" + now.getMinutes()).slice(-2);
+        var seconds = ("0" + now.getSeconds()).slice(-2);
+        var curr_date = yyyy + '-' + mm + '-' + dd;
+        var curr_time = hours + ':' + minutes + ':' + seconds;
+        return curr_date + " " + curr_time;
+    }
+
+    //This function returns next sensor value, also makes sure that the value is in between 0 and 100
+    function getNextValue(sensorValue, min, max){
+        let MAX_VALUE = 100;
+        let MIN_VALUE = 0;
+        if((sensorValue-MIN_VALUE)<Math.abs(min)){
+            max = max-min;
+            min = 0;
+        }
+        else if((MAX_VALUE-sensorValue)<Math.abs(max)){
+            max = 0;
+        }
+        nextSensorValue = sensorValue + getRandomNumber(min,max);
+        return nextSensorValue;
+    }
+
+    //This function returns random number between min(inclusive) and max(exclusive)
+    function getRandomNumber(min,max){
+        let rand_num = Math.random()*(max-min)+min;
+        let rounded = rand_num.toFixed(2);
+        return parseFloat(rounded);
+    }
+
 
     // This function gets cookie with a given name
     function getCookie(name) {

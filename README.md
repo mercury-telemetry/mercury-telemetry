@@ -1,5 +1,13 @@
+`develop`
+
 [![Build Status](https://travis-ci.com/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors.svg?token=YtfCuazTkWZrw19nZ9s6&branch=develop)](https://travis-ci.com/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors)
 [![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors?branch=develop)
+
+`master`
+
+[![Build Status](https://travis-ci.com/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors.svg?token=YtfCuazTkWZrw19nZ9s6&branch=master)](https://travis-ci.com/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors)
+[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/fall2019-cs-gy-6063-team-moonsurvivors?branch=master)
+
 # Team Project repo
 
 Heroku Production (master) URI: [https://nyu-mercury-prod.herokuapp.com/](https://nyu-mercury-prod.herokuapp.com/)
@@ -7,6 +15,8 @@ Heroku Production (master) URI: [https://nyu-mercury-prod.herokuapp.com/](https:
 Heroku Staging (develop) URI: [https://nyu-mercury.herokuapp.com](https://nyu-mercury.herokuapp.com)
 
 Heroku Dashboard: [https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872](https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872)
+
+
 # HOWTO Contribute to this repo
 
 N.B.: `<something>` means you need to change the `something` text within the angle brackets (and do not include the include brackets in your command).

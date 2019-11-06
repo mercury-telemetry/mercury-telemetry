@@ -83,7 +83,7 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 
 DATABASES = {}
 DATABASES["default"] = dj_database_url.config(conn_max_age=600)
-if "TRAVIS" in os.environ:
+if "TRAVIS" in os.environ:  # pragma: no cover
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -96,7 +96,7 @@ if "TRAVIS" in os.environ:
     }
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
+    dotenv.load_dotenv(dotenv_file)  # pragma: no cover
 
 
 # Password validation
@@ -144,4 +144,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 if "OPTIONS" in DATABASES["default"]:
-    del DATABASES["default"]["OPTIONS"]["sslmode"]
+    del DATABASES["default"]["OPTIONS"]["sslmode"]  # pragma: no cover

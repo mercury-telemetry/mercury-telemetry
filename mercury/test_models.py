@@ -2,16 +2,24 @@ from django.test import TestCase
 from mercury.models import SimulatedData
 import datetime
 
+TEST_TEMP = 999.0
+
 
 def create_simulated_data():
-    SimulatedData.objects.create(name="Foo", created_at=datetime.datetime.now())
+    SimulatedData.objects.create(
+        temperature=TEST_TEMP, created_at=datetime.datetime.now()
+    )
 
 
 class TestSimulatedData(TestCase):
     def setUp(self):
         create_simulated_data()
 
-    def test_vehicle_name(self):
-        test_name = "Foo"
-        foo = SimulatedData.objects.get(name=test_name)
-        self.assertEqual(foo.name, test_name)
+    def test_vehicle_temp(self):
+        foo = SimulatedData.objects.get(temperature=TEST_TEMP)
+        self.assertEqual(foo.temperature, TEST_TEMP)
+
+    def test_vehicle_temp_method(self):
+        foo = SimulatedData()
+        foo.temperature = 987
+        self.assertEqual(foo.temp(), 987)

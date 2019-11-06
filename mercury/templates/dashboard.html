@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
 {#    http-equiv="refresh" content="5; URL=/dashboard/"/>#}
     <title>Dashboard</title>
+    {%  load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
 </head>
 <body>
 <h1>Dashboard</h1>
-<h3>The Simulated Data for each data packet sent is shown:</h3>
+<div>
+    <button onclick=window.location="https://nyu-mercury-grafana.herokuapp.com/d/OLdA89AZz/nyu-mercury-poc?orgId=1&refresh=5s&from=now-5m&to=now"; class="btn btn-primary">Grafana PoC</button>
+    <br>
+    <br>
+</div>
+<h3>The Simulated Data for each snapshot</h3>
 <div>
     <table id="main_dash" style="border: 1px solid black">
-        The simulated data for each data package is shown below:<br><br>
+        <br>
         <tr>
             <th>ID</th>
-            <th>Vehicle Name</th>
-            <th>Vehicle Owner</th>
             <th>Time</th>
             <th>Temperature</th>
             <th>X-axis accel</th>
@@ -28,12 +33,11 @@
             <th>FL susp</th>
             <th>BR susp</th>
             <th>BL susp</th>
+            <th>Fuel Level</th>
         </tr>
         {% for item in all_data %}
             <tr>
                 <td>{{ item.id }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.owner }}</td>
                 <td>{{ item.created_at }}</td>
                 <td>{{ item.temperature }}</td>
                 <td>{{ item.acceleration_x }}</td>
@@ -47,16 +51,9 @@
                 <td>{{ item.suspension_fl }}</td>
                 <td>{{ item.suspension_br }}</td>
                 <td>{{ item.suspension_bl }}</td>
+                <td>{{ item.current_fuel_level }}</td>
             </tr>
         {%  endfor %}
-        {#            Data Package ID: {{  item.id }}<br>#}
-        {#            Name of the sender: {{ item.name }} <br>#}
-        {#            Owner of the vehicle: {{  item.owner }}<br>#}
-        {#            Time at which data was sent: {{ item.created_at }}<br>#}
-        {#            Temperature of the vehicle: {{ item.temperature }}<br>#}
-        {#            Acceleration of the vehicle: x-axis:  {{ item.acceleration_x }} , y-axis: {{item.acceleration_y  }}, z-axis: {{ item.acceleration_z }}<br>#}
-        {#            Wheel Speed (4 Wheels): FR: {{item.wheel_speed_fr}}, FL: {{item.wheel_speed_fl}}, BR: {{item.wheel_speed_br}}, BL: {{item.wheel_speed_bl}}<br>#}
-        {#            Compression/Suspension of the 4 Wheels: FR: {{item.suspension_fr}}, FL: {{item.suspension_fr}}, BR: {{item.suspension_fr}}, BL: {{item.suspension_fr}}<br>#}
     </table>
 </div>
 
