@@ -60,8 +60,9 @@
 	<div class="row">
         <div id="articles" style="width:1400px;height:800px;"></div>
     </div>
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-	<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+{#	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>#}
+    <script src="{% static "mercury/js/plotly-latest.js" %}"></script>
+	<script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function(){
