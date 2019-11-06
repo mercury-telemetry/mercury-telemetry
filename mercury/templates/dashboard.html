@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8"  http-equiv="refresh" content="5; URL=/dashboard/"/>
     <title>Dashboard</title>
+    {%  load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
 </head>
 <body>
 <h1>Dashboard</h1>
+<div>
+    <button onclick=window.location="https://nyu-mercury-grafana.herokuapp.com/d/OLdA89AZz/nyu-mercury-poc?orgId=1&refresh=5s&from=now-5m&to=now"; class="btn btn-primary">Grafana PoC</button>
+    <br>
+    <br>
+</div>
 <h3>The Simulated Data for each snapshot</h3>
 <div>
     <table id="main_dash" style="border: 1px solid black">
