@@ -28,7 +28,7 @@ $(function () {
     
     // AJAX for posting
     function create_post() {
-        console.log("Entered create_post() function."); // sanity check
+        console.log("Entered create_post() function.");
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
@@ -62,7 +62,6 @@ $(function () {
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
-
     }
 
     // Processes the form data and assigns the value to corresponding fields in the UI
@@ -80,26 +79,25 @@ $(function () {
         let suspension_br = parseFloat($('#post-suspension-br').val());
         let suspension_bl = parseFloat($('#post-suspension-bl').val());
         let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
-        let random_int = Math.ceil(Math.random() * 10)-5;
-        if(current_fuel_level<=10){
-            current_fuel_level+=90;
+        if(current_fuel_level <= 10){
+            current_fuel_level += 90;
         }
         else{
-            current_fuel_level-=Math.ceil(Math.random()*10);
+            current_fuel_level -= parseFloat((Math.random() * 10).toFixed(2));
         }
         $('#post-created-at').val(getDateTimenow());
-        $('#post-temperature').val(temperature + random_int);
-        $('#post-acceleration-X').val(acceleration_x + random_int);
-        $('#post-acceleration-Y').val(acceleration_y + random_int);
-        $('#post-acceleration-Z').val(acceleration_z + random_int);
-        $('#post-wheel-speed-fr').val(wheel_speed_fr + random_int);
-        $('#post-wheel-speed-fl').val(wheel_speed_fl + random_int);
-        $('#post-wheel-speed-br').val(wheel_speed_br + random_int);
-        $('#post-wheel-speed-bl').val(wheel_speed_bl + random_int);
-        $('#post-suspension-fr').val(suspension_fr + random_int);
-        $('#post-suspension-fl').val(suspension_fl + random_int);
-        $('#post-suspension-br').val(suspension_br + random_int);
-        $('#post-suspension-bl').val(suspension_bl + random_int);
+        $('#post-temperature').val(temperature + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-acceleration-X').val(acceleration_x + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-acceleration-Y').val(acceleration_y + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-acceleration-Z').val(acceleration_z + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-wheel-speed-fr').val(wheel_speed_fr + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-wheel-speed-fl').val(wheel_speed_fl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-wheel-speed-br').val(wheel_speed_br + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-wheel-speed-bl').val(wheel_speed_bl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-suspension-fr').val(suspension_fr + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-suspension-fl').val(suspension_fl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-suspension-br').val(suspension_br + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-suspension-bl').val(suspension_bl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
         $('#post-current-fuel-level').val(current_fuel_level);
     }
 
