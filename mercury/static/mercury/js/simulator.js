@@ -83,24 +83,26 @@ $(function () {
             current_fuel_level += 90;
         }
         else{
-            current_fuel_level -= parseFloat((Math.random() * 10).toFixed(2));
+            //current_fuel_level -= parseFloat((Math.random() * 10).toFixed(2));
+            current_fuel_level -= getRandomNumber(0,5);
         }
         $('#post-created-at').val(getDateTimenow());
-        $('#post-temperature').val(temperature + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-acceleration-X').val(acceleration_x + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-acceleration-Y').val(acceleration_y + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-acceleration-Z').val(acceleration_z + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-wheel-speed-fr').val(wheel_speed_fr + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-wheel-speed-fl').val(wheel_speed_fl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-wheel-speed-br').val(wheel_speed_br + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-wheel-speed-bl').val(wheel_speed_bl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-suspension-fr').val(suspension_fr + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-suspension-fl').val(suspension_fl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-suspension-br').val(suspension_br + parseFloat((Math.random() * 10).toFixed(2)) - 5);
-        $('#post-suspension-bl').val(suspension_bl + parseFloat((Math.random() * 10).toFixed(2)) - 5);
+        $('#post-temperature').val(getNextValue(temperature,-5,5));
+        $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
+        $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
+        $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
+        $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
+        $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
+        $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
+        $('#post-wheel-speed-bl').val(getNextValue(wheel_speed_bl,-5,5));
+        $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
+        $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
+        $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
+        $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
         $('#post-current-fuel-level').val(current_fuel_level);
     }
 
+    // This function returns current date time in the format "yyyy-mm-dd hh:min:sec"
     function getDateTimenow(){
         var now = new Date();
         var yyyy = now.getFullYear();
@@ -112,6 +114,28 @@ $(function () {
         var curr_date = yyyy + '-' + mm + '-' + dd;
         var curr_time = hours + ':' + minutes + ':' + seconds;
         return curr_date + " " + curr_time;
+    }
+
+    //This function returns next sensor value, also makes sure that the value is in between 0 and 100
+    function getNextValue(sensorValue, min, max){
+        let MAX_VALUE = 100;
+        let MIN_VALUE = 0;
+        if((sensorValue-MIN_VALUE)<Math.abs(min)){
+            max = max-min;
+            min = 0;
+        }
+        else if((MAX_VALUE-sensorValue)<Math.abs(max)){
+            max = 0;
+        }
+        nextSensorValue = sensorValue + getRandomNumber(min,max);
+        return nextSensorValue;
+    }
+
+    //This function returns random number between min(inclusive) and max(exclusive)
+    function getRandomNumber(min,max){
+        let rand_num = Math.random()*(max-min)+min;
+        let rounded = rand_num.toFixed(2);
+        return parseFloat(rounded);
     }
 
 
