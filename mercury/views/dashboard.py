@@ -33,8 +33,6 @@ class ChartData(APIView):
         for item in SimulatedData.objects.all().order_by("-created_at"):
             dictionary[item.created_at] = item.temperature
 
-
-
         # dictionary = sorted(dictionary.items(), key=lambda x: x[0])
         # dictionary = dict(dictionary)
 
