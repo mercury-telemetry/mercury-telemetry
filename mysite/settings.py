@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "mercury.apps.MercuryConfig",
-    "rest_framework",
 ]
 
 MIDDLEWARE = [
