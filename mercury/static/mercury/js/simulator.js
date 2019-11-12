@@ -85,11 +85,14 @@ $(function () {
         else{
             current_fuel_level -= getRandomNumber(0,5);
         }
+        acceleration_x = acceleration_x + getRandomNumber(-5,5);
+        acceleration_y = acceleration_y + getRandomNumber(-5,5);
+        acceleration_z = acceleration_z + getRandomNumber(-5,5);
         $('#post-created-at').val(getDateTimenow());
         $('#post-temperature').val(getNextValue(temperature,-5,5));
-        $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
-        $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
-        $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
+        $('#post-acceleration-X').val(roundOffAndParse(acceleration_x));
+        $('#post-acceleration-Y').val(roundOffAndParse(acceleration_y));
+        $('#post-acceleration-Z').val(roundOffAndParse(acceleration_z));
         $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
         $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
         $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
@@ -98,7 +101,7 @@ $(function () {
         $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
         $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
         $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
-        $('#post-current-fuel-level').val(current_fuel_level);
+        $('#post-current-fuel-level').val(roundOffAndParse(current_fuel_level));
     }
 
     // This function returns current date time in the format "yyyy-mm-dd hh:min:ss"
@@ -127,13 +130,17 @@ $(function () {
             max = 0;
         }
         nextSensorValue = sensorValue + getRandomNumber(min,max);
-        return nextSensorValue;
+        return roundOffAndParse(nextSensorValue);
     }
 
     //This function returns random number between min(inclusive) and max(exclusive)
     function getRandomNumber(min,max){
         let rand_num = Math.random()*(max-min)+min;
-        let rounded = rand_num.toFixed(2);
+        return rand_num;
+    }
+
+    function roundOffAndParse(nextSensorValue){
+        rounded = nextSensorValue.toFixed(2);
         return parseFloat(rounded);
     }
 
