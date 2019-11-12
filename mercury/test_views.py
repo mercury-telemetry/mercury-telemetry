@@ -10,11 +10,6 @@ class TestViews(TestCase):
         response = client.get(reverse("mercury:dashboard"))
         self.assertEqual(response.status_code, 200)
 
-    def test_dashboard_live(self):
-        client = Client()
-        response = client.get(reverse("mercury:dashboard-live"))
-        self.assertEqual(response.status_code, 200)
-
     def test_simulator(self):
         client = Client()
         response = client.get(reverse("mercury:simulator"))
