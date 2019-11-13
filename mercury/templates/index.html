@@ -3,7 +3,7 @@
 
 <!DOCTYPE html>
 <html>
-  <div style='text-align:center'>
+
     <head>
         <meta charset="utf-8">
         <title>Mercury - NYU Tandon Telemetry</title>
@@ -16,37 +16,19 @@
             }            
         </script>
     </head>
-    <body>
 
-        <h1>NYU Motorsports Telemetry</h1>
-
-    <a href="/about/">About Telemetry</a>
-        <br>
-        <br>
-
-
-    {% block title %}<b>Login Page</b>{% endblock %}
-
-    {% block content %}
-        <br>
-    {% if user.is_authenticated %}
-    <br>
-      Hi user: {{ user.username }}!
+  <div style="padding: 30px;">
+    <div id="grafana">
       <br>
+      <h1>NYU Motorsports Telemetry</h1>
       <br>
-      <button onclick="RedirectSimulator();" class="btn btn-primary">Simulator</button>
+      <button onclick=window.location="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod" class="grafana-btn grafana-btn-primary" style="width: 50%; height: 80px; font-size: larger;">Telemetry Dashboard</button>
       <br>
-      <br>
-      <button onclick="RedirectDashboard();" class="btn btn-primary">Dashboard</button>
-      <br>
-      <br>
-      <p><a href="{% url 'logout' %}">logout</a></p>
-    {% else %}
-      <p>You are not logged in</p>
-      <a href="{% url 'login' %}">login</a>
-    {% endif %}
-    {% endblock %}
-
-    </body>
+      <div style="height: 4px;"></div>
+      <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Simulator</button>
+      <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Raw Telemetry</button>
+      <br><br>
+    </div>
   </div>
+
 </html>
