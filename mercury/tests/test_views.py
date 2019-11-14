@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import SimulatedData
+from mercury.models import SimulatedData
 from datetime import datetime
 
 
