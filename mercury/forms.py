@@ -1,5 +1,13 @@
 from django import forms
-from mercury.models import SimulatedData, TemperatureSensor, AccelerationSensor, WheelSpeedSensor, SuspensionSensor, FuelLevelSensor
+from mercury.models import (
+    SimulatedData,
+    TemperatureSensor,
+    AccelerationSensor,
+    WheelSpeedSensor,
+    SuspensionSensor,
+    FuelLevelSensor,
+)
+
 
 class SimulatorForm(forms.ModelForm):
     class Meta:
@@ -49,6 +57,7 @@ class SimulatorForm(forms.ModelForm):
                 attrs={"id": "post-created-at", "required": True}
             ),
         }
+
 
 class TemperatureForm(forms.ModelForm):
     class Meta:

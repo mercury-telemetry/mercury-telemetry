@@ -97,4 +97,3 @@ class FuelLevelSensor(models.Model):
     # Fuel Supply Panel
     # measured in liters
     current_fuel_level = models.FloatField(default=0)
-
