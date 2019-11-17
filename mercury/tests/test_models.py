@@ -38,7 +38,7 @@ def create_simulated_data_objects():
     )
 
 
-class TestSimulatedData(TestCase):
+class TestSensorModels(TestCase):
     def setUp(self):
         create_simulated_data_objects()
 
