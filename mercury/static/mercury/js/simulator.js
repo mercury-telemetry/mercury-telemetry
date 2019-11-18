@@ -2,26 +2,30 @@ $(function () {
 
     let buttonpressed;
     let interval_var;
+    let button_counter=0;
     // Submit post on submit
     $('.submitbutton').click(function () {
         buttonpressed = $(this).attr('name')
     });
     $('#SimulatorForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed == "Continuous") {
+        if (buttonpressed == "Continuous" && button_counter != 1){
             console.log("Continuous Submission button was pressed.");
             create_post();
+            button_counter =1;
             interval_var = setInterval(create_post, 2000);
-        } else if (buttonpressed == "Once") {
+        }else if (buttonpressed == "Once") {
             console.log("Submit Once button was pressed.");
             if (interval_var) {
                 clearInterval(interval_var);
+                button_counter =0;
             }
             create_post();
-        } else if (buttonpressed == "Stop") {
+        }else if (buttonpressed == "Stop") {
             console.log("Stopping continuous submission.");
             if (interval_var) {
                 clearInterval(interval_var);
+                button_counter =0;
             }
         }
     });

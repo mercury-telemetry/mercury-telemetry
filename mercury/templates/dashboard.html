@@ -55,46 +55,5 @@
         {%  endfor %}
     </table>
 </div>
-
-	<div class="row">
-        <div id="articles" style="width:1400px;height:800px;"></div>
-    </div>
-    <script src="{% static "mercury/js/plotly-latest.js" %}"></script>
-	<script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
-
-	<script type="text/javascript">
-		$(document).ready(function(){
-        var endpoint = '/api/chart/data'
-		var articleData = articleLabels = []
-		$.ajax({
-		    method: "GET",
-		    url: endpoint,
-		    success: function(data){
-		        articleLabels = data.article_labels
-		        articleData = data.article_data
-		        articleChart()
-		    },
-		    error: function(error_data){
-		        console.log("error")
-		    },
-		})
-		function articleChart(){
-		    var data = [{
-		        x: articleLabels,
-		        y: articleData,
-		        type: 'line',
-		        marker: {
-		            color: '#23b7e5',
-		        },
-		    }];
-		    var layout = {
-		        title: 'Temperature Vs Time',
-		        margin: {l:200},
-		    };
-		    Plotly.newPlot('articles', data, layout);
-		}
-		})
-	</script>
-
 </body>
 </html>
