@@ -13,18 +13,16 @@
 
 
 /* NYU Telemetry */
-#grafana {
+#grafana-panel {
   text-align: center;
   margin: auto;
   vertical-align: middle;
-  /* border-radius: 100px; */
   border-style: solid;
   border-color: black;
   border-width: thin;
   background: #212025;
   padding: 20px; 
   width: 500px;
-  /* height: 150px; */
 }
   
 .grafana-btn {
