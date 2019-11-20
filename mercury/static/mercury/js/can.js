@@ -22,8 +22,7 @@ $(function () {
             success: function (response) {
                 console.log("POSTing was successful.");
                 console.log("Response:" + response);
-                let json_response = JSON.stringify(response);
-                $("#result").html(json_response)
+                document.getElementById("result").innerHTML = JSON.stringify(response, undefined, 2)
             },
 
             // handle a non-successful response

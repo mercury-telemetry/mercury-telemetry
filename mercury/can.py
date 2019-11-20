@@ -107,7 +107,8 @@ class CANDecoder:
         except KeyError:
             # KeyError here means that the ID decoded for the sensor is not in our table
             # or the ID provided was malformed/bad data
-            sensor_type = None
+            log.error(f"CAN ID {self.data['can_id']} is not implemented.")
+            raise NotImplementedError()
         # RTR of 0 means this is a normal data frame
         # RTR of 1 means this is a remote frame, unlikely in our use case
         self.data["rtr"] = self.read_bits_as_int(1)

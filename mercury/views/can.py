@@ -33,6 +33,8 @@ def post(request, *args, **kwargs):
         return HttpResponse(json.dumps(decoded_data), status=201)
     except InvalidBitException as e:
         return HttpResponse(e.error, status=400)
+    except NotImplementedError as e:
+        return HttpResponse(e.args, status=400)
 
 
 class CANUI(TemplateView):
