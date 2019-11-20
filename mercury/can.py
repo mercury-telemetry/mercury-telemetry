@@ -16,7 +16,7 @@ ID_TO_SENSOR_MAP = {
 }
 
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.ERROR)
 log = logging.getLogger(__name__)
 
 
@@ -42,29 +42,63 @@ class CANDecoder:
         return this_value
 
     def read_bits_as_int(self, num_bits) -> int:
-        """Return the bitstrem read as a base-10 integer."""
-        bits = self.read_bits(num_bits)
-        return int(bits, 2)
+        """Return the bitstream read as a base-10 integer."""
+        if num_bits > 0:
+            bits = self.read_bits(num_bits)
+            log.info(f"bits: {bits}")
+            log.info(f"num_bits: {num_bits}")
+            return int(bits, 2)
 
     def decode_can_message(self):
-        data = self._decode_can_message()
-        return data["sensor_type"], data["data"]
+        sensor_type, data = self._decode_can_message()
+        if data:
+            return sensor_type, data["data"]
+        else:
+            return None, None
 
-    def decode_can_message_full_dict(self) -> dict:
+    def decode_can_message_full_dict(self) -> tuple:
         return self._decode_can_message()
 
-    def _decode_can_message(self) -> dict:
+    def _decode_can_message(self) -> tuple:
         """Decode CAN messages based on reference
         http://www.copperhilltechnologies.com/can-bus-guide-message-frame-format/"""
 
+        log.error("Message type: {}".format(type(self.message)))
+        log.error("Message: {}".format(self.message))
+
         # Use the binary representation of the integer
-        try:
-            self.message = bin(int(self.message))
-        except ValueError:
-            return False
+        if type(self.message) is bytes:
+            log.info("message is bytes type")
+            self.message = self.message.decode("utf-8")
+        if type(self.message) is str:
+            log.info("message is str type")
+            # if self.message[0:2] == "0b":
+            log.info("converting to int -> bin")
+            self.message = bin(int(self.message, 2))
+        elif type(self.message) is int:
+            log.info("message in int, converting to bin")
+            self.message = bin(self.message)
+
+        log.error("Message type: {}".format(type(self.message)))
+        log.error("Message: {}".format(self.message))
+
+        # # try:
+        # self.message = int(self.message, 2)
+        # log.error("Message type (post int): {}".format(type(self.message)))
+        # log.error("Message: {}".format(self.message))
+        #
+        # self.message = bin(self.message)
+        # log.error("Message type (post bin): {}".format(type(self.message)))
+        # log.error("Message: {}".format(self.message))
+
+        # except ValueError:
+        #     log.error("Unable to convert message.")
+        #     return {}
 
         # the first two chars are '0b' from bin() conversion, so strip them out
         self.message = self.message[2:]
+        log.info("chopping off first two chars, then produces:")
+        log.info(self.message)
 
         # Start of Frame field, 1-bit
         self.data["sof"] = self.read_bits_as_int(1)
@@ -77,7 +111,7 @@ class CANDecoder:
         IDE fiels moves out of the control field into arbitration field.
         The ID defines the ECU that sent this message."""
         self.data["can_id"] = self.read_bits_as_int(11)
-        self.data["sensor_type"] = ID_TO_SENSOR_MAP[self.data["can_id"]]
+        sensor_type = ID_TO_SENSOR_MAP[self.data["can_id"]]
         # RTR of 0 means this is a normal data frame
         # RTR of 1 means this is a remote frame, unlikely in our use case
         self.data["rtr"] = self.read_bits_as_int(1)
@@ -122,4 +156,4 @@ class CANDecoder:
 
         # IFS
         self.data["interframe_space"] = self.read_bits_as_int(3)
-        return self.data
+        return sensor_type, self.data
