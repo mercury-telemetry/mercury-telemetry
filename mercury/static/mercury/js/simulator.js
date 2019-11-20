@@ -211,6 +211,130 @@ $(function () {
         });
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////Suspension Sensor////////////////////////////////////////
+    let button_counter_ss=0;
+    $('.submitbutton_ss').click(function () {
+        buttonpressed = $(this).attr('name')
+    });
+    $('#SuspensionForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed == "Continuous" && button_counter_ss != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_ss();
+            button_counter_ss =1;
+            interval_var = setInterval(create_post_ss, 2000);
+        }else if (buttonpressed == "Once") {
+            console.log("ss Submit Once button was pressed.");
+            if (interval_var) {
+                clearInterval(interval_var);
+                button_counter_ss =0;
+            }
+            create_post_ss();
+        }else if (buttonpressed == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var) {
+                clearInterval(interval_var);
+                button_counter_ss =0;
+            }
+        }
+    });
+
+    function create_post_ss() {
+        console.log("Entered create_post_ss() Suspension function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                created_at_ss: $('#post-created-at_ss').val(),
+                suspension_fr: $('#post-suspension-fr').val(),
+                suspension_fl: $('#post-suspension-fl').val(),
+                suspension_br: $('#post-suspension-br').val(),
+                suspension_bl: $('#post-suspension-bl').val()
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let suspension_fr = parseFloat($('#post-suspension-fr').val());
+                let suspension_fl = parseFloat($('#post-suspension-fl').val());
+                let suspension_br = parseFloat($('#post-suspension-br').val());
+                let suspension_bl = parseFloat($('#post-suspension-bl').val());
+                $('#post-created-at_ss').val(getDateTimenow());
+                $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
+                $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
+                $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
+                $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
+                console.log("POSTing was successful for ss"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////Fuel Level Sensor////////////////////////////////////////
+    let button_counter_fl=0;
+    $('.submitbutton_fl').click(function () {
+        buttonpressed = $(this).attr('name')
+    });
+    $('#FuelLevelForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed == "Continuous" && button_counter_fl != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_fl();
+            button_counter_fl =1;
+            interval_var = setInterval(create_post_fl, 2000);
+        }else if (buttonpressed == "Once") {
+            console.log("fl Submit Once button was pressed.");
+            if (interval_var) {
+                clearInterval(interval_var);
+                button_counter_fl =0;
+            }
+            create_post_fl();
+        }else if (buttonpressed == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var) {
+                clearInterval(interval_var);
+                button_counter_fl =0;
+            }
+        }
+    });
+
+    function create_post_fl() {
+        console.log("Entered create_post_fl() fl function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                created_at_fl: $('#post-created-at_fl').val(),
+                current_fuel_level: $('#post-current-fuel-level').val(),
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
+                if(current_fuel_level <= 10){
+                    current_fuel_level += 90;
+                }
+                else{
+                    current_fuel_level -= getRandomNumber(0,5);
+                }
+                $('#post-created-at_fl').val(getDateTimenow());
+                $('#post-current-fuel-level').val(current_fuel_level);
+
+                console.log("POSTing was successful for FL"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
 
 
 

@@ -67,6 +67,34 @@
                             <input class="submitbutton_ws grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
                         </form>
                     {% endif %}
+                    <h1>Suspension Sensor</h1>
+                    {% if form_ss %}
+                        <form method="POST" action="" id="SuspensionForm">
+                            {% csrf_token %}
+                            {% load crispy_forms_tags %}
+                            {{ form_ss|crispy }}
+                            <input class="submitbutton_ss grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                            <br><br>
+                            <input class="submitbutton_ss grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                            <br><br>
+                            <input class="submitbutton_ss grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                        </form>
+                    {% endif %}
+                    <h1>Fuel Level Sensor</h1>
+                    {% if form_fl %}
+                        <form method="POST" action="" id="FuelLevelForm">
+                            {% csrf_token %}
+                            {% load crispy_forms_tags %}
+                            {{ form_fl|crispy }}
+                            <input class="submitbutton_fl grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                            <br><br>
+                            <input class="submitbutton_fl grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                            <br><br>
+                            <input class="submitbutton_fl grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                        </form>
+                    {% endif %}
+                <br><br>
+
 
 
 

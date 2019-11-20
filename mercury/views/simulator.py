@@ -19,9 +19,6 @@ from mercury.models import (
     FuelLevelSensor,
 )
 
-
-
-
 import datetime
 
 
@@ -103,33 +100,32 @@ class SimulatorView(TemplateView):
                 wheel_speed_bl=post_wheel_speed_bl,
             )
             ws_data.save()
-        #
-        # if request.POST.get("created_at_ss"):
-        #     post_created_at = request.POST.get("created_at_ss")
-        #     post_suspension_fr = request.POST.get("suspension_fr")
-        #     post_suspension_fl = request.POST.get("suspension_fl")
-        #     post_suspension_br = request.POST.get("suspension_br")
-        #     post_suspension_bl = request.POST.get("suspension_bl")
-        #
-        #     ss_data = SuspensionSensor(
-        #         created_at=post_created_at,
-        #         suspension_fr=post_suspension_fr,
-        #         suspension_fl=post_suspension_fl,
-        #         suspension_br=post_suspension_br,
-        #         suspension_bl=post_suspension_bl,
-        #     )
-        #     ss_data.save()
-        #
-        # if request.POST.get("created_at_fl"):
-        #     post_created_at = request.POST.get("created_at_fl")
-        #     post_current_fuel_level = request.POST.get("current_fuel_level")
-        #
-        #     fl_data = FuelLevelSensor(
-        #         created_at=post_created_at,
-        #         current_fuel_level=post_current_fuel_level,
-        #     )
-        #     fl_data.save()
 
+        if request.POST.get("created_at_ss"):
+            post_created_at = request.POST.get("created_at_ss")
+            post_suspension_fr = request.POST.get("suspension_fr")
+            post_suspension_fl = request.POST.get("suspension_fl")
+            post_suspension_br = request.POST.get("suspension_br")
+            post_suspension_bl = request.POST.get("suspension_bl")
+
+            ss_data = SuspensionSensor(
+                created_at=post_created_at,
+                suspension_fr=post_suspension_fr,
+                suspension_fl=post_suspension_fl,
+                suspension_br=post_suspension_br,
+                suspension_bl=post_suspension_bl,
+            )
+            ss_data.save()
+
+        if request.POST.get("created_at_fl"):
+            post_created_at = request.POST.get("created_at_fl")
+            post_current_fuel_level = request.POST.get("current_fuel_level")
+
+            fl_data = FuelLevelSensor(
+                created_at=post_created_at,
+                current_fuel_level=post_current_fuel_level,
+            )
+            fl_data.save()
 
         return HttpResponse(status=201)
 
@@ -139,9 +135,9 @@ class SimulatorView(TemplateView):
         form_temp = TemperatureForm(initial={"created_at": datetime.datetime.now()})
         form_accel = AccelerationForm(initial={"created_at": datetime.datetime.now()})
         form_ws = WheelSpeedForm(initial={"created_at": datetime.datetime.now()})
-        # form_ss = SuspensionForm(initial={"created_at": datetime.datetime.now()})
-        # form_fl = FuelLevelForm(initial={"created_at": datetime.datetime.now()})
-        # context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws,"form_ss": form_ss,"form_fl": form_fl}
-        context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws}
+        form_ss = SuspensionForm(initial={"created_at": datetime.datetime.now()})
+        form_fl = FuelLevelForm(initial={"created_at": datetime.datetime.now()})
+        context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws,"form_ss": form_ss,"form_fl": form_fl}
+        # context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws}
 
         return render(request, self.template_name, context)
