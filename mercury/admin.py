@@ -8,6 +8,7 @@ from .models import (
     WheelSpeedSensor,
     SuspensionSensor,
     FuelLevelSensor,
+    EventCodeAccess,
 )
 
 admin.site.register(SimulatedData)
@@ -17,3 +18,4 @@ admin.site.register(AccelerationSensor)
 admin.site.register(WheelSpeedSensor)
 admin.site.register(SuspensionSensor)
 admin.site.register(FuelLevelSensor)
+admin.site.register(EventCodeAccess)
