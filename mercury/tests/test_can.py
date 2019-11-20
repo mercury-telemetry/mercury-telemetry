@@ -17,7 +17,7 @@ EXAMPLE_CAN_MSG_EXTENDED = (
 class TestCANDecoderExtended(TestCase):
     def setUp(self) -> None:
         decoder = CANDecoder(EXAMPLE_CAN_MSG_EXTENDED)
-        self.data = decoder.decode_can_message_full_dict()
+        sensor, self.data = decoder.decode_can_message_full_dict()
 
     def test_can_1s(self):
         self.assertEqual(1, self.data["ack_delimiter"])
