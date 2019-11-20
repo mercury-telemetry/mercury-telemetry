@@ -60,27 +60,29 @@ $(function () {
     ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////Acceleration Sensor////////////////////////////////////////
     let button_counter_accel=0;
+    let buttonpressed_accel;
+    let interval_var_accel;
     $('.submitbutton_accel').click(function () {
-        buttonpressed = $(this).attr('name')
+        buttonpressed_accel = $(this).attr('name')
     });
     $('#AccelerationForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed == "Continuous" && button_counter_accel != 1){
+        if (buttonpressed_accel== "Continuous" && button_counter_accel != 1){
             console.log("Continuous Submission button was pressed.");
             create_post_accel();
             button_counter_accel =1;
-            interval_var = setInterval(create_post_accel, 2000);
-        }else if (buttonpressed == "Once") {
+            interval_var_accel = setInterval(create_post_accel, 2000);
+        }else if (buttonpressed_accel == "Once") {
             console.log("accel Submit Once button was pressed.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_accel) {
+                clearInterval(interval_var_accel);
                 button_counter_accel =0;
             }
             create_post_accel();
-        }else if (buttonpressed == "Stop") {
+        }else if (buttonpressed_accel == "Stop") {
             console.log("Stopping continuous submission.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_accel) {
+                clearInterval(interval_var_accel);
                 button_counter_accel =0;
             }
         }
@@ -121,27 +123,29 @@ $(function () {
     ///////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////WheelSpeed Sensor////////////////////////////////////////
     let button_counter_ws=0;
+    let buttonpressed_ws;
+    let interval_var_ws;
     $('.submitbutton_ws').click(function () {
-        buttonpressed = $(this).attr('name')
+        buttonpressed_ws = $(this).attr('name')
     });
     $('#WheelSpeedForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed == "Continuous" && button_counter_ws != 1){
+        if (buttonpressed_ws == "Continuous" && button_counter_ws != 1){
             console.log("Continuous Submission button was pressed.");
             create_post_ws();
             button_counter_ws =1;
-            interval_var = setInterval(create_post_ws, 2000);
-        }else if (buttonpressed == "Once") {
+            interval_var_ws = setInterval(create_post_ws, 2000);
+        }else if (buttonpressed_ws == "Once") {
             console.log("ws Submit Once button was pressed.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_ws) {
+                clearInterval(interval_var_ws);
                 button_counter_ws =0;
             }
             create_post_ws();
-        }else if (buttonpressed == "Stop") {
+        }else if (buttonpressed_ws == "Stop") {
             console.log("Stopping continuous submission.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_ws) {
+                clearInterval(interval_var_ws);
                 button_counter_ws =0;
             }
         }
@@ -184,27 +188,29 @@ $(function () {
     ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////Suspension Sensor////////////////////////////////////////
     let button_counter_ss=0;
+    let buttonpressed_ss;
+    let interval_var_ss;
     $('.submitbutton_ss').click(function () {
-        buttonpressed = $(this).attr('name')
+        buttonpressed_ss = $(this).attr('name')
     });
     $('#SuspensionForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed == "Continuous" && button_counter_ss != 1){
+        if (buttonpressed_ss == "Continuous" && button_counter_ss != 1){
             console.log("Continuous Submission button was pressed.");
             create_post_ss();
             button_counter_ss =1;
-            interval_var = setInterval(create_post_ss, 2000);
-        }else if (buttonpressed == "Once") {
+            interval_var_ss = setInterval(create_post_ss, 2000);
+        }else if (buttonpressed_ss == "Once") {
             console.log("ss Submit Once button was pressed.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_ss) {
+                clearInterval(interval_var_ss);
                 button_counter_ss =0;
             }
             create_post_ss();
-        }else if (buttonpressed == "Stop") {
+        }else if (buttonpressed_ss == "Stop") {
             console.log("Stopping continuous submission.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_ss) {
+                clearInterval(interval_var_ss);
                 button_counter_ss =0;
             }
         }
@@ -247,27 +253,29 @@ $(function () {
     ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////Fuel Level Sensor////////////////////////////////////////
     let button_counter_fl=0;
+    let buttonpressed_fl;
+    let interval_var_fl;
     $('.submitbutton_fl').click(function () {
-        buttonpressed = $(this).attr('name')
+        buttonpressed_fl = $(this).attr('name')
     });
     $('#FuelLevelForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed == "Continuous" && button_counter_fl != 1){
+        if (buttonpressed_fl == "Continuous" && button_counter_fl != 1){
             console.log("Continuous Submission button was pressed.");
             create_post_fl();
             button_counter_fl =1;
-            interval_var = setInterval(create_post_fl, 2000);
-        }else if (buttonpressed == "Once") {
+            interval_var_fl = setInterval(create_post_fl, 2000);
+        }else if (buttonpressed_fl == "Once") {
             console.log("fl Submit Once button was pressed.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_fl) {
+                clearInterval(interval_var_fl);
                 button_counter_fl =0;
             }
             create_post_fl();
-        }else if (buttonpressed == "Stop") {
+        }else if (buttonpressed_fl == "Stop") {
             console.log("Stopping continuous submission.");
-            if (interval_var) {
-                clearInterval(interval_var);
+            if (interval_var_fl) {
+                clearInterval(interval_var_fl);
                 button_counter_fl =0;
             }
         }
