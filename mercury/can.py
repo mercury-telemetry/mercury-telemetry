@@ -41,17 +41,19 @@ class CANDecoder:
         self.message = self.message[num_bits:]
         return this_value
 
-    def read_bits_as_int(self, num_bits):
+    def read_bits_as_int(self, num_bits) -> int:
         """Return the bitstrem read as a base-10 integer."""
         bits = self.read_bits(num_bits)
         return int(bits, 2)
 
     def decode_can_message(self):
-
         data = self._decode_can_message()
         return data["sensor_type"], data["data"]
 
-    def _decode_can_message(self):
+    def decode_can_message_full_dict(self) -> dict:
+        return self._decode_can_message()
+
+    def _decode_can_message(self) -> dict:
         """Decode CAN messages based on reference
         http://www.copperhilltechnologies.com/can-bus-guide-message-frame-format/"""
 
@@ -99,8 +101,8 @@ class CANDecoder:
         self.data["data"] = self.read_bits_as_int(self.data["data_length_code"] * 8)
 
         """CRC Field is 16-bits.
-        The CRC segment is 15-bits in the field and contains the frame check sequence spanning
-        from SOF through Arbitration Field, Control Field, and Data Field.
+        The CRC segment is 15-bits in the field and contains the frame check sequence
+        spanning from SOF through Arbitration Field, Control Field, and Data Field.
         The CRC Delimeter bit is always recessive (i.e. 1) following the CRC field."""
         self.data["crc_segment"] = self.read_bits_as_int(15)
 
@@ -121,29 +123,3 @@ class CANDecoder:
         # IFS
         self.data["interframe_space"] = self.read_bits_as_int(3)
         return self.data
-
-
-class CANDecoderTester(CANDecoder):
-    """A Test client intended for use in test suites and debugging."""
-
-    def decode_can_message(self):
-        data = self._decode_can_message()
-        # return tuple(item for item in data.items())
-        return (
-            data["sensor_type"],
-            data["data"],
-            data["sof"],
-            data["can_id"],
-            data["rtr"],
-            data["ide"],
-            data["srr"],
-            data["extended_can_id"],
-            data["r0"],
-            data["data_length_code"],
-            data["crc_segment"],
-            data["crc_delimiter"],
-            data["ack_bit"],
-            data["ack_delimiter"],
-            data["end_of_frame"],
-            data["interframe_space"],
-        )
