@@ -27,6 +27,8 @@
       <div style="height: 4px;"></div>
       <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Simulator</button>
       <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Raw Telemetry</button>
+        <div style="height: 4px;"></div>
+        <a href="{% url 'mercury:can-ui' %}"><button class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">CAN Decoder</button></a>
       <br><br>
     </div>
   </div>
