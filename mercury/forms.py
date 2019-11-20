@@ -1,6 +1,6 @@
 from django import forms
 from mercury.models import (
-    SimulatedData,
+    # SimulatedData,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
@@ -58,6 +58,7 @@ from mercury.models import (
 #             ),
 #         }
 #
+
 
 class TemperatureForm(forms.ModelForm):
     class Meta:

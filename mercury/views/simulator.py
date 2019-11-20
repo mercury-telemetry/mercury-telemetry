@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 
-from ..forms import SimulatorForm
-from mercury.models import SimulatedData
+# from ..forms import SimulatorForm
+# from mercury.models import SimulatedData
 from ..forms import (
     TemperatureForm,
     AccelerationForm,
@@ -90,8 +90,7 @@ class SimulatorView(TemplateView):
             post_current_fuel_level = request.POST.get("current_fuel_level")
 
             fl_data = FuelLevelSensor(
-                created_at=post_created_at,
-                current_fuel_level=post_current_fuel_level,
+                created_at=post_created_at, current_fuel_level=post_current_fuel_level,
             )
             fl_data.save()
 
@@ -105,7 +104,13 @@ class SimulatorView(TemplateView):
         form_ws = WheelSpeedForm(initial={"created_at": datetime.datetime.now()})
         form_ss = SuspensionForm(initial={"created_at": datetime.datetime.now()})
         form_fl = FuelLevelForm(initial={"created_at": datetime.datetime.now()})
-        context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws,"form_ss": form_ss,"form_fl": form_fl}
+        context = {
+            "form_temp": form_temp,
+            "form_accel": form_accel,
+            "form_ws": form_ws,
+            "form_ss": form_ss,
+            "form_fl": form_fl,
+        }
         # context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws}
 
         return render(request, self.template_name, context)
