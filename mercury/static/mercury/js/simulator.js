@@ -7,6 +7,8 @@ $(function () {
     $('.submitbutton').click(function () {
         buttonpressed = $(this).attr('name')
     });
+
+
     $('#SimulatorForm').on('submit', function (event) {
         event.preventDefault();
         if (buttonpressed == "Continuous" && button_counter != 1){
@@ -29,7 +31,63 @@ $(function () {
             }
         }
     });
-    
+
+    // TODO Check: interval_var, post-created-at in the forms
+    $('.submitbutton_temp').click(function () {
+        buttonpressed = $(this).attr('name')
+    });
+    let button_counter_temp=0;
+    $('#TemperatureForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed == "Continuous" && button_counter_temp != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_temp();
+            button_counter_temp =1;
+            interval_var = setInterval(create_post_temp, 2000);
+        }else if (buttonpressed == "Once") {
+            console.log("Temp Submit Once button was pressed.");
+            if (interval_var) {
+                clearInterval(interval_var);
+                button_counter_temp =0;
+            }
+            create_post_temp();
+        }else if (buttonpressed == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var) {
+                clearInterval(interval_var);
+                button_counter_temp =0;
+            }
+        }
+    });
+
+    function create_post_temp() {
+        console.log("Entered create_post_temp() temperature function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                temperature: $('#post-temperature').val(),
+                created_at_temp: $('#post-created-at-temp').val()
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let temperature = parseFloat($('#post-temperature').val());
+                $('#post-created-at-temp').val(getDateTimenow());
+                $('#post-temperature').val(getNextValue(temperature,-5,5));
+                console.log("POSTing was successful for temperature"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+
+
+
     // AJAX for posting
     function create_post() {
         console.log("Entered create_post() function.");

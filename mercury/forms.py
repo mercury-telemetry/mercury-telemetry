@@ -65,7 +65,7 @@ class TemperatureForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "created_at": forms.DateTimeInput(
-                attrs={"id": "post-created-at_temp", "required": True}
+                attrs={"id": "post-created-at-temp", "required": True}
             ),
             "temperature": forms.NumberInput(
                 attrs={"id": "post-temperature", "required": True}
