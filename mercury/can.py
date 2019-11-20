@@ -66,39 +66,19 @@ class CANDecoder:
         log.debug("Message type: {}".format(type(self.message)))
         log.debug("Message: {}".format(self.message))
 
-        # Use the binary representation of the integer
+        # Convert various inputs the binary representation of the integer
         if type(self.message) is bytes:
-            log.debug("message is bytes type")
             self.message = self.message.decode("utf-8")
         if type(self.message) is str:
-            log.debug("message is str type")
-            # if self.message[0:2] == "0b":
-            log.debug("converting to int -> bin")
-            self.message = bin(int(self.message, 2))
+            try:
+                self.message = bin(int(self.message, 2))
+            except ValueError:
+                self.message = bin(int(self.message))
         elif type(self.message) is int:
-            log.debug("message in int, converting to bin")
             self.message = bin(self.message)
-
-        log.debug("Message type: {}".format(type(self.message)))
-        log.debug("Message: {}".format(self.message))
-
-        # # try:
-        # self.message = int(self.message, 2)
-        # log.error("Message type (post int): {}".format(type(self.message)))
-        # log.error("Message: {}".format(self.message))
-        #
-        # self.message = bin(self.message)
-        # log.error("Message type (post bin): {}".format(type(self.message)))
-        # log.error("Message: {}".format(self.message))
-
-        # except ValueError:
-        #     log.error("Unable to convert message.")
-        #     return {}
 
         # the first two chars are '0b' from bin() conversion, so strip them out
         self.message = self.message[2:]
-        log.info("chopping off first two chars, then produces:")
-        log.info(self.message)
 
         # Start of Frame field, 1-bit
         self.data["sof"] = self.read_bits_as_int(1)
