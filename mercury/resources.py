@@ -1,13 +1,13 @@
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
-from mercury.models import SimulatedData
+from mercury.models import TemperatureSensor
 
 
-class SimulatedDataResource(ModelResource):
+class TemperatureSensorResource(ModelResource):
     """This class exposes an API for the SimulatedData object with the resource name
     defined below as the 'resource_name'."""
 
     class Meta:
-        queryset = SimulatedData.objects.all()
-        resource_name = "simdata"
+        queryset = TemperatureSensor.objects.all()
+        resource_name = "tempdata"
         authorization = Authorization()
