@@ -2,61 +2,51 @@ $(function () {
 
     let buttonpressed;
     let interval_var;
-    let button_counter=0;
-    // Submit post on submit
-    $('.submitbutton').click(function () {
+
+    // TODO Check: interval_var, post-created-at in the forms
+    // ////////////////////////////////////////////////////Temperature Sensor////////////////////////////////////////
+    let button_counter_temp=0;
+    $('.submitbutton_temp').click(function () {
         buttonpressed = $(this).attr('name')
     });
-    $('#SimulatorForm').on('submit', function (event) {
+    $('#TemperatureForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed == "Continuous" && button_counter != 1){
+        if (buttonpressed == "Continuous" && button_counter_temp != 1){
             console.log("Continuous Submission button was pressed.");
-            create_post();
-            button_counter =1;
-            interval_var = setInterval(create_post, 2000);
+            create_post_temp();
+            button_counter_temp =1;
+            interval_var = setInterval(create_post_temp, 2000);
         }else if (buttonpressed == "Once") {
-            console.log("Submit Once button was pressed.");
+            console.log("Temp Submit Once button was pressed.");
             if (interval_var) {
                 clearInterval(interval_var);
-                button_counter =0;
+                button_counter_temp =0;
             }
-            create_post();
+            create_post_temp();
         }else if (buttonpressed == "Stop") {
             console.log("Stopping continuous submission.");
             if (interval_var) {
                 clearInterval(interval_var);
-                button_counter =0;
+                button_counter_temp =0;
             }
         }
     });
-    
-    // AJAX for posting
-    function create_post() {
-        console.log("Entered create_post() function.");
+
+    function create_post_temp() {
+        console.log("Entered create_post_temp() temperature function.");
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
             data: {
                 temperature: $('#post-temperature').val(),
-                acceleration_x: $('#post-acceleration-X').val(),
-                acceleration_y: $('#post-acceleration-Y').val(),
-                acceleration_z: $('#post-acceleration-Z').val(),
-                wheel_speed_fr: $('#post-wheel-speed-fr').val(),
-                wheel_speed_fl: $('#post-wheel-speed-fl').val(),
-                wheel_speed_br: $('#post-wheel-speed-br').val(),
-                wheel_speed_bl: $('#post-wheel-speed-bl').val(),
-                suspension_fr: $('#post-suspension-fr').val(),
-                suspension_fl: $('#post-suspension-fl').val(),
-                suspension_br: $('#post-suspension-br').val(),
-                suspension_bl: $('#post-suspension-bl').val(),
-                current_fuel_level: $('#post-current-fuel-level').val(),
-                created_at: $('#post-created-at').val()
+                created_at_temp: $('#post-created-at-temp').val()
             }, // data sent with the post request
-
             // handle a successful response
             success: function () {
-                generateValues();
-                console.log("POSTing was successful."); // another sanity check
+                let temperature = parseFloat($('#post-temperature').val());
+                $('#post-created-at-temp').val(getDateTimenow());
+                $('#post-temperature').val(getNextValue(temperature,-5,5));
+                console.log("POSTing was successful for temperature"); // another sanity check
             },
 
             // handle a non-successful response
@@ -67,47 +57,263 @@ $(function () {
             }
         });
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////Acceleration Sensor////////////////////////////////////////
+    let button_counter_accel=0;
+    let buttonpressed_accel;
+    let interval_var_accel;
+    $('.submitbutton_accel').click(function () {
+        buttonpressed_accel = $(this).attr('name')
+    });
+    $('#AccelerationForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed_accel== "Continuous" && button_counter_accel != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_accel();
+            button_counter_accel =1;
+            interval_var_accel = setInterval(create_post_accel, 2000);
+        }else if (buttonpressed_accel == "Once") {
+            console.log("accel Submit Once button was pressed.");
+            if (interval_var_accel) {
+                clearInterval(interval_var_accel);
+                button_counter_accel =0;
+            }
+            create_post_accel();
+        }else if (buttonpressed_accel == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var_accel) {
+                clearInterval(interval_var_accel);
+                button_counter_accel =0;
+            }
+        }
+    });
 
-    // Processes the form data and assigns the value to corresponding fields in the UI
-    function generateValues() {
-        let temperature = parseFloat($('#post-temperature').val());
-        let acceleration_x = parseFloat($('#post-acceleration-X').val());
-        let acceleration_y = parseFloat($('#post-acceleration-Y').val());
-        let acceleration_z = parseFloat($('#post-acceleration-Z').val());
-        let wheel_speed_fr = parseFloat($('#post-wheel-speed-fr').val());
-        let wheel_speed_fl = parseFloat($('#post-wheel-speed-fl').val());
-        let wheel_speed_br = parseFloat($('#post-wheel-speed-br').val());
-        let wheel_speed_bl = parseFloat($('#post-wheel-speed-bl').val());
-        let suspension_fr = parseFloat($('#post-suspension-fr').val());
-        let suspension_fl = parseFloat($('#post-suspension-fl').val());
-        let suspension_br = parseFloat($('#post-suspension-br').val());
-        let suspension_bl = parseFloat($('#post-suspension-bl').val());
-        let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
-        if(current_fuel_level <= 10){
-            current_fuel_level += 90;
-        }
-        else{
-            current_fuel_level -= getRandomNumber(0,5);
-        }
-        acceleration_x = acceleration_x + getRandomNumber(-5,5);
-        acceleration_y = acceleration_y + getRandomNumber(-5,5);
-        acceleration_z = acceleration_z + getRandomNumber(-5,5);
-        $('#post-created-at').val(getDateTimenow());
-        $('#post-temperature').val(getNextValue(temperature,-5,5));
-        $('#post-acceleration-X').val(roundOffAndParse(acceleration_x));
-        $('#post-acceleration-Y').val(roundOffAndParse(acceleration_y));
-        $('#post-acceleration-Z').val(roundOffAndParse(acceleration_z));
-        $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
-        $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
-        $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
-        $('#post-wheel-speed-bl').val(getNextValue(wheel_speed_bl,-5,5));
-        $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
-        $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
-        $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
-        $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
-        $('#post-current-fuel-level').val(roundOffAndParse(current_fuel_level));
+    function create_post_accel() {
+        console.log("Entered create_post_accel() accel function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                acceleration_x: $('#post-acceleration-X').val(),
+                acceleration_y: $('#post-acceleration-Y').val(),
+                acceleration_z: $('#post-acceleration-Z').val(),
+                created_at_accel: $('#post-created-at_accel').val()
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let acceleration_x = parseFloat($('#post-acceleration-X').val());
+                let acceleration_y = parseFloat($('#post-acceleration-Y').val());
+                let acceleration_z = parseFloat($('#post-acceleration-Z').val());
+
+                $('#post-created-at_accel').val(getDateTimenow());
+                $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
+                $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
+                $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
+                console.log("POSTing was successful for acceleration"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////WheelSpeed Sensor////////////////////////////////////////
+    let button_counter_ws=0;
+    let buttonpressed_ws;
+    let interval_var_ws;
+    $('.submitbutton_ws').click(function () {
+        buttonpressed_ws = $(this).attr('name')
+    });
+    $('#WheelSpeedForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed_ws == "Continuous" && button_counter_ws != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_ws();
+            button_counter_ws =1;
+            interval_var_ws = setInterval(create_post_ws, 2000);
+        }else if (buttonpressed_ws == "Once") {
+            console.log("ws Submit Once button was pressed.");
+            if (interval_var_ws) {
+                clearInterval(interval_var_ws);
+                button_counter_ws =0;
+            }
+            create_post_ws();
+        }else if (buttonpressed_ws == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var_ws) {
+                clearInterval(interval_var_ws);
+                button_counter_ws =0;
+            }
+        }
+    });
 
+    function create_post_ws() {
+        console.log("Entered create_post_ws() WS function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                created_at_ws: $('#post-created-at_ws').val(),
+                wheel_speed_fr: $('#post-wheel-speed-fr').val(),
+                wheel_speed_fl: $('#post-wheel-speed-fl').val(),
+                wheel_speed_br: $('#post-wheel-speed-br').val(),
+                wheel_speed_bl: $('#post-wheel-speed-bl').val(),
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let wheel_speed_fr = parseFloat($('#post-wheel-speed-fr').val());
+                let wheel_speed_fl = parseFloat($('#post-wheel-speed-fl').val());
+                let wheel_speed_br = parseFloat($('#post-wheel-speed-br').val());
+                let wheel_speed_bl = parseFloat($('#post-wheel-speed-bl').val());
+                $('#post-created-at_ws').val(getDateTimenow());
+                $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
+                $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
+                $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
+                $('#post-wheel-speed-bl').val(getNextValue(wheel_speed_bl,-5,5));
+                console.log("POSTing was successful for WS"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////Suspension Sensor////////////////////////////////////////
+    let button_counter_ss=0;
+    let buttonpressed_ss;
+    let interval_var_ss;
+    $('.submitbutton_ss').click(function () {
+        buttonpressed_ss = $(this).attr('name')
+    });
+    $('#SuspensionForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed_ss == "Continuous" && button_counter_ss != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_ss();
+            button_counter_ss =1;
+            interval_var_ss = setInterval(create_post_ss, 2000);
+        }else if (buttonpressed_ss == "Once") {
+            console.log("ss Submit Once button was pressed.");
+            if (interval_var_ss) {
+                clearInterval(interval_var_ss);
+                button_counter_ss =0;
+            }
+            create_post_ss();
+        }else if (buttonpressed_ss == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var_ss) {
+                clearInterval(interval_var_ss);
+                button_counter_ss =0;
+            }
+        }
+    });
+
+    function create_post_ss() {
+        console.log("Entered create_post_ss() Suspension function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                created_at_ss: $('#post-created-at_ss').val(),
+                suspension_fr: $('#post-suspension-fr').val(),
+                suspension_fl: $('#post-suspension-fl').val(),
+                suspension_br: $('#post-suspension-br').val(),
+                suspension_bl: $('#post-suspension-bl').val()
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let suspension_fr = parseFloat($('#post-suspension-fr').val());
+                let suspension_fl = parseFloat($('#post-suspension-fl').val());
+                let suspension_br = parseFloat($('#post-suspension-br').val());
+                let suspension_bl = parseFloat($('#post-suspension-bl').val());
+                $('#post-created-at_ss').val(getDateTimenow());
+                $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
+                $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
+                $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
+                $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
+                console.log("POSTing was successful for ss"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////Fuel Level Sensor////////////////////////////////////////
+    let button_counter_fl=0;
+    let buttonpressed_fl;
+    let interval_var_fl;
+    $('.submitbutton_fl').click(function () {
+        buttonpressed_fl = $(this).attr('name')
+    });
+    $('#FuelLevelForm').on('submit', function (event) {
+        event.preventDefault();
+        if (buttonpressed_fl == "Continuous" && button_counter_fl != 1){
+            console.log("Continuous Submission button was pressed.");
+            create_post_fl();
+            button_counter_fl =1;
+            interval_var_fl = setInterval(create_post_fl, 2000);
+        }else if (buttonpressed_fl == "Once") {
+            console.log("fl Submit Once button was pressed.");
+            if (interval_var_fl) {
+                clearInterval(interval_var_fl);
+                button_counter_fl =0;
+            }
+            create_post_fl();
+        }else if (buttonpressed_fl == "Stop") {
+            console.log("Stopping continuous submission.");
+            if (interval_var_fl) {
+                clearInterval(interval_var_fl);
+                button_counter_fl =0;
+            }
+        }
+    });
+
+    function create_post_fl() {
+        console.log("Entered create_post_fl() fl function.");
+        $.ajax({
+            url: "", // the endpoint
+            type: "POST", // http method
+            data: {
+                created_at_fl: $('#post-created-at_fl').val(),
+                current_fuel_level: $('#post-current-fuel-level').val(),
+            }, // data sent with the post request
+            // handle a successful response
+            success: function () {
+                let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
+                if(current_fuel_level <= 10){
+                    current_fuel_level += 90;
+                }
+                else{
+                    current_fuel_level -= getRandomNumber(0,5);
+                }
+                $('#post-created-at_fl').val(getDateTimenow());
+                $('#post-current-fuel-level').val(current_fuel_level);
+
+                console.log("POSTing was successful for FL"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
     // This function returns current date time in the format "yyyy-mm-dd hh:min:ss"
     function getDateTimenow(){
         var now = new Date();
