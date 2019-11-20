@@ -2,8 +2,6 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 
-# from ..forms import SimulatorForm
-# from mercury.models import SimulatedData
 from ..forms import (
     TemperatureForm,
     AccelerationForm,

@@ -1,7 +1,6 @@
 from django.test import TestCase
 import datetime
 from mercury.models import (
-    SimulatedData,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
@@ -18,9 +17,6 @@ TEST_FUEL = 6
 
 
 def create_simulated_data_objects():
-    SimulatedData.objects.create(
-        temperature=TEST_TEMP, created_at=datetime.datetime.now()
-    )
     TemperatureSensor.objects.create(
         temperature=TEST_TEMP, created_at=datetime.datetime.now()
     )
@@ -41,15 +37,6 @@ def create_simulated_data_objects():
 class TestSensorModels(TestCase):
     def setUp(self):
         create_simulated_data_objects()
-
-    def test_vehicle_temp(self):
-        foo = SimulatedData.objects.get(temperature=TEST_TEMP)
-        self.assertEqual(foo.temperature, TEST_TEMP)
-
-    def test_vehicle_temp_method(self):
-        foo = SimulatedData()
-        foo.temperature = 987
-        self.assertEqual(foo.temp(), 987)
 
     def test_temp(self):
         foo = TemperatureSensor.objects.get(temperature=TEST_TEMP)
