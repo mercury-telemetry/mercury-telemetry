@@ -13,6 +13,9 @@
           }
           function RedirectDashboard() {
               window.location="/dashboard/";
+          } 
+          function RedirectCAN() {
+              window.location="/can/";
           }            
       </script>
   </head>
@@ -27,6 +30,7 @@
       <div style="height: 4px;"></div>
       <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Simulator</button>
       <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Raw Telemetry</button>
+      <button onclick="RedirectCAN();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">CAN Decoder</button>
       <br><br>
     </div>
   </div>

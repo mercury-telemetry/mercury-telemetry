@@ -7,21 +7,29 @@
     <title>Simulator</title>
     <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
     <script src="{% static "mercury/js/can.js" %}"></script>
+    <script>
+        function RedirectSimulator() {
+            window.location="/";
+        }         
+    </script>
 </head>
 <body>
-<div style="padding: 30px;">
-    <div id="grafana">
+<div id="grafana-base">
+    <div id="grafana-panel">
+        <button onclick="RedirectSimulator();" class="grafana-btn">Home</button>
+    </div>
+    <div id="grafana-panel">
+        <h1>CAN Message Decoder</h1>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-6 justify-content-center">
-                    <h1>CAN Message Decoder</h1>
                         <form method="GET" action="" id="CanForm">
                             {% csrf_token %}
                             {% load crispy_forms_tags %}
                             {{ form|crispy }}
                             <input class="submitbutton grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Decode CAN Message">
                         </form>
-                    <pre class="result" id="result"></pre>
+                    <div class="result" id="result" ></div>
                 </div>
             </div>
         </div>
