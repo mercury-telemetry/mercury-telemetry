@@ -1,6 +1,5 @@
 from django import forms
 from mercury.models import (
-    # SimulatedData,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
