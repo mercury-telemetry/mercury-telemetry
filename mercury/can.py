@@ -63,24 +63,24 @@ class CANDecoder:
         """Decode CAN messages based on reference
         http://www.copperhilltechnologies.com/can-bus-guide-message-frame-format/"""
 
-        log.error("Message type: {}".format(type(self.message)))
-        log.error("Message: {}".format(self.message))
+        log.debug("Message type: {}".format(type(self.message)))
+        log.debug("Message: {}".format(self.message))
 
         # Use the binary representation of the integer
         if type(self.message) is bytes:
-            log.info("message is bytes type")
+            log.debug("message is bytes type")
             self.message = self.message.decode("utf-8")
         if type(self.message) is str:
-            log.info("message is str type")
+            log.debug("message is str type")
             # if self.message[0:2] == "0b":
-            log.info("converting to int -> bin")
+            log.debug("converting to int -> bin")
             self.message = bin(int(self.message, 2))
         elif type(self.message) is int:
-            log.info("message in int, converting to bin")
+            log.debug("message in int, converting to bin")
             self.message = bin(self.message)
 
-        log.error("Message type: {}".format(type(self.message)))
-        log.error("Message: {}".format(self.message))
+        log.debug("Message type: {}".format(type(self.message)))
+        log.debug("Message: {}".format(self.message))
 
         # # try:
         # self.message = int(self.message, 2)
