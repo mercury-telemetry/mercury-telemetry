@@ -5,9 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("mercury", "0003_auto_20191104_2125"),
-    ]
+    dependencies = [("mercury", "0003_auto_20191104_2125")]
 
     operations = [
         migrations.CreateModel(

@@ -100,3 +100,7 @@ class FuelLevelForm(forms.ModelForm):
                 attrs={"id": "post-current-fuel-level", "required": True}
             ),
         }
+
+
+class CANForm(forms.Form):
+    can_msg = forms.CharField(label="CAN Message")

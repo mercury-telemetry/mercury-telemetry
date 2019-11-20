@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .wsgi import *  # noqa: F403
+from .wsgi import project_name  # noqa: F403
 import os
 
 

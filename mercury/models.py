@@ -60,3 +60,8 @@ class FuelLevelSensor(models.Model):
     # Fuel Supply Panel
     # measured in liters
     current_fuel_level = models.FloatField(default=0)
+
+
+class EventCodeAccess(models.Model):
+    event_code = models.CharField(max_length=8)
+    enabled = models.BooleanField()

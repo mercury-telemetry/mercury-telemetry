@@ -4,21 +4,21 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <title>Mercury - NYU Tandon Telemetry</title>
-        <script>
-            function RedirectSimulator() {
-                window.location="/simulator/";
-            }
-            function RedirectDashboard() {
-                window.location="/dashboard/";
-            }            
-        </script>
-    </head>
+  <head>
+      <meta charset="utf-8">
+      <title>Mercury - NYU Tandon Telemetry</title>
+      <script>
+          function RedirectSimulator() {
+              window.location="/simulator/";
+          }
+          function RedirectDashboard() {
+              window.location="/dashboard/";
+          }            
+      </script>
+  </head>
 
-  <div style="padding: 30px;">
-    <div id="grafana">
+  <div id="grafana-base">
+    <div id="grafana-panel">
       <br>
       <h1>NYU Motorsports Telemetry</h1>
       <br>
@@ -27,6 +27,8 @@
       <div style="height: 4px;"></div>
       <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Simulator</button>
       <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">Raw Telemetry</button>
+        <div style="height: 4px;"></div>
+        <a href="{% url 'mercury:can-ui' %}"><button class="grafana-btn grafana-btn-secondary" style="width: 24.5%; height: 80px; font-size: larger;">CAN Decoder</button></a>
       <br><br>
     </div>
   </div>
