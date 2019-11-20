@@ -28,10 +28,35 @@ class InvalidBitException(Exception):
         log.error(self.error)
 
 
+class MessageLengthException(Exception):
+    def __init__(self, value):
+        self.error = (
+            f"The CAN message bit string length is {value}, but 130 is the maximum."
+        )
+        log.error(self.error)
+
+
 class CANDecoder:
     def __init__(self, message):
         self.message = message
         self.data = {}
+        log.debug("Message type: {}".format(type(self.message)))
+        log.debug("Message: {}".format(self.message))
+
+        # Convert various inputs the binary representation of the integer
+        if type(self.message) is bytes:
+            self.message = self.message.decode("utf-8")
+        if type(self.message) is str:
+            try:
+                self.message = bin(int(self.message, 2))
+            except ValueError:
+                self.message = bin(int(self.message))
+        elif type(self.message) is int:
+            self.message = bin(self.message)
+
+        # 130 bits is the maximum message length
+        if len(self.message) > 130:
+            raise MessageLengthException(len(self.message))
 
     def read_bits(self, num_bits):
         """This function reads <num_bits> number of bits from the message
@@ -63,20 +88,6 @@ class CANDecoder:
         """Decode CAN messages based on reference
         http://www.copperhilltechnologies.com/can-bus-guide-message-frame-format/"""
 
-        log.debug("Message type: {}".format(type(self.message)))
-        log.debug("Message: {}".format(self.message))
-
-        # Convert various inputs the binary representation of the integer
-        if type(self.message) is bytes:
-            self.message = self.message.decode("utf-8")
-        if type(self.message) is str:
-            try:
-                self.message = bin(int(self.message, 2))
-            except ValueError:
-                self.message = bin(int(self.message))
-        elif type(self.message) is int:
-            self.message = bin(self.message)
-
         # the first two chars are '0b' from bin() conversion, so strip them out
         self.message = self.message[2:]
 
@@ -91,7 +102,12 @@ class CANDecoder:
         IDE fiels moves out of the control field into arbitration field.
         The ID defines the ECU that sent this message."""
         self.data["can_id"] = self.read_bits_as_int(11)
-        sensor_type = ID_TO_SENSOR_MAP[self.data["can_id"]]
+        try:
+            sensor_type = ID_TO_SENSOR_MAP[self.data["can_id"]]
+        except KeyError:
+            # KeyError here means that the ID decoded for the sensor is not in our table
+            # or the ID provided was malformed/bad data
+            sensor_type = None
         # RTR of 0 means this is a normal data frame
         # RTR of 1 means this is a remote frame, unlikely in our use case
         self.data["rtr"] = self.read_bits_as_int(1)

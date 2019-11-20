@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 import logging
-from mercury.can import CANDecoder, InvalidBitException
+from mercury.can import CANDecoder, InvalidBitException, MessageLengthException
 from ..forms import CANForm
 from django.shortcuts import render
 import json
@@ -23,7 +23,11 @@ def post(request, *args, **kwargs):
             """Return 400 Bad Request if no CAN message is received"""
             return HttpResponse(status=400)
         can_msg = request.body
-    decoder = CANDecoder(can_msg)
+    try:
+        decoder = CANDecoder(can_msg)
+    except MessageLengthException as e:
+        return HttpResponse(e.error, status=400)
+
     try:
         sensor_type, decoded_data = decoder.decode_can_message_full_dict()
         return HttpResponse(json.dumps(decoded_data), status=201)
