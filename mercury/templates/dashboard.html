@@ -15,86 +15,141 @@
 </div>
 <h3>The Simulated Data for each snapshot</h3>
 <div>
-    <table id="main_dash" style="border: 1px solid black">
+{#    <table id="main_dash" style="border: 1px solid black">#}
+{#        <br>#}
+{#        <tr>#}
+{#            <th>ID</th>#}
+{#            <th>Time</th>#}
+{#            <th>Temperature</th>#}
+{#            <th>X-axis accel</th>#}
+{#            <th>Y-axis accel</th>#}
+{#            <th>Z-axis accel</th>#}
+{#            <th>FR speed</th>#}
+{#            <th>FL speed</th>#}
+{#            <th>BR speed</th>#}
+{#            <th>BL speed</th>#}
+{#            <th>FR susp</th>#}
+{#            <th>FL susp</th>#}
+{#            <th>BR susp</th>#}
+{#            <th>BL susp</th>#}
+{#            <th>Fuel Level</th>#}
+{#        </tr>#}
+{#        {% for item in all_data %}#}
+{#            <tr>#}
+{#                <td>{{ item.id }}</td>#}
+{#                <td>{{ item.created_at }}</td>#}
+{#                <td>{{ item.temperature }}</td>#}
+{#                <td>{{ item.acceleration_x }}</td>#}
+{#                <td>{{ item.acceleration_y }}</td>#}
+{#                <td>{{ item.acceleration_z }}</td>#}
+{#                <td>{{ item.wheel_speed_fr }}</td>#}
+{#                <td>{{ item.wheel_speed_fl }}</td>#}
+{#                <td>{{ item.wheel_speed_br }}</td>#}
+{#                <td>{{ item.wheel_speed_bl }}</td>#}
+{#                <td>{{ item.suspension_fr }}</td>#}
+{#                <td>{{ item.suspension_fl }}</td>#}
+{#                <td>{{ item.suspension_br }}</td>#}
+{#                <td>{{ item.suspension_bl }}</td>#}
+{#                <td>{{ item.current_fuel_level }}</td>#}
+{#            </tr>#}
+{#        {%  endfor %}#}
+{#    </table>#}
+
+    <table id="temp_dash" style="border: 1px solid black">
         <br>
         <tr>
             <th>ID</th>
             <th>Time</th>
             <th>Temperature</th>
-            <th>X-axis accel</th>
-            <th>Y-axis accel</th>
-            <th>Z-axis accel</th>
-            <th>FR speed</th>
-            <th>FL speed</th>
-            <th>BR speed</th>
-            <th>BL speed</th>
-            <th>FR susp</th>
-            <th>FL susp</th>
-            <th>BR susp</th>
-            <th>BL susp</th>
-            <th>Fuel Level</th>
         </tr>
-        {% for item in all_data %}
+        {% for item in temp_data %}
             <tr>
                 <td>{{ item.id }}</td>
                 <td>{{ item.created_at }}</td>
                 <td>{{ item.temperature }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+    <br>
+    <table id="accel_dash" style="border: 1px solid black">
+        <br>
+        <tr>
+            <th>ID</th>
+            <th>Time</th>
+            <th>X-axis accel</th>
+            <th>Y-axis accel</th>
+            <th>Z-axis accel</th>
+        </tr>
+        {% for item in accel_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.created_at }}</td>
                 <td>{{ item.acceleration_x }}</td>
                 <td>{{ item.acceleration_y }}</td>
                 <td>{{ item.acceleration_z }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+    <br>
+    <table id="ws_dash" style="border: 1px solid black">
+        <br>
+        <tr>
+            <th>ID</th>
+            <th>Time</th>
+            <th>FR speed</th>
+            <th>FL speed</th>
+            <th>BR speed</th>
+            <th>BL speed</th>
+        </tr>
+        {% for item in ws_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.created_at }}</td>
                 <td>{{ item.wheel_speed_fr }}</td>
                 <td>{{ item.wheel_speed_fl }}</td>
                 <td>{{ item.wheel_speed_br }}</td>
                 <td>{{ item.wheel_speed_bl }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+    <br>
+    <table id="ss_dash" style="border: 1px solid black">
+        <br>
+        <tr>
+            <th>ID</th>
+            <th>Time</th>
+            <th>FR susp</th>
+            <th>FL susp</th>
+            <th>BR susp</th>
+            <th>BL susp</th>
+        </tr>
+        {% for item in ss_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.created_at }}</td>
                 <td>{{ item.suspension_fr }}</td>
                 <td>{{ item.suspension_fl }}</td>
                 <td>{{ item.suspension_br }}</td>
                 <td>{{ item.suspension_bl }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+    <br>
+    <table id="fl_dash" style="border: 1px solid black">
+        <br>
+        <tr>
+            <th>ID</th>
+            <th>Time</th>
+            <th>Fuel Level</th>
+        </tr>
+        {% for item in fl_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.created_at }}</td>
                 <td>{{ item.current_fuel_level }}</td>
             </tr>
         {%  endfor %}
     </table>
 </div>
-
-	<div class="row">
-        <div id="articles" style="width:1400px;height:800px;"></div>
-    </div>
-    <script src="{% static "mercury/js/plotly-latest.js" %}"></script>
-	<script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
-
-	<script type="text/javascript">
-		$(document).ready(function(){
-        var endpoint = '/api/chart/data'
-		var articleData = articleLabels = []
-		$.ajax({
-		    method: "GET",
-		    url: endpoint,
-		    success: function(data){
-		        articleLabels = data.article_labels
-		        articleData = data.article_data
-		        articleChart()
-		    },
-		    error: function(error_data){
-		        console.log("error")
-		    },
-		})
-		function articleChart(){
-		    var data = [{
-		        x: articleLabels,
-		        y: articleData,
-		        type: 'line',
-		        marker: {
-		            color: '#23b7e5',
-		        },
-		    }];
-		    var layout = {
-		        title: 'Temperature Vs Time',
-		        margin: {l:200},
-		    };
-		    Plotly.newPlot('articles', data, layout);
-		}
-		})
-	</script>
-
 </body>
 </html>
