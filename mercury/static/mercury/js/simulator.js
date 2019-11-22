@@ -106,9 +106,9 @@ $(function () {
                 let acceleration_z = parseFloat($('#post-acceleration-Z').val());
 
                 $('#post-created-at_accel').val(getDateTimenow());
-                $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
-                $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
-                $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
+                $('#post-acceleration-X').val(roundOffAndParse(acceleration_x + getRandomNumber(-5,5)));
+                $('#post-acceleration-Y').val(roundOffAndParse(acceleration_y + getRandomNumber(-5,5)));
+                $('#post-acceleration-Z').val(roundOffAndParse(acceleration_z + getRandomNumber(-5,5)));
                 console.log("POSTing was successful for acceleration"); // another sanity check
             },
 
@@ -300,7 +300,7 @@ $(function () {
                     current_fuel_level -= getRandomNumber(0,5);
                 }
                 $('#post-created-at_fl').val(getDateTimenow());
-                $('#post-current-fuel-level').val(current_fuel_level);
+                $('#post-current-fuel-level').val(roundOffAndParse(current_fuel_level));
 
                 console.log("POSTing was successful for FL"); // another sanity check
             },
