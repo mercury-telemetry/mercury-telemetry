@@ -6,6 +6,7 @@ class MercuryConfig(AppConfig):
 
     def ready(self):
         from .models import EventCodeAccess
+
         for code in EventCodeAccess.objects.all():
             if code.event_code == "testcode":
                 code.delete()
