@@ -32,7 +32,7 @@ class SimulatorView(TemplateView):
             post_temperature = request.POST.get("temperature")
 
             temp_data = TemperatureSensor(
-                created_at=post_created_at, temperature=post_temperature,
+                created_at=post_created_at, temperature=post_temperature
             )
             temp_data.save()
 
@@ -88,7 +88,7 @@ class SimulatorView(TemplateView):
             post_current_fuel_level = request.POST.get("current_fuel_level")
 
             fl_data = FuelLevelSensor(
-                created_at=post_created_at, current_fuel_level=post_current_fuel_level,
+                created_at=post_created_at, current_fuel_level=post_current_fuel_level
             )
             fl_data.save()
 
