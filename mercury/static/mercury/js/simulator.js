@@ -34,17 +34,18 @@ $(function () {
 
     function create_post_temp() {
         console.log("Entered create_post_temp() temperature function.");
+        let dateTime_temp = getDateTimenow();
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
             data: {
                 temperature: $('#post-temperature').val(),
-                created_at_temp: $('#post-created-at-temp').val()
+                created_at_temp: dateTime_temp
             }, // data sent with the post request
             // handle a successful response
             success: function () {
                 let temperature = parseFloat($('#post-temperature').val());
-                $('#post-created-at-temp').val(getDateTimenow());
+                $('#post-created-at-temp').val(dateTime_temp);
                 $('#post-temperature').val(getNextValue(temperature,-5,5));
                 console.log("POSTing was successful for temperature"); // another sanity check
             },
@@ -90,6 +91,7 @@ $(function () {
 
     function create_post_accel() {
         console.log("Entered create_post_accel() accel function.");
+        let dateTime_accel = getDateTimenow();
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
@@ -97,7 +99,7 @@ $(function () {
                 acceleration_x: $('#post-acceleration-X').val(),
                 acceleration_y: $('#post-acceleration-Y').val(),
                 acceleration_z: $('#post-acceleration-Z').val(),
-                created_at_accel: $('#post-created-at_accel').val()
+                created_at_accel: dateTime_accel
             }, // data sent with the post request
             // handle a successful response
             success: function () {
@@ -105,7 +107,7 @@ $(function () {
                 let acceleration_y = parseFloat($('#post-acceleration-Y').val());
                 let acceleration_z = parseFloat($('#post-acceleration-Z').val());
 
-                $('#post-created-at_accel').val(getDateTimenow());
+                $('#post-created-at_accel').val(dateTime_accel);
                 $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
                 $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
                 $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
@@ -153,11 +155,12 @@ $(function () {
 
     function create_post_ws() {
         console.log("Entered create_post_ws() WS function.");
+        let dateTime_ws = getDateTimenow();
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
             data: {
-                created_at_ws: $('#post-created-at_ws').val(),
+                created_at_ws: dateTime_ws,
                 wheel_speed_fr: $('#post-wheel-speed-fr').val(),
                 wheel_speed_fl: $('#post-wheel-speed-fl').val(),
                 wheel_speed_br: $('#post-wheel-speed-br').val(),
@@ -169,7 +172,7 @@ $(function () {
                 let wheel_speed_fl = parseFloat($('#post-wheel-speed-fl').val());
                 let wheel_speed_br = parseFloat($('#post-wheel-speed-br').val());
                 let wheel_speed_bl = parseFloat($('#post-wheel-speed-bl').val());
-                $('#post-created-at_ws').val(getDateTimenow());
+                $('#post-created-at_ws').val(dateTime_ws);
                 $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
                 $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
                 $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
@@ -218,11 +221,12 @@ $(function () {
 
     function create_post_ss() {
         console.log("Entered create_post_ss() Suspension function.");
+        let dateTime_ss = getDateTimenow();
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
             data: {
-                created_at_ss: $('#post-created-at_ss').val(),
+                created_at_ss: dateTime_ss,
                 suspension_fr: $('#post-suspension-fr').val(),
                 suspension_fl: $('#post-suspension-fl').val(),
                 suspension_br: $('#post-suspension-br').val(),
@@ -234,7 +238,7 @@ $(function () {
                 let suspension_fl = parseFloat($('#post-suspension-fl').val());
                 let suspension_br = parseFloat($('#post-suspension-br').val());
                 let suspension_bl = parseFloat($('#post-suspension-bl').val());
-                $('#post-created-at_ss').val(getDateTimenow());
+                $('#post-created-at_ss').val(dateTime_ss);
                 $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
                 $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
                 $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
@@ -283,11 +287,12 @@ $(function () {
 
     function create_post_fl() {
         console.log("Entered create_post_fl() fl function.");
+        let dateTime_fl = getDateTimenow();
         $.ajax({
             url: "", // the endpoint
             type: "POST", // http method
             data: {
-                created_at_fl: $('#post-created-at_fl').val(),
+                created_at_fl: dateTime_fl,
                 current_fuel_level: $('#post-current-fuel-level').val(),
             }, // data sent with the post request
             // handle a successful response
@@ -299,7 +304,7 @@ $(function () {
                 else{
                     current_fuel_level -= getRandomNumber(0,5);
                 }
-                $('#post-created-at_fl').val(getDateTimenow());
+                $('#post-created-at_fl').val(dateTime_fl);
                 $('#post-current-fuel-level').val(current_fuel_level);
 
                 console.log("POSTing was successful for FL"); // another sanity check
