@@ -12,19 +12,19 @@ $(function () {
     $('#TemperatureForm').on('submit', function (event) {
         event.preventDefault();
         if (buttonpressed == "Continuous" && button_counter_temp != 1){
-            console.log("Continuous Submission button was pressed.");
+            console.log("Continuous Submission enabled for Temperature panel.");
             create_post_temp();
             button_counter_temp =1;
             interval_var = setInterval(create_post_temp, 2000);
         }else if (buttonpressed == "Once") {
-            console.log("Temp Submit Once button was pressed.");
+            console.log("Temperature Submit Once button was pressed.");
             if (interval_var) {
                 clearInterval(interval_var);
                 button_counter_temp =0;
             }
             create_post_temp();
         }else if (buttonpressed == "Stop") {
-            console.log("Stopping continuous submission.");
+            console.log("Stopping continuous submission for Temperature panel.");
             if (interval_var) {
                 clearInterval(interval_var);
                 button_counter_temp =0;
@@ -68,19 +68,19 @@ $(function () {
     $('#AccelerationForm').on('submit', function (event) {
         event.preventDefault();
         if (buttonpressed_accel== "Continuous" && button_counter_accel != 1){
-            console.log("Continuous Submission button was pressed.");
+            console.log("Continuous Submission enabled for Acceleration panel.");
             create_post_accel();
             button_counter_accel =1;
             interval_var_accel = setInterval(create_post_accel, 2000);
         }else if (buttonpressed_accel == "Once") {
-            console.log("accel Submit Once button was pressed.");
+            console.log("Acceleration Submit Once button was pressed.");
             if (interval_var_accel) {
                 clearInterval(interval_var_accel);
                 button_counter_accel =0;
             }
             create_post_accel();
         }else if (buttonpressed_accel == "Stop") {
-            console.log("Stopping continuous submission.");
+            console.log("Stopping continuous submission for Acceleration panel.");
             if (interval_var_accel) {
                 clearInterval(interval_var_accel);
                 button_counter_accel =0;
@@ -106,9 +106,9 @@ $(function () {
                 let acceleration_z = parseFloat($('#post-acceleration-Z').val());
 
                 $('#post-created-at_accel').val(getDateTimenow());
-                $('#post-acceleration-X').val(acceleration_x + getRandomNumber(-5,5));
-                $('#post-acceleration-Y').val(acceleration_y + getRandomNumber(-5,5));
-                $('#post-acceleration-Z').val(acceleration_z + getRandomNumber(-5,5));
+                $('#post-acceleration-X').val(roundOffAndParse(acceleration_x + getRandomNumber(-5,5)));
+                $('#post-acceleration-Y').val(roundOffAndParse(acceleration_y + getRandomNumber(-5,5)));
+                $('#post-acceleration-Z').val(roundOffAndParse(acceleration_z + getRandomNumber(-5,5)));
                 console.log("POSTing was successful for acceleration"); // another sanity check
             },
 
@@ -131,19 +131,19 @@ $(function () {
     $('#WheelSpeedForm').on('submit', function (event) {
         event.preventDefault();
         if (buttonpressed_ws == "Continuous" && button_counter_ws != 1){
-            console.log("Continuous Submission button was pressed.");
+            console.log("Continuous Submission enabled for Wheel Speed panel");
             create_post_ws();
             button_counter_ws =1;
             interval_var_ws = setInterval(create_post_ws, 2000);
         }else if (buttonpressed_ws == "Once") {
-            console.log("ws Submit Once button was pressed.");
+            console.log("Wheel Speed Submit Once button was pressed.");
             if (interval_var_ws) {
                 clearInterval(interval_var_ws);
                 button_counter_ws =0;
             }
             create_post_ws();
         }else if (buttonpressed_ws == "Stop") {
-            console.log("Stopping continuous submission.");
+            console.log("Stopping continuous submission for Wheel Speed panel.");
             if (interval_var_ws) {
                 clearInterval(interval_var_ws);
                 button_counter_ws =0;
@@ -196,19 +196,19 @@ $(function () {
     $('#SuspensionForm').on('submit', function (event) {
         event.preventDefault();
         if (buttonpressed_ss == "Continuous" && button_counter_ss != 1){
-            console.log("Continuous Submission button was pressed.");
+            console.log("Continuous Submission enabled for Suspension panel");
             create_post_ss();
             button_counter_ss =1;
             interval_var_ss = setInterval(create_post_ss, 2000);
         }else if (buttonpressed_ss == "Once") {
-            console.log("ss Submit Once button was pressed.");
+            console.log("Suspension Submit Once button was pressed.");
             if (interval_var_ss) {
                 clearInterval(interval_var_ss);
                 button_counter_ss =0;
             }
             create_post_ss();
         }else if (buttonpressed_ss == "Stop") {
-            console.log("Stopping continuous submission.");
+            console.log("Stopping continuous submission for Suspension panel.");
             if (interval_var_ss) {
                 clearInterval(interval_var_ss);
                 button_counter_ss =0;
@@ -261,19 +261,19 @@ $(function () {
     $('#FuelLevelForm').on('submit', function (event) {
         event.preventDefault();
         if (buttonpressed_fl == "Continuous" && button_counter_fl != 1){
-            console.log("Continuous Submission button was pressed.");
+            console.log("Continuous Submission enabled for Fuel Level panel");
             create_post_fl();
             button_counter_fl =1;
             interval_var_fl = setInterval(create_post_fl, 2000);
         }else if (buttonpressed_fl == "Once") {
-            console.log("fl Submit Once button was pressed.");
+            console.log("Fuel Level Submit Once button was pressed.");
             if (interval_var_fl) {
                 clearInterval(interval_var_fl);
                 button_counter_fl =0;
             }
             create_post_fl();
         }else if (buttonpressed_fl == "Stop") {
-            console.log("Stopping continuous submission.");
+            console.log("Stopping continuous submission for Fuel Level panel.");
             if (interval_var_fl) {
                 clearInterval(interval_var_fl);
                 button_counter_fl =0;
@@ -300,7 +300,7 @@ $(function () {
                     current_fuel_level -= getRandomNumber(0,5);
                 }
                 $('#post-created-at_fl').val(getDateTimenow());
-                $('#post-current-fuel-level').val(current_fuel_level);
+                $('#post-current-fuel-level').val(roundOffAndParse(current_fuel_level));
 
                 console.log("POSTing was successful for FL"); // another sanity check
             },
