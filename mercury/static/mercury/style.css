@@ -13,13 +13,10 @@
 
 
 /* NYU Telemetry */
-/*
-launch
-list
-*/
+
 body {
   color: var(--light-text);
-  background-color: var(--grey-dark3);
+  background-color: var(--light-background);
   margin: 0;
   font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
@@ -33,8 +30,8 @@ body {
 }
 
 #grafana-panel {
-  border-color:var(--black);
-  background: var(--grey-dark4);
+  border-color:var(--light-border);
+  background: var(--light-panel);
   text-align: center;
   margin: auto;
   vertical-align: middle;
@@ -46,8 +43,8 @@ body {
   
 .grafana-btn {
   color: var(--light-text);
-  background-color: var(--grey-dark1);
-  border-color: var(--grey-dark1);
+  background-color: var(--light-background);
+  border-color: var(--light-background);
   display: inline-block;
   font-weight: 400;
   text-align: center;
@@ -64,31 +61,31 @@ body {
 }
 
 .grafana-btn:hover {
-  color: var(--dark-text);
-  background-color: var(--grey);
-  border-color: var(--grey);
+  color: var(--button-text-dark);
+  background-color: var(--light-accent);
+  border-color: var(--light-accent);
 }
 
 .grafana-btn-primary {
-  color: var(--white);
-  background-color: var(--green-dark);
-  border-color: var(--green-dark);
+  color: var(--light-text);
+  background-color: var(--light-green);
+  border-color: var(--light-green);
 }
 
 .grafana-btn-primary:hover {
-  color: var(--dark-text);
+  color: var(--button-text-dark);
   background-color: var(--green);
   border-color: var(--green);
 }
 
 .grafana-btn-secondary {
-  color: var(--white);
-  background-color: var(--red-dark);
-  border-color: var(--red-dark);
+  color: var(--light-text);
+  background-color: var(--light-red);
+  border-color: var(--light-red);
 }
 
 .grafana-btn-secondary:hover {
-  color: var(--dark-text);
+  color: var(--button-text-dark);
   background-color: var(--red);
   border-color: var(--red);
 }
@@ -99,25 +96,32 @@ body {
 
 /* NYU Motorsports Elements Begin */
   --red: #EE4B5E;
-  --red-dark: #44292E;
-
   --green: #74BE6D;
-  --green-dark:#303D33;
-
   --yellow: #F8D943;
-  --yellow-dark: #453C2B;
-
-  --grey: #858796;
-  --grey-dark1: #343436;
-  --grey-dark2: #302F34;
-  --grey-dark3: #161719;
-  --grey-dark4: #212025;
+  
+  --dark-text: #D8D9DB;
+  --dark-panel: #212025;
+  --dark-background: #161719;
+  --dark-border: #161618;
+  --dark-accent: #302F34;
+  --dark-green:#303D33;
+  --dark-yellow: #453C2B;
+  --dark-red: #44292E;
+  
+  --light-text: #51545D;
+  --light-panel: #FFFFFF;
+  --light-background: #F7F8FA;
+  --light-border: #DBE4ED;
+  --light-accent: #DADEE7;
+  --light-green: #E1EFDE;
+  --light-yellow: #FCF7DA;
+  --light-red: #F9DADF;
 
   --black: #000000;
   --white: #fff;
 
-  --light-text: #d8d9da;
-  --dark-text: #161719;
+  --button-text-light: #d8d9da;
+  --button-text-dark: #161719;
 /* End */
 
     --blue: #4e73df;
