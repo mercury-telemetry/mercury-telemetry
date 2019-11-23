@@ -1,23 +1,10 @@
+{% extends 'banner.html' %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Simulator</title>
-    <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
-    <script src="{% static "mercury/js/can.js" %}"></script>
-    <script>
-        function RedirectSimulator() {
-            window.location="/";
-        }         
-    </script>
-</head>
-<body>
+
+{% block content %}
+<script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+<script src="{% static "mercury/js/can.js" %}"></script>
 <div id="grafana-base">
-    <div id="grafana-panel">
-        <button onclick="RedirectSimulator();" class="grafana-btn">Home</button>
-    </div>
     <div id="grafana-panel">
         <h1>CAN Message Decoder</h1>
         <div class="container">
@@ -35,5 +22,4 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+{% endblock %}
