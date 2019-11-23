@@ -1,20 +1,4 @@
-from .models import (
-    TemperatureSensor,
-    AccelerationSensor,
-    WheelSpeedSensor,
-    SuspensionSensor,
-    FuelLevelSensor,
-)
 import logging
-
-ID_TO_SENSOR_MAP = {
-    1: TemperatureSensor,
-    2: AccelerationSensor,
-    3: WheelSpeedSensor,
-    4: SuspensionSensor,
-    5: FuelLevelSensor,
-}
-
 
 logging.basicConfig(level=logging.ERROR)
 log = logging.getLogger(__name__)
@@ -34,14 +18,6 @@ class MessageLengthException(Exception):
             f"The CAN message bit string length is {value}, but 130 is the maximum."
         )
         log.error(self.error)
-
-
-class CANMapper:
-    """This class takes the result of decoded CAN data and maps the CAN
-    ID to a Model."""
-
-    def __init__(self, can_data):
-        self.can_data = can_data
 
 
 class CANDecoder:
