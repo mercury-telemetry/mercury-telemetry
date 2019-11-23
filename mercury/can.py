@@ -36,6 +36,14 @@ class MessageLengthException(Exception):
         log.error(self.error)
 
 
+class CANMapper:
+    """This class takes the result of decoded CAN data and maps the CAN
+    ID to a Model."""
+
+    def __init__(self, can_data):
+        self.can_data = can_data
+
+
 class CANDecoder:
     def __init__(self, message):
         self.message = message
@@ -74,17 +82,7 @@ class CANDecoder:
             log.info(f"num_bits: {num_bits}")
             return int(bits, 2)
 
-    def decode_can_message(self):
-        sensor_type, data = self._decode_can_message()
-        if data:
-            return sensor_type, data["data"]
-        else:
-            return None, None
-
-    def decode_can_message_full_dict(self) -> tuple:
-        return self._decode_can_message()
-
-    def _decode_can_message(self) -> tuple:
+    def decode_can_message(self) -> dict:
         """Decode CAN messages based on reference
         http://www.copperhilltechnologies.com/can-bus-guide-message-frame-format/"""
 
@@ -102,13 +100,6 @@ class CANDecoder:
         IDE fiels moves out of the control field into arbitration field.
         The ID defines the ECU that sent this message."""
         self.data["can_id"] = self.read_bits_as_int(11)
-        try:
-            sensor_type = ID_TO_SENSOR_MAP[self.data["can_id"]]
-        except KeyError:
-            # KeyError here means that the ID decoded for the sensor is not in our table
-            # or the ID provided was malformed/bad data
-            log.error(f"CAN ID {self.data['can_id']} is not implemented.")
-            raise NotImplementedError()
         # RTR of 0 means this is a normal data frame
         # RTR of 1 means this is a remote frame, unlikely in our use case
         self.data["rtr"] = self.read_bits_as_int(1)
@@ -153,4 +144,4 @@ class CANDecoder:
 
         # IFS
         self.data["interframe_space"] = self.read_bits_as_int(3)
-        return sensor_type, self.data
+        return self.data
