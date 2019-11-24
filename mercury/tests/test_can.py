@@ -31,7 +31,7 @@ class TestCANSensorIdentification(TestCase):
         verified by a human to meet the implementation requirements of the CAN decoder
         and mapping to Sensors."""
         self.temp_data = CANDecoder(
-            0b1000000000010000001000000010000000000000001110000000000
+            0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000  # noqa E501
         ).decode_can_message()
         self.accel_data = CANDecoder(
             0b1000000000100000001000000010000000000000001110000000000
