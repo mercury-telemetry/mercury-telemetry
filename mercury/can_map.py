@@ -7,7 +7,7 @@ from .models import (
     FuelLevelSensor,
 )
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
 
