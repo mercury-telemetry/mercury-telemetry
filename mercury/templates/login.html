@@ -1,20 +1,30 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
 <div style="padding: 30px;">
-<div id="grafana">
-    <br>
-    <h1>NYU Motorsports Telemetry</h1>
-    <br>
-    <form method="post" action="{% url 'mercury:EventAccess' %}">
-        {% csrf_token %}
-        {% for message in messages %}
-        <p style="color:red"> {{ message }} </p>
-        {% endfor %}
-        <label><h4>Event Code:</h4></label>
-        <input type="text" name="eventcode" placeholder="Enter Event Code">
-       	<br>
-        <input type="submit" class="grafana-btn grafana-btn-primary" name="" value="Enter Event">
-    </form>
-    <a class="navbar-link" href="{% url 'admin:index' %}">Admin</a>
+    <div id="grafana-base">
+        <div id="grafana-panel">
+            <br>
+            <h1>NYU Motorsports Telemetry</h1>
+            <br>
+            <form method="post" action="{% url 'mercury:EventAccess' %}">
+                {% csrf_token %}
+                {% for message in messages %}
+                    <p style="color:red"> {{ message }} </p>
+                {% endfor %}
+                <label><h4>Event Code:</h4></label>
+                <input type="text" name="eventcode" placeholder="Enter Event Code">
+                <br>
+                <input type="submit" class="grafana-btn grafana-btn-primary" name="" value="Submit">
+            </form>
+            <a class="navbar-link" href="{% url 'admin:index' %}">Admin</a>
+        </div>
+    </div>
 </div>
-</div>
+</body>
+</html>
