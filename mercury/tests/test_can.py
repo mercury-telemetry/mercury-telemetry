@@ -1,5 +1,6 @@
 from django.test import TestCase
 from mercury.can import CANDecoder
+from mercury.can_map import CANMapper
 from mercury.models import (
     TemperatureSensor,
     AccelerationSensor,
@@ -45,12 +46,21 @@ class TestCANSensorIdentification(TestCase):
             0b1000000001010000001000000010000000000000001110000000000
         ).decode_can_message()
 
-    # def test_can_sensor_identification(self):
-    #     self.assertEqual(TemperatureSensor, self.temp_model)
-    #     self.assertEqual(AccelerationSensor, self.accel_model)
-    #     self.assertEqual(WheelSpeedSensor, self.wheel_speed_model)
-    #     self.assertEqual(SuspensionSensor, self.suspension_model)
-    #     self.assertEqual(FuelLevelSensor, self.fuel_model)
+    def test_can_sensor_identification(self):
+        temp_model = CANMapper(self.temp_data).get_sensor_from_id()
+        self.assertEqual(TemperatureSensor, temp_model)
+
+        accel_model = CANMapper(self.accel_data).get_sensor_from_id()
+        self.assertEqual(AccelerationSensor, accel_model)
+
+        wheel_speed_model = CANMapper(self.wheel_speed_data).get_sensor_from_id()
+        self.assertEqual(WheelSpeedSensor, wheel_speed_model)
+
+        suspension_model = CANMapper(self.suspension_data).get_sensor_from_id()
+        self.assertEqual(SuspensionSensor, suspension_model)
+
+        fuel_model = CANMapper(self.fuel_data).get_sensor_from_id()
+        self.assertEqual(FuelLevelSensor, fuel_model)
 
 
 class TestCANInputTypes(TestCase):
