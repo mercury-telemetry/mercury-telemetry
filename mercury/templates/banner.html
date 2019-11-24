@@ -1,15 +1,9 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Mercury Telemetry</title>
-	<!-- CSS -->
-	<link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
-</head>
-<body>
-	<nav class="navbar navbar-expand-lg navbar-light bg-white">
-		<div>
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
+	<div class="container">
+        <a class="navbar-brand" href="{% url 'mercury:index' %}">
+          NYU Motorsports Telemetry
+        </a>
+		<div class="container">
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
 					<a class="nav-link" href="{% url 'mercury:index' %}">Home</a>
@@ -28,8 +22,5 @@
 				</li>
 			</ul>
 		</div>
-	</nav>
-	{% block content %}
-	{% endblock %}
-</body>
-</html>
+	</div>
+</nav>

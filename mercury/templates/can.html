@@ -1,25 +1,33 @@
-{% extends 'banner.html' %}
 {% load static %}
-
-{% block content %}
-<script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
-<script src="{% static "mercury/js/can.js" %}"></script>
-<div id="grafana-base">
-    <div id="grafana-panel">
-        <h1>CAN Message Decoder</h1>
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-6 justify-content-center">
-                        <form method="GET" action="" id="CanForm">
-                            {% csrf_token %}
-                            {% load crispy_forms_tags %}
-                            {{ form|crispy }}
-                            <input class="submitbutton grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Decode CAN Message">
-                        </form>
-                    <div class="result" id="result" ></div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mercury CAN Decoder</title>
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+        <script src="{% static "mercury/js/can.js" %}"></script>
+    </head>
+    <body>
+        {% include 'banner.html' %}
+        <div id="grafana-base">
+            <div id="grafana-panel">
+                <h1>CAN Message Decoder</h1>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-6 justify-content-center">
+                                <form method="GET" action="" id="CanForm">
+                                    {% csrf_token %}
+                                    {% load crispy_forms_tags %}
+                                    {{ form|crispy }}
+                                    <input class="submitbutton grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Decode CAN Message">
+                                </form>
+                            <div class="result" id="result" ></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+    </body>
+</html>
