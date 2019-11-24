@@ -1,6 +1,6 @@
 import logging
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
@@ -108,6 +108,11 @@ class CANDecoder:
             self.can_data["data_length_code"] * 8
         )
         self.can_data["data"] = int(self.can_data["data_bin"], 2)
+
+        """For sensors providing multiple simultaneous values in one field, we will
+        delimit at word length (16-bits) and store each word in our data dictionary.
+        For sensors with single valued data, we just use the data field. See the
+        views/can.py file for ORM declarations."""
         for word in range(self.can_data["data_length_code"] // 2):
             self.can_data[f"data_word_{word}"] = self.read_can_data_word(
                 self.can_data["data_bin"], word
