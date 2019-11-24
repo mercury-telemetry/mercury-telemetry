@@ -34,7 +34,5 @@ class CANMapper:
         """If an unmapped CAN ID is passed, None is returned"""
         can_id = self.can_data.get("can_id")
         sensor = self.sensor_map.get(can_id)
-        log.debug(
-            "Mapped can_id {} to Sensor {}.".format(self.can_data["can_id"], sensor)
-        )
+        log.debug("Mapped can_id {} to Sensor {}.".format(can_id, sensor))
         return sensor
