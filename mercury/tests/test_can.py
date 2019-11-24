@@ -62,6 +62,11 @@ class TestCANSensorIdentification(TestCase):
         fuel_model = CANMapper(self.fuel_data).get_sensor_from_id()
         self.assertEqual(FuelLevelSensor, fuel_model)
 
+        none_model_int = CANMapper({"can_id": 9999}).get_sensor_from_id()
+        self.assertEqual(None, none_model_int)
+        none_model_str = CANMapper({"can_id": "doesnotexit"}).get_sensor_from_id()
+        self.assertEqual(None, none_model_str)
+
 
 class TestCANInputTypes(TestCase):
     def setUp(self) -> None:

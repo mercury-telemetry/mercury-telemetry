@@ -1,4 +1,3 @@
-from collections import defaultdict
 import logging
 from .models import (
     TemperatureSensor,
@@ -18,7 +17,7 @@ class CANMapper:
 
     def __init__(self, can_data):
         self.can_data = can_data
-        self.sensor_map = defaultdict(None)
+        self.sensor_map = dict()
         self._register_sensors()
 
     def _register_sensors(self):
@@ -33,7 +32,8 @@ class CANMapper:
 
     def get_sensor_from_id(self):
         """If an unmapped CAN ID is passed, None is returned"""
-        sensor = self.sensor_map[self.can_data["can_id"]]
+        can_id = self.can_data.get("can_id")
+        sensor = self.sensor_map.get(can_id)
         log.debug(
             "Mapped can_id {} to Sensor {}.".format(self.can_data["can_id"], sensor)
         )
