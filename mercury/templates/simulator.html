@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+     <head>
         <meta charset="UTF-8">
         <title>Mercury Simulator</title>
         <!-- CSS -->
@@ -12,80 +12,82 @@
     <body>
         {% include 'banner.html' %}
         <div id="grafana-base">
-            <div id="grafana-panel">
-                <h1>Telemetry Data Simulator</h1>
+            <div align="center">
+                <h2>Telemetry Data Simulator</h2>
                 <br>
-                <br>
-                <h1>Temperature Sensor</h1> {% if form_temp %}
-                <form method="POST" action="" id="TemperatureForm">
-                    {% csrf_token %} {% load crispy_forms_tags %} {{ form_temp|crispy }}
-                    <input class="submitbutton_temp grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <div class="sim-panel">
+                    <h4>Suspension Sensor</h4> {% if form_ss %}
+                    <form method="POST" action="" id="SuspensionForm">
+                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_ss|crispy }}
+                        <input class="submitbutton_ss simulator-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                        <input class="submitbutton_ss simulator-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                        <input class="submitbutton_ss simulator-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                    </form>
+                    {% endif %}
+                    </div>
                     <br>
+                    <div class="sim-panel">
+                    <h4>Temperature Sensor</h4> {% if form_temp %}
+                    <form method="POST" action="" id="TemperatureForm">
+                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_temp|crispy }}
+                        <input class="submitbutton_temp simulator-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                        <input class="submitbutton_temp simulator-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                        <input class="submitbutton_temp simulator-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                    </form>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <div class="sim-panel">
+                    <h4>Acceleration Sensor</h4> {% if form_accel %}
+                    <form method="POST" action="" id="AccelerationForm">
+                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_accel|crispy }}
+                        <input class="submitbutton_accel simulator-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                        <input class="submitbutton_accel simulator-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                        <input class="submitbutton_accel simulator-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                    </form>
+                    {% endif %}
+                    </div>
                     <br>
-                    <input class="submitbutton_temp grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                    <div align="center">
+                    <form method="POST" action="" id="AllSensorsForm">
+                        {% csrf_token %}
+                        <input class="submitbutton_all grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission All">
+                        <br>
+                        <br>
+                        <input class="submitbutton_all grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit All Once">
+                        <br>
+                        <br>
+                        <input class="submitbutton_all grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop All Submission">
+                    </form>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <div class="sim-panel">
+                    <h4>Wheel Speed Sensor</h4> {% if form_ws %}
+                    <form method="POST" action="" id="WheelSpeedForm">
+                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_ws|crispy }}
+                        <input class="submitbutton_ws simulator-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                        <input class="submitbutton_ws simulator-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                        <input class="submitbutton_ws simulator-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                    </form>
+                    {% endif %}
+                    </div>
                     <br>
-                    <br>
-                    <input class="submitbutton_temp grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
-                </form>
-                {% endif %}
-                <h1>Acceleration Sensor</h1> {% if form_accel %}
-                <form method="POST" action="" id="AccelerationForm">
-                    {% csrf_token %} {% load crispy_forms_tags %} {{ form_accel|crispy }}
-                    <input class="submitbutton_accel grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
-                    <br>
-                    <br>
-                    <input class="submitbutton_accel grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
-                    <br>
-                    <br>
-                    <input class="submitbutton_accel grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
-                </form>
-                {% endif %}
-                <h1>Wheel Speed Sensor</h1> {% if form_ws %}
-                <form method="POST" action="" id="WheelSpeedForm">
-                    {% csrf_token %} {% load crispy_forms_tags %} {{ form_ws|crispy }}
-                    <input class="submitbutton_ws grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
-                    <br>
-                    <br>
-                    <input class="submitbutton_ws grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
-                    <br>
-                    <br>
-                    <input class="submitbutton_ws grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
-                </form>
-                {% endif %}
-                <h1>Suspension Sensor</h1> {% if form_ss %}
-                <form method="POST" action="" id="SuspensionForm">
-                    {% csrf_token %} {% load crispy_forms_tags %} {{ form_ss|crispy }}
-                    <input class="submitbutton_ss grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
-                    <br>
-                    <br>
-                    <input class="submitbutton_ss grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
-                    <br>
-                    <br>
-                    <input class="submitbutton_ss grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
-                </form>
-                {% endif %}
-                <h1>Fuel Level Sensor</h1> {% if form_fl %}
-                <form method="POST" action="" id="FuelLevelForm">
-                    {% csrf_token %} {% load crispy_forms_tags %} {{ form_fl|crispy }}
-                    <input class="submitbutton_fl grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
-                    <br>
-                    <br>
-                    <input class="submitbutton_fl grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
-                    <br>
-                    <br>
-                    <input class="submitbutton_fl grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
-                </form>
-                {% endif %}
-                <form method="POST" action="" id="AllSensorsForm">
-                    {% csrf_token %}
-                    <input class="submitbutton_all grafana-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission All">
-                    <br>
-                    <br>
-                    <input class="submitbutton_all grafana-btn grafana-btn-secondary" type="submit" name="Once" value="Submit All Once">
-                    <br>
-                    <br>
-                    <input class="submitbutton_all grafana-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop All Submission">
-                </form>
+                    <div class="sim-panel">
+                        <h4>Fuel Level Sensor</h4> {% if form_fl %}
+                        <form method="POST" action="" id="FuelLevelForm">
+                            {% csrf_token %} {% load crispy_forms_tags %} {{ form_fl|crispy }}
+                            <input class="submitbutton_fl simulator-btn grafana-btn-primary" type="submit" name="Continuous" value="Continuous Submission">
+                            <input class="submitbutton_fl simulator-btn grafana-btn-secondary" type="submit" name="Once" value="Submit Once">
+                            <input class="submitbutton_fl simulator-btn grafana-btn-secondary" type="submit" name="Stop" value="Stop Submission">
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </body>

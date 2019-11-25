@@ -29,6 +29,36 @@ body {
   padding-top: 8%;
 }
 
+#main-sim-panel {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: center;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  width: 500px;
+}
+
+.sim-panel {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: center;
+  /*margin: auto;*/
+  vertical-align:middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+
+  /*padding-top: 50px;*/
+  padding-right: 40px !important;
+  /*padding-bottom: 50px;*/
+  padding-left: 40px !important;
+  /*width: 300px;*/
+}
+
+
 #grafana-panel {
   border-color:var(--light-border);
   background: var(--light-panel);
@@ -37,9 +67,36 @@ body {
   vertical-align: middle;
   border-style: solid;
   border-width: thin;
-  padding: 20px; 
+  padding: 20px;
   width: 500px;
 }
+
+.simulator-btn {
+  color: var(--light-text);
+  background-color: var(--light-background);
+  border-color: var(--light-background);
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0.375rem 0.60rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  border-radius: 0.35rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.simulator-btn:hover {
+  color: var(--button-text-dark);
+  background-color: var(--light-accent);
+  border-color: var(--light-accent);
+}
+
+
   
 .grafana-btn {
   color: var(--light-text);
