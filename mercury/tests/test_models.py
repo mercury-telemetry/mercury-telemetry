@@ -15,7 +15,7 @@ TEST_ACCEL_Y = 9.81
 TEST_WHEEL_SPEED_FR = 30
 TEST_SUSPENSION_FR = 2
 TEST_FUEL = 6
-TEST_EVENT_CODE = "foobarbaz"
+TEST_EVENT_CODE = "foobarba"
 
 
 def create_simulated_data_objects():
