@@ -20,5 +20,5 @@ class MercuryConfig(AppConfig):
                     code.delete()
             test_code = EventCodeAccess(event_code="testcode", enabled=True)
             test_code.save()
-        except:  # noqa E722
+        except:  # noqa E722 # pragma: no cover
             pass

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from mercury.can import CANDecoder
+from mercury.can import CANDecoder, InvalidBitException, MessageLengthException
 from mercury.can_map import CANMapper
 from mercury.models import (
     TemperatureSensor,
@@ -89,3 +89,29 @@ class TestCANInputTypes(TestCase):
         self.assertEqual(self.bin_data, self.bin_str_data)
         self.assertEqual(self.bin_str_data, self.int_data)
         self.assertEqual(self.int_data, self.bytes_data)
+
+
+class TestCANExceptions(TestCase):
+    def test_msg_length_exception(self):
+        with self.assertRaises(MessageLengthException):
+            CANDecoder(
+                0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000000000000000000000000000  # noqa E501
+            )
+
+    def test_invalid_bit_crc(self):
+        temp_data = CANDecoder(
+            0b10000000001101000000000000000000000001000000010000000000000000110000000000
+        )
+        with self.assertRaises(InvalidBitException):
+            temp_data.decode_can_message()
+
+    def test_invalid_bit_ack(self):
+        temp_data = CANDecoder(
+            0b10000000001101000000000000000000000001000000010000000000000001100000000000
+        )
+        with self.assertRaises(InvalidBitException):
+            temp_data.decode_can_message()
+
+    def test_value_error_for_int_as_str_caught(self):
+        temp_data = CANDecoder("9459720945368167357440")
+        self.assertTrue(isinstance(temp_data, CANDecoder))
