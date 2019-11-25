@@ -93,8 +93,8 @@ class TestCANInputTypes(TestCase):
 
 class TestCANExceptions(TestCase):
     def test_msg_length_exception(self):
-        with self.assertRaises(MessageLengthException) as cm:
-            temp_data = CANDecoder(
+        with self.assertRaises(MessageLengthException):
+            CANDecoder(
                 0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000000000000000000000000000  # noqa E501
             )
 
@@ -102,18 +102,16 @@ class TestCANExceptions(TestCase):
         temp_data = CANDecoder(
             0b10000000001101000000000000000000000001000000010000000000000000110000000000
         )
-        with self.assertRaises(InvalidBitException) as cm:
+        with self.assertRaises(InvalidBitException):
             temp_data.decode_can_message()
 
     def test_invalid_bit_ack(self):
         temp_data = CANDecoder(
             0b10000000001101000000000000000000000001000000010000000000000001100000000000
         )
-        with self.assertRaises(InvalidBitException) as cm:
+        with self.assertRaises(InvalidBitException):
             temp_data.decode_can_message()
 
     def test_value_error_for_int_as_str_caught(self):
-        temp_data = CANDecoder(
-            "9459720945368167357440"
-        )
+        temp_data = CANDecoder("9459720945368167357440")
         self.assertTrue(isinstance(temp_data, CANDecoder))
