@@ -6,6 +6,7 @@ from mercury.models import (
     WheelSpeedSensor,
     SuspensionSensor,
     FuelLevelSensor,
+    EventCodeAccess,
 )
 
 # Test Values
@@ -14,6 +15,7 @@ TEST_ACCEL_Y = 9.81
 TEST_WHEEL_SPEED_FR = 30
 TEST_SUSPENSION_FR = 2
 TEST_FUEL = 6
+TEST_EVENT_CODE = "foobarbaz"
 
 
 def create_simulated_data_objects():
@@ -32,6 +34,7 @@ def create_simulated_data_objects():
     FuelLevelSensor.objects.create(
         current_fuel_level=TEST_FUEL, created_at=datetime.datetime.now()
     )
+    EventCodeAccess.objects.create(event_code=TEST_EVENT_CODE, enabled=False)
 
 
 class TestSensorModels(TestCase):
@@ -41,19 +44,29 @@ class TestSensorModels(TestCase):
     def test_temp(self):
         foo = TemperatureSensor.objects.get(temperature=TEST_TEMP)
         self.assertEqual(foo.temperature, TEST_TEMP)
+        self.assertEqual("TemperatureSensor", str(foo))
 
     def test_acceleration(self):
         foo = AccelerationSensor.objects.get(acceleration_x=TEST_ACCEL_Y)
         self.assertEqual(foo.acceleration_x, TEST_ACCEL_Y)
+        self.assertEqual("AccelerationSensor", str(foo))
 
     def test_wheel_speed(self):
         foo = WheelSpeedSensor.objects.get(wheel_speed_fr=TEST_WHEEL_SPEED_FR)
         self.assertEqual(foo.wheel_speed_fr, TEST_WHEEL_SPEED_FR)
+        self.assertEqual("WheelSpeedSensor", str(foo))
 
     def test_suspension(self):
         foo = SuspensionSensor.objects.get(suspension_fr=TEST_SUSPENSION_FR)
         self.assertEqual(foo.suspension_fr, TEST_SUSPENSION_FR)
+        self.assertEqual("SuspensionSensor", str(foo))
 
     def test_fuel_level(self):
         foo = FuelLevelSensor.objects.get(current_fuel_level=TEST_FUEL)
         self.assertEqual(foo.current_fuel_level, TEST_FUEL)
+        self.assertEqual("FuelLevelSensor", str(foo))
+
+    def test_event_code_access(self):
+        foo = EventCodeAccess.objects.get(event_code=TEST_EVENT_CODE, enabled=False)
+        self.assertEqual(TEST_EVENT_CODE, foo.event_code)
+        self.assertEqual("EventCodeAccess", str(foo))

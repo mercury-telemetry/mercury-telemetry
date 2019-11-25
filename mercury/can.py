@@ -75,8 +75,6 @@ class CANDecoder:
 
         # Start of Frame field, 1-bit
         self.can_data["sof"] = self.read_bits_as_int(1)
-        if self.can_data["sof"] == "0":
-            raise InvalidBitException(self.can_data["sof"], "Start of Frame")
 
         """Arbitration Field is 12-bits or 32-bits long
         Assume we only have an 11-bit identifiers in this project for now,
@@ -125,14 +123,14 @@ class CANDecoder:
         self.can_data["crc_segment"] = self.read_bits_as_int(15)
 
         self.can_data["crc_delimiter"] = self.read_bits_as_int(1)
-        if self.can_data["crc_delimiter"] == "0":
+        if self.can_data["crc_delimiter"] == 0:
             raise InvalidBitException(self.can_data["crc_delimiter"], "CRC Delimiter")
 
         # ACK Field is 2-bits
         # Delimiter is always recessive (1)
         self.can_data["ack_bit"] = self.read_bits_as_int(1)
         self.can_data["ack_delimiter"] = self.read_bits_as_int(1)
-        if self.can_data["ack_delimiter"] == "0":
+        if self.can_data["ack_delimiter"] == 0:
             raise InvalidBitException(self.can_data["ack_delimiter"], "ACK Delimiter")
 
         # EOF
