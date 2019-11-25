@@ -44,29 +44,23 @@ class TestSensorModels(TestCase):
     def test_temp(self):
         foo = TemperatureSensor.objects.get(temperature=TEST_TEMP)
         self.assertEqual(foo.temperature, TEST_TEMP)
-        self.assertEqual("TemperatureSensor", str(foo))
 
     def test_acceleration(self):
         foo = AccelerationSensor.objects.get(acceleration_x=TEST_ACCEL_Y)
         self.assertEqual(foo.acceleration_x, TEST_ACCEL_Y)
-        self.assertEqual("AccelerationSensor", str(foo))
 
     def test_wheel_speed(self):
         foo = WheelSpeedSensor.objects.get(wheel_speed_fr=TEST_WHEEL_SPEED_FR)
         self.assertEqual(foo.wheel_speed_fr, TEST_WHEEL_SPEED_FR)
-        self.assertEqual("WheelSpeedSensor", str(foo))
 
     def test_suspension(self):
         foo = SuspensionSensor.objects.get(suspension_fr=TEST_SUSPENSION_FR)
         self.assertEqual(foo.suspension_fr, TEST_SUSPENSION_FR)
-        self.assertEqual("SuspensionSensor", str(foo))
 
     def test_fuel_level(self):
         foo = FuelLevelSensor.objects.get(current_fuel_level=TEST_FUEL)
         self.assertEqual(foo.current_fuel_level, TEST_FUEL)
-        self.assertEqual("FuelLevelSensor", str(foo))
 
     def test_event_code_access(self):
         foo = EventCodeAccess.objects.get(event_code=TEST_EVENT_CODE, enabled=False)
         self.assertEqual(TEST_EVENT_CODE, foo.event_code)
-        self.assertEqual("EventCodeAccess", str(foo))

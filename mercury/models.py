@@ -10,7 +10,7 @@ class TemperatureSensor(models.Model):
     # Oil temperature panel, measured in fahrenheit
     temperature = models.FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return TemperatureSensor.__name__
 
 
@@ -25,7 +25,7 @@ class AccelerationSensor(models.Model):
     acceleration_y = models.FloatField(default=0)
     acceleration_z = models.FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return AccelerationSensor.__name__
 
 
@@ -42,7 +42,7 @@ class WheelSpeedSensor(models.Model):
     wheel_speed_br = models.FloatField(default=0)
     wheel_speed_bl = models.FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return WheelSpeedSensor.__name__
 
 
@@ -59,7 +59,7 @@ class SuspensionSensor(models.Model):
     suspension_br = models.FloatField(default=0)
     suspension_bl = models.FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return SuspensionSensor.__name__
 
 
@@ -73,7 +73,7 @@ class FuelLevelSensor(models.Model):
     # measured in liters
     current_fuel_level = models.FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return FuelLevelSensor.__name__
 
 
@@ -81,5 +81,5 @@ class EventCodeAccess(models.Model):
     event_code = models.CharField(max_length=8)
     enabled = models.BooleanField()
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return EventCodeAccess.__name__
