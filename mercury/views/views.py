@@ -12,7 +12,6 @@ class HomePageView(TemplateView):
 
 class EventAccess(TemplateView):
     def post(self, request, *args, **kwargs):
-        print("in EventAccess post method")
         event_code = request.POST.get("eventcode")
         event_code_objects = EventCodeAccess.objects.filter(
             event_code=event_code, enabled=True
@@ -24,7 +23,6 @@ class EventAccess(TemplateView):
             return HttpResponseRedirect("/")
 
     def get(self, request, **kwargs):
-        print("in EventAccess get method")
         event_code_objects = EventCodeAccess.objects.filter(enabled=True)
         if event_code_objects:
             return render(request, "login.html", context=None)
