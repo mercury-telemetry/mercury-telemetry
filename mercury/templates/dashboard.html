@@ -7,14 +7,15 @@
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
     </head>
-    <body>
+    <body> <center>
         {% include 'banner.html' %}
         <h1>Dashboard</h1>
-        <h3>The Simulated Data for each snapshot</h3>
-        <div>
-            <table id="temp_dash" style="border: 1px solid black">
+        <h2>The Simulated Data for each snapshot</h2>
+        <div><br>
+                <h3>Temperature</h3>
+            <table>
                 <br>
-                <tr>
+                <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
                     <th>Temperature</th>
@@ -26,11 +27,12 @@
                         <td>{{ item.temperature }}</td>
                     </tr>
                 {%  endfor %}
-            </table>
+            </table><br><br>
             <br>
-            <table id="accel_dash" style="border: 1px solid black">
+            <h3>Acceleration</h3>
+            <table>
                 <br>
-                <tr>
+                <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
                     <th>X-axis accel</th>
@@ -46,11 +48,12 @@
                         <td>{{ item.acceleration_z }}</td>
                     </tr>
                 {%  endfor %}
-            </table>
+            </table><br><br>
             <br>
-            <table id="ws_dash" style="border: 1px solid black">
+            <h3>Wheel Speed</h3>
+            <table>
                 <br>
-                <tr>
+                <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
                     <th>FR speed</th>
@@ -69,11 +72,12 @@
                     </tr>
                 {%  endfor %}
             </table>
-            <br>
-            <table id="ss_dash" style="border: 1px solid black">
+            <br><br><br>
+            <h3>Suspension</h3>
+            <table>
                 <br>
-                <tr>
-                    <th>ID</th>
+                <tr bgcolor="#e0efdf">
+                    <th >ID</th>
                     <th>Time</th>
                     <th>FR susp</th>
                     <th>FL susp</th>
@@ -91,10 +95,11 @@
                     </tr>
                 {%  endfor %}
             </table>
-            <br>
-            <table id="fl_dash" style="border: 1px solid black">
+            <br><br><br>
+            <h3>Fuel Level</h3>
+            <table>
                 <br>
-                <tr>
+                <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
                     <th>Fuel Level</th>
@@ -108,5 +113,5 @@
                 {%  endfor %}
             </table>
         </div>
-    </body>
+    </body></center>
 </html>
