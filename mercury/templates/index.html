@@ -17,10 +17,12 @@
           function RedirectCAN() {
               window.location="/can/";
           } 
+          function RedirectTimer() {
+              window.location="/timer/";
+          } 
           function newGrafanaWindow() {
               window.open("https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod");
-  
-}           
+          }           
       </script>
   </head>
 
@@ -39,6 +41,8 @@
       <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">Raw Telemetry</button>
       <div style="height: 4px;"></div>
       <button onclick="RedirectCAN();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">CAN Decoder</button>
+      <div style="height: 4px;"></div>
+      <button onclick="RedirectTimer();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">Lap Timer</button>
       <br><br>
     </div>
   </div>
