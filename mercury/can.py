@@ -1,28 +1,48 @@
 import logging
+from copy import deepcopy
 
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
 
 class InvalidBitException(Exception):
-    def __init__(self, value, field_name):
-        self.error = (
-            f"An invalid bit value of {value} was decoded for field {field_name}"
-        )
-        log.error(self.error)
+    def __init__(self, value, field_name, request):
+        error = f"An invalid bit value of {value} was decoded for field {field_name}"
+        log.error(error)
+        self.error = {"error": error, "received_message": request}
 
 
 class MessageLengthException(Exception):
-    def __init__(self, value):
-        self.error = (
-            f"The CAN message bit string length is {value}, but 130 is the maximum."
+    def __init__(self, value, request):
+        error = (
+            f"The bit string length of the provided CAN message is {value}, "
+            "but 128 is the maximum."
         )
-        log.error(self.error)
+        log.error(error)
+        self.error = {"error": error, "received_message": request}
+
+
+class BadInputException(Exception):
+    def __init__(self, msg, request):
+        log.error("The CAN Decoder received Bad Input that it could not process.")
+        log.error(msg)
+        self.error = {"error": msg, "received_message": request}
+
+
+class NoMoreBitsException(Exception):
+    def __init__(self, request):
+        error = (
+            "The CAN Decoder received an input smaller than it "
+            "expected and ran out of bits to process."
+        )
+        log.error(error)
+        self.error = {"error": error, "received_message": request}
 
 
 class CANDecoder:
     def __init__(self, message):
         self.message = message
+        self.original_message = deepcopy(self.message)
         self.can_data = {}
         log.debug("Message type: {}".format(type(self.message)))
         log.debug("Message: {}".format(self.message))
@@ -30,17 +50,27 @@ class CANDecoder:
         # Convert various inputs the binary representation of the integer
         if type(self.message) is bytes:
             self.message = self.message.decode("utf-8")
+            self.original_message = deepcopy(self.message)
         if type(self.message) is str:
+            self.message = self.message.replace("'", "")
+            self.message = self.message.replace('"', "")
             try:
                 self.message = bin(int(self.message, 2))
             except ValueError:
-                self.message = bin(int(self.message))
+                try:
+                    self.message = bin(int(self.message))
+                except ValueError:
+                    raise BadInputException(
+                        "Invalid input detected. Please review the CAN "
+                        "message protocol format to ensure conformity.",
+                        self.original_message,
+                    )
         elif type(self.message) is int:
             self.message = bin(self.message)
 
-        # 130 bits is the maximum message length
-        if len(self.message) > 130:
-            raise MessageLengthException(len(self.message))
+        # 128 bits is the maximum message length
+        if len(self.message) > 128:
+            raise MessageLengthException(len(self.message), self.original_message)
 
     def read_bits_as_int(self, num_bits) -> int:
         """Return the bitstream read as a base-10 integer."""
@@ -48,7 +78,11 @@ class CANDecoder:
             bits = self.read_bits(num_bits)
             log.info(f"bits: {bits}")
             log.info(f"num_bits: {num_bits}")
-            return int(bits, 2)
+            try:
+                int_bits = int(bits, 2)
+            except ValueError:
+                raise NoMoreBitsException(self.original_message)
+            return int_bits
 
     def read_bits_as_bin(self, num_bits):
         if num_bits > 0:
@@ -124,14 +158,18 @@ class CANDecoder:
 
         self.can_data["crc_delimiter"] = self.read_bits_as_int(1)
         if self.can_data["crc_delimiter"] == 0:
-            raise InvalidBitException(self.can_data["crc_delimiter"], "CRC Delimiter")
+            raise InvalidBitException(
+                self.can_data["crc_delimiter"], "CRC Delimiter", self.original_message
+            )
 
         # ACK Field is 2-bits
         # Delimiter is always recessive (1)
         self.can_data["ack_bit"] = self.read_bits_as_int(1)
         self.can_data["ack_delimiter"] = self.read_bits_as_int(1)
         if self.can_data["ack_delimiter"] == 0:
-            raise InvalidBitException(self.can_data["ack_delimiter"], "ACK Delimiter")
+            raise InvalidBitException(
+                self.can_data["ack_delimiter"], "ACK Delimiter", self.original_message
+            )
 
         # EOF
         self.can_data["end_of_frame"] = self.read_bits_as_int(7)
