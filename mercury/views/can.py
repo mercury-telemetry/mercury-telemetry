@@ -106,4 +106,13 @@ class CANUI(TemplateView):
 
     def get(self, request, *args, **kwargs):
         form = CANForm()
-        return render(request, "can.html", {"form": form})
+        if request.session.get("event_code_active") and request.session.get("event_code_known"):
+            return render(request, "can.html", {"form": form})
+        else:
+            return render(
+                request,
+                "login.html",
+                context={
+                    "no_session_message": "You do not appear to have an active session. Please login again."
+                },
+            )
