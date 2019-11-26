@@ -42,7 +42,7 @@ class NoMoreBitsException(Exception):
 class CANDecoder:
     def __init__(self, message):
         self.message = message
-        self.original_message = None
+        self.original_message = deepcopy(self.message)
         self.can_data = {}
         log.debug("Message type: {}".format(type(self.message)))
         log.debug("Message: {}".format(self.message))
