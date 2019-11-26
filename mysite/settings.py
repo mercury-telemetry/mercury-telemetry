@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "mercury.apps.MercuryConfig",
 ]
-
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

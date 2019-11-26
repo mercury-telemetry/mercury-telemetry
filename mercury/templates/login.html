@@ -12,6 +12,9 @@
             <br>
             <h1>NYU Motorsports Telemetry</h1>
             <br>
+            {% if no_session_message %}
+            <p>{{ no_session_message }}</p>
+            {%  endif %}
             <form method="post" action="{% url 'mercury:EventAccess' %}">
                 {% csrf_token %}
                 {% for message in messages %}

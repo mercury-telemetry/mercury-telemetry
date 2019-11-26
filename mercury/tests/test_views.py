@@ -9,17 +9,17 @@ class TestViews(TestCase):
         self.dashboard_url = "mercury:dashboard"
         self.simulator_url = "mercury:simulator"
 
-    def test_HomePageView_GET(self):
+    def test_HomePageView_GET_fail(self):
         response = self.client.get(reverse(self.index_url))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "index.html")
+        self.assertTemplateUsed(response, "login.html")
 
-    def test_DashboardView_GET(self):
+    def test_DashboardView_GET_fail(self):
         response = self.client.get(reverse(self.dashboard_url))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "dashboard.html")
+        self.assertTemplateUsed(response, "login.html")
 
-    def test_SimulatorView_GET(self):
+    def test_SimulatorView_GET_fail(self):
         response = self.client.get(reverse(self.simulator_url))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "simulator.html")
+        self.assertTemplateUsed(response, "login.html")

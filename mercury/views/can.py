@@ -94,8 +94,16 @@ def post(request, *args, **kwargs):
 
     try:
         sensor = create_and_save_sensor(decoded_data)
-    except KeyError as e:
-        return HttpResponse(json.dumps({"error": e}, status=400))
+    except (KeyError, TypeError):
+        return HttpResponse(
+            json.dumps(
+                {
+                    "error": "Necessary data for the CAN ID type you "
+                    "specified was missing. The data was probably too short."
+                }
+            ),
+            status=400,
+        )
     log.debug("Saving a new instance of {}".format(sensor))
     sensor.save()
     return HttpResponse(json.dumps(decoded_data), status=201)
@@ -106,4 +114,18 @@ class CANUI(TemplateView):
 
     def get(self, request, *args, **kwargs):
         form = CANForm()
-        return render(request, "can.html", {"form": form})
+        if request.session.get("event_code_active") and request.session.get(
+            "event_code_known"
+        ):
+            return render(request, "can.html", {"form": form})
+        else:
+            return render(
+                request,
+                "login.html",
+                context={
+                    "no_session_message": (
+                        "You do not appear to have an "
+                        "active session. Please login again."
+                    )
+                },
+            )
