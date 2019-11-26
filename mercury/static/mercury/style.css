@@ -57,6 +57,26 @@ display: block;
   /*width: 300px;*/
 }
 
+.stopwatch {
+  padding: 15px;
+  font-size: 30px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: var(--light-background);
+}
+
+.results {
+  padding: 15px;
+  font-size: 20px;
+  list-style: none;
+  text-align: center;
+  vertical-align: middle;
+  background-color: var(--light-background);
+}
+
+.stopwatch-wrapper {
+  padding: 10px;
+}
 
 #grafana-panel {
   border-color:var(--light-border);
@@ -94,8 +114,6 @@ display: block;
   background-color: var(--light-accent);
   border-color: var(--light-accent);
 }
-
-
   
 .grafana-btn {
   color: var(--light-text);
@@ -122,28 +140,40 @@ display: block;
   border-color: var(--light-accent);
 }
 
-.grafana-btn-primary {
+.grafana-btn-green {
   color: var(--light-text);
   background-color: var(--light-green);
   border-color: var(--light-green);
 }
 
-.grafana-btn-primary:hover {
+.grafana-btn-green:hover {
   color: var(--button-text-dark);
   background-color: var(--green);
   border-color: var(--green);
 }
 
-.grafana-btn-secondary {
+.grafana-btn-red {
   color: var(--light-text);
   background-color: var(--light-red);
   border-color: var(--light-red);
 }
 
-.grafana-btn-secondary:hover {
+.grafana-btn-red:hover {
   color: var(--button-text-dark);
   background-color: var(--red);
   border-color: var(--red);
+}
+
+.grafana-btn-yellow {
+  color: var(--light-text);
+  background-color: var(--light-yellow);
+  border-color: var(--light-yellow);
+}
+
+.grafana-btn-yellow:hover {
+  color: var(--button-text-dark);
+  background-color: var(--yellow);
+  border-color: var(--yellow);
 }
 
 /* Base Bootstrap Style Elements */
