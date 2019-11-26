@@ -9,6 +9,20 @@ body {
   text-align: left;
 }
 
+.my-custom-scrollbar {
+position: relative;
+height: 200px;
+overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
 #grafana-base {
   padding-top: 8%;
  
