@@ -17,8 +17,8 @@
           function RedirectCAN() {
               window.location="/can/";
           } 
-          function RedirectTimer() {
-              window.location="/timer/";
+          function RedirectStopwatch() {
+              window.location="/stopwatch/";
           } 
           function newGrafanaWindow() {
               window.open("https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod");
@@ -31,18 +31,18 @@
       <br>
       <h1>NYU Motorsports Telemetry</h1>
       <br>
-      <button onclick="newGrafanaWindow()" class="grafana-btn grafana-btn-primary" style="width: 50%; height: 80px; font-size: larger;"> Telemetry Dashboard</button>
+      <button onclick="newGrafanaWindow()" class="grafana-btn grafana-btn-green" style="width: 50%; height: 80px; font-size: larger;"> Telemetry Dashboard</button>
 
 
       <br>
       <div style="height: 4px;"></div>
-      <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">Simulator</button>
+      <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-red" style="width: 50%; height: 40px; font-size: larger;">Simulator</button>
       <div style="height: 4px;"></div>
-      <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">Raw Telemetry</button>
+      <button onclick="RedirectDashboard();" class="grafana-btn grafana-btn-red" style="width: 50%; height: 40px; font-size: larger;">Raw Telemetry</button>
       <div style="height: 4px;"></div>
-      <button onclick="RedirectCAN();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">CAN Decoder</button>
+      <button onclick="RedirectCAN();" class="grafana-btn grafana-btn-red" style="width: 50%; height: 40px; font-size: larger;">CAN Decoder</button>
       <div style="height: 4px;"></div>
-      <button onclick="RedirectTimer();" class="grafana-btn grafana-btn-secondary" style="width: 50%; height: 40px; font-size: larger;">Lap Timer</button>
+      <button onclick="RedirectStopwatch();" class="grafana-btn grafana-btn-red" style="width: 50%; height: 40px; font-size: larger;">Stopwatch</button>
       <br><br>
     </div>
   </div>

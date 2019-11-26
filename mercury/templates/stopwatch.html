@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mercury Stopwatch</title>
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/stopwatch.js" %}"></script>
+    </head>
+    <body>
+        {% include 'banner.html' %}
+        <div id="grafana-base">
+            <div id="grafana-panel">
+                <h1>Stopwatch</h1>
+                <nav class="controls stopwatch-wrapper">
+                    <a class="grafana-btn grafana-btn-green" onClick="stopwatch.start();">Start</a>
+                    <a class="grafana-btn grafana-btn-red" onClick="stopwatch.stop();">Stop</a>
+                    <a class="grafana-btn" onClick="stopwatch.lap();">Lap</a>
+                    <a class="grafana-btn" onClick="stopwatch.reset();">Reset</a>
+                </nav>
+                <div class="stopwatch-wrapper"><div class="stopwatch"></div></div>
+                <div class="stopwatch-wrapper"><div class="results"></div></div>
+            </div>
+        </div>
+    </body>
+</html>
