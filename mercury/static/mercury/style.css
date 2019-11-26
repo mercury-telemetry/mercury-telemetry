@@ -9,8 +9,23 @@ body {
   text-align: left;
 }
 
+.my-custom-scrollbar {
+position: relative;
+height: 200px;
+overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
 #grafana-base {
   padding-top: 8%;
+ 
 }
 
 #main-sim-panel {
@@ -384,9 +399,32 @@ body {
     vertical-align: middle;
   }
   
-  table {
+  table{
     border-collapse: collapse;
+    border: 1px solid black;
+    width: 600px;
+    height: 400px; 
+    overflow: 400px; 
+  
   }
+
+  td {
+    border: 1px solid black;
+    text-align: center; 
+  }
+
+  th{
+    border: 1px solid black;
+    width: 30px; 
+    text-align: center; 
+  }
+
+  tr{
+    border: 1px solid black;
+    text-align: center; 
+  }
+  
+  
   
   caption {
     padding-top: 0.75rem;
@@ -396,9 +434,7 @@ body {
     caption-side: bottom;
   }
   
-  th {
-    text-align: inherit;
-  }
+  
   
   label {
     display: inline-block;

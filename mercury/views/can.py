@@ -2,7 +2,13 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 import logging
-from mercury.can import CANDecoder, InvalidBitException, MessageLengthException
+from mercury.can import (
+    CANDecoder,
+    InvalidBitException,
+    MessageLengthException,
+    BadInputException,
+    NoMoreBitsException,
+)
 from mercury.can_map import CANMapper
 from ..forms import CANForm
 from django.shortcuts import render
@@ -72,22 +78,24 @@ def post(request, *args, **kwargs):
     else:
         # origin is the api
         if not request.body:
-            """Return 400 Bad Request if no CAN message is received"""
-            return HttpResponse(status=400)
+            return HttpResponse(
+                json.dumps({"error": "Request body is empty"}), status=400
+            )
         can_msg = request.body
     try:
         decoder = CANDecoder(can_msg)
-    except MessageLengthException as e:
-        return HttpResponse(e.error, status=400)
+    except (MessageLengthException, BadInputException) as e:
+        return HttpResponse(json.dumps(e.error), status=400)
 
     try:
         decoded_data = decoder.decode_can_message()
-    except InvalidBitException as e:
-        return HttpResponse(e.error, status=400)
+    except (InvalidBitException, NoMoreBitsException) as e:
+        return HttpResponse(json.dumps(e.error), status=400)
+
     try:
         sensor = create_and_save_sensor(decoded_data)
     except KeyError as e:
-        return HttpResponse(f"Missing data for {e}", status=400)
+        return HttpResponse(json.dumps({"error": e}, status=400))
     log.debug("Saving a new instance of {}".format(sensor))
     sensor.save()
     return HttpResponse(json.dumps(decoded_data), status=201)

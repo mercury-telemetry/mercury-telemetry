@@ -4,6 +4,7 @@ $(function () {
     let buttonpressed_temp;
     let interval_var_temp;
     let button_counter_temp=0;
+    let timeOut = 5*60*1000;
     $('.submitbutton_temp,.submitbutton_all').click(function () {
         buttonpressed_temp = $(this).attr('name')
     });
@@ -14,6 +15,7 @@ $(function () {
             create_post_temp();
             button_counter_temp =1;
             interval_var_temp = setInterval(create_post_temp, 2000);
+            setTimeout(clear_interval_temp,timeOut);
         }else if (buttonpressed_temp == "Once") {
             console.log("Temperature Submit Once button was pressed.");
             if (interval_var_temp) {
@@ -29,6 +31,13 @@ $(function () {
             }
         }
     });
+
+    function clear_interval_temp(){
+        if(interval_var_temp){
+            clearInterval(interval_var_temp);
+            button_counter_temp = 0;
+        }
+    }
 
     function create_post_temp() {
         console.log("Entered create_post_temp() temperature function.");
@@ -71,6 +80,7 @@ $(function () {
             create_post_accel();
             button_counter_accel =1;
             interval_var_accel = setInterval(create_post_accel, 2000);
+            setTimeout(clear_interval_accel,timeOut);
         }else if (buttonpressed_accel == "Once") {
             console.log("Acceleration Submit Once button was pressed.");
             if (interval_var_accel) {
@@ -120,6 +130,13 @@ $(function () {
             }
         });
     }
+
+    function clear_interval_accel(){
+        if(interval_var_accel){
+            clearInterval(interval_var_accel);
+            button_counter_accel = 0;
+        }
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////WheelSpeed Sensor////////////////////////////////////////
     let button_counter_ws=0;
@@ -135,6 +152,7 @@ $(function () {
             create_post_ws();
             button_counter_ws =1;
             interval_var_ws = setInterval(create_post_ws, 2000);
+            setTimeout(clear_interval_ws, timeOut);
         }else if (buttonpressed_ws == "Once") {
             console.log("Wheel Speed Submit Once button was pressed.");
             if (interval_var_ws) {
@@ -186,6 +204,13 @@ $(function () {
             }
         });
     }
+
+    function clear_interval_ws(){
+        if(interval_var_ws){
+            clearInterval(interval_var_ws);
+            button_counter_ws = 0;
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////Suspension Sensor////////////////////////////////////////
     let button_counter_ss=0;
@@ -201,6 +226,7 @@ $(function () {
             create_post_ss();
             button_counter_ss =1;
             interval_var_ss = setInterval(create_post_ss, 2000);
+            setTimeout(clear_interval_ss,timeOut);
         }else if (buttonpressed_ss == "Once") {
             console.log("Suspension Submit Once button was pressed.");
             if (interval_var_ss) {
@@ -252,6 +278,13 @@ $(function () {
             }
         });
     }
+
+    function clear_interval_ss(){
+        if(interval_var_ss){
+            clearInterval(interval_var_ss);
+            button_counter_ss = 0;
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////
     // ////////////////////////////////////////////////////Fuel Level Sensor////////////////////////////////////////
     let button_counter_fl=0;
@@ -267,6 +300,7 @@ $(function () {
             create_post_fl();
             button_counter_fl =1;
             interval_var_fl = setInterval(create_post_fl, 2000);
+            setTimeout(clear_interval_fl,timeOut);
         }else if (buttonpressed_fl == "Once") {
             console.log("Fuel Level Submit Once button was pressed.");
             if (interval_var_fl) {
@@ -315,6 +349,13 @@ $(function () {
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
+    }
+
+    function clear_interval_fl(){
+        if(interval_var_fl){
+            clearInterval(interval_var_fl);
+            button_counter_fl = 0;
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
     // This function returns current date time in the format "yyyy-mm-dd hh:min:ss"

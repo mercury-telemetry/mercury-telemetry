@@ -9,104 +9,159 @@
     </head>
     <body>
         {% include 'banner.html' %}
-        <h1>Dashboard</h1>
-        <h3>The Simulated Data for each snapshot</h3>
-        <div>
-            <table id="temp_dash" style="border: 1px solid black">
+        <div id="grafana-base">
+            <div align="center">
+                <h1>Dashboard</h1>
                 <br>
-                <tr>
-                    <th>ID</th>
-                    <th>Time</th>
-                    <th>Temperature</th>
-                </tr>
-                {% for item in temp_data %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.created_at }}</td>
-                        <td>{{ item.temperature }}</td>
-                    </tr>
-                {%  endfor %}
-            </table>
-            <br>
-            <table id="accel_dash" style="border: 1px solid black">
-                <br>
-                <tr>
-                    <th>ID</th>
-                    <th>Time</th>
-                    <th>X-axis accel</th>
-                    <th>Y-axis accel</th>
-                    <th>Z-axis accel</th>
-                </tr>
-                {% for item in accel_data %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.created_at }}</td>
-                        <td>{{ item.acceleration_x }}</td>
-                        <td>{{ item.acceleration_y }}</td>
-                        <td>{{ item.acceleration_z }}</td>
-                    </tr>
-                {%  endfor %}
-            </table>
-            <br>
-            <table id="ws_dash" style="border: 1px solid black">
-                <br>
-                <tr>
-                    <th>ID</th>
-                    <th>Time</th>
-                    <th>FR speed</th>
-                    <th>FL speed</th>
-                    <th>BR speed</th>
-                    <th>BL speed</th>
-                </tr>
-                {% for item in ws_data %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.created_at }}</td>
-                        <td>{{ item.wheel_speed_fr }}</td>
-                        <td>{{ item.wheel_speed_fl }}</td>
-                        <td>{{ item.wheel_speed_br }}</td>
-                        <td>{{ item.wheel_speed_bl }}</td>
-                    </tr>
-                {%  endfor %}
-            </table>
-            <br>
-            <table id="ss_dash" style="border: 1px solid black">
-                <br>
-                <tr>
-                    <th>ID</th>
-                    <th>Time</th>
-                    <th>FR susp</th>
-                    <th>FL susp</th>
-                    <th>BR susp</th>
-                    <th>BL susp</th>
-                </tr>
-                {% for item in ss_data %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.created_at }}</td>
-                        <td>{{ item.suspension_fr }}</td>
-                        <td>{{ item.suspension_fl }}</td>
-                        <td>{{ item.suspension_br }}</td>
-                        <td>{{ item.suspension_bl }}</td>
-                    </tr>
-                {%  endfor %}
-            </table>
-            <br>
-            <table id="fl_dash" style="border: 1px solid black">
-                <br>
-                <tr>
-                    <th>ID</th>
-                    <th>Time</th>
-                    <th>Fuel Level</th>
-                </tr>
-                {% for item in fl_data %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.created_at }}</td>
-                        <td>{{ item.current_fuel_level }}</td>
-                    </tr>
-                {%  endfor %}
-            </table>
+                <h2>Simulated Data for each Snapshot</h2>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 mb-6">
+                    <div class="sim-panel">
+                        <h4>Temperature</h4>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead>
+                                <tr bgcolor="#e0efdf">
+                                    <th>ID</th>
+                                    <th>Time</th>
+                                    <th>Temperature</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in temp_data %}
+                                    <tr>
+                                        <th>{{ item.id }}</th>
+                                        <td>{{ item.created_at }}</td>
+                                        <td>{{ item.temperature }}</td>
+                                    </tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="sim-panel">
+                        <h4>Acceleration</h4>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead>
+                                <tr bgcolor="#e0efdf">
+                                    <th>ID</th>
+                                    <th>Time</th>
+                                    <th>X-axis accel</th>
+                                    <th>Y-axis accel</th>
+                                    <th>Z-axis accel</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in accel_data %}
+                                    <tr>
+                                        <th>{{ item.id }}</th>
+                                        <td>{{ item.created_at }}</td>
+                                        <td>{{ item.acceleration_x }}</td>
+                                        <td>{{ item.acceleration_y }}</td>
+                                        <td>{{ item.acceleration_z }}</td>
+                                    </tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 mb-6">
+                    <div class="sim-panel">
+                        <h4>Wheel Speed</h4>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead>
+                                <tr bgcolor="#e0efdf">
+                                    <th>ID</th>
+                                    <th>Time</th>
+                                    <th>FR speed</th>
+                                    <th>FL speed</th>
+                                    <th>BR speed</th>
+                                    <th>BL speed</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in ws_data %}
+                                    <tr>
+                                        <th>{{ item.id }}</th>
+                                        <td>{{ item.created_at }}</td>
+                                        <td>{{ item.wheel_speed_fr }}</td>
+                                        <td>{{ item.wheel_speed_fl }}</td>
+                                        <td>{{ item.wheel_speed_br }}</td>
+                                        <td>{{ item.wheel_speed_bl }}</td>
+                                    </tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="sim-panel">
+                        <h4>Suspension</h4>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead>
+                                <tr bgcolor="#e0efdf">
+                                    <th >ID</th>
+                                    <th>Time</th>
+                                    <th>FR susp</th>
+                                    <th>FL susp</th>
+                                    <th>BR susp</th>
+                                    <th>BL susp</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in ss_data %}
+                                    <tr>
+                                        <th>{{ item.id }}</th>
+                                        <td>{{ item.created_at }}</td>
+                                        <td>{{ item.suspension_fr }}</td>
+                                        <td>{{ item.suspension_fl }}</td>
+                                        <td>{{ item.suspension_br }}</td>
+                                        <td>{{ item.suspension_bl }}</td>
+                                    </tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <div class="row" align="center">
+                <div class="col-lg-6 col-md-6 mb-6 col-centered">
+                    <div class="sim-panel">
+                        <h4>Fuel Level</h4>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead>
+                                <tr bgcolor="#e0efdf">
+                                    <th>ID</th>
+                                    <th>Time</th>
+                                    <th>Fuel Level</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in fl_data %}
+                                    <tr>
+                                        <th>{{ item.id }}</th>
+                                        <td>{{ item.created_at }}</td>
+                                        <td>{{ item.current_fuel_level }}</td>
+                                    </tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br><br>
+            </div>
         </div>
     </body>
 </html>
