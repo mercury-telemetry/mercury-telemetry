@@ -7,31 +7,40 @@
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
     </head>
-    <body> <center>
+    <body>
         {% include 'banner.html' %}
         <h1>Dashboard</h1>
         <h2>The Simulated Data for each snapshot</h2>
-        <div><br>
-                <h3>Temperature</h3>
-            <table>
-                <br>
+        <div>
+        <br>
+        <h3>Temperature</h3>
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
                 <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
                     <th>Temperature</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for item in temp_data %}
                     <tr>
-                        <td>{{ item.id }}</td>
+                        <th>{{ item.id }}</th>
                         <td>{{ item.created_at }}</td>
                         <td>{{ item.temperature }}</td>
                     </tr>
                 {%  endfor %}
-            </table><br><br>
-            <br>
+                </tbody>
+            </table>
+        </div>
+
+            <br><br>
+
             <h3>Acceleration</h3>
-            <table>
-                <br>
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered table-striped mb-0">
+
                 <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
@@ -49,6 +58,7 @@
                     </tr>
                 {%  endfor %}
             </table><br><br>
+
             <br>
             <h3>Wheel Speed</h3>
             <table>
@@ -113,5 +123,5 @@
                 {%  endfor %}
             </table>
         </div>
-    </body></center>
+    </body>
 </html>
