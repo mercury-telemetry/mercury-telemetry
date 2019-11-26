@@ -40,7 +40,7 @@
             <h3>Acceleration</h3>
         <div class="table-wrapper-scroll-y my-custom-scrollbar">
             <table class="table table-bordered table-striped mb-0">
-
+                <thead>
                 <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
@@ -48,21 +48,26 @@
                     <th>Y-axis accel</th>
                     <th>Z-axis accel</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for item in accel_data %}
                     <tr>
-                        <td>{{ item.id }}</td>
+                        <th>{{ item.id }}</th>
                         <td>{{ item.created_at }}</td>
                         <td>{{ item.acceleration_x }}</td>
                         <td>{{ item.acceleration_y }}</td>
                         <td>{{ item.acceleration_z }}</td>
                     </tr>
                 {%  endfor %}
-            </table><br><br>
+                </tbody>
+            </table>
+        </div>
 
-            <br>
-            <h3>Wheel Speed</h3>
-            <table>
-                <br>
+            <br><br><br>
+        <h3>Wheel Speed</h3>
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
                 <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
@@ -71,9 +76,11 @@
                     <th>BR speed</th>
                     <th>BL speed</th>
                 </tr>
+                </thead>
+                <tbody><
                 {% for item in ws_data %}
                     <tr>
-                        <td>{{ item.id }}</td>
+                        <th>{{ item.id }}</th>
                         <td>{{ item.created_at }}</td>
                         <td>{{ item.wheel_speed_fr }}</td>
                         <td>{{ item.wheel_speed_fl }}</td>
@@ -81,11 +88,16 @@
                         <td>{{ item.wheel_speed_bl }}</td>
                     </tr>
                 {%  endfor %}
+                </tbody>
             </table>
+        </div>
+
             <br><br><br>
-            <h3>Suspension</h3>
-            <table>
-                <br>
+
+        <h3>Suspension</h3>
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
                 <tr bgcolor="#e0efdf">
                     <th >ID</th>
                     <th>Time</th>
@@ -94,9 +106,11 @@
                     <th>BR susp</th>
                     <th>BL susp</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for item in ss_data %}
                     <tr>
-                        <td>{{ item.id }}</td>
+                        <th>{{ item.id }}</th>
                         <td>{{ item.created_at }}</td>
                         <td>{{ item.suspension_fr }}</td>
                         <td>{{ item.suspension_fl }}</td>
@@ -104,24 +118,34 @@
                         <td>{{ item.suspension_bl }}</td>
                     </tr>
                 {%  endfor %}
+                </tbody>
             </table>
+        </div>
+
             <br><br><br>
+
+
             <h3>Fuel Level</h3>
-            <table>
-                <br>
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
                 <tr bgcolor="#e0efdf">
                     <th>ID</th>
                     <th>Time</th>
                     <th>Fuel Level</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for item in fl_data %}
                     <tr>
-                        <td>{{ item.id }}</td>
+                        <th>{{ item.id }}</th>
                         <td>{{ item.created_at }}</td>
                         <td>{{ item.current_fuel_level }}</td>
                     </tr>
                 {%  endfor %}
+                </tbody>
             </table>
+        </div>
         </div>
     </body>
 </html>
