@@ -17,6 +17,12 @@ Heroku Staging (develop) URI: [https://nyu-mercury.herokuapp.com](https://nyu-me
 Heroku Dashboard: [https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872](https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872)
 
 
+# First time repo setup
+1. From the root of the repo, run `scripts/setup.sh`. Activate your virtualenv first.
+2. To run the server, run `python manage.py runserver`.
+
+You should now be able to view the site at http://127.0.0.1:8000/
+
 # HOWTO Contribute to this repo
 
 N.B.: `<something>` means you need to change the `something` text within the angle brackets (and do not include the include brackets in your command).

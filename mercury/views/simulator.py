@@ -26,13 +26,27 @@ class SimulatorView(TemplateView):
     def post(self, request, *args, **kwargs):
         """Used by AJAX method in the simulator.js file to save data
         from the simulator UI."""
+        if not (
+            request.session.get("event_code_active")
+            and request.session.get("event_code_known")
+        ):
+            return render(
+                request,
+                "login.html",
+                context={
+                    "no_session_message": (
+                        "You do not appear to have "
+                        "an active session. Please login again."
+                    )
+                },
+            )
 
         if request.POST.get("created_at_temp"):
             post_created_at = request.POST.get("created_at_temp")
             post_temperature = request.POST.get("temperature")
 
             temp_data = TemperatureSensor(
-                created_at=post_created_at, temperature=post_temperature,
+                created_at=post_created_at, temperature=post_temperature
             )
             temp_data.save()
 
@@ -88,7 +102,7 @@ class SimulatorView(TemplateView):
             post_current_fuel_level = request.POST.get("current_fuel_level")
 
             fl_data = FuelLevelSensor(
-                created_at=post_created_at, current_fuel_level=post_current_fuel_level,
+                created_at=post_created_at, current_fuel_level=post_current_fuel_level
             )
             fl_data.save()
 
@@ -110,5 +124,18 @@ class SimulatorView(TemplateView):
             "form_fl": form_fl,
         }
         # context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws}
-
-        return render(request, self.template_name, context)
+        if request.session.get("event_code_active") and request.session.get(
+            "event_code_known"
+        ):
+            return render(request, self.template_name, context)
+        else:
+            return render(
+                request,
+                "login.html",
+                context={
+                    "no_session_message": (
+                        "You do not appear to have an "
+                        "active session. Please login again."
+                    )
+                },
+            )
