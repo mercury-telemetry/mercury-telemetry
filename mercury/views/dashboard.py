@@ -25,13 +25,18 @@ class DashboardView(TemplateView):
             "ss_data": ss_data,
             "fl_data": fl_data,
         }
-        if request.session.get("event_code_active") and request.session.get("event_code_known"):
+        if request.session.get("event_code_active") and request.session.get(
+            "event_code_known"
+        ):
             return render(request, self.template_name, context)
         else:
             return render(
                 request,
                 "login.html",
                 context={
-                    "no_session_message": "You do not appear to have an active session. Please login again."
+                    "no_session_message": (
+                        "You do not appear to have "
+                        "an active session. Please login again."
+                    )
                 },
             )
