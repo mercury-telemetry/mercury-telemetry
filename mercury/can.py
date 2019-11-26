@@ -14,7 +14,10 @@ class InvalidBitException(Exception):
 
 class MessageLengthException(Exception):
     def __init__(self, value, request):
-        error = f"The bit string length of the provided CAN message is {value}, but 128 is the maximum."
+        error = (
+            f"The bit string length of the provided CAN message is {value}, "
+            "but 128 is the maximum."
+        )
         log.error(error)
         self.error = {"error": error, "received_message": request}
 
@@ -28,7 +31,10 @@ class BadInputException(Exception):
 
 class NoMoreBitsException(Exception):
     def __init__(self, request):
-        error = "The CAN Decoder received an input smaller than it expected and ran out of bits to process."
+        error = (
+            "The CAN Decoder received an input smaller than it "
+            "expected and ran out of bits to process."
+        )
         log.error(error)
         self.error = {"error": error, "received_message": request}
 
@@ -55,7 +61,8 @@ class CANDecoder:
                     self.message = bin(int(self.message))
                 except ValueError:
                     raise BadInputException(
-                        "Invalid input detected. Please review the CAN message protocol format to ensure conformity.",
+                        "Invalid input detected. Please review the CAN "
+                        "message protocol format to ensure conformity.",
                         self.original_message,
                     )
         elif type(self.message) is int:
