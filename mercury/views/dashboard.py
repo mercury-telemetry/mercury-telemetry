@@ -33,6 +33,11 @@ class DashboardView(TemplateView):
         ):
             return render(request, self.template_name, context)
         else:
-            messages.error(request, ("You do not have an active session. "
-                                     "Please submit the active event code."))
+            messages.error(
+                request,
+                (
+                    "You do not have an active session. "
+                    "Please submit the active event code."
+                ),
+            )
             return HttpResponseRedirect(reverse("mercury:EventAccess"))
