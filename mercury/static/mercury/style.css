@@ -176,6 +176,9 @@ display: block;
   border-color: var(--yellow);
 }
 
+.error {
+    color: var(--red)
+}
 /* Base Bootstrap Style Elements */
 
  :root {
