@@ -1,6 +1,9 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 import logging
 from mercury.can import (
     CANDecoder,
@@ -119,13 +122,6 @@ class CANUI(TemplateView):
         ):
             return render(request, "can.html", {"form": form})
         else:
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have an "
-                        "active session. Please login again."
-                    )
-                },
-            )
+            messages.error(request, ("You do not have an active session. "
+                                     "Please submit the active event code."))
+            return HttpResponseRedirect(reverse("mercury:EventAccess"))

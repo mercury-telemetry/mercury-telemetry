@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from mercury.models import (
     TemperatureSensor,
     AccelerationSensor,
@@ -30,13 +33,6 @@ class DashboardView(TemplateView):
         ):
             return render(request, self.template_name, context)
         else:
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have "
-                        "an active session. Please login again."
-                    )
-                },
-            )
+            messages.error(request, ("You do not have an active session. "
+                                     "Please submit the active event code."))
+            return HttpResponseRedirect(reverse("mercury:EventAccess"))

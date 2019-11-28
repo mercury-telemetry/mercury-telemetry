@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib import messages
+from django.urls import reverse
 
 from ..forms import (
     TemperatureForm,
@@ -30,16 +32,9 @@ class SimulatorView(TemplateView):
             request.session.get("event_code_active")
             and request.session.get("event_code_known")
         ):
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have "
-                        "an active session. Please login again."
-                    )
-                },
-            )
+            messages.error(request, ("You do not have an active session. "
+                                     "Please submit the active event code."))
+            return HttpResponseRedirect(reverse("mercury:EventAccess"))
 
         if request.POST.get("created_at_temp"):
             post_created_at = request.POST.get("created_at_temp")
@@ -129,13 +124,6 @@ class SimulatorView(TemplateView):
         ):
             return render(request, self.template_name, context)
         else:
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have an "
-                        "active session. Please login again."
-                    )
-                },
-            )
+            messages.error(request, ("You do not have an active session. "
+                                     "Please submit the active event code."))
+            return HttpResponseRedirect(reverse("mercury:EventAccess"))
