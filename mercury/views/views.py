@@ -3,10 +3,12 @@ from django.views.generic import TemplateView
 from mercury.models import EventCodeAccess
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.urls import reverse
+
 import logging
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.ERROR)
 
 
 class HomePageView(TemplateView):
@@ -16,20 +18,24 @@ class HomePageView(TemplateView):
         ):
             return render(request, "index.html", context=None)
         else:
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have an "
-                        "active session. Please login again."
-                    )
-                },
-            )
+            return HttpResponseRedirect(reverse("mercury:EventAccess"))
+
+
+class Logout(TemplateView):
+    def get(self, request, *args, **kwargs):
+        items = ["event_code_known", "event_code_active"]
+        for item in items:
+            try:
+                del request.session[item]
+            except:  # noqa E722
+                pass
+        return HttpResponseRedirect(reverse("mercury:EventAccess"))
 
 
 class EventAccess(TemplateView):
     def post(self, request, *args, **kwargs):
+        """This method checks the submitted event code to see if it matches
+        the latest (ongoing) event"""
         event_code = request.POST.get("eventcode")
         event_code_objects = EventCodeAccess.objects.filter(
             event_code=event_code, enabled=True
@@ -38,14 +44,19 @@ class EventAccess(TemplateView):
             request.session["event_code_known"] = True
             return HttpResponseRedirect("index")
         else:
-            messages.error(request, "Invalid Event Code")
-            return HttpResponseRedirect("/")
+            messages.error(request, f"Event Code '{event_code}' is invalid!")
+            return HttpResponseRedirect(reverse("mercury:EventAccess"))
 
     def get(self, request, **kwargs):
-        log.debug(dir(request.session))
+        """This method checks for an active (enabled) event and directs the user
+        to the login page if an event is ongoing. Otherwise, the user is sent
+        to the main page."""
         event_code_objects = EventCodeAccess.objects.filter(enabled=True)
         if event_code_objects:
             request.session["event_code_active"] = True
-            return render(request, "login.html", context=None)
+            if request.session.get("event_code_known"):
+                return HttpResponseRedirect("index")
+            else:
+                return render(request, "login.html", context={"active_event": True})
         else:
-            return render(request, "index.html", context=None)
+            return HttpResponseRedirect("index")
