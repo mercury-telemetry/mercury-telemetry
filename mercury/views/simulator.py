@@ -1,16 +1,9 @@
+import datetime
+
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib import messages
-from django.urls import reverse
 
-from ..forms import (
-    TemperatureForm,
-    AccelerationForm,
-    WheelSpeedForm,
-    SuspensionForm,
-    FuelLevelForm,
-)
 from mercury.models import (
     TemperatureSensor,
     AccelerationSensor,
@@ -18,29 +11,23 @@ from mercury.models import (
     SuspensionSensor,
     FuelLevelSensor,
 )
-
-import datetime
+from ..event_check import require_event_code
+from ..forms import (
+    TemperatureForm,
+    AccelerationForm,
+    WheelSpeedForm,
+    SuspensionForm,
+    FuelLevelForm,
+)
 
 
 class SimulatorView(TemplateView):
     template_name = "simulator.html"
 
+    @require_event_code
     def post(self, request, *args, **kwargs):
         """Used by AJAX method in the simulator.js file to save data
         from the simulator UI."""
-        if not (
-            request.session.get("event_code_active")
-            and request.session.get("event_code_known")
-        ):
-            messages.error(
-                request,
-                (
-                    "You do not have an active session. "
-                    "Please submit the active event code."
-                ),
-            )
-            return HttpResponseRedirect(reverse("mercury:EventAccess"))
-
         if request.POST.get("created_at_temp"):
             post_created_at = request.POST.get("created_at_temp")
             post_temperature = request.POST.get("temperature")
@@ -65,7 +52,6 @@ class SimulatorView(TemplateView):
             accel_data.save()
         #
         if request.POST.get("created_at_ws"):
-
             post_created_at = request.POST.get("created_at_ws")
             post_wheel_speed_fr = request.POST.get("wheel_speed_fr")
             post_wheel_speed_fl = request.POST.get("wheel_speed_fl")
@@ -108,6 +94,7 @@ class SimulatorView(TemplateView):
 
         return HttpResponse(status=201)
 
+    @require_event_code
     def get(self, request, *args, **kwargs):
         """This method will render the Simulator form when GET is used"""
         # form = SimulatorForm(initial={"created_at": datetime.datetime.now()})
@@ -123,17 +110,4 @@ class SimulatorView(TemplateView):
             "form_ss": form_ss,
             "form_fl": form_fl,
         }
-        # context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws}
-        if request.session.get("event_code_active") and request.session.get(
-            "event_code_known"
-        ):
-            return render(request, self.template_name, context)
-        else:
-            messages.error(
-                request,
-                (
-                    "You do not have an active session. "
-                    "Please submit the active event code."
-                ),
-            )
-            return HttpResponseRedirect(reverse("mercury:EventAccess"))
+        return render(request, self.template_name, context)

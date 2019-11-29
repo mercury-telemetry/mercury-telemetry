@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+
 from mercury.models import (
     TemperatureSensor,
     AccelerationSensor,
@@ -10,11 +8,13 @@ from mercury.models import (
     SuspensionSensor,
     FuelLevelSensor,
 )
+from ..event_check import require_event_code
 
 
 class DashboardView(TemplateView):
     template_name = "dashboard.html"
 
+    @require_event_code
     def get(self, request, *args, **kwargs):
         temp_data = TemperatureSensor.objects.all().order_by("-created_at")
         accel_data = AccelerationSensor.objects.all().order_by("-created_at")
@@ -28,16 +28,4 @@ class DashboardView(TemplateView):
             "ss_data": ss_data,
             "fl_data": fl_data,
         }
-        if request.session.get("event_code_active") and request.session.get(
-            "event_code_known"
-        ):
-            return render(request, self.template_name, context)
-        else:
-            messages.error(
-                request,
-                (
-                    "You do not have an active session. "
-                    "Please submit the active event code."
-                ),
-            )
-            return HttpResponseRedirect(reverse("mercury:EventAccess"))
+        return render(request, self.template_name, context)

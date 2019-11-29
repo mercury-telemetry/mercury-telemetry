@@ -1,10 +1,12 @@
+import datetime
+import json
+import logging
+
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-import logging
+
 from mercury.can import (
     CANDecoder,
     InvalidBitException,
@@ -13,10 +15,8 @@ from mercury.can import (
     NoMoreBitsException,
 )
 from mercury.can_map import CANMapper
+from ..event_check import require_event_code
 from ..forms import CANForm
-from django.shortcuts import render
-import json
-import datetime
 from ..models import (
     TemperatureSensor,
     AccelerationSensor,
@@ -24,7 +24,6 @@ from ..models import (
     SuspensionSensor,
     FuelLevelSensor,
 )
-
 
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
@@ -115,18 +114,7 @@ def post(request, *args, **kwargs):
 class CANUI(TemplateView):
     template_name = "can.html"
 
+    @require_event_code
     def get(self, request, *args, **kwargs):
         form = CANForm()
-        if request.session.get("event_code_active") and request.session.get(
-            "event_code_known"
-        ):
-            return render(request, "can.html", {"form": form})
-        else:
-            messages.error(
-                request,
-                (
-                    "You do not have an active session. "
-                    "Please submit the active event code."
-                ),
-            )
-            return HttpResponseRedirect(reverse("mercury:EventAccess"))
+        return render(request, "can.html", {"form": form})

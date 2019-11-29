@@ -1,24 +1,22 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
-from mercury.models import EventCodeAccess
-from django.http import HttpResponseRedirect
-from django.contrib import messages
-from django.urls import reverse
-
 import logging
+
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import reverse
+from django.views.generic import TemplateView
+
+from mercury.models import EventCodeAccess
+from ..event_check import require_event_code
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
 class HomePageView(TemplateView):
+    @require_event_code
     def get(self, request, **kwargs):
-        if request.session.get("event_code_active") and request.session.get(
-            "event_code_known"
-        ):
-            return render(request, "index.html", context=None)
-        else:
-            return HttpResponseRedirect(reverse("mercury:EventAccess"))
+        return render(request, "index.html", context=None)
 
 
 class Logout(TemplateView):
