@@ -44,6 +44,7 @@ class EventAccess(TemplateView):
             request.session["event_code_known"] = True
             return HttpResponseRedirect("index")
         else:
+            request.session["event_code_known"] = False
             messages.error(request, f"Event Code '{event_code}' is invalid!")
             return HttpResponseRedirect(reverse("mercury:EventAccess"))
 
