@@ -1,32 +1,36 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
-	<div class="container">
+    <img src="https://yt3.ggpht.com/-RZYi5isxH_M/AAAAAAAAAAI/AAAAAAAAAAA/rmWpoe2qZzI/s900-c-k-no/photo.jpg"
+         style="margin-left:5px" width="40" height="40">
+    <div class="container">
         <a class="navbar-brand" href="{% url 'mercury:index' %}">
-          NYU Motorsports Telemetry
+            NYU Motorsports Telemetry
         </a>
-		<div class="container">
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="{% url 'mercury:index' %}">Home</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{% url 'mercury:simulator' %}">Simulator</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod?orgId=1&refresh=5s" target="_blank">Dashboard</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
-				</li>
+        <div class="container">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mercury:index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mercury:simulator' %}">Simulator</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod?orgId=1&refresh=5s"
+                       target="_blank">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'mercury:logout' %}">Logout</a>
                 </li>
             </ul>
-		</div>
-	</div>
+        </div>
+    </div>
 </nav>
