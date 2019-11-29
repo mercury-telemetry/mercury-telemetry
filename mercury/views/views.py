@@ -59,4 +59,5 @@ class EventAccess(TemplateView):
             else:
                 return render(request, "login.html", context={"active_event": True})
         else:
+            request.session["event_code_active"] = False
             return HttpResponseRedirect("index")
