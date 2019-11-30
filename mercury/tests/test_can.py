@@ -5,7 +5,7 @@ from mercury.can import (
     InvalidBitException,
     MessageLengthException,
     NoMoreBitsException,
-    BadInputException
+    BadInputException,
 )
 from mercury.can_map import CANMapper
 from mercury.models import (
@@ -38,8 +38,7 @@ class TestCANSensorIdentification(TestCase):
         verified by a human to meet the implementation requirements of the CAN decoder
         and mapping to Sensors."""
         self.temp_data = CANDecoder(
-            0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000
-            # noqa E501
+            0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000  # noqa E501
         ).decode_can_message()
         self.accel_data = CANDecoder(
             0b1000000000100000001000000010000000000000001110000000000
@@ -103,8 +102,7 @@ class TestCANExceptions(TestCase):
     def test_msg_length_exception(self):
         with self.assertRaises(MessageLengthException):
             CANDecoder(
-                0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000000000000000000000000000
-                # noqa E501
+                0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000000000000000000000000000  # noqa E501
             )
 
     def test_invalid_bit_crc(self):
