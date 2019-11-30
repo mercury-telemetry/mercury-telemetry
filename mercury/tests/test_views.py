@@ -32,6 +32,7 @@ class TestViewsWithActiveEvent(TestCase):
     def test_HomePageView_GET_fail(self):
         response, session = self._get_without_known_code(self.index_url)
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(False, session["event_code_known"])
 
@@ -44,6 +45,7 @@ class TestViewsWithActiveEvent(TestCase):
     def test_DashboardView_GET_fail(self):
         response, session = self._get_without_known_code(self.dashboard_url)
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(False, session["event_code_known"])
 
@@ -56,6 +58,7 @@ class TestViewsWithActiveEvent(TestCase):
     def test_SimulatorView_GET_fail(self):
         response, session = self._get_without_known_code(self.simulator_url)
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(False, session["event_code_known"])
 
@@ -68,6 +71,7 @@ class TestViewsWithActiveEvent(TestCase):
     def test_CAN_GET_fail(self):
         response, session = self._get_without_known_code(self.can_url)
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(False, session["event_code_known"])
 
@@ -80,6 +84,7 @@ class TestViewsWithActiveEvent(TestCase):
     def test_StopWatch_GET_fail(self):
         response, session = self._get_without_known_code(self.stopwatch_url)
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(False, session["event_code_known"])
 
@@ -143,6 +148,7 @@ class TestLogout(TestCase):
     def test_logout_after_login(self):
         response, session = self._get_with_known_code(self.logout_url)
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertNotIn("event_code_active", session)
         self.assertNotIn("event_code_known", session)
 
@@ -150,5 +156,33 @@ class TestLogout(TestCase):
         response = self.client.get(reverse(self.logout_url))
         session = self.client.session
         self.assertEqual(302, response.status_code)
+        self.assertEqual("/", response.url)
         self.assertNotIn("event_code_active", session)
         self.assertNotIn("event_code_known", session)
+
+
+class TestEventAccessDisabled(TestCase):
+    def setUp(self):
+        self.login_url = "mercury:EventAccess"
+        test_code = EventCodeAccess(event_code="testcode", enabled=False)
+        test_code.save()
+
+    def test_active_event_get(self):
+        response = self.client.get(reverse(self.login_url))
+        session = self.client.session
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(False, session["event_code_active"])
+
+
+class TestEventAlreadyLoggedIn(TestCase):
+    def setUp(self):
+        self.login_url = "mercury:EventAccess"
+        test_code = EventCodeAccess(event_code="testcode", enabled=True)
+        test_code.save()
+
+    def test_bypass_login(self):
+        self.client.get(reverse(self.login_url))
+        self.client.post(reverse(self.login_url), data={"eventcode": "testcode"})
+        response = self.client.get(reverse(self.login_url))
+        self.assertEqual(302, response.status_code)
+        self.assertEqual("index", response.url)
