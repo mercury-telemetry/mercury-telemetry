@@ -88,3 +88,38 @@ class TestViewsWithActiveEvent(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(True, session["event_code_known"])
+
+
+class TestViewsWithoutActiveEvent(TestCase):
+    def setUp(self):
+        self.index_url = "mercury:index"
+        self.login_url = "mercury:EventAccess"
+        self.dashboard_url = "mercury:dashboard"
+        self.simulator_url = "mercury:simulator"
+        self.can_url = "mercury:can-ui"
+        self.stopwatch_url = "mercury:stopwatch"
+
+    def test_HomePageView_GET(self):
+        response = self.client.get(reverse(self.index_url))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed("index.html")
+
+    def test_DashboardView_GET(self):
+        response = self.client.get(reverse(self.dashboard_url))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed("dashboard.html")
+
+    def test_SimulatorView_GET(self):
+        response = self.client.get(reverse(self.simulator_url))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed("simulator.html")
+
+    def test_CAN_GET(self):
+        response = self.client.get(reverse(self.can_url))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed("can.html")
+
+    def test_StopWatch_GET(self):
+        response = self.client.get(reverse(self.stopwatch_url))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed("stopwatch.html")
