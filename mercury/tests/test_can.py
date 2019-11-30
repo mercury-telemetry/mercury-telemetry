@@ -1,5 +1,12 @@
 from django.test import TestCase
-from mercury.can import CANDecoder, InvalidBitException, MessageLengthException
+
+from mercury.can import (
+    CANDecoder,
+    InvalidBitException,
+    MessageLengthException,
+    NoMoreBitsException,
+    BadInputException
+)
 from mercury.can_map import CANMapper
 from mercury.models import (
     TemperatureSensor,
@@ -31,7 +38,8 @@ class TestCANSensorIdentification(TestCase):
         verified by a human to meet the implementation requirements of the CAN decoder
         and mapping to Sensors."""
         self.temp_data = CANDecoder(
-            0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000  # noqa E501
+            0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000
+            # noqa E501
         ).decode_can_message()
         self.accel_data = CANDecoder(
             0b1000000000100000001000000010000000000000001110000000000
@@ -95,7 +103,8 @@ class TestCANExceptions(TestCase):
     def test_msg_length_exception(self):
         with self.assertRaises(MessageLengthException):
             CANDecoder(
-                0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000000000000000000000000000  # noqa E501
+                0b100000000001000100000000001000000010000000100000001000000010000000100000001000000010000000000000001110000000000000000000000000000000000
+                # noqa E501
             )
 
     def test_invalid_bit_crc(self):
@@ -115,3 +124,12 @@ class TestCANExceptions(TestCase):
     def test_value_error_for_int_as_str_caught(self):
         temp_data = CANDecoder("9459720945368167357440")
         self.assertTrue(isinstance(temp_data, CANDecoder))
+
+    def test_too_short_message(self):
+        temp_data = CANDecoder(0b1000000001010000001000000010000000000000001110000000)
+        with self.assertRaises(NoMoreBitsException):
+            temp_data.decode_can_message()
+
+    def test_bad_input_raises_exception(self):
+        with self.assertRaises(BadInputException):
+            CANDecoder("thisisbadCANdata")
