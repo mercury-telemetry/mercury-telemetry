@@ -8,27 +8,27 @@
         <div class="container">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mercury:index' %}">Home</a>
+                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:index' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mercury:simulator' %}">Simulator</a>
+                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:simulator' %}">Simulator</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
+                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"
-                       href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod?orgId=1&refresh=5s"
+                    <a class="nav-link grafana-btn grafana-btn-green"
+                       href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s"
                        target="_blank">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
+                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
+                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mercury:logout' %}">Logout</a>
+                    <a class="nav-link grafana-btn grafana-btn-red" href="{% url 'mercury:logout' %}">Logout</a>
                 </li>
             </ul>
         </div>
