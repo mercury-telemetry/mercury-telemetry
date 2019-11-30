@@ -50,7 +50,7 @@ class SimulatorView(TemplateView):
                 acceleration_z=post_acceleration_z,
             )
             accel_data.save()
-        #
+
         if request.POST.get("created_at_ws"):
             post_created_at = request.POST.get("created_at_ws")
             post_wheel_speed_fr = request.POST.get("wheel_speed_fr")
@@ -96,13 +96,15 @@ class SimulatorView(TemplateView):
 
     @require_event_code
     def get(self, request, *args, **kwargs):
-        """This method will render the Simulator form when GET is used"""
-        # form = SimulatorForm(initial={"created_at": datetime.datetime.now()})
-        form_temp = TemperatureForm(initial={"created_at": datetime.datetime.now()})
-        form_accel = AccelerationForm(initial={"created_at": datetime.datetime.now()})
-        form_ws = WheelSpeedForm(initial={"created_at": datetime.datetime.now()})
-        form_ss = SuspensionForm(initial={"created_at": datetime.datetime.now()})
-        form_fl = FuelLevelForm(initial={"created_at": datetime.datetime.now()})
+        """This method will render the Simulator form when the
+        HTTP GET method is used."""
+        now = datetime.datetime.now()
+        initial_data = {"created_at": now}
+        form_temp = TemperatureForm(initial=initial_data)
+        form_accel = AccelerationForm(initial=initial_data)
+        form_ws = WheelSpeedForm(initial=initial_data)
+        form_ss = SuspensionForm(initial=initial_data)
+        form_fl = FuelLevelForm(initial=initial_data)
         context = {
             "form_temp": form_temp,
             "form_accel": form_accel,

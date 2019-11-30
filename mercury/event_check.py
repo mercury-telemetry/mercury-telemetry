@@ -5,6 +5,11 @@ from django.urls import reverse
 
 
 def require_event_code(func):
+    """This decorator can be used on any method which is a view, such as
+    get or post for a Class view, in order to verify that the user
+    has "logged-in" if necessary, meaning that if an event is active, that
+    the user has supplied the necessary credentials. """
+
     @functools.wraps(func)
     def wrapper(self, request, *args, **kwargs):
         if request.session.get("event_code_active") and not request.session.get(
