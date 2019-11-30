@@ -123,3 +123,32 @@ class TestViewsWithoutActiveEvent(TestCase):
         response = self.client.get(reverse(self.stopwatch_url))
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed("stopwatch.html")
+
+
+class TestLogout(TestCase):
+    def setUp(self):
+        self.login_url = "mercury:EventAccess"
+        self.logout_url = "mercury:logout"
+
+        test_code = EventCodeAccess(event_code="testcode", enabled=True)
+        test_code.save()
+
+    def _get_with_known_code(self, url):
+        self.client.get(reverse(self.login_url))
+        self.client.post(reverse(self.login_url), data={"eventcode": "testcode"})
+        response = self.client.get(reverse(url))
+        session = self.client.session
+        return response, session
+
+    def test_logout_after_login(self):
+        response, session = self._get_with_known_code(self.logout_url)
+        self.assertEqual(302, response.status_code)
+        self.assertNotIn("event_code_active", session)
+        self.assertNotIn("event_code_known", session)
+
+    def test_logout_without_login(self):
+        response = self.client.get(reverse(self.logout_url))
+        session = self.client.session
+        self.assertEqual(302, response.status_code)
+        self.assertNotIn("event_code_active", session)
+        self.assertNotIn("event_code_known", session)
