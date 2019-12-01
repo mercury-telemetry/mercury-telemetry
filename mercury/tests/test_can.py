@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.urls import reverse
 
 from mercury.can import (
     CANDecoder,
@@ -20,6 +21,9 @@ from mercury.models import (
 EXAMPLE_CAN_MSG_EXTENDED = (
     0b10000000001101000000000000000000000001000000010000000000000001110000000000
 )
+
+TEMP_DATA =  0b1000000000010000001000000010000000000000001110000000000
+ACCEL_DATA = 0b10000000001000001100000000000000001000000000000001000000000000000110000000000000001110000000000
 
 
 class TestCANDRecessiveBits(TestCase):
@@ -131,3 +135,28 @@ class TestCANExceptions(TestCase):
     def test_bad_input_raises_exception(self):
         with self.assertRaises(BadInputException):
             CANDecoder("thisisbadCANdata")
+
+
+class TestCANViews(TestCase):
+    def test_acceleration_sensor_missing_data(self):
+        """This test uses can_id of 2 for acceleration sensor,
+        but doesn't provide enough data for acceleration."""
+        response = self.client.post(
+            reverse("mercury:can-api"),
+            data={
+                "can_msg": "0b1000000000100000001000000010000000000000001110000000000"
+            },
+        )
+        data = response.json()
+        self.assertEqual(400, response.status_code)
+        self.assertEqual(0, data["words_found"])
+
+    def test_acceleration_sensor_with_full_data(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": ACCEL_DATA}
+        )
+        data = response.json()
+        self.assertEqual(201, response.status_code)
+        self.assertEqual("0000000000000001", data["can_msg"]["data_word_0"])
+        self.assertEqual("0000000000000010", data["can_msg"]["data_word_1"])
+        self.assertEqual("0000000000000011", data["can_msg"]["data_word_2"])
