@@ -18,7 +18,8 @@ before_script:
 
 script:
 - black --check --exclude "migrations/" mysite mercury
-- flake8 mysite mercury
+- flake8 --exclude tests mysite/ mercury/
+- flake8 --ignore=E501 mercury/tests/
 - coverage run --source=mysite,mercury --omit="mercury/migrations/*" manage.py test
 
 after_script:
