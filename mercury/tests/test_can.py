@@ -162,9 +162,13 @@ class TestCANViews(TestCase):
         self.assertEqual("0000000000000011", data["can_msg"]["data_word_2"])
 
     def test_empty_body_api(self):
-        response = self.client.post(reverse("mercury:can-api"), content_type='application/json')
+        response = self.client.post(
+            reverse("mercury:can-api"), content_type="application/json"
+        )
         self.assertEqual(400, response.status_code)
 
     def test_temperature_sensor(self):
-        response = self.client.post(reverse("mercury:can-api"), data={"can_msg": TEMP_DATA})
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": TEMP_DATA}
+        )
         self.assertEqual(201, response.status_code)
