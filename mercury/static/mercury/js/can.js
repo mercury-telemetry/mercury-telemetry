@@ -22,8 +22,8 @@ $(function () {
             success: function (response) {
                 console.log("POSTing was successful.");
                 console.log("Response:" + response);
-                let json_resp = JSON.stringify(response, undefined, 2).replace(/\\\"/g, "").replace(/,/g, ",\n");;
-                document.getElementById("result").innerHTML = json_resp;
+                let json_resp = JSON.stringify(response, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
+                document.getElementById("can-result").innerHTML = json_resp;
             },
 
             // handle a non-successful response
@@ -31,8 +31,8 @@ $(function () {
                 $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                let json_resp = JSON.stringify(xhr.responseText, undefined, 2).replace(/\\\"/g, "").replace(/,/g, ",\n");
-                document.getElementById("result").innerHTML = json_resp;
+                let json_resp = JSON.stringify(xhr.responseText, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
+                document.getElementById("can-result").innerHTML = json_resp;
 
             }
         });
