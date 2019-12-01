@@ -25,7 +25,6 @@ from ..models import (
     FuelLevelSensor,
 )
 
-logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
 
@@ -46,6 +45,8 @@ class DataTooShortException(Exception):
 
 
 def _bad_request(decoded_data, error_message, *args, **kwargs):
+    """This is a helper function to return a specific error message
+    including all of the data that was decoded."""
     decoded_data["data_word_0"] = decoded_data.get("data_word_0")
     decoded_data["data_word_1"] = decoded_data.get("data_word_1")
     decoded_data["data_word_2"] = decoded_data.get("data_word_2")
@@ -57,12 +58,19 @@ def _bad_request(decoded_data, error_message, *args, **kwargs):
 
 
 def _determine_sensor(data):
+    """This helper method attempts to return the "type" of the Sensor that
+    is determined by the can_id within data. If it cannot be identified, None
+    is returned."""
     mapper = CANMapper(data)
     sensor = mapper.get_sensor_from_id()
     return sensor
 
 
 def _create_populated_sensor(sensor, data):
+    """This method returns a Sensor object of a particular type with the data in the
+    proper fields based on the type of sensor. If required data is missing (because
+    the CAN message data was not properly constructed, we raise a DataTooShortException
+    which can be caught when this method is invoked."""
     counter = 0
     created_at = datetime.datetime.now()
     if sensor is TemperatureSensor:
@@ -118,6 +126,7 @@ def _create_populated_sensor(sensor, data):
             suspension_br=br,
             suspension_bl=bl,
         )
+
     if sensor is FuelLevelSensor:
         return sensor(created_at=created_at, current_fuel_level=data["data"])
 
@@ -126,9 +135,11 @@ def _create_populated_sensor(sensor, data):
 def post(request, *args, **kwargs):
     if "can_msg" in request.POST:
         # origin is the ui
+        log.debug("Request came from the UI")
         can_msg = request.POST.get("can_msg")
     else:
         # origin is the api
+        log.debug("Request came from the API")
         if not request.body:
             msg = "Request body is empty. Please re-POST with a non-empty body."
             return _bad_request({}, msg)
