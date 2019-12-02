@@ -99,6 +99,7 @@ class TestViewsWithoutActiveEvent(TestCase):
         self.simulator_url = "mercury:simulator"
         self.can_url = "mercury:can-ui"
         self.stopwatch_url = "mercury:stopwatch"
+        self.client.get(reverse(self.login_url))
 
     def test_HomePageView_GET(self):
         response = self.client.get(reverse(self.index_url))
