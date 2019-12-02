@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "mercury.apps.MercuryConfig",
 ]
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

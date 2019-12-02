@@ -17,18 +17,20 @@
                 <h1>CAN Message Decoder</h1>
                 <div class="container">
                     <div class="row justify-content-center">
-                        <div class="col-6 justify-content-center">      <center>
+                        <div class="col-6 justify-content-center">
                                 <form method="GET" action="" id="CanForm">
                                     {% csrf_token %}
                                     {% load crispy_forms_tags %}
                                     {{ form|crispy }}
                                     <input class="submitbutton grafana-btn grafana-btn-red" type="submit" name="Once" value="Decode CAN Message">
-                                </form></center>
-                        <div><pre><code class="result" id="result" ></code></pre></div>
+                                </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+            <div id="grafana-panel" >
+                <pre class="can-result"><code id="can-result"></code></pre>
+            </div>
     </body>
 </html>

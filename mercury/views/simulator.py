@@ -1,14 +1,9 @@
+import datetime
+
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.http import HttpResponse
 
-from ..forms import (
-    TemperatureForm,
-    AccelerationForm,
-    WheelSpeedForm,
-    SuspensionForm,
-    FuelLevelForm,
-)
 from mercury.models import (
     TemperatureSensor,
     AccelerationSensor,
@@ -16,31 +11,23 @@ from mercury.models import (
     SuspensionSensor,
     FuelLevelSensor,
 )
-
-import datetime
+from ..event_check import require_event_code
+from ..forms import (
+    TemperatureForm,
+    AccelerationForm,
+    WheelSpeedForm,
+    SuspensionForm,
+    FuelLevelForm,
+)
 
 
 class SimulatorView(TemplateView):
     template_name = "simulator.html"
 
+    @require_event_code
     def post(self, request, *args, **kwargs):
         """Used by AJAX method in the simulator.js file to save data
         from the simulator UI."""
-        if not (
-            request.session.get("event_code_active")
-            and request.session.get("event_code_known")
-        ):
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have "
-                        "an active session. Please login again."
-                    )
-                },
-            )
-
         if request.POST.get("created_at_temp"):
             post_created_at = request.POST.get("created_at_temp")
             post_temperature = request.POST.get("temperature")
@@ -63,9 +50,8 @@ class SimulatorView(TemplateView):
                 acceleration_z=post_acceleration_z,
             )
             accel_data.save()
-        #
-        if request.POST.get("created_at_ws"):
 
+        if request.POST.get("created_at_ws"):
             post_created_at = request.POST.get("created_at_ws")
             post_wheel_speed_fr = request.POST.get("wheel_speed_fr")
             post_wheel_speed_fl = request.POST.get("wheel_speed_fl")
@@ -108,14 +94,17 @@ class SimulatorView(TemplateView):
 
         return HttpResponse(status=201)
 
+    @require_event_code
     def get(self, request, *args, **kwargs):
-        """This method will render the Simulator form when GET is used"""
-        # form = SimulatorForm(initial={"created_at": datetime.datetime.now()})
-        form_temp = TemperatureForm(initial={"created_at": datetime.datetime.now()})
-        form_accel = AccelerationForm(initial={"created_at": datetime.datetime.now()})
-        form_ws = WheelSpeedForm(initial={"created_at": datetime.datetime.now()})
-        form_ss = SuspensionForm(initial={"created_at": datetime.datetime.now()})
-        form_fl = FuelLevelForm(initial={"created_at": datetime.datetime.now()})
+        """This method will render the Simulator form when the
+        HTTP GET method is used."""
+        now = datetime.datetime.now()
+        initial_data = {"created_at": now}
+        form_temp = TemperatureForm(initial=initial_data)
+        form_accel = AccelerationForm(initial=initial_data)
+        form_ws = WheelSpeedForm(initial=initial_data)
+        form_ss = SuspensionForm(initial=initial_data)
+        form_fl = FuelLevelForm(initial=initial_data)
         context = {
             "form_temp": form_temp,
             "form_accel": form_accel,
@@ -123,19 +112,4 @@ class SimulatorView(TemplateView):
             "form_ss": form_ss,
             "form_fl": form_fl,
         }
-        # context = {"form_temp": form_temp,"form_accel": form_accel,"form_ws": form_ws}
-        if request.session.get("event_code_active") and request.session.get(
-            "event_code_known"
-        ):
-            return render(request, self.template_name, context)
-        else:
-            return render(
-                request,
-                "login.html",
-                context={
-                    "no_session_message": (
-                        "You do not appear to have an "
-                        "active session. Please login again."
-                    )
-                },
-            )
+        return render(request, self.template_name, context)

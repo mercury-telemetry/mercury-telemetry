@@ -13,18 +13,20 @@
           }
           function RedirectDashboard() {
               window.location="/dashboard/";
-          } 
+          }
           function RedirectCAN() {
               window.location="/can/";
-          } 
+          }
           function RedirectStopwatch() {
               window.location="/stopwatch/";
-          } 
+          }
           function newGrafanaWindow() {
-              window.open("https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-mercury-poc-prod?orgId=1&refresh=5s");
-          }           
+              window.open("https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s");
+          }
       </script>
   </head>
+<body>
+{% include 'banner.html' %}
 
   <div id="grafana-base">
     <div id="grafana-panel">
@@ -32,8 +34,6 @@
       <h1>NYU Motorsports Telemetry</h1>
       <br>
       <button onclick="newGrafanaWindow()" class="grafana-btn grafana-btn-green" style="width: 50%; height: 80px; font-size: larger;"> Telemetry Dashboard</button>
-
-
       <br>
       <div style="height: 4px;"></div>
       <button onclick="RedirectSimulator();" class="grafana-btn grafana-btn-red" style="width: 50%; height: 40px; font-size: larger;">Simulator</button>
@@ -46,5 +46,5 @@
       <br><br>
     </div>
   </div>
-
+</body>
 </html>
