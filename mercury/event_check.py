@@ -15,6 +15,17 @@ def require_event_code(func):
         if request.session.get("event_code_active") and not request.session.get(
             "event_code_known"
         ):
+            # event is active but user doesn't know the event code
+            valid_session = False
+        else:
+            # event is active and user does know the event code
+            valid_session = True
+
+        if request.session.get("event_code_active") is None:
+            # server hasn't determined if an event is active yet
+            valid_session = False
+
+        if not valid_session:
             messages.error(
                 request,
                 (
