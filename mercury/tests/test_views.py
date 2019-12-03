@@ -99,6 +99,7 @@ class TestViewsWithoutActiveEvent(TestCase):
         self.simulator_url = "mercury:simulator"
         self.can_url = "mercury:can-ui"
         self.stopwatch_url = "mercury:stopwatch"
+        self.client.get(reverse(self.login_url))
 
     def test_HomePageView_GET(self):
         response = self.client.get(reverse(self.index_url))
@@ -182,3 +183,12 @@ class TestEventAlreadyLoggedIn(TestCase):
         response = self.client.get(reverse(self.login_url))
         self.assertEqual(302, response.status_code)
         self.assertEqual("index", response.url)
+
+
+class TestViewsWithoutCheckingEvent(TestCase):
+    def setUp(self):
+        self.index_url = "mercury:index"
+
+    def test_HomePageView_GET(self):
+        response = self.client.get(reverse(self.index_url))
+        self.assertEqual(302, response.status_code)
