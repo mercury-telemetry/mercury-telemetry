@@ -55,7 +55,9 @@ $(function () {
                 let json_resp = JSON.stringify(response, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
                 document.getElementById("can-result").innerHTML = json_resp;
 
-                GFG_FUN([response["can_msg"]])
+                GFG_FUN([response["can_msg"]]);
+                document.getElementById("para").innerHTML = "";
+                document.getElementById("para2").innerHTML = "";
             },
 
             // handle a non-successful response
