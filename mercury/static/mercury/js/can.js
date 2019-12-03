@@ -7,7 +7,54 @@ $(function () {
         create_post();
         }
     );
+    function GFG_FUN(list) {
+            var cols = [];
+            for (var i = 0; i < list.length; i++) {
+                for (var k in list[i]) {
+                    if (cols.indexOf(k) === -1) {
 
+                        // Push all keys to the array
+                        cols.push(k);
+                    }
+                }
+            }
+
+            // Create a table element
+            var table = document.createElement("table");
+
+            // Create table row tr element of a table
+
+
+
+
+            for (var i = 0; i < cols.length; i++) {
+
+                // Create the table header th element
+                var tr = table.insertRow(-1);
+                var theader = document.createElement("th");
+                theader.innerHTML = cols[i];
+                // Append columnName to the table row
+                tr.appendChild(theader);
+                var cell = tr.insertCell(-1);
+                cell.innerHTML = list[0][cols[i]];
+            }
+
+            // Adding the data to the table
+                // Create a new row
+            // trow = table.insertRow(-1);
+            // for (var j = 0; j < cols.length; j++) {
+            //     var cell = trow.insertCell(-1);
+            //
+            //     // Inserting the cell at particular place
+            //     cell.innerHTML = list[0][cols[j]];
+            // }
+
+
+            // Add the newely created table containing json data
+            var el = document.getElementById("table");
+            el.innerHTML = "";
+            el.appendChild(table);
+        }
     // AJAX for posting
     function create_post() {
         console.log("Entered create_post() function.");
@@ -24,6 +71,8 @@ $(function () {
                 console.log("Response:" + response);
                 let json_resp = JSON.stringify(response, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
                 document.getElementById("can-result").innerHTML = json_resp;
+
+                GFG_FUN([response["can_msg"]])
             },
 
             // handle a non-successful response
