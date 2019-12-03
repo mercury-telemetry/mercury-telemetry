@@ -4,6 +4,7 @@ from copy import deepcopy
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
+
 class InvalidBitException(Exception):
     def __init__(self, value, field_name, request):
         error = f"An invalid bit value of {value} was decoded for field {field_name}"

@@ -12,7 +12,6 @@ $(function () {
             for (var i = 0; i < list.length; i++) {
                 for (var k in list[i]) {
                     if (cols.indexOf(k) === -1) {
-
                         // Push all keys to the array
                         cols.push(k);
                     }
@@ -31,8 +30,6 @@ $(function () {
                 var cell = tr.insertCell(-1);
                 cell.innerHTML = list[0][cols[i]];
             }
-
-
             // Add the newely created table containing json data
             var el = document.getElementById("table");
             el.innerHTML = "";
@@ -73,7 +70,6 @@ $(function () {
 
                 let json_resp = JSON.stringify(xhr.responseText, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
                 document.getElementById("can-result").innerHTML = json_resp;
-
             }
         });
     }
@@ -96,7 +92,6 @@ $(function () {
     }
 
     var csrftoken = getCookie('csrftoken');
-
     /*
     The functions below will create a header with csrftoken
     */
