@@ -26,12 +26,17 @@ class Logout(TemplateView):
     will bring the user back to the login page."""
 
     def get(self, request, *args, **kwargs):
-        items = ["event_code_known", "event_code_active"]
-        for item in items:
-            try:
-                del request.session[item]
-            except:  # noqa E722
-                pass
+        try:
+            del request.session["event_code_active"]
+        except KeyError:  # noqa
+            pass
+
+        if request.session.get("event_code_known"):
+            message = "You have been successfully logged out."
+            del request.session["event_code_known"]
+        else:
+            message = "You are already logged out."
+        messages.info(request, message)
         return HttpResponseRedirect(reverse("mercury:EventAccess"))
 
 

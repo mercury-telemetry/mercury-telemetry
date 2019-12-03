@@ -27,9 +27,11 @@
                 <li class="nav-item">
                     <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
                 </li>
+                {%  if request.session.event_code_known %}
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-red" href="{% url 'mercury:logout' %}">Logout</a>
+                    <a class="nav-link grafana-btn grafana-btn-red" href="{% url 'mercury:logout' %}" onclick="return confirm('Are you sure you want to logout?')">Logout</a>
                 </li>
+                {%  endif %}
             </ul>
         </div>
     </div>
