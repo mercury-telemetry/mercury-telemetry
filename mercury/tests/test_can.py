@@ -1,5 +1,13 @@
 from django.test import TestCase
-from mercury.can import CANDecoder, InvalidBitException, MessageLengthException
+from django.urls import reverse
+
+from mercury.can import (
+    CANDecoder,
+    InvalidBitException,
+    MessageLengthException,
+    NoMoreBitsException,
+    BadInputException,
+)
 from mercury.can_map import CANMapper
 from mercury.models import (
     TemperatureSensor,
@@ -9,10 +17,15 @@ from mercury.models import (
     FuelLevelSensor,
 )
 
-# EXAMPLE_CAN_MSG_INT = 0b1000000000110100001000000010000000000000001110000000000
 EXAMPLE_CAN_MSG_EXTENDED = (
     0b10000000001101000000000000000000000001000000010000000000000001110000000000
 )
+
+TEMP_DATA = 0b1000000000010000001000000010000000000000001110000000000
+ACCEL_DATA = 0b10000000001000001100000000000000001000000000000001000000000000000110000000000000001110000000000
+SPEED_DATA = 0b100000000011000100000000000000000010000000000000010000000000000001100000000000001000000000000000001110000000000
+SUSP_DATA = 0b100000000100000100000000000000000010000000000000010000000000000001100000000000001000000000000000001110000000000
+FUEL_DATA = 0b1000000001010000001000000010000000000000001110000000000
 
 
 class TestCANDRecessiveBits(TestCase):
@@ -115,3 +128,107 @@ class TestCANExceptions(TestCase):
     def test_value_error_for_int_as_str_caught(self):
         temp_data = CANDecoder("9459720945368167357440")
         self.assertTrue(isinstance(temp_data, CANDecoder))
+
+    def test_too_short_message(self):
+        temp_data = CANDecoder(0b1000000001010000001000000010000000000000001110000000)
+        with self.assertRaises(NoMoreBitsException):
+            temp_data.decode_can_message()
+
+    def test_bad_input_raises_exception(self):
+        with self.assertRaises(BadInputException):
+            CANDecoder("thisisbadCANdata")
+
+
+class TestCANViews(TestCase):
+    def test_acceleration_sensor_missing_data(self):
+        """This test uses can_id of 2 for acceleration sensor,
+        but doesn't provide enough data for acceleration."""
+        response = self.client.post(
+            reverse("mercury:can-api"),
+            data={
+                "can_msg": "0b1000000000100000001000000010000000000000001110000000000"
+            },
+        )
+        data = response.json()
+        self.assertEqual(400, response.status_code)
+        self.assertEqual(0, data["words_found"])
+
+    def test_acceleration_sensor_with_full_data(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": ACCEL_DATA}
+        )
+        data = response.json()
+        self.assertEqual(201, response.status_code)
+        self.assertEqual("0000000000000001", data["can_msg"]["data_word_0"])
+        self.assertEqual("0000000000000010", data["can_msg"]["data_word_1"])
+        self.assertEqual("0000000000000011", data["can_msg"]["data_word_2"])
+
+    def test_empty_body_api(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), content_type="application/json"
+        )
+        self.assertEqual(400, response.status_code)
+
+    def test_temperature_sensor(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": TEMP_DATA}
+        )
+        self.assertEqual(201, response.status_code)
+
+    def test_wheel_speed_sensor(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": SPEED_DATA}
+        )
+        data = response.json()
+        self.assertEqual(201, response.status_code)
+        self.assertEqual("0000000000000001", data["can_msg"]["data_word_0"])
+        self.assertEqual("0000000000000010", data["can_msg"]["data_word_1"])
+        self.assertEqual("0000000000000011", data["can_msg"]["data_word_2"])
+        self.assertEqual("0000000000000100", data["can_msg"]["data_word_3"])
+
+    def test_wheel_speed_sensor_missing_data(self):
+        response = self.client.post(
+            reverse("mercury:can-api"),
+            data={
+                "can_msg": 0b10000000001100001100000000000000001000000000000001000000000000000110000000000000001110000000000
+            },
+        )
+        self.assertEqual(400, response.status_code)
+
+    def test_suspension_sensor(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": SUSP_DATA}
+        )
+        data = response.json()
+        self.assertEqual(201, response.status_code)
+        self.assertEqual("0000000000000001", data["can_msg"]["data_word_0"])
+        self.assertEqual("0000000000000010", data["can_msg"]["data_word_1"])
+        self.assertEqual("0000000000000011", data["can_msg"]["data_word_2"])
+        self.assertEqual("0000000000000100", data["can_msg"]["data_word_3"])
+
+    def test_suspension_sensor_missing_data(self):
+        response = self.client.post(
+            reverse("mercury:can-api"),
+            data={
+                "can_msg": 0b10000000010000001100000000000000001000000000000001000000000000000110000000000000001110000000000
+            },
+        )
+        self.assertEqual(400, response.status_code)
+
+    def test_fuel_sensor(self):
+        response = self.client.post(
+            reverse("mercury:can-api"), data={"can_msg": FUEL_DATA}
+        )
+        self.assertEqual(201, response.status_code)
+
+    def test_none_sensor_type(self):
+        response = self.client.post(
+            reverse("mercury:can-api"),
+            data={"can_msg": 0b1000001111110000001000000010000000000000001110000000000},
+        )
+        data = response.json()
+        self.assertEqual(400, response.status_code)
+        self.assertEqual(
+            "Unable to determine sensor based on can_id. Please check can_id value.",
+            data["error"],
+        )

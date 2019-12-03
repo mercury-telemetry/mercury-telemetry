@@ -26,11 +26,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "ee@v))dd&_+-29rp@nmpl0jnqccj@us-u!nrd1+n9n#*r2^rrf"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = [
+    "nyu-mercury.herokuapp.com",
+    "nyu-mercury-prod.herokuapp.com",
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
@@ -46,6 +48,11 @@ INSTALLED_APPS = [
     "mercury.apps.MercuryConfig",
 ]
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -54,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -83,6 +91,7 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 DATABASES = {}
 DATABASES["default"] = dj_database_url.config(conn_max_age=600)
 if "TRAVIS" in os.environ:  # pragma: no cover
+    DEBUG = True
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -96,6 +105,7 @@ if "TRAVIS" in os.environ:  # pragma: no cover
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)  # pragma: no cover
+    DEBUG = True
 
 
 # Password validation

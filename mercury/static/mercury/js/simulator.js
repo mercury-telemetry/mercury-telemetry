@@ -1,39 +1,39 @@
 $(function () {
     // TODO Check: interval_var, post-created-at in the forms
-    // ////////////////////////////////////////////////////Temperature Sensor////////////////////////////////////////
+    // Temperature Sensor
     let buttonpressed_temp;
     let interval_var_temp;
-    let button_counter_temp=0;
-    let timeOut = 5*60*1000;
+    let button_counter_temp = 0;
+    let timeOut = 5 * 60 * 1000;
     $('.submitbutton_temp,.submitbutton_all').click(function () {
         buttonpressed_temp = $(this).attr('name')
     });
     $('#TemperatureForm,#AllSensorsForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed_temp == "Continuous" && button_counter_temp != 1){
+        if (buttonpressed_temp == "Continuous" && button_counter_temp != 1) {
             console.log("Continuous Submission enabled for Temperature panel.");
             create_post_temp();
-            button_counter_temp =1;
+            button_counter_temp = 1;
             interval_var_temp = setInterval(create_post_temp, 2000);
-            setTimeout(clear_interval_temp,timeOut);
-        }else if (buttonpressed_temp == "Once") {
+            setTimeout(clear_interval_temp, timeOut);
+        } else if (buttonpressed_temp == "Once") {
             console.log("Temperature Submit Once button was pressed.");
             if (interval_var_temp) {
                 clearInterval(interval_var_temp);
-                button_counter_temp =0;
+                button_counter_temp = 0;
             }
             create_post_temp();
-        }else if (buttonpressed_temp == "Stop") {
+        } else if (buttonpressed_temp == "Stop") {
             console.log("Stopping continuous submission for Temperature panel.");
             if (interval_var_temp) {
                 clearInterval(interval_var_temp);
-                button_counter_temp =0;
+                button_counter_temp = 0;
             }
         }
     });
 
-    function clear_interval_temp(){
-        if(interval_var_temp){
+    function clear_interval_temp() {
+        if (interval_var_temp) {
             clearInterval(interval_var_temp);
             button_counter_temp = 0;
         }
@@ -53,7 +53,7 @@ $(function () {
             success: function () {
                 let temperature = parseFloat($('#post-temperature').val());
                 $('#post-created-at-temp').val(dateTime_temp);
-                $('#post-temperature').val(getNextValue(temperature,-5,5));
+                $('#post-temperature').val(getNextValue(temperature, -5, 5));
                 console.log("POSTing was successful for temperature"); // another sanity check
             },
 
@@ -65,9 +65,9 @@ $(function () {
             }
         });
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // ////////////////////////////////////////////////////Acceleration Sensor////////////////////////////////////////
-    let button_counter_accel=0;
+
+    // Acceleration Sensor
+    let button_counter_accel = 0;
     let buttonpressed_accel;
     let interval_var_accel;
     $('.submitbutton_accel,.submitbutton_all').click(function () {
@@ -75,24 +75,24 @@ $(function () {
     });
     $('#AccelerationForm,#AllSensorsForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed_accel== "Continuous" && button_counter_accel != 1){
+        if (buttonpressed_accel == "Continuous" && button_counter_accel != 1) {
             console.log("Continuous Submission enabled for Acceleration panel.");
             create_post_accel();
-            button_counter_accel =1;
+            button_counter_accel = 1;
             interval_var_accel = setInterval(create_post_accel, 2000);
-            setTimeout(clear_interval_accel,timeOut);
-        }else if (buttonpressed_accel == "Once") {
+            setTimeout(clear_interval_accel, timeOut);
+        } else if (buttonpressed_accel == "Once") {
             console.log("Acceleration Submit Once button was pressed.");
             if (interval_var_accel) {
                 clearInterval(interval_var_accel);
-                button_counter_accel =0;
+                button_counter_accel = 0;
             }
             create_post_accel();
-        }else if (buttonpressed_accel == "Stop") {
+        } else if (buttonpressed_accel == "Stop") {
             console.log("Stopping continuous submission for Acceleration panel.");
             if (interval_var_accel) {
                 clearInterval(interval_var_accel);
-                button_counter_accel =0;
+                button_counter_accel = 0;
             }
         }
     });
@@ -116,9 +116,9 @@ $(function () {
                 let acceleration_z = parseFloat($('#post-acceleration-Z').val());
 
                 $('#post-created-at_accel').val(dateTime_accel);
-                $('#post-acceleration-X').val(roundOffAndParse(acceleration_x + getRandomNumber(-5,5)));
-                $('#post-acceleration-Y').val(roundOffAndParse(acceleration_y + getRandomNumber(-5,5)));
-                $('#post-acceleration-Z').val(roundOffAndParse(acceleration_z + getRandomNumber(-5,5)));
+                $('#post-acceleration-X').val(roundOffAndParse(acceleration_x + getRandomNumber(-5, 5)));
+                $('#post-acceleration-Y').val(roundOffAndParse(acceleration_y + getRandomNumber(-5, 5)));
+                $('#post-acceleration-Z').val(roundOffAndParse(acceleration_z + getRandomNumber(-5, 5)));
                 console.log("POSTing was successful for acceleration"); // another sanity check
             },
 
@@ -131,15 +131,15 @@ $(function () {
         });
     }
 
-    function clear_interval_accel(){
-        if(interval_var_accel){
+    function clear_interval_accel() {
+        if (interval_var_accel) {
             clearInterval(interval_var_accel);
             button_counter_accel = 0;
         }
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // ////////////////////////////////////////////////////WheelSpeed Sensor////////////////////////////////////////
-    let button_counter_ws=0;
+
+    // WheelSpeed Sensor
+    let button_counter_ws = 0;
     let buttonpressed_ws;
     let interval_var_ws;
     $('.submitbutton_ws,.submitbutton_all').click(function () {
@@ -147,24 +147,24 @@ $(function () {
     });
     $('#WheelSpeedForm,#AllSensorsForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed_ws == "Continuous" && button_counter_ws != 1){
+        if (buttonpressed_ws == "Continuous" && button_counter_ws != 1) {
             console.log("Continuous Submission enabled for Wheel Speed panel");
             create_post_ws();
-            button_counter_ws =1;
+            button_counter_ws = 1;
             interval_var_ws = setInterval(create_post_ws, 2000);
             setTimeout(clear_interval_ws, timeOut);
-        }else if (buttonpressed_ws == "Once") {
+        } else if (buttonpressed_ws == "Once") {
             console.log("Wheel Speed Submit Once button was pressed.");
             if (interval_var_ws) {
                 clearInterval(interval_var_ws);
-                button_counter_ws =0;
+                button_counter_ws = 0;
             }
             create_post_ws();
-        }else if (buttonpressed_ws == "Stop") {
+        } else if (buttonpressed_ws == "Stop") {
             console.log("Stopping continuous submission for Wheel Speed panel.");
             if (interval_var_ws) {
                 clearInterval(interval_var_ws);
-                button_counter_ws =0;
+                button_counter_ws = 0;
             }
         }
     });
@@ -189,10 +189,10 @@ $(function () {
                 let wheel_speed_br = parseFloat($('#post-wheel-speed-br').val());
                 let wheel_speed_bl = parseFloat($('#post-wheel-speed-bl').val());
                 $('#post-created-at_ws').val(dateTime_ws);
-                $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr,-5,5));
-                $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl,-5,5));
-                $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br,-5,5));
-                $('#post-wheel-speed-bl').val(getNextValue(wheel_speed_bl,-5,5));
+                $('#post-wheel-speed-fr').val(getNextValue(wheel_speed_fr, -5, 5));
+                $('#post-wheel-speed-fl').val(getNextValue(wheel_speed_fl, -5, 5));
+                $('#post-wheel-speed-br').val(getNextValue(wheel_speed_br, -5, 5));
+                $('#post-wheel-speed-bl').val(getNextValue(wheel_speed_bl, -5, 5));
                 console.log("POSTing was successful for WS"); // another sanity check
             },
 
@@ -205,15 +205,15 @@ $(function () {
         });
     }
 
-    function clear_interval_ws(){
-        if(interval_var_ws){
+    function clear_interval_ws() {
+        if (interval_var_ws) {
             clearInterval(interval_var_ws);
             button_counter_ws = 0;
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // ////////////////////////////////////////////////////Suspension Sensor////////////////////////////////////////
-    let button_counter_ss=0;
+
+    // Suspension Sensor
+    let button_counter_ss = 0;
     let buttonpressed_ss;
     let interval_var_ss;
     $('.submitbutton_ss,.submitbutton_all').click(function () {
@@ -221,24 +221,24 @@ $(function () {
     });
     $('#SuspensionForm,#AllSensorsForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed_ss == "Continuous" && button_counter_ss != 1){
+        if (buttonpressed_ss == "Continuous" && button_counter_ss != 1) {
             console.log("Continuous Submission enabled for Suspension panel");
             create_post_ss();
-            button_counter_ss =1;
+            button_counter_ss = 1;
             interval_var_ss = setInterval(create_post_ss, 2000);
-            setTimeout(clear_interval_ss,timeOut);
-        }else if (buttonpressed_ss == "Once") {
+            setTimeout(clear_interval_ss, timeOut);
+        } else if (buttonpressed_ss == "Once") {
             console.log("Suspension Submit Once button was pressed.");
             if (interval_var_ss) {
                 clearInterval(interval_var_ss);
-                button_counter_ss =0;
+                button_counter_ss = 0;
             }
             create_post_ss();
-        }else if (buttonpressed_ss == "Stop") {
+        } else if (buttonpressed_ss == "Stop") {
             console.log("Stopping continuous submission for Suspension panel.");
             if (interval_var_ss) {
                 clearInterval(interval_var_ss);
-                button_counter_ss =0;
+                button_counter_ss = 0;
             }
         }
     });
@@ -263,10 +263,10 @@ $(function () {
                 let suspension_br = parseFloat($('#post-suspension-br').val());
                 let suspension_bl = parseFloat($('#post-suspension-bl').val());
                 $('#post-created-at_ss').val(dateTime_ss);
-                $('#post-suspension-fr').val(getNextValue(suspension_fr,-5,5));
-                $('#post-suspension-fl').val(getNextValue(suspension_fl,-5,5));
-                $('#post-suspension-br').val(getNextValue(suspension_br,-5,5));
-                $('#post-suspension-bl').val(getNextValue(suspension_bl,-5,5));
+                $('#post-suspension-fr').val(getNextValue(suspension_fr, -5, 5));
+                $('#post-suspension-fl').val(getNextValue(suspension_fl, -5, 5));
+                $('#post-suspension-br').val(getNextValue(suspension_br, -5, 5));
+                $('#post-suspension-bl').val(getNextValue(suspension_bl, -5, 5));
                 console.log("POSTing was successful for ss"); // another sanity check
             },
 
@@ -279,15 +279,15 @@ $(function () {
         });
     }
 
-    function clear_interval_ss(){
-        if(interval_var_ss){
+    function clear_interval_ss() {
+        if (interval_var_ss) {
             clearInterval(interval_var_ss);
             button_counter_ss = 0;
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // ////////////////////////////////////////////////////Fuel Level Sensor////////////////////////////////////////
-    let button_counter_fl=0;
+
+    // Fuel Level Sensor
+    let button_counter_fl = 0;
     let buttonpressed_fl;
     let interval_var_fl;
     $('.submitbutton_fl,.submitbutton_all').click(function () {
@@ -295,24 +295,24 @@ $(function () {
     });
     $('#FuelLevelForm,#AllSensorsForm').on('submit', function (event) {
         event.preventDefault();
-        if (buttonpressed_fl == "Continuous" && button_counter_fl != 1){
+        if (buttonpressed_fl == "Continuous" && button_counter_fl != 1) {
             console.log("Continuous Submission enabled for Fuel Level panel");
             create_post_fl();
-            button_counter_fl =1;
+            button_counter_fl = 1;
             interval_var_fl = setInterval(create_post_fl, 2000);
-            setTimeout(clear_interval_fl,timeOut);
-        }else if (buttonpressed_fl == "Once") {
+            setTimeout(clear_interval_fl, timeOut);
+        } else if (buttonpressed_fl == "Once") {
             console.log("Fuel Level Submit Once button was pressed.");
             if (interval_var_fl) {
                 clearInterval(interval_var_fl);
-                button_counter_fl =0;
+                button_counter_fl = 0;
             }
             create_post_fl();
-        }else if (buttonpressed_fl == "Stop") {
+        } else if (buttonpressed_fl == "Stop") {
             console.log("Stopping continuous submission for Fuel Level panel.");
             if (interval_var_fl) {
                 clearInterval(interval_var_fl);
-                button_counter_fl =0;
+                button_counter_fl = 0;
             }
         }
     });
@@ -330,11 +330,10 @@ $(function () {
             // handle a successful response
             success: function () {
                 let current_fuel_level = parseFloat($('#post-current-fuel-level').val());
-                if(current_fuel_level <= 10){
+                if (current_fuel_level <= 10) {
                     current_fuel_level += 90;
-                }
-                else{
-                    current_fuel_level -= getRandomNumber(0,5);
+                } else {
+                    current_fuel_level -= getRandomNumber(0, 5);
                 }
                 $('#post-created-at_fl').val(dateTime_fl);
                 $('#post-current-fuel-level').val(roundOffAndParse(current_fuel_level));
@@ -351,15 +350,15 @@ $(function () {
         });
     }
 
-    function clear_interval_fl(){
-        if(interval_var_fl){
+    function clear_interval_fl() {
+        if (interval_var_fl) {
             clearInterval(interval_var_fl);
             button_counter_fl = 0;
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////
+
     // This function returns current date time in the format "yyyy-mm-dd hh:min:ss"
-    function getDateTimenow(){
+    function getDateTimenow() {
         var now = new Date();
         var yyyy = now.getFullYear();
         var mm = ("0" + (now.getMonth() + 1)).slice(-2);
@@ -372,32 +371,30 @@ $(function () {
         return curr_date + " " + curr_time;
     }
 
-    //This function returns next sensor value, also makes sure that the value is in between 0 and 100
-    function getNextValue(sensorValue, min, max){
+    // This function returns next sensor value, also makes sure that the value is in between 0 and 100
+    function getNextValue(sensorValue, min, max) {
+        let nextSensorValue;
         let MAX_VALUE = 100;
         let MIN_VALUE = 0;
-        if((sensorValue-MIN_VALUE)<Math.abs(min)){
-            max = max-min;
+        if ((sensorValue - MIN_VALUE) < Math.abs(min)) {
+            max = max - min;
             min = 0;
-        }
-        else if((MAX_VALUE-sensorValue)<Math.abs(max)){
+        } else if ((MAX_VALUE - sensorValue) < Math.abs(max)) {
             max = 0;
         }
-        nextSensorValue = sensorValue + getRandomNumber(min,max);
+        nextSensorValue = sensorValue + getRandomNumber(min, max);
         return roundOffAndParse(nextSensorValue);
     }
 
     //This function returns random number between min(inclusive) and max(exclusive)
-    function getRandomNumber(min,max){
-        let rand_num = Math.random()*(max-min)+min;
-        return rand_num;
+    function getRandomNumber(min, max) {
+        return Math.random() * (max - min) + min;
     }
 
-    function roundOffAndParse(nextSensorValue){
-        rounded = nextSensorValue.toFixed(2);
+    function roundOffAndParse(nextSensorValue) {
+        let rounded = nextSensorValue.toFixed(2);
         return parseFloat(rounded);
     }
-
 
     // This function gets cookie with a given name
     function getCookie(name) {

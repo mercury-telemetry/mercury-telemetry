@@ -2,12 +2,12 @@ from django.db import models
 
 
 class TemperatureSensor(models.Model):
-    """This model represents the Tempeature sensor that we expect to
+    """This model represents the Temperature sensor that we expect to
     be potentially available in the future in the NYU Motorsports
     Racing vehicle."""
 
     created_at = models.DateTimeField()
-    # Oil temperature panel, measured in fahrenheit
+    # Oil temperature panel, measured in fahrenheit degrees
     temperature = models.FloatField(default=0)
 
     def __str__(self):  # pragma: no cover
@@ -20,7 +20,7 @@ class AccelerationSensor(models.Model):
     Racing vehicle."""
 
     created_at = models.DateTimeField()
-    # Acceleration Panel, measured in meter/second
+    # Acceleration Panel, measured in meters/second
     acceleration_x = models.FloatField(default=0)
     acceleration_y = models.FloatField(default=0)
     acceleration_z = models.FloatField(default=0)
@@ -36,7 +36,7 @@ class WheelSpeedSensor(models.Model):
 
     created_at = models.DateTimeField()
     # Wheel Speed Panel for each of the four wheels
-    # measured in meter/second
+    # measured in meters/second
     wheel_speed_fr = models.FloatField(default=0)
     wheel_speed_fl = models.FloatField(default=0)
     wheel_speed_br = models.FloatField(default=0)
@@ -53,7 +53,7 @@ class SuspensionSensor(models.Model):
 
     created_at = models.DateTimeField()
     # Suspension/Compression Panel for each of the four wheels
-    # measured in centimeter
+    # measured in centimeters
     suspension_fr = models.FloatField(default=0)
     suspension_fl = models.FloatField(default=0)
     suspension_br = models.FloatField(default=0)
@@ -78,6 +78,11 @@ class FuelLevelSensor(models.Model):
 
 
 class EventCodeAccess(models.Model):
+    """This model stores the information about events. When an event is
+    ongoing, if a new event_code is added and the enabled property is
+    True, then use of the Telemetry app will be restricted to those
+    that know the event_code."""
+
     event_code = models.CharField(max_length=8)
     enabled = models.BooleanField()
 
