@@ -18,15 +18,8 @@ $(function () {
                     }
                 }
             }
-
             // Create a table element
             var table = document.createElement("table");
-
-            // Create table row tr element of a table
-
-
-
-
             for (var i = 0; i < cols.length; i++) {
 
                 // Create the table header th element
@@ -38,16 +31,6 @@ $(function () {
                 var cell = tr.insertCell(-1);
                 cell.innerHTML = list[0][cols[i]];
             }
-
-            // Adding the data to the table
-                // Create a new row
-            // trow = table.insertRow(-1);
-            // for (var j = 0; j < cols.length; j++) {
-            //     var cell = trow.insertCell(-1);
-            //
-            //     // Inserting the cell at particular place
-            //     cell.innerHTML = list[0][cols[j]];
-            // }
 
 
             // Add the newely created table containing json data
