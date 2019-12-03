@@ -7,7 +7,7 @@ $(function () {
         create_post();
         }
     );
-    function GFG_FUN(list) {
+    function creating_table(list) {
             var cols = [];
             for (var i = 0; i < list.length; i++) {
                 for (var k in list[i]) {
@@ -55,7 +55,7 @@ $(function () {
                 let json_resp = JSON.stringify(response, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
                 document.getElementById("can-result").innerHTML = json_resp;
 
-                GFG_FUN([response["can_msg"]]);
+                creating_table([response["can_msg"]]);
                 document.getElementById("para").innerHTML = "";
                 document.getElementById("para2").innerHTML = "";
             },
