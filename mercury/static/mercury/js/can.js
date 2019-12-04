@@ -2,39 +2,41 @@ $(function () {
 
     // Submit post on submit
     $('#CanForm').on('submit', function (event) {
-        event.preventDefault();
-        console.log("Submit CAN Message button was pressed.");
-        create_post();
+            event.preventDefault();
+            console.log("Submit CAN Message button was pressed.");
+            create_post();
         }
     );
-    function creating_table(list) {
-            var cols = [];
-            for (var i = 0; i < list.length; i++) {
-                for (var k in list[i]) {
-                    if (cols.indexOf(k) === -1) {
-                        // Push all keys to the array
-                        cols.push(k);
-                    }
+
+    function creating_table(json_array) {
+        let cols = [];
+        for (let i = 0; i < json_array.length; i++) {
+            for (let k in json_array[i]) {
+                if (cols.indexOf(k) === -1) {
+                    // Push all keys to the array
+                    cols.push(k);
                 }
             }
-            // Create a table element
-            var table = document.createElement("table");
-            for (var i = 0; i < cols.length; i++) {
-
-                // Create the table header th element
-                var tr = table.insertRow(-1);
-                var theader = document.createElement("th");
-                theader.innerHTML = cols[i];
-                // Append columnName to the table row
-                tr.appendChild(theader);
-                var cell = tr.insertCell(-1);
-                cell.innerHTML = list[0][cols[i]];
-            }
-            // Add the newely created table containing json data
-            var el = document.getElementById("table");
-            el.innerHTML = "";
-            el.appendChild(table);
         }
+        // Create a table element
+        let table = document.createElement("table");
+        for (let i = 0; i < cols.length; i++) {
+
+            // Create the table header th element
+            let tr = table.insertRow(-1);
+            let theader = document.createElement("th");
+            theader.innerHTML = cols[i];
+            // Append columnName to the table row
+            tr.appendChild(theader);
+            let cell = tr.insertCell(-1);
+            cell.innerHTML = json_array[0][cols[i]];
+        }
+        // Add the newely created table containing json data
+        let el = document.getElementById("table");
+        el.innerHTML = "";
+        el.appendChild(table);
+    }
+
     // AJAX for posting
     function create_post() {
         console.log("Entered create_post() function.");
@@ -49,6 +51,7 @@ $(function () {
             success: function (response) {
                 console.log("POSTing was successful.");
                 console.log("Response:" + response);
+                console.log(response);
                 creating_table([response["can_msg"]]);
                 document.getElementById("para").innerHTML = "";
                 document.getElementById("para2").innerHTML = "";
@@ -56,13 +59,22 @@ $(function () {
 
             // handle a non-successful response
             error: function (xhr, errmsg) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                var obj = JSON.parse(xhr.responseText);
-                document.getElementById("para").innerHTML = "Error: "+obj.error;
-                document.getElementById("para2").innerHTML = "Received Message: "+obj.received_message;
+                console.log(xhr);
+                let obj = JSON.parse(xhr.responseText);
+                document.getElementById("para").innerHTML = "Error: " + obj.error;
+                if (obj.received_message) {
+                    document.getElementById("para2").innerHTML = "Received Message: " + obj.received_message;
+                } else {
+                    document.getElementById("para2").innerHTML = "";
+                }
                 document.getElementById("table").innerHTML = "";
+                if ("can_msg" in xhr.responseJSON) {
+                    creating_table([xhr.responseJSON["can_msg"]]);
+                } else {
+                    document.getElementById("table").innerHTML = "";
+                }
+
             }
         });
     }
@@ -85,6 +97,7 @@ $(function () {
     }
 
     var csrftoken = getCookie('csrftoken');
+
     /*
     The functions below will create a header with csrftoken
     */
