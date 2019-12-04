@@ -10,27 +10,9 @@
     <meta charset="utf-8">
     <title>Mercury - NYU Tandon Telemetry</title>
     <link rel="icon" href="{% static 'mercury/favicon.png' %}">
-    <script>
-      function RedirectSimulator() {
-        window.location="/simulator/";
-      }
-      function RedirectDashboard() {
-        window.location="/dashboard/";
-      }
-      function RedirectCAN() {
-        window.location="/can/";
-      }
-      function RedirectStopwatch() {
-        window.location="/stopwatch/";
-      }
-      function newGrafanaWindow() {
-        window.open("https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s");
-      }
-    </script>
   </head>
   <body>
   {% include 'banner.html' %}
-
     <div id="grafana-base">
       <div id="grafana-panel">
 
