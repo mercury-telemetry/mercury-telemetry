@@ -8,10 +8,10 @@ $(function () {
         }
     );
 
-    function creating_table(list) {
+    function creating_table(json_array) {
         let cols = [];
-        for (let i = 0; i < list.length; i++) {
-            for (let k in list[i]) {
+        for (let i = 0; i < json_array.length; i++) {
+            for (let k in json_array[i]) {
                 if (cols.indexOf(k) === -1) {
                     // Push all keys to the array
                     cols.push(k);
@@ -29,7 +29,7 @@ $(function () {
             // Append columnName to the table row
             tr.appendChild(theader);
             let cell = tr.insertCell(-1);
-            cell.innerHTML = list[0][cols[i]];
+            cell.innerHTML = json_array[0][cols[i]];
         }
         // Add the newely created table containing json data
         let el = document.getElementById("table");
@@ -51,6 +51,7 @@ $(function () {
             success: function (response) {
                 console.log("POSTing was successful.");
                 console.log("Response:" + response);
+                console.log(response);
                 creating_table([response["can_msg"]]);
                 document.getElementById("para").innerHTML = "";
                 document.getElementById("para2").innerHTML = "";
@@ -59,12 +60,21 @@ $(function () {
             // handle a non-successful response
             error: function (xhr, errmsg) {
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                console.log(xhr);
                 let obj = JSON.parse(xhr.responseText);
                 document.getElementById("para").innerHTML = "Error: " + obj.error;
                 if (obj.received_message) {
                     document.getElementById("para2").innerHTML = "Received Message: " + obj.received_message;
+                } else {
+                    document.getElementById("para2").innerHTML = "";
                 }
                 document.getElementById("table").innerHTML = "";
+                if ("can_msg" in xhr.responseJSON) {
+                    creating_table([xhr.responseJSON["can_msg"]]);
+                } else {
+                    document.getElementById("table").innerHTML = "";
+                }
+
             }
         });
     }
