@@ -8,61 +8,52 @@
 
   <head>
     <meta charset="utf-8">
-    <title>Mercury - NYU Tandon Telemetry</title>
-    <link rel="icon" href="{% static 'mercury/favicon.png' %}">
-    <script>
-      function RedirectSimulator() {
-        window.location="/simulator/";
-      }
-      function RedirectDashboard() {
-        window.location="/dashboard/";
-      }
-      function RedirectCAN() {
-        window.location="/can/";
-      }
-      function RedirectStopwatch() {
-        window.location="/stopwatch/";
-      }
-      function newGrafanaWindow() {
-        window.open("https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s");
-      }
-    </script>
+    <title>Mercury Telemetry</title>
+    <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
   </head>
+
   <body>
-  {% include 'banner.html' %}
+
+    {% include 'banner.html' %}
 
     <div id="grafana-base">
       <div id="grafana-panel">
 
         <h1>NYU Motorsports Telemetry</h1>
         <br>
-        This platform allows for monitoring of NYU’s Motorsports. Our simulator generates data such as suspension, temperature, acceleration, wheel speed, and fuel level. The Raw Telemetry section shows the data simulated in tabular format, while the Dashboard shows the data in easy-to-view graphs. Test CAN API by sending messages to the decoder endpoint. Access to the stopwatch to time races.
+        Telemetry platform for monitoring NYU’s Motorsports SAE BAJA competition vehicle. This platform supports reception and visualization of data from the competition vehicle along with several auxilary features. Each section of the platform and its functionality is explained below.
         <br>
         <br>
+
         <div id="grafana-text-box">
           <h3>Dashboard</h3>
-          See graphical representation of the data. Lorem ipsum dolor sit amet, congue atomorum an usu, ex est tation mandamus. Eu tation verear reformidans vix. Ius novum iusto utroque ut, ea eam evertitur temporibus concludaturque. Similique eloquentiam an qui, sit cibo possim equidem at. Te eam diceret consequat, pri cu exerci temporibus, ocurreret explicari voluptaria ne eos. Mel ex epicurei sadipscing.
+          Lauches a data visualization tool in a new window. This tool queries the team's database and uses the return values to populate several graphs. These graphs can be configured to fit the team's needs. Graphs can also be added or deleted as new data sources become available.
         </div>
         <br>
+
         <div id="grafana-text-box">
           <h3>Stop Watch</h3>
-          Lorem ipsum dolor sit amet, congue atomorum an usu, ex est tation mandamus. Eu tation verear reformidans vix. Ius novum iusto utroque ut, ea eam evertitur temporibus concludaturque. Similique eloquentiam an qui, sit cibo possim equidem at. Te eam diceret consequat, pri cu exerci temporibus, ocurreret explicari voluptaria ne eos. Mel ex epicurei sadipscing.
+          Time the race with the Stop Watch feature. This allows for overall time, as well as individual lap times, to be tracked in the user's browser.
         </div>
         <br>
+
         <div id="grafana-text-box">
           <h3>Raw Telemety</h3>
-          View raw, generated data from the simulator. Lorem ipsum dolor sit amet, congue atomorum an usu, ex est tation mandamus. Eu tation verear reformidans vix. Ius novum iusto utroque ut, ea eam evertitur temporibus concludaturque. Similique eloquentiam an qui, sit cibo possim equidem at. Te eam diceret consequat, pri cu exerci temporibus, ocurreret explicari voluptaria ne eos. Mel ex epicurei sadipscing.
+          This portal allows the raw data to be viewed. This is useful for debuggin and understanding the models behind the data visualization portal. Data generated inthe simulator will appear here.
         </div>
         <br>
+
         <div id="grafana-text-box">
           <h3>Simulator</h3>
-          Generate data for the dashboard. Lorem ipsum dolor sit amet, congue atomorum an usu, ex est tation mandamus. Eu tation verear reformidans vix. Ius novum iusto utroque ut, ea eam evertitur temporibus concludaturque. Similique eloquentiam an qui, sit cibo possim equidem at. Te eam diceret consequat, pri cu exerci temporibus, ocurreret explicari voluptaria ne eos. Mel ex epicurei sadipscing.
+          Generates mock vehicle data. Allows the user to experiment with different data patters on the vidualization portal and raw telemetry portal.
         </div>
         <br>
+
         <div id="grafana-text-box">
           <h3>CAN Decoder</h3>
-          Lorem ipsum dolor sit amet, congue atomorum an usu, ex est tation mandamus. Eu tation verear reformidans vix. Ius novum iusto utroque ut, ea eam evertitur temporibus concludaturque. Similique eloquentiam an qui, sit cibo possim equidem at. Te eam diceret consequat, pri cu exerci temporibus, ocurreret explicari voluptaria ne eos. Mel ex epicurei sadipscing.
+          Input CAN messages and view the return values. This portal sends user input to the CAN decoder API endpoint and returns the decoded JSON values. Useful for learning CAN's format and the differences between structured and CAN data.
         </div>
+
       </div>
     </div>
   </body>
