@@ -49,9 +49,6 @@ $(function () {
             success: function (response) {
                 console.log("POSTing was successful.");
                 console.log("Response:" + response);
-                let json_resp = JSON.stringify(response, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
-                document.getElementById("can-result").innerHTML = json_resp;
-
                 creating_table([response["can_msg"]]);
                 document.getElementById("para").innerHTML = "";
                 document.getElementById("para2").innerHTML = "";
@@ -62,14 +59,9 @@ $(function () {
                 $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                     " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-
-
                 var obj = JSON.parse(xhr.responseText);
                 document.getElementById("para").innerHTML = "Error: "+obj.error;
                 document.getElementById("para2").innerHTML = "Received Message: "+obj.received_message;
-
-                let json_resp = JSON.stringify(xhr.responseText, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
-                document.getElementById("can-result").innerHTML = json_resp;
             }
         });
     }
