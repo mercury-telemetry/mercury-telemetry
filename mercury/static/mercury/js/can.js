@@ -62,6 +62,7 @@ $(function () {
                 var obj = JSON.parse(xhr.responseText);
                 document.getElementById("para").innerHTML = "Error: "+obj.error;
                 document.getElementById("para2").innerHTML = "Received Message: "+obj.received_message;
+                document.getElementById("table").innerHTML = "";
             }
         });
     }
