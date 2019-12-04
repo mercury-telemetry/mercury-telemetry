@@ -608,6 +608,7 @@ display: block;
 
   h3, .h3 {
     font-size: 1.75rem;
+    color: black; 
   }
 
   h4, .h4 {
