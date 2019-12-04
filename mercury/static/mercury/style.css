@@ -8,7 +8,10 @@ body {
   line-height: 1.5;
   text-align: left;
 }
-
+input#id_can_msg{
+    width: 100%;
+    color: green;
+}
 .my-custom-scrollbar {
 position: relative;
 height: 200px;

@@ -1,35 +1,37 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Mercury CAN Decoder</title>
-        <link rel="icon" href="{% static 'mercury/favicon.png' %}">
-        <!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
-        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
-        <script src="{% static "mercury/js/can.js" %}"></script>
-    </head>
-    <body>
-        {% include 'banner.html' %}
-  
-        <div id="grafana-base">
-            <div class="col-lg-6 col-md-6 mb-6 col-centered">
-                    <div class="sim-panel">
-                        <h1>CAN Message Decoder</h1>
-                            <form method="GET" action="" id="CanForm">
-                                {% csrf_token %}
-                                {% load crispy_forms_tags %}
-                                {{ form|crispy }}
-                                <br>
-                                <input class="submitbutton grafana-btn grafana-btn-red" type="submit" name="Once" value="Decode CAN Message">
-                            </form>
-                        <p id="para"></p>
-                        <p id="para2"></p>
-                        <table align = "center" id="table" border="1" >
-                        </table>
-                    </div>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Mercury CAN Decoder</title>
+    <link rel="icon" href="{% static 'mercury/favicon.png' %}">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+    <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+    <script src="{% static "mercury/js/can.js" %}"></script>
+</head>
+<body>
+{% include 'banner.html' %}
+
+<div id="grafana-base">
+    <div class="col-lg-6 col-md-6 mb-6 col-centered">
+        <div class="sim-panel">
+            <h1>CAN Message Decoder</h1>
+            <form method="GET" action="" id="CanForm">
+                {% csrf_token %}
+                {% load crispy_forms_tags %}
+                {{ form|crispy }}
+                <br>
+                <input class="submitbutton grafana-btn grafana-btn-red" type="submit" name="Once"
+                       value="Decode CAN Message">
+            </form>
+            <br>
+            <p class="error" id="para"></p>
+            <pre><code id="para2"></code></pre>
+            <table align="center" id="table" border="1">
+            </table>
         </div>
-    </body>
+    </div>
+</div>
+</body>
 </html>
