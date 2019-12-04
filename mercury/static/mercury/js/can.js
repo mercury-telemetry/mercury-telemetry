@@ -2,11 +2,40 @@ $(function () {
 
     // Submit post on submit
     $('#CanForm').on('submit', function (event) {
-        event.preventDefault();
-        console.log("Submit CAN Message button was pressed.");
-        create_post();
+            event.preventDefault();
+            console.log("Submit CAN Message button was pressed.");
+            create_post();
         }
     );
+
+    function creating_table(json_array) {
+        let cols = [];
+        for (let i = 0; i < json_array.length; i++) {
+            for (let k in json_array[i]) {
+                if (cols.indexOf(k) === -1) {
+                    // Push all keys to the array
+                    cols.push(k);
+                }
+            }
+        }
+        // Create a table element
+        let table = document.createElement("table");
+        for (let i = 0; i < cols.length; i++) {
+
+            // Create the table header th element
+            let tr = table.insertRow(-1);
+            let theader = document.createElement("th");
+            theader.innerHTML = cols[i];
+            // Append columnName to the table row
+            tr.appendChild(theader);
+            let cell = tr.insertCell(-1);
+            cell.innerHTML = json_array[0][cols[i]];
+        }
+        // Add the newely created table containing json data
+        let el = document.getElementById("table");
+        el.innerHTML = "";
+        el.appendChild(table);
+    }
 
     // AJAX for posting
     function create_post() {
@@ -22,17 +51,29 @@ $(function () {
             success: function (response) {
                 console.log("POSTing was successful.");
                 console.log("Response:" + response);
-                let json_resp = JSON.stringify(response, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
-                document.getElementById("can-result").innerHTML = json_resp;
+                console.log(response);
+                creating_table([response["can_msg"]]);
+                document.getElementById("para").innerHTML = "";
+                document.getElementById("para2").innerHTML = "";
             },
 
             // handle a non-successful response
             error: function (xhr, errmsg) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                let json_resp = JSON.stringify(xhr.responseText, null, 4).replace(/\\/g, "").replace(/,/g, ",\n");
-                document.getElementById("can-result").innerHTML = json_resp;
+                console.log(xhr);
+                let obj = JSON.parse(xhr.responseText);
+                document.getElementById("para").innerHTML = "Error: " + obj.error;
+                if (obj.received_message) {
+                    document.getElementById("para2").innerHTML = "Received Message: " + obj.received_message;
+                } else {
+                    document.getElementById("para2").innerHTML = "";
+                }
+                document.getElementById("table").innerHTML = "";
+                if ("can_msg" in xhr.responseJSON) {
+                    creating_table([xhr.responseJSON["can_msg"]]);
+                } else {
+                    document.getElementById("table").innerHTML = "";
+                }
 
             }
         });

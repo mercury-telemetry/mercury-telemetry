@@ -1,31 +1,28 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
-    <img src="https://yt3.ggpht.com/-RZYi5isxH_M/AAAAAAAAAAI/AAAAAAAAAAA/rmWpoe2qZzI/s900-c-k-no/photo.jpg"
-         style="margin-left:5px" width="40" height="40">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'mercury:index' %}">
-            NYU Motorsports Telemetry
+        <a class="nav-link grafana-btn" href="{% url 'mercury:index' %}" style="width: 280px;">
+            <div><img src="{% static 'mercury/motorsports_logo.png' %}" class="team-logo"></div>
+            <div>NYU Motorsports</div>
         </a>
         <div class="container">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:index' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:simulator' %}">Simulator</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link grafana-btn grafana-btn-green"
                        href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s"
                        target="_blank">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-purple" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:simulator' %}">Simulator</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
                 </li>
                 {%  if request.session.event_code_known %}
                 <li class="nav-item">

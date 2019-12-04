@@ -8,24 +8,36 @@ body {
   line-height: 1.5;
   text-align: left;
 }
-
-.my-custom-scrollbar {
-position: relative;
-height: 200px;
-overflow: auto;
+input#id_can_msg{
+    width: 100%;
+    color: green;
 }
+.my-custom-scrollbar {
+  position: relative;
+  height: 200px;
+  overflow: auto;
+}
+
 .table-wrapper-scroll-y {
-display: block;
+  display: block;
 }
 
 .col-centered{
-    float: none;
-    margin: 0 auto;
+  float: none;
+  margin: 0 auto;
+}
+
+.team-logo {
+  /* margin-left: 5px; */
+  padding: 5px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--light-background);
 }
 
 #grafana-base {
-  padding-top: 8%;
-
+  padding-top: 3%;
 }
 
 #main-sim-panel {
@@ -87,9 +99,40 @@ display: block;
   border-style: solid;
   border-width: thin;
   padding: 20px;
-  width: 500px;
+  width: 600px;
 }
 
+#grafana-text-box {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: left;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  width: 95%;
+}
+
+.help-btn {
+    color: var(--light-text);
+    background-color: var(--light-background);
+    border-color: var(--light-background);
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: 0.375rem .60rem;
+    font-size: 0.65rem;
+    line-height: 1.5;
+    border-radius: 0.35rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 10rem;
+}
 .simulator-btn {
   color: var(--light-text);
   background-color: var(--light-background);
@@ -102,8 +145,8 @@ display: block;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  padding: 0.375rem 0.60rem;
-  font-size: 0.75rem;
+  padding: 0.375rem .60rem;
+  font-size: 0.65rem;
   line-height: 1.5;
   border-radius: 0.35rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -117,8 +160,6 @@ display: block;
 
 .grafana-btn {
   color: var(--light-text);
-  background-color: var(--light-background);
-  border-color: var(--light-background);
   display: inline-block;
   font-weight: 400;
   text-align: center;
@@ -135,6 +176,16 @@ display: block;
 }
 
 .grafana-btn:hover {
+  color: var(--light-text);
+}
+
+.grafana-btn-gray {
+  color: var(--light-text);
+  background-color: var(--light-background);
+  border-color: var(--light-background);
+}
+
+.grafana-btn-gray:hover {
   color: var(--button-text-dark);
   background-color: var(--light-accent);
   border-color: var(--light-accent);
@@ -186,7 +237,6 @@ display: block;
     background-color: var(--purple);
     border-color: var(--purple);
 }
-
 
 .error {
     color: var(--red)
@@ -418,15 +468,16 @@ display: block;
   table{
     border-collapse: collapse;
     border: 1px solid black;
-    width: 600px;
-    height: 400px;
-    overflow: 400px;
+    width: 100%;
+    height: 100%;
+    
 
   }
 
   td {
     border: 1px solid black;
     text-align: center;
+    
   }
 
   th{
