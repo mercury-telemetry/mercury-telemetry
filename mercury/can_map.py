@@ -23,7 +23,7 @@ class CANMapper:
 
     def _register_sensors(self):
         """When a new sensor needs to be add, update the
-        mappings here from "can_id" to the Sensor."""
+        mappings here from "can_id" to the appropriate Sensor model."""
 
         log.debug("Registering Sensors.")
         self.sensor_map[1] = TemperatureSensor

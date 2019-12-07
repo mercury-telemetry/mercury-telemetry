@@ -9,6 +9,6 @@ urlpatterns = [
     path("simulator/", simulator.SimulatorView.as_view(), name="simulator"),
     path("dashboard/", dashboard.DashboardView.as_view(), name="dashboard"),
     path("stopwatch/", stopwatch.StopwatchView.as_view(), name="stopwatch"),
-    path("api/can/", can.post, name="can-api"),
-    path("can/", can.CANUI.as_view(), name="can-ui"),
+    path("api/can/", can.post, name="can-api"),  # CAN API Ingestion endpoint
+    path("can/", can.CANUI.as_view(), name="can-ui"),  # CAN Decoder UI endpoint
 ]

@@ -15,13 +15,9 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.contrib import admin
-from mercury.resources import TemperatureSensorResource
-
-mercury_api = TemperatureSensorResource()
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("mercury.urls")),
-    path("api/", include(mercury_api.urls)),
     path("accounts/", include("django.contrib.auth.urls")),
 ]
