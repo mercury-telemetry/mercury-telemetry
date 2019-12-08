@@ -9,13 +9,13 @@ from mercury.models import (
     EventCodeAccess,
 )
 
-# Test Values
+# Test value constants that should all work
 TEST_TEMP = 999.0
 TEST_ACCEL_Y = 9.81
 TEST_WHEEL_SPEED_FR = 30
 TEST_SUSPENSION_FR = 2
 TEST_FUEL = 6
-TEST_EVENT_CODE = "foobarba"
+TEST_EVENT_CODE = "abcdefgh"
 
 
 def create_simulated_data_objects():

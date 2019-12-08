@@ -2,6 +2,5 @@ Django==2.*
 gunicorn
 django-heroku==0.3.*
 django-crispy-forms==1.8.*
-django-tastypie==0.14.*
 python-dotenv==0.10.*
 whitenoise==4.1.4
