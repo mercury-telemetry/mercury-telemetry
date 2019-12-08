@@ -439,13 +439,13 @@ input#id_can_msg{
   }
 
   a {
-    color: #4e73df;
+    color: #8f06cb;
     text-decoration: none;
     background-color: transparent;
   }
 
   a:hover {
-    color: #224abe;
+    color: #57068C;
     text-decoration: underline;
   }
 
