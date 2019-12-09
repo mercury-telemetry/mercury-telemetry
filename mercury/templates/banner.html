@@ -1,4 +1,6 @@
 {% load static %}
+<!-- Sets up icon fonts for use in any web page through Google Web Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
 <nav class="navbar navbar-expand-lg navbar-light bg-white" style ="z-index: 100" >
     <div class="container">
         <a class="nav-link grafana-btn" href="{% url 'mercury:index' %}" style="width: 280px;">
@@ -10,19 +12,19 @@
                 <li class="nav-item">
                     <a class="nav-link grafana-btn grafana-btn-gray"
                        href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s"
-                       target="_blank">Dashboard</a>
+                       target="_blank"> <i class="material-icons-outlined">dashboard</i> <br> Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:stopwatch' %}"> <i class="material-icons">timer</i> <br>Stopwatch</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:dashboard' %}"><i class="material-icons-outlined">table_chart</i><br> Raw Telemetry</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:simulator' %}">Simulator</a>
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:simulator' %}"><i class="material-icons">input</i><br>Simulator</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
+                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:can-ui' %}"><i class="material-icons">lock_open</i><br>CAN Decoder</a>
                 </li>
                 {%  if request.session.event_code_known %}
                 <li class="nav-item">
