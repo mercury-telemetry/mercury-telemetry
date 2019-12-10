@@ -17,6 +17,14 @@
                 </li>
 
                 <li class="nav-item">
+                {% if request.path == "/index"%}
+                        <div class="grafana-current-tab">Home</div>
+                {% else %}
+                        <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:index' %}"><i class="material-icons-outlined">house</i><br>Home</a>
+                {% endif %}
+                </li>
+              
+                <li class="nav-item">
                     {% if request.path == "/stopwatch/" %}
                         <div class="grafana-current-tab"><i class="material-icons">timer</i> <br>Stopwatch</div>
                     {% else %}
