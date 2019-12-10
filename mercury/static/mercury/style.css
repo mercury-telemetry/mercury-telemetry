@@ -1512,6 +1512,9 @@ a {
     justify-content: space-between;
     padding: 0.5rem 1rem;
     width: 100%;
+    border-bottom: 1px solid var(--light-border); 
+   
+
   }
 
   .navbar > .container,
@@ -1520,6 +1523,7 @@ a {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    
   }
 
   .navbar-brand {
@@ -1542,6 +1546,7 @@ a {
     padding-left: 0;
     margin-bottom: 0;
     list-style: none;
+    
   }
 
   .navbar-nav .nav-link {
