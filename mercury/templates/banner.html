@@ -13,7 +13,7 @@
                 <li class="nav-item">
                     <a class="grafana-btn grafana-btn-gray"
                        href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s"
-                       target="_blank"> <i class="material-icons-outlined">dashboard</i> <br> Dashboard</a>
+                       target="_blank"> <i class="material-icons-outlined">open_in_new</i> <br> Dashboard</a>
                 </li>
 
                 <li class="nav-item">
@@ -46,10 +46,10 @@
 
                 <li class="nav-item">
                     {% if request.path == "/simulator/" %}
-                        <div class="grafana-current-tab"><i class="material-icons">input</i><br>Simulator</div>
+                        <div class="grafana-current-tab"><i class="material-icons">tune</i><br>Simulator</div>
                     {% else %}
                         <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:simulator' %}"><i
-                                class="material-icons">input</i><br>Simulator</a>
+                                class="material-icons">tune</i><br>Simulator</a>
                     {% endif %}
                 </li>
 
