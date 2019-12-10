@@ -1,0 +1,97 @@
+{% load static %}
+<link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+      rel="stylesheet">
+
+<div class="sidebar-container">
+    <!-- Name & Logo -->
+    <a class="grafana-btn" href="{% url 'mercury:index' %}">
+        <div><img src="{% static 'mercury/motorsports_logo.png' %}" class="team-logo"></div>
+        <div>NYU Motorsports</div>
+    </a>
+    <br><br>
+
+    <!-- Dashboard -->
+    <a class="grafana-btn grafana-btn-green sidebar-btn" href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s" target="_blank">
+        <i class="material-icons-outlined">open_in_new</i>
+        <br>Dashboard
+    </a>
+    <br><br>
+
+    <!-- Home / Index -->
+    {% if request.path == "/index"%}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons-outlined">house</i>
+            <br>Home
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:index' %}">
+            <i class="material-icons-outlined">house</i>
+            <br>Home
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- Stopwatch -->
+    {% if request.path == "/stopwatch/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">timer</i>
+            <br>Stopwatch
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:stopwatch' %}">
+            <i class="material-icons">timer</i>
+            <br>Stopwatch
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- Raw Telemetry -->
+    {% if request.path == "/dashboard/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons-outlined">table_chart</i>
+            <br>Raw Telemetry
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:dashboard' %}">
+            <i class="material-icons-outlined">table_chart</i>
+            <br>Raw Telemetry
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- Simulator -->
+    {% if request.path == "/simulator/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">tune</i>
+            <br>Simulator
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:simulator' %}">
+            <i class="material-icons">tune</i>
+            <br>Simulator
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- CAN Decoder -->
+    {% if request.path == "/can/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">lock_open</i>
+            <br>CAN Decoder
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:can-ui' %}">
+            <i class="material-icons">lock_open</i>
+            <br>CAN Decoder
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- Logout -->
+    {% if request.session.event_code_known %}
+        <a class="grafana-btn grafana-btn-red sidebar-btn" href="{% url 'mercury:logout' %}" onclick="return confirm('Are you sure you want to logout?')">
+            <i class="material-icons">power_settings_new</i>
+            <br>Logout
+        </a>
+    {% endif %}
+</div>
