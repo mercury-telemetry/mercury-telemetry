@@ -131,6 +131,7 @@ input#id_can_msg{
 }
 
 #grafana-text-box {
+  color: var(--light-text);
   border-color:var(--light-border);
   background: var(--light-panel);
   text-align: left;
@@ -140,6 +141,10 @@ input#id_can_msg{
   border-width: thin;
   padding: 20px;
   width: 95%;
+}
+
+#grafana-text-box:hover {
+  background-color: var(--light-background);
 }
 
 .help-btn {
@@ -287,29 +292,10 @@ input#id_can_msg{
 }
 
 .tooltip {
+    color: var(--light-text);
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 400px;
-    background-color: lightgray;
-    color: black;
-    /*text-align: center;*/
-    padding: 5px;
-    border-radius: 6px;
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-    visibility: visible;
 }
 
 /* Base Bootstrap Style Elements */
