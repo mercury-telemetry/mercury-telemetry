@@ -34,6 +34,12 @@ input#id_can_msg{
     color: green;
 }
 
+#accordion-text {
+  display: none;
+  text-align: left;
+  margin: 30px;
+}
+
 .my-custom-scrollbar {
   position: relative;
   height: 200px;

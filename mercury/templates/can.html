@@ -9,34 +9,43 @@
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
         <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
         <script src="{% static "mercury/js/can.js" %}"></script>
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
     </head>
     <body>
         {% include 'sidebar.html' %}
         <div id="grafana-base">
-            <div class="col-lg-6 col-md-6 mb-6 col-centered">
-                <div class="sim-panel">
-                    <h1>CAN Message Decoder</h1>
-                    <p>The CAN Decoder accepts a CAN message as input in base2 or base10, as a numeric type (or string if you
-                        insist), and returns a JSON response of the decoded message according to structure of the CAN
-                        protocol.</p>
-                    <p>All returned values are in base10, except for data_bin and data_word_x fields. For demonstration
-                        purposes, this decoder does write to the database, but this feature will be disabled in a future release
-                        as the primary purpose is to decode CAN data for debugging.</p>
-                    <form method="GET" action="" id="CanForm">
-                        {% csrf_token %}
-                        {% load crispy_forms_tags %}
-                        {{ form|crispy }}
-                        <br>
-                        <input class="submitbutton grafana-btn grafana-btn-red" type="submit" name="Once"
-                            value="Decode CAN Message">
-                    </form>
-                    <br>
-                    <br>
-                    <p class="error" id="para"></p>
-                    <pre><code id="para2"></code></pre>
-                    <table align="center" id="table" border="1">
-                    </table>
+        <!-- <div class="col-lg-6 col-md-6 mb-6 col-centered"> -->
+            <div id="grafana-panel">
+                <h1>
+                    CAN Decoder
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+                <div id="accordion-text">
+                    <p>CAN Decoder accepted inputs: <br>
+                    - Base-2 CAN Messages (Numeric & String) <br>
+                    - Base-10 CAN Messages (Numeric & String)</p>
+                    <p>CAN Decoder returns a decoded message in a JSON response structured according to CAN protocol. Returned values are in Base-10, except the "data_bin" and "data_word_x" fields.</p>
+                    <p> <b>Note:</b> For demo purposes, the decoder writes to the database. This feature will be disabled in a future release.</p>
                 </div>
+                <br>
+                <form method="GET" action="" id="CanForm">
+                    {% csrf_token %}
+                    {% load crispy_forms_tags %}
+                    {{ form|crispy }}
+                    <br>
+                    <input class="submitbutton grafana-btn grafana-btn-green" type="submit" name="Once" value="Decode CAN Message">
+                </form>
+                <br>
+                <br>
+                <p class="error" id="para"></p>
+                <pre>
+                    <code id="para2"></code>
+                </pre>
+                <table align="center" id="table" border="1">
+                </table>
             </div>
         </div>
     </body>
