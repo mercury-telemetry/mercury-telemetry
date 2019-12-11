@@ -25,97 +25,118 @@
                 
                 <div id="accordion-text">
                     Generate mock telemetry data to test visualizations and test the link between the database models and the visualization software.
-                    <br>
-                    <br>
+                    <br> <br>
 
-                    <a class="grafana-btn simulator-btn grafana-btn-green">Continuous Submission</a> - Panel generates and submits data on an interval.<br><br>
-                    <a class="grafana-btn simulator-btn grafana-btn-green">Submit Once</a> - Submit input value a single time.<br><br>
-                    <a class="grafana-btn simulator-btn grafana-btn-red">Stop Submission</a> - Stop continuously submitting data.<br><br>
+                    <a class="grafana-btn simulator-btn grafana-btn-green" style="width: 220px;">Continuous Submission</a> - Panel generates and submits data on an interval.
+                    <br><br>
+                    <a class="grafana-btn simulator-btn grafana-btn-green" style="width: 220px;">Submit Once</a> - Submit input value a single time.
+                    <br><br>
+                    <a class="grafana-btn simulator-btn grafana-btn-red" style="width: 220px;">Stop Submission</a> - Stop continuously submitting data.
+                    <br><br>
 
-                    <a class="grafana-btn simulator-btn grafana-btn-green">Continuous Submission All</a> - All panels generate and submit data on an interval.<br><br>
-                    <a class="grafana-btn simulator-btn grafana-btn-green">Submit All Once</a> - All panels submit current inputs a single time.<br><br>
-                    <a class="grafana-btn simulator-btn grafana-btn-red">Stop All Submission</a> - Stops continuous submission for all panels.<br><br>
+                    <a class="grafana-btn simulator-btn grafana-btn-green" style="width: 220px;">Continuous Submission All</a> - All panels generate and submit data on an interval.
+                    <br><br>
+                    <a class="grafana-btn simulator-btn grafana-btn-green" style="width: 220px;">Submit All Once</a> - All panels submit current inputs a single time.
+                    <br><br>
+                    <a class="grafana-btn simulator-btn grafana-btn-red" style="width: 220px;">Stop All Submission</a> - Stops continuous submission for all panels.
+                    <br><br>
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-lg-4 col-md-4 mb-4">
                     <div class="sim-panel">
-                    <h4>Suspension Sensor</h4> {% if form_ss %}
-                    <form method="POST" action="" id="SuspensionForm">
-                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_ss|crispy }}
-                        <br>
-                        <input class="submitbutton_ss simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission"> <br> <br>
-                        <input class="submitbutton_ss simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once"> <br> <br>
-                        <input class="submitbutton_ss simulator-btn grafana-btn grafana-btn-red"   type="submit" name="Stop" value="Stop Submission">
-                    </form>
-                    {% endif %}
+                        <h4>Suspension Sensor</h4>
+                        {% if form_ss %}
+                            <form method="POST" action="" id="SuspensionForm">
+                                {% csrf_token %} {% load crispy_forms_tags %} {{ form_ss|crispy }}
+                                <br>
+                                <input class="submitbutton_ss simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission">
+                                <br> <br>
+                                <input class="submitbutton_ss simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once">
+                                <br> <br>
+                                <input class="submitbutton_ss simulator-btn grafana-btn grafana-btn-red"   type="submit" name="Stop" value="Stop Submission">
+                            </form>
+                        {% endif %}
                     </div>
                     <br>
                     <div class="sim-panel">
-                    <h4>Temperature Sensor</h4> {% if form_temp %}
-                    <form method="POST" action="" id="TemperatureForm">
-                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_temp|crispy }}
-                        <br>
-                        <input class="submitbutton_temp simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission"> <br> <br>
-                        <input class="submitbutton_temp simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once"> <br> <br>
-                        <input class="submitbutton_temp simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
-                    </form>
-                    {% endif %}
+                        <h4>Temperature Sensor</h4>
+                        {% if form_temp %}
+                            <form method="POST" action="" id="TemperatureForm">
+                                {% csrf_token %} {% load crispy_forms_tags %} {{ form_temp|crispy }}
+                                <br>
+                                <input class="submitbutton_temp simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission">
+                                <br> <br>
+                                <input class="submitbutton_temp simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once">
+                                <br> <br>
+                                <input class="submitbutton_temp simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 mb-4">
                     <div class="sim-panel">
-                    <h4>Acceleration Sensor</h4> {% if form_accel %}
-                    <form method="POST" action="" id="AccelerationForm">
-                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_accel|crispy }}
-                        <br>
-                        <input class="submitbutton_accel simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission"> <br> <br>
-                        <input class="submitbutton_accel simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once"> <br> <br>
-                        <input class="submitbutton_accel simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
-                    </form>
-                    {% endif %}
-                    </div>
-                    <br>
-                    <div align="center">
-                    <form method="POST" action="" id="AllSensorsForm">
-                        {% csrf_token %}
-                        <input class="submitbutton_all simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission All">
-                        <br>
-                        <br>
-                        <input class="submitbutton_all simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit All Once">
-                        <br>
-                        <br>
-                        <input class="submitbutton_all simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop All Submission">
-                    </form>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-4 mb-4">
-                    <div class="sim-panel">
-                    <h4>Wheel Speed Sensor</h4> {% if form_ws %}
-                    <form method="POST" action="" id="WheelSpeedForm">
-                        {% csrf_token %} {% load crispy_forms_tags %} {{ form_ws|crispy }}
-                        <br>
-                        <input class="submitbutton_ws simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission"> <br> <br>
-                        <input class="submitbutton_ws simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once"> <br> <br>
-                        <input class="submitbutton_ws simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
-                    </form>
-                    {% endif %}
+                        <h4>Acceleration Sensor</h4>
+                        {% if form_accel %}
+                            <form method="POST" action="" id="AccelerationForm">
+                                {% csrf_token %} {% load crispy_forms_tags %} {{ form_accel|crispy }}
+                                <br>
+                                <input class="submitbutton_accel simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission">
+                                <br> <br>
+                                <input class="submitbutton_accel simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once">
+                                <br> <br>
+                                <input class="submitbutton_accel simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
+                            </form>
+                        {% endif %}
                     </div>
                     <br>
                     <div class="sim-panel">
-                        <h4>Fuel Level Sensor</h4> {% if form_fl %}
-                        <form method="POST" action="" id="FuelLevelForm">
-                            {% csrf_token %} {% load crispy_forms_tags %} {{ form_fl|crispy }}
-                            <br>
-                            <input class="submitbutton_fl simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission"> <br> <br>
-                            <input class="submitbutton_fl simulator-btn grafana-btn grafana-btn-red" type="submit" name="Once" value="Submit Once"> <br> <br>
-                            <input class="submitbutton_fl simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
+                        <h4>All Panel Controls</h4>
+                        <br>
+                        <form method="POST" action="" id="AllSensorsForm">
+                            {% csrf_token %}
+                            <input class="submitbutton_all simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission All">
+                            <br> <br>
+                            <input class="submitbutton_all simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit All Once">
+                            <br> <br>
+                            <input class="submitbutton_all simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop All Submission">
                         </form>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <div class="sim-panel">
+                        <h4>Wheel Speed Sensor</h4>
+                        {% if form_ws %}
+                            <form method="POST" action="" id="WheelSpeedForm">
+                                {% csrf_token %} {% load crispy_forms_tags %} {{ form_ws|crispy }}
+                                <br>
+                                <input class="submitbutton_ws simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission">
+                                <br> <br>
+                                <input class="submitbutton_ws simulator-btn grafana-btn grafana-btn-green" type="submit" name="Once" value="Submit Once">
+                                <br> <br>
+                                <input class="submitbutton_ws simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
+                            </form>
+                        {% endif %}
+                    </div>
+                    <br>
+                    <div class="sim-panel">
+                        <h4>Fuel Level Sensor</h4>
+                        {% if form_fl %}
+                            <form method="POST" action="" id="FuelLevelForm">
+                                {% csrf_token %} {% load crispy_forms_tags %} {{ form_fl|crispy }}
+                                <br>
+                                <input class="submitbutton_fl simulator-btn grafana-btn grafana-btn-green" type="submit" name="Continuous" value="Continuous Submission">
+                                <br> <br>
+                                <input class="submitbutton_fl simulator-btn grafana-btn grafana-btn-red" type="submit" name="Once" value="Submit Once">
+                                <br> <br>
+                                <input class="submitbutton_fl simulator-btn grafana-btn grafana-btn-red" type="submit" name="Stop" value="Stop Submission">
+                            </form>
                         {% endif %}
                     </div>
                 </div>
             </div>
+            <br>
         </div>
     </body>
 </html>
