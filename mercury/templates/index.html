@@ -18,7 +18,7 @@
             <br>
             <br>
             <a href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s" target="_blank">
-                <div class="tooltip" id="grafana-text-box">
+                <div class="index-text" id="grafana-text-box">
                     <h3>Dashboard</h3>
                     Launches a data visualization tool in a new window. This tool queries the team's database to populate several graphs. These graphs are fully configurable and can be added or deleted as new data sources become available. </span>
                 </div>
@@ -26,7 +26,7 @@
             <br>
 
             <a href="{% url 'mercury:stopwatch' %}">
-                <div class="tooltip" id="grafana-text-box">
+                <div class="index-text" id="grafana-text-box">
                     <h3>Stopwatch</h3>
                     Time the race with the Stopwatch feature. Track overall time and individual laps in the browser.
                 </div>
@@ -34,24 +34,24 @@
             <br>
 
             <a href="{% url 'mercury:dashboard' %}">
-                <div class="tooltip" id="grafana-text-box">
+                <div class="index-text" id="grafana-text-box">
                     <h3>Raw Telemetry</h3>
-                    This portal allows the raw data to be viewed. Useful for debugging and understanding the models behind the data visualization portal. Data generated in the simulator and/or vehicle sensors will appear here.
+                    Allows the raw data to be viewed. Useful for debugging and understanding the models behind the data visualization graphs. Data generated in the simulator and/or vehicle sensors will appear here.
                 </div>
             </a>
             <br>
 
             <a href="{% url 'mercury:simulator' %}">
-                <div class="tooltip" id="grafana-text-box">
+                <div class="index-text" id="grafana-text-box">
                     <h3>Simulator</h3>
-                    Generates mock vehicle data. Allows for experimentation with different data patterns on the visualization portal and raw telemetry portal.</span>
+                    Generates mock vehicle data. Allows for experimentation with different data patterns on the visualization graphs and raw telemetry tables.</span>
                 </div>
             </a>
             <br>
             <a href="{% url 'mercury:can-ui' %}">
-                <div class="tooltip" id="grafana-text-box">
+                <div class="index-text" id="grafana-text-box">
                     <h3>CAN Decoder</h3>
-                    Input CAN messages and view the return values. Sends user input to the CAN Decoder API endpoint and returns the decoded JSON values. Useful for learning CAN's format and the differences between structured and CAN data.
+                    Input CAN messages and view the return values. Sends input to the CAN Decoder API endpoint and returns the decoded JSON values. Useful for learning CAN's format and the differences between structured and CAN data.
                 </div>
             </a>
         </div>

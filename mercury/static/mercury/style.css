@@ -267,7 +267,7 @@ input#id_can_msg{
   color: var(--red)
 }
 
-.tooltip {
+.index-text {
     color: var(--light-text);
     position: relative;
     display: inline-block;
