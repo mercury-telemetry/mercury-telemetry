@@ -5,17 +5,28 @@
         <meta charset="UTF-8" http-equiv="refresh" content="5; URL=/dashboard/"/>
         <title>Mercury Raw Telemetry</title>
         <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
-        <!-- CSS -->
+        <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
     </head>
     <body>
         {% include 'banner.html' %}
         <div id="grafana-base">
-            <div align="center">
-                <h1>Dashboard</h1>
-                <br>
-                <h2>Simulated Data for each Snapshot</h2>
+            <div id="grafana-panel">
+                <h1>
+                    Raw Telemetry
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+                
+                <div id="accordion-text">
+                    Each table represents a table in the database. Each row in a given table displays a telemetry message stored in its corresponding database. Rows are sorted by ID and are in order of Time. Columns in each table show the fields of the messages stored in their corresponding database tables. <br><br>
+                    Page refreshes every few seconds and populates tables with newest messages in the database.
+                </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-lg-6 col-md-6 mb-6">
                     <div class="sim-panel">
@@ -43,7 +54,7 @@
                     
                     </div>
                     </div>
-                    <br><br>
+                    <br>
                     <div class="sim-panel">
                         <h4>Acceleration</h4>
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -103,7 +114,7 @@
                             </table>
                         </div>
                     </div>
-                    <br><br>
+                    <br>
                     <div class="sim-panel">
                         <h4>Suspension</h4>
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -136,7 +147,7 @@
                     </div>
                 </div>
             </div>
-            <br><br>
+            <br>
             <div class="row" align="center">
                 <div class="col-lg-6 col-md-6 mb-6 col-centered">
                     <div class="sim-panel">
