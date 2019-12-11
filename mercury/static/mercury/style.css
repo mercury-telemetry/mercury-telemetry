@@ -8,10 +8,38 @@ body {
   line-height: 1.5;
   text-align: left;
 }
-input#id_can_msg{
-    width: 100%;
-    color: green;
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+.sidebar-container {
+  position: fixed;
+  width: var(--sidebar-size);
+  height: 100%;
+  background: var(--light-panel);
+  border-color: var(--light-border);
+  text-align: center;
+  padding-top: 30px;
+  border-style: solid;
+  border-width: thin;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
+
+.sidebar-btn {
+  width: var(--sidebar-btn-width);
+}
+
+input#id_can_msg{
+  width: 100%;
+  color: green;
+}
+
+#accordion-text {
+  display: none;
+  text-align: left;
+  margin: 30px;
+}
+
 .my-custom-scrollbar {
   position: relative;
   height: 200px;
@@ -28,16 +56,17 @@ input#id_can_msg{
 }
 
 .team-logo {
-  /* margin-left: 5px; */
   padding: 5px;
-  width: 50px;
-  height: 50px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background-color: var(--light-background);
 }
 
 #grafana-base {
-  padding-top: 3%;
+  padding-top: 50px;
+  padding-left: var(--sidebar-size);
+  overflow: hidden;
 }
 
 #main-sim-panel {
@@ -56,17 +85,18 @@ input#id_can_msg{
   border-color:var(--light-border);
   background: var(--light-panel);
   text-align: center;
-  /*margin: auto;*/
   vertical-align:middle;
   border-style: solid;
   border-width: thin;
   padding: 20px;
-
-  /*padding-top: 50px;*/
+  line-height: normal;
+  min-width: 230px;
   padding-right: 40px !important;
-  /*padding-bottom: 50px;*/
   padding-left: 40px !important;
-  /*width: 300px;*/
+}
+
+.stopwatch-wrapper {
+  padding: 10px;
 }
 
 .stopwatch {
@@ -86,10 +116,6 @@ input#id_can_msg{
   background-color: var(--light-background);
 }
 
-.stopwatch-wrapper {
-  padding: 10px;
-}
-
 #grafana-panel {
   border-color:var(--light-border);
   background: var(--light-panel);
@@ -103,6 +129,7 @@ input#id_can_msg{
 }
 
 #grafana-text-box {
+  color: var(--light-text);
   border-color:var(--light-border);
   background: var(--light-panel);
   text-align: left;
@@ -114,26 +141,11 @@ input#id_can_msg{
   width: 95%;
 }
 
-.help-btn {
-    color: var(--light-text);
-    background-color: var(--light-background);
-    border-color: var(--light-background);
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    padding: 0.375rem .60rem;
-    font-size: 0.65rem;
-    line-height: 1.5;
-    border-radius: 0.35rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    width: 10rem;
+#grafana-text-box:hover {
+  background-color: var(--light-background);
 }
-.simulator-btn {
+
+.help-btn {
   color: var(--light-text);
   background-color: var(--light-background);
   border-color: var(--light-background);
@@ -150,12 +162,25 @@ input#id_can_msg{
   line-height: 1.5;
   border-radius: 0.35rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 10rem;
 }
 
-.simulator-btn:hover {
+.simulator-btn {
+  width: 95%;
+}
+
+.grafana-current-tab {
   color: var(--button-text-dark);
   background-color: var(--light-accent);
   border-color: var(--light-accent);
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.35rem;
 }
 
 .grafana-btn {
@@ -177,6 +202,7 @@ input#id_can_msg{
 
 .grafana-btn:hover {
   color: var(--light-text);
+  text-decoration: none;
 }
 
 .grafana-btn-gray {
@@ -227,23 +253,31 @@ input#id_can_msg{
   border-color: var(--yellow);
 }
 .grafana-btn-purple {
-    color: var(--light-text);
-    background-color: var(--light-purple);
-    border-color: var(--light-purple);
+  color: var(--light-text);
+  background-color: var(--light-purple);
+  border-color: var(--light-purple);
 }
 
 .grafana-btn-purple:hover {
-    color: var(--button-text-dark);
-    background-color: var(--purple);
-    border-color: var(--purple);
+  color: var(--button-text-dark);
+  background-color: var(--purple);
+  border-color: var(--purple);
 }
 
 .error {
-    color: var(--red)
+  color: var(--red)
 }
+
+.index-text {
+    color: var(--light-text);
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
 /* Base Bootstrap Style Elements */
 
- :root {
+:root {
 
 /* NYU Motorsports Elements Begin */
   --red: #EE4B5E;
@@ -275,6 +309,9 @@ input#id_can_msg{
 
   --button-text-light: #d8d9da;
   --button-text-dark: #161719;
+
+  --sidebar-size: 170px;
+  --sidebar-btn-width: 130px;
 /* End */
 
     --blue: #4e73df;
@@ -412,7 +449,17 @@ input#id_can_msg{
     top: -.5em;
   }
 
-  a {
+
+  a .homepage {
+      color: #8f06cb;
+  }
+
+  a:hover .homepage {
+     color: #57068C;
+        text-decoration: underline;
+    }
+
+a {
     color: #4e73df;
     text-decoration: none;
     background-color: transparent;
@@ -470,14 +517,14 @@ input#id_can_msg{
     border: 1px solid black;
     width: 100%;
     height: 100%;
-    
+
 
   }
 
   td {
     border: 1px solid black;
     text-align: center;
-    
+
   }
 
   th{
@@ -1454,12 +1501,16 @@ input#id_can_msg{
   }
 
   .navbar {
-    position: relative;
+    position: fixed;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem 1rem;
+    width: 100%;
+    border-bottom: 1px solid var(--light-border); 
+   
+
   }
 
   .navbar > .container,
@@ -1468,6 +1519,7 @@ input#id_can_msg{
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    
   }
 
   .navbar-brand {
@@ -1490,6 +1542,7 @@ input#id_can_msg{
     padding-left: 0;
     margin-bottom: 0;
     list-style: none;
+    
   }
 
   .navbar-nav .nav-link {

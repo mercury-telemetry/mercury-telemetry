@@ -1,4 +1,9 @@
 window.onload = stopwatchLoad;
+window.onbeforeunload = function() {
+    if (window.stopwatch.running == true) {
+        return "The stopwatch is running. Are you sure you want to leave?";
+    }
+};
 
 function stopwatchLoad() {
     window.stopwatch = new Stopwatch(

@@ -1,3 +1,5 @@
+"""This module defines the ModelForms (or Forms) that are used by the rendering
+engine to accept input for various features of the site"""
 from django import forms
 from mercury.models import (
     TemperatureSensor,
@@ -103,4 +105,6 @@ class FuelLevelForm(forms.ModelForm):
 
 
 class CANForm(forms.Form):
+    """This simple form is used just to accept a CAN message on the CAN UI."""
+
     can_msg = forms.CharField(label="CAN Message")

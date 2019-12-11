@@ -4,21 +4,35 @@
     <head>
         <meta charset="UTF-8">
         <title>Mercury Stopwatch</title>
-        <link rel="icon" href="{% static 'mercury/favicon.png' %}">
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
         <script src="{% static "mercury/js/stopwatch.js" %}"></script>
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
     </head>
     <body>
-        {% include 'banner.html' %}
+        {% include 'sidebar.html' %}
         <div id="grafana-base">
-            <div id="grafana-panel">
-                <h1>Stopwatch</h1>
+            <div id="grafana-panel" style="width: 375px">
+                <h1>
+                    Stopwatch
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+                
+                <div id="accordion-text">
+                        This stopwatch can be used to record lap times during competitions and testing. <br><br>
+                        <b>Recorded laps are saved only on this page,</b> ensure that lap data has been transferred to the official timesheet before leaving this page.
+                    <br>
+                </div>
+                <br>
                 <nav class="controls stopwatch-wrapper">
                     <a class="grafana-btn grafana-btn-green" onClick="stopwatch.start();">Start</a>
                     <a class="grafana-btn grafana-btn-red" onClick="stopwatch.stop();">Stop</a>
-                    <a class="grafana-btn" onClick="stopwatch.lap();">Lap</a>
-                    <a class="grafana-btn" onClick="stopwatch.reset();">Reset</a>
+                    <a class="grafana-btn grafana-btn-gray" onClick="stopwatch.lap();">Lap</a>
+                    <a class="grafana-btn grafana-btn-gray" onClick="stopwatch.reset();">Reset</a>
                 </nav>
                 <div class="stopwatch-wrapper"><div class="stopwatch"></div></div>
                 <div class="stopwatch-wrapper"><div class="results"></div></div>

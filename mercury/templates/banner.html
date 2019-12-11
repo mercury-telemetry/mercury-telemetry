@@ -1,5 +1,8 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
+<!-- Sets up icon fonts for use in any web page through Google Web Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+      rel="stylesheet">
+<nav class="navbar navbar-expand-lg navbar-light bg-white" style="z-index: 100">
     <div class="container">
         <a class="nav-link grafana-btn" href="{% url 'mercury:index' %}" style="width: 280px;">
             <div><img src="{% static 'mercury/motorsports_logo.png' %}" class="team-logo"></div>
@@ -8,27 +11,63 @@
         <div class="container">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-green"
+                    <a class="grafana-btn grafana-btn-gray"
                        href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s"
-                       target="_blank">Dashboard</a>
+                       target="_blank"> <i class="material-icons-outlined">open_in_new</i> <br> Dashboard</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:stopwatch' %}">Stopwatch</a>
+                {% if request.path == "/index"%}
+                        <div class="grafana-current-tab"><i class="material-icons-outlined">house</i><br>Home</div>
+                {% else %}
+                        <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:index' %}"><i class="material-icons-outlined">house</i><br>Home</a>
+                {% endif %}
                 </li>
+              
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:dashboard' %}">Raw Telemetry</a>
+                    {% if request.path == "/stopwatch/" %}
+                        <div class="grafana-current-tab"><i class="material-icons">timer</i> <br>Stopwatch</div>
+                    {% else %}
+                        <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:stopwatch' %}"><i
+                                class="material-icons">timer</i> <br>Stopwatch</a>
+                    {% endif %}
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:simulator' %}">Simulator</a>
+                    {% if request.path == "/dashboard/" %}
+                        <div class="grafana-current-tab"><i class="material-icons-outlined">table_chart</i><br>Raw
+                            Telemetry
+                        </div>
+                    {% else %}
+                        <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:dashboard' %}"><i
+                                class="material-icons-outlined">table_chart</i><br>Raw Telemetry</a>
+                    {% endif %}
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-gray" href="{% url 'mercury:can-ui' %}">CAN Decoder</a>
+                    {% if request.path == "/simulator/" %}
+                        <div class="grafana-current-tab"><i class="material-icons">tune</i><br>Simulator</div>
+                    {% else %}
+                        <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:simulator' %}"><i
+                                class="material-icons">tune</i><br>Simulator</a>
+                    {% endif %}
                 </li>
-                {%  if request.session.event_code_known %}
+
                 <li class="nav-item">
-                    <a class="nav-link grafana-btn grafana-btn-red" href="{% url 'mercury:logout' %}" onclick="return confirm('Are you sure you want to logout?')">Logout</a>
+                    {% if request.path == "/can/" %}
+                        <div class="grafana-current-tab"><i class="material-icons">lock_open</i><br>CAN Decoder</div>
+                    {% else %}
+                        <a class="grafana-btn grafana-btn-gray" href="{% url 'mercury:can-ui' %}"><i
+                                class="material-icons">lock_open</i><br>CAN Decoder</a>
+                    {% endif %}
                 </li>
-                {%  endif %}
+
+                {% if request.session.event_code_known %}
+                    <li class="nav-item">
+                        <a class="grafana-btn grafana-btn-red" href="{% url 'mercury:logout' %}"
+                           onclick="return confirm('Are you sure you want to logout?')"><i class="material-icons">power_settings_new</i><br>Logout</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
