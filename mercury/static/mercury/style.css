@@ -16,37 +16,9 @@ input#id_can_msg{
     color: green;
 }
 
-.accordion {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-  transition: 0.4s;
-}
-
-/* #accordion-btn {
-  width: 10px;
-} */
-
 #accordion-text {
   display: none;
   text-align: left;
-}
-
-.active, .accordion:hover {
-  background-color: #ccc; 
-}
-
-.panel {
-  padding: 0 18px;
-  display: none;
-  background-color: white;
-  overflow: hidden;
 }
 
 .my-custom-scrollbar {
