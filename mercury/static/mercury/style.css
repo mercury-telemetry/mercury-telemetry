@@ -11,6 +11,24 @@ body {
 
 tr:nth-child(even) {background-color: #f2f2f2;}
 
+.sidebar-container {
+  position: fixed;
+  width: var(--sidebar-size);
+  height: 100%;
+  background: var(--light-panel);
+  border-color: var(--light-border);
+  text-align: center;
+  padding-top: 30px;
+  border-style: solid;
+  border-width: thin;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.sidebar-btn {
+  width: var(--sidebar-btn-width);
+}
+
 input#id_can_msg{
     width: 100%;
     color: green;
@@ -37,16 +55,16 @@ input#id_can_msg{
 }
 
 .team-logo {
-  /* margin-left: 5px; */
   padding: 5px;
-  width: 50px;
-  height: 50px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background-color: var(--light-background);
 }
 
 #grafana-base {
-  padding-top: 10%;
+  padding-top: 50px;
+  padding-left: var(--sidebar-size);
 }
 
 #main-sim-panel {
@@ -78,6 +96,10 @@ input#id_can_msg{
   /*width: 300px;*/
 }
 
+.stopwatch-wrapper {
+  padding: 10px;
+}
+
 .stopwatch {
   padding: 15px;
   font-size: 30px;
@@ -93,10 +115,6 @@ input#id_can_msg{
   text-align: center;
   vertical-align: middle;
   background-color: var(--light-background);
-}
-
-.stopwatch-wrapper {
-  padding: 10px;
 }
 
 #grafana-panel {
@@ -142,6 +160,7 @@ input#id_can_msg{
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     width: 10rem;
 }
+
 .simulator-btn {
   color: var(--light-text);
   background-color: var(--light-background);
@@ -265,6 +284,7 @@ input#id_can_msg{
 .error {
     color: var(--red)
 }
+
 .tooltip {
     position: relative;
     display: inline-block;
@@ -325,6 +345,9 @@ input#id_can_msg{
 
   --button-text-light: #d8d9da;
   --button-text-dark: #161719;
+
+  --sidebar-size: 170px;
+  --sidebar-btn-width: 130px;
 /* End */
 
     --blue: #4e73df;
