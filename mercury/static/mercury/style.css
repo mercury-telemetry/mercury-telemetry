@@ -66,6 +66,7 @@ input#id_can_msg{
 #grafana-base {
   padding-top: 50px;
   padding-left: var(--sidebar-size);
+  overflow: hidden;
 }
 
 #main-sim-panel {
