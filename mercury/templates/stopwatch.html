@@ -8,13 +8,25 @@
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
         <script src="{% static "mercury/js/stopwatch.js" %}"></script>
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
     </head>
     <body>
         {% include 'banner.html' %}
         <div id="grafana-base">
             <div id="grafana-panel">
-                <h1>Stopwatch</h1>
-                <p>This stopwatch can be used to time in-progress races by someone from NYU Motorsports, to be transferred to the official race paperwork. Please note that it does not save to the database. You will need to confirm leaving the page while the timer is active.</p>
+                <h1>
+                    Stopwatch
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+                
+                <div id="accordion-text">
+                        This stopwatch can be used to record lap times during competitions and testing. <b>Recorded laps are saved only on this page,</b> ensure that lap data has been transferred to the official timesheet before leaving this page.
+                    <br>
+                </div>
+                <br>
                 <nav class="controls stopwatch-wrapper">
                     <a class="grafana-btn grafana-btn-green" onClick="stopwatch.start();">Start</a>
                     <a class="grafana-btn grafana-btn-red" onClick="stopwatch.stop();">Stop</a>

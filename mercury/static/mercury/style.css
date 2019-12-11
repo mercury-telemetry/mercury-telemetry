@@ -29,12 +29,13 @@ input#id_can_msg{
   transition: 0.4s;
 }
 
-#accordion-btn {
-  width: 80%;
-}
+/* #accordion-btn {
+  width: 10px;
+} */
 
 #accordion-text {
   display: none;
+  text-align: left;
 }
 
 .active, .accordion:hover {

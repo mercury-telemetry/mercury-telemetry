@@ -14,29 +14,30 @@
     <body>
         {% include 'banner.html' %}
         <div id="grafana-base">
-            <div id="grafana-panel"> 
-                <h1>Simulator</h1>
-                Generate mock telemetry data to test visualizations and test the link between the database models and the visualization software.
-                <br>
-                <br>
-                <button class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
-                    Instructions <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i> <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
-                </button>
+            <div id="grafana-panel">
+                <h1>
+                    Simulator
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+                
                 <div id="accordion-text">
-                    <input class="help-btn grafana-btn-green" value="Continuous Submission" readonly>
-                    or <input class="help-btn grafana-btn-red" value="Submit Once" readonly> buttons will generate data for individual panels <br> <br>
-                    <input class="help-btn grafana-btn-green" value= "Continuous Submission" readonly> will continuously submit data on an interval, <br> while <input class="help-btn grafana-btn-red" value="Submit Once" readonly> will only generate and submit data once.
-                    <br><br>If you select <input class="help-btn grafana-btn-green" value= "Continuous Submission" readonly>  ,
-                    click on <input class="help-btn grafana-btn-red" value="Stop Submission" readonly> to discontinue generating data.
-                    <br><br>
-                    To generate data for all panels simultaneously, you will find buttons for all as shown below<br>
-                    <input class="help-btn grafana-btn-green" value= "Continuous Submission All" readonly>
+                    Generate mock telemetry data to test visualizations and test the link between the database models and the visualization software.
+                    <br>
+                    <br>
 
-                    <input class="help-btn grafana-btn-red" value="Submit All Once" readonly>
+                    <input class="help-btn grafana-btn-green" value="Continuous Submission" readonly> - Panel generates and submits data on an interval.<br><br>
+                    <input class="help-btn grafana-btn-red" value="Submit Once" readonly> - Submit input value a single time.<br><br>
+                    <input class="help-btn grafana-btn-red" value="Stop Submission" readonly> - Stop continuously submitting data.<br><br>
 
-                    <input class="help-btn grafana-btn-red" value="Stop All Submission" readonly> <br> in the center. <br>
+                    <input class="help-btn grafana-btn-green" value= "Continuous Submission All" readonly> - All panels generate and submit data on an interval.<br><br>
+                    <input class="help-btn grafana-btn-red" value="Submit All Once" readonly> - All panels submit current inputs a single time.<br><br>
+                    <input class="help-btn grafana-btn-red" value="Stop All Submission" readonly> - Stops continuous submission for all panels.<br><br>
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-lg-4 col-md-4 mb-4">
                     <div class="sim-panel">
