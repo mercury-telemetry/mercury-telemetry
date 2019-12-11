@@ -5,19 +5,25 @@
         <meta charset="UTF-8">
         <title>Mercury Simulator</title>
         <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
-        <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
         <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
         <script src="{% static "mercury/js/simulator.js" %}"></script>
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
     </head>
     <body>
         {% include 'banner.html' %}
         <div id="grafana-base">
-            <div align="center">
-                <h2>Telemetry Data Simulator</h2>
-                <br>  <div class="sim-panel"> <b> Welcome to our Telemetry Data Simulator! </b><br> <br>
-
-                    <input class="help-btn grafana-btn-green" value= "Continuous Submission" readonly>
+            <div id="grafana-panel"> 
+                <h1>Simulator</h1>
+                Generate mock telemetry data to test visualizations and test the link between the database models and the visualization software.
+                <br>
+                <br>
+                <button class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                    Instructions <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i> <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                </button>
+                <div id="accordion-text">
+                    <input class="help-btn grafana-btn-green" value="Continuous Submission" readonly>
                     or <input class="help-btn grafana-btn-red" value="Submit Once" readonly> buttons will generate data for individual panels <br> <br>
                     <input class="help-btn grafana-btn-green" value= "Continuous Submission" readonly> will continuously submit data on an interval, <br> while <input class="help-btn grafana-btn-red" value="Submit Once" readonly> will only generate and submit data once.
                     <br><br>If you select <input class="help-btn grafana-btn-green" value= "Continuous Submission" readonly>  ,

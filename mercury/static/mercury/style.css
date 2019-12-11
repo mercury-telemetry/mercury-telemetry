@@ -15,6 +15,39 @@ input#id_can_msg{
     width: 100%;
     color: green;
 }
+
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+#accordion-btn {
+  width: 80%;
+}
+
+#accordion-text {
+  display: none;
+}
+
+.active, .accordion:hover {
+  background-color: #ccc; 
+}
+
+.panel {
+  padding: 0 18px;
+  display: none;
+  background-color: white;
+  overflow: hidden;
+}
+
 .my-custom-scrollbar {
   position: relative;
   height: 200px;
