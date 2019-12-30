@@ -1,5 +1,6 @@
 Django==2.*
 gunicorn
+psycopg2==2.7.5
 django-heroku==0.3.*
 django-crispy-forms==1.8.*
 python-dotenv==0.10.*

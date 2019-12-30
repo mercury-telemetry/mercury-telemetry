@@ -106,6 +106,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+clear/
+virtualenv-9223/
 
 # Spyder project settings
 .spyderproject
