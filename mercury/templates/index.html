@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Mercury Telemetry</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+    </head>
+<body>
+    {% include 'sidebar.html' %}
+    <div id="grafana-base">
+        <div id="grafana-panel">
+            <h1>NYU Motorsports Telemetry</h1>
+            <p style="text-align: left; margin: 25px;"> Telemetry platform for monitoring <a href="https://www.nyutandonmotorsports.com/" target="_blank" style="color: var(--light-text); text-decoration: underline;">NYU Tandon's Motorsports</a> BAJA SAE competition vehicle. This platform supports visualization of data from vehicle sensors along with several auxiliary features.</p>
+
+            <a href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s" target="_blank">
+                <div class="index-text" id="grafana-text-box">
+                    <h3>Dashboard</h3>
+                    Opens a new window containing the telemetry visualization tool, which queries the database to populate several graphs. Graphs are fully configurable and can be added or deleted as needed.
+                </div>
+            </a>
+            <br>
+
+            <a href="{% url 'mercury:stopwatch' %}">
+                <div class="index-text" id="grafana-text-box">
+                    <h3>Stopwatch</h3>
+                    Track overall race time and individual laps in the browser.
+                </div>
+            </a>
+            <br>
+
+            <a href="{% url 'mercury:dashboard' %}">
+                <div class="index-text" id="grafana-text-box">
+                    <h3>Raw Telemetry</h3>
+                    View raw data row-by-row as it appears in the database tables.
+                </div>
+            </a>
+            <br>
+
+            <a href="{% url 'mercury:simulator' %}">
+                <div class="index-text" id="grafana-text-box">
+                    <h3>Simulator</h3>
+                    Generates mock sensor data and sends it to the database tables.
+                </div>
+            </a>
+            <br>
+            <a href="{% url 'mercury:can-ui' %}">
+                <div class="index-text" id="grafana-text-box">
+                    <h3>CAN Decoder</h3>
+                    Input CAN messages and view the return values.
+                </div>
+            </a>
+        </div>
+        <br>
+    </div>
+</body>
+</html>

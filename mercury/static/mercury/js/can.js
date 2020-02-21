@@ -1,0 +1,134 @@
+$(function () {
+
+    // Submit post on submit
+    $('#CanForm').on('submit', function (event) {
+            event.preventDefault();
+            console.log("Submit CAN Message button was pressed.");
+            create_post();
+        }
+    );
+
+    function creating_table(json_array) {
+        let cols = [];
+        for (let i = 0; i < json_array.length; i++) {
+            for (let k in json_array[i]) {
+                if (cols.indexOf(k) === -1) {
+                    // Push all keys to the array
+                    cols.push(k);
+                }
+            }
+        }
+        // Create a table element
+        let table = document.createElement("table");
+        for (let i = 0; i < cols.length; i++) {
+
+            // Create the table header th element
+            let tr = table.insertRow(-1);
+            let theader = document.createElement("th");
+            theader.innerHTML = cols[i];
+            // Append columnName to the table row
+            tr.appendChild(theader);
+            let cell = tr.insertCell(-1);
+            cell.innerHTML = json_array[0][cols[i]];
+        }
+        // Add the newely created table containing json data
+        let el = document.getElementById("table");
+        el.innerHTML = "";
+        el.appendChild(table);
+    }
+
+    // AJAX for posting
+    function create_post() {
+        console.log("Entered create_post() function.");
+        $.ajax({
+            url: "/api/can/", // the endpoint
+            type: "POST", // http method
+            data: {
+                can_msg: $('#id_can_msg').val()
+            }, // data sent with the post request
+
+            // handle a successful response
+            success: function (response) {
+                console.log("POSTing was successful.");
+                console.log("Response:" + response);
+                console.log(response);
+                creating_table([response["can_msg"]]);
+                document.getElementById("para").innerHTML = "";
+                document.getElementById("para2").innerHTML = "";
+            },
+
+            // handle a non-successful response
+            error: function (xhr, errmsg) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                console.log(xhr);
+                let obj = JSON.parse(xhr.responseText);
+                document.getElementById("para").innerHTML = "Error: " + obj.error;
+                if (obj.received_message) {
+                    document.getElementById("para2").innerHTML = "Received Message: " + obj.received_message;
+                } else {
+                    document.getElementById("para2").innerHTML = "";
+                }
+                document.getElementById("table").innerHTML = "";
+                if ("can_msg" in xhr.responseJSON) {
+                    creating_table([xhr.responseJSON["can_msg"]]);
+                } else {
+                    document.getElementById("table").innerHTML = "";
+                }
+
+            }
+        });
+    }
+
+    // This function gets cookie with a given name
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    /*
+    The functions below will create a header with csrftoken
+    */
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
