@@ -134,3 +134,4 @@ env/
 .vscode/
 staticfiles/
 db.sqlite3
+Icon[\r]
