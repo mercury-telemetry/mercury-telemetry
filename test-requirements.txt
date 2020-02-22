@@ -1,5 +1,5 @@
 black
 flake8
 pytest
-coverage
+coverage==4.5.4
 python-coveralls
