@@ -10,9 +10,9 @@
 
 # Team Project repo
 
-Heroku Production (master) URI: [https://nyu-mercury-prod.herokuapp.com/](https://nyu-mercury-prod.herokuapp.com/)
+Heroku Production (master) URI: [https://hardware-team-master.herokuapp.com/](https://hardware-team-master.herokuapp.com/)
 
-Heroku Staging (develop) URI: [https://nyu-mercury.herokuapp.com](https://nyu-mercury.herokuapp.com)
+Heroku Staging (develop) URI: [https://hardware-team-develop.herokuapp.com/](https://hardware-team-develop.herokuapp.com/)
 
 Heroku Dashboard: [https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872](https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872)
 
