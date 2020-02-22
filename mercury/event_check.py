@@ -21,7 +21,7 @@ def require_event_code(func):
             # event is active and user does know the event code
             valid_session = True
 
-        if request.session.get("event_code_active") is None:
+        if request.session.get("event_code_active") is None: 
             # server hasn't determined if an event is active yet
             valid_session = False
 
