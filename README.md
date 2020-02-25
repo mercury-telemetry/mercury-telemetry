@@ -14,8 +14,6 @@ Heroku Production (master) URI: [https://hardware-team-master.herokuapp.com/](ht
 
 Heroku Staging (develop) URI: [https://hardware-team-develop.herokuapp.com/](https://hardware-team-develop.herokuapp.com/)
 
-Heroku Dashboard: [https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872](https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872)
-
 
 # First time repo setup
 1. From the root of the repo, run `scripts/setup.sh`. Activate your virtualenv first.
