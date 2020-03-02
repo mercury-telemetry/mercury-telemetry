@@ -40,6 +40,12 @@ input#id_can_msg{
   margin: 30px;
 }
 
+#accordion-event-form {
+  display: none; 
+  text-align: left;
+  margin: 30px;
+}
+
 .my-custom-scrollbar {
   position: relative;
   height: 200px;
@@ -587,6 +593,24 @@ a {
 
   select {
     word-wrap: normal;
+  }
+
+  .cancelbutton {
+    width: 47%;
+    float: left;
+  }
+
+  .submitbutton {
+    width: 47%;
+    float: right;
+  }
+
+  [name="event_name"] {
+    width: 70%;
+  }
+
+  [name="event_location"] {
+    width: 70%;
   }
 
   button,

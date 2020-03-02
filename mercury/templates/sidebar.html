@@ -49,12 +49,12 @@
     {% if request.path == "/dashboard/" %}
         <div class="grafana-current-tab sidebar-btn">
             <i class="material-icons-outlined">table_chart</i>
-            <br>Raw Telemetry
+            <br>Reports
         </div>
     {% else %}
         <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:dashboard' %}">
             <i class="material-icons-outlined">table_chart</i>
-            <br>Raw Telemetry
+            <br>Reports
         </a>
     {% endif %}
     <br><br>

@@ -1,6 +1,17 @@
 from django.db import models
 
 
+# Note: the Event will have an ID automatically
+class Event(models.Model):
+    event_name = models.CharField(max_length=100, null=False, unique=True)
+    event_location = models.CharField(max_length=100, null=False, unique=False)
+    date = models.DateTimeField(null=False)
+    comments = models.TextField(null=True)
+
+    def __str__(self):  # pragma: no cover
+        return Event.__name__
+
+
 class TemperatureSensor(models.Model):
     """This model represents the Temperature sensor that we expect to
     be potentially available in the future in the NYU Motorsports
