@@ -158,5 +158,6 @@ class General_data(models.Model) :
 
     class Meta :
         unique_together = (("event_id", "sensor_id", "field_id"),)
+
     def __str__(self):
         return General_data.__name__
