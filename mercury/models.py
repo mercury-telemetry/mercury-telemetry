@@ -130,32 +130,33 @@ class Sensor(models.Model) :
 
 class Field(models.Model) :
     """This model stores the information about fields of sensors. """
-    field_id = models.AutoField(primary_key=True)
+    field_id = models.IntegerField(unique=True)
     sensor_id = models.ForeignKey(Sensor, related_name='sensor_field',
                                   to_field="sensor_id",
-                                  primary_key=True,
                                   on_delete=models.CASCADE)
     field_name = models.CharField(max_length=40, null=False, blank=False)
+
+    class Meta:
+        unique_together = (("field_id", "sensor_id"),)
 
     def __str__(self):
         return Field.__name__
 
 
 class General_data(models.Model) :
-    event_id = models.ForeignKey(Events, related_name="event_data",
+    event_id = models.OneToOneField(Events, related_name="event_data",
                                  on_delete=models.CASCADE,
-                                 to_field='event_id',
-                                 primary_key=True)
-    sensor_id = models.ForeignKey(Sensor, related_name="sensor_data",
+                                 to_field='event_id')
+    sensor_id = models.OneToOneField(Sensor, related_name="sensor_data",
                                   on_delete=models.CASCADE,
-                                  to_field='sensor_id',
-                                  primary_key=True)
-    field_id = models.ForeignKey(Field, related_name="field_data",
+                                  to_field='sensor_id')
+    field_id = models.OneToOneField(Field, related_name="field_data",
                                  on_delete=models.CASCADE,
-                                 to_field='field_id',
-                                 primary_key=True)
+                                 to_field='field_id')
     stored_at_time = models.DateTimeField()     # index
     data_value = models.FloatField(default=0)
 
+    class Meta :
+        unique_together = (("event_id", "sensor_id", "field_id"),)
     def __str__(self):
         return General_data.__name__
