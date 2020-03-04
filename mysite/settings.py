@@ -113,7 +113,7 @@ if "TRAVIS" in os.environ:  # pragma: no cover
             "PORT": "5432",
         }
     }
-    
+
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)  # pragma: no cover
