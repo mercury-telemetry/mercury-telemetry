@@ -1,20 +1,18 @@
-`develop`
-
-[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-hardware.svg?branch=develop)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-hardware)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-hardware/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-hardware?branch=develop)
-
 `master`
 
 [![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-hardware.svg?branch=master)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-hardware)
 [![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-hardware/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-hardware?branch=master)
+
+`develop`
+
+[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-hardware.svg?branch=develop)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-hardware)
+[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-hardware/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-hardware?branch=develop)
 
 # Team Project repo
 
 Heroku Production (master) URI: [https://hardware-team-master.herokuapp.com/](https://hardware-team-master.herokuapp.com/)
 
 Heroku Staging (develop) URI: [https://hardware-team-develop.herokuapp.com/](https://hardware-team-develop.herokuapp.com/)
-
-Heroku Dashboard: [https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872](https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872)
 
 
 # First time repo setup
