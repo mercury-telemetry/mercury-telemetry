@@ -1,3 +1,9 @@
 [flake8]
-max-line-length = 92
-exclude = tests/*
+max-line-length=120
+exclude =
+    .git,
+    __pycache__,
+    venv
+    **/migrations
+ignore =
+    E501
