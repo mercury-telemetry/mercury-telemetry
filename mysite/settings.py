@@ -91,16 +91,7 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 
 DATABASES = {}
 DATABASES["default"] = dj_database_url.config(conn_max_age=600)
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "mercury",
-        "USER": "postgres",
-        "PASSWORD": "123",
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
-}
+
 if "TRAVIS" in os.environ:  # pragma: no cover
     DEBUG = True
     DATABASES = {
