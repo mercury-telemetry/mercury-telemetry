@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Events(models.Model):
     """This model stores the information about events. When a new event is created,
