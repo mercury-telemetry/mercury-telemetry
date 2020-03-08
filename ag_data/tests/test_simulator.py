@@ -96,32 +96,33 @@ class SimulatorTest(TestCase):
 
     def test_simulator_log_single_measurement(self):
         randEventIndex = randint(0, len(test_event_data) - 1)
-        randSensorIndex = randint(0, len(test_sensor_data) - 1)
 
         sim = Simulator()
         sim.createAnEventFromPresets(randEventIndex)
-        sim.createASensorFromPresets(randSensorIndex)
 
-        timestamp = timezone.now()
-        measurement = sim.logSingleMeasurement(timestamp=timestamp)
+        for index in range(len(test_sensor_data)):
+            sim.createASensorFromPresets(index)
 
-        # test data in database
-        measurement_in_database = AGMeasurement.objects.get(
-            pk=measurement.measurement_uuid
-        )
-        self.assertEqual(measurement_in_database.measurement_timestamp, timestamp)
-        self.assertEqual(measurement_in_database.measurement_event, sim.event)
-        self.assertEqual(measurement_in_database.measurement_sensor, sim.sensor)
+            timestamp = timezone.now()
+            measurement = sim.logSingleMeasurement(timestamp=timestamp)
 
-        # test measurement payload format
-        measurement_payload = measurement_in_database.measurement_value
-        correct_payload_format = test_sensor_data[randSensorIndex]["agSensorFormat"]
-        # Cross comparison of all keys in payload and the expected specification
-        for field in correct_payload_format.keys():
-            self.assertIn(field, measurement_payload.keys())
-        for field in measurement_payload.keys():
-            self.assertIn(field, correct_payload_format.keys())
+            # test data in database
+            measurement_in_database = AGMeasurement.objects.get(
+                pk=measurement.measurement_uuid
+            )
+            self.assertEqual(measurement_in_database.measurement_timestamp, timestamp)
+            self.assertEqual(measurement_in_database.measurement_event, sim.event)
+            self.assertEqual(measurement_in_database.measurement_sensor, sim.sensor)
 
-        # FIXME: test string/number restriant
+            # test measurement payload format by cross comparison of all keys in payload
+            # and the expected specification
+            measurement_payload = measurement_in_database.measurement_value
+            correct_payload_format = test_sensor_data[index]["agSensorFormat"]
 
-        # FIXME: test string/number restriant
+            # NOTE: limitation: this only checks the keys at root level of the payload
+            for field in correct_payload_format.keys():
+                self.assertIn(field, measurement_payload.keys())
+            for field in measurement_payload.keys():
+                self.assertIn(field, correct_payload_format.keys())
+
+            # FIXME: test string/number restriant
