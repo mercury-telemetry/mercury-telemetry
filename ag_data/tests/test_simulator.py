@@ -10,20 +10,21 @@ from ag_data.tests.common import test_event_data, test_sensor_data
 
 
 class SimulatorTest(TestCase):
+    def setUp(self):
+        self.sim = Simulator()
+
     def test_simulator_creation(self):
-        sim = Simulator()
-        self.assertEqual(sim.event, None)
-        self.assertEqual(sim.sensor, None)
+        self.assertEqual(self.sim.event, None)
+        self.assertEqual(self.sim.sensor, None)
 
     def test_simulator_create_event(self):
-        sim = Simulator()
         totalTestEvents = len(test_event_data)
         # test event creation for indices in range
         for index in range(totalTestEvents):
-            sim.createAnEventFromPresets(index)
+            self.sim.createAnEventFromPresets(index)
             current_event = test_event_data[index]
 
-            event = AGEvent.objects.get(pk=sim.event.event_uuid)
+            event = AGEvent.objects.get(pk=self.sim.event.event_uuid)
             self.assertEqual(event.event_name, current_event["agEventName"])
             self.assertEqual(
                 (event.event_date), parse_datetime(current_event["agEventDate"])
@@ -34,7 +35,7 @@ class SimulatorTest(TestCase):
 
         # test event creation for index out of range
         with self.assertRaises(Exception) as e:
-            sim.createAnEventFromPresets(totalTestEvents)
+            self.sim.createAnEventFromPresets(totalTestEvents)
         correct_exception_message = (
             "Cannot find requested event (index "
             + str(totalTestEvents)
@@ -43,14 +44,13 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_create_sensor(self):
-        sim = Simulator()
         totalTestSensors = len(test_sensor_data)
         # test sensor creation for indices in range
         for index in range(totalTestSensors):
-            sim.createASensorFromPresets(index)
+            self.sim.createASensorFromPresets(index)
             current_sensor = test_sensor_data[index]
 
-            sensor = AGSensor.objects.get(pk=sim.sensor.sensor_id)
+            sensor = AGSensor.objects.get(pk=self.sim.sensor.sensor_id)
             self.assertEqual(sensor.sensor_name, current_sensor["agSensorName"])
             self.assertEqual(
                 sensor.sensor_description, current_sensor["agSensorDescription"]
@@ -62,7 +62,7 @@ class SimulatorTest(TestCase):
 
         # test sensor creation for index out of range
         with self.assertRaises(Exception) as e:
-            sim.createASensorFromPresets(totalTestSensors)
+            self.sim.createASensorFromPresets(totalTestSensors)
         correct_exception_message = (
             "Cannot find requested sensor (index "
             + str(totalTestSensors)
@@ -73,46 +73,45 @@ class SimulatorTest(TestCase):
     def test_simulator_log_single_measurement_no_event(self):
         randSensorIndex = randint(0, len(test_sensor_data) - 1)
 
-        sim = Simulator()
-        sim.createASensorFromPresets(randSensorIndex)
+        self.sim.createASensorFromPresets(randSensorIndex)
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
-            sim.logSingleMeasurement(timestamp=timestamp)
+            self.sim.logSingleMeasurement(timestamp=timestamp)
         correct_assertion_message = "No event registered in the simulator"
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement_no_sensor(self):
         randEventIndex = randint(0, len(test_event_data) - 1)
 
-        sim = Simulator()
-        sim.createAnEventFromPresets(randEventIndex)
+        self.sim.createAnEventFromPresets(randEventIndex)
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
-            sim.logSingleMeasurement(timestamp=timestamp)
+            self.sim.logSingleMeasurement(timestamp=timestamp)
         correct_assertion_message = "No sensor registered in the simulator"
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement(self):
         randEventIndex = randint(0, len(test_event_data) - 1)
 
-        sim = Simulator()
-        sim.createAnEventFromPresets(randEventIndex)
+        self.sim.createAnEventFromPresets(randEventIndex)
 
         for index in range(len(test_sensor_data)):
-            sim.createASensorFromPresets(index)
+            self.sim.createASensorFromPresets(index)
 
             timestamp = timezone.now()
-            measurement = sim.logSingleMeasurement(timestamp=timestamp)
+            measurement = self.sim.logSingleMeasurement(timestamp=timestamp)
 
             # test data in database
             measurement_in_database = AGMeasurement.objects.get(
                 pk=measurement.measurement_uuid
             )
             self.assertEqual(measurement_in_database.measurement_timestamp, timestamp)
-            self.assertEqual(measurement_in_database.measurement_event, sim.event)
-            self.assertEqual(measurement_in_database.measurement_sensor, sim.sensor)
+            self.assertEqual(measurement_in_database.measurement_event, self.sim.event)
+            self.assertEqual(
+                measurement_in_database.measurement_sensor, self.sim.sensor
+            )
 
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
@@ -131,20 +130,19 @@ class SimulatorTest(TestCase):
         randEventIndex = randint(0, len(test_event_data) - 1)
         randSensorIndex = randint(0, len(test_sensor_data) - 1)
 
-        sim = Simulator()
-        sim.createAnEventFromPresets(randEventIndex)
-        sim.createASensorFromPresets(randSensorIndex)
+        self.sim.createAnEventFromPresets(randEventIndex)
+        self.sim.createASensorFromPresets(randSensorIndex)
 
         randFrequencyInHz = uniform(1, 100)
         randSeconds = uniform(1, 60)
 
-        sim.logMeasurementsInThePastSeconds(
+        self.sim.logMeasurementsInThePastSeconds(
             seconds=randSeconds, frequencyInHz=randFrequencyInHz, printProgress=False
         )
 
         totalMeasurementsInDatabase = (
-            AGMeasurement.objects.filter(measurement_event=sim.event)
-            .filter(measurement_sensor=sim.sensor)
+            AGMeasurement.objects.filter(measurement_event=self.sim.event)
+            .filter(measurement_sensor=self.sim.sensor)
             .count()
         )
         self.assertEqual(
@@ -155,16 +153,15 @@ class SimulatorTest(TestCase):
         randEventIndex = randint(0, len(test_event_data) - 1)
         randSensorIndex = randint(0, len(test_sensor_data) - 1)
 
-        sim = Simulator()
-        sim.createAnEventFromPresets(randEventIndex)
-        sim.createASensorFromPresets(randSensorIndex)
+        self.sim.createAnEventFromPresets(randEventIndex)
+        self.sim.createASensorFromPresets(randSensorIndex)
 
         randFrequencyInHz = uniform(1, 100)
         randSleepTimer = uniform(1, 15)
 
         startTime = timezone.now()
 
-        sim.logContinuousRealTimeMeasurements(
+        self.sim.logContinuousRealTimeMeasurements(
             frequencyInHz=randFrequencyInHz, sleepTimer=randSleepTimer
         )
 
