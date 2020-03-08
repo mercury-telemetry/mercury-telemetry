@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, uniform
 
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
@@ -126,3 +126,52 @@ class SimulatorTest(TestCase):
                 self.assertIn(field, correct_payload_format.keys())
 
             # FIXME: test string/number restriant
+
+    def test_simulator_log_multiple_measurements(self):
+        randEventIndex = randint(0, len(test_event_data) - 1)
+        randSensorIndex = randint(0, len(test_sensor_data) - 1)
+
+        sim = Simulator()
+        sim.createAnEventFromPresets(randEventIndex)
+        sim.createASensorFromPresets(randSensorIndex)
+
+        randFrequencyInHz = uniform(1, 100)
+        randSeconds = uniform(1, 60)
+
+        sim.logMeasurementsInThePastSeconds(
+            seconds=randSeconds, frequencyInHz=randFrequencyInHz, printProgress=False
+        )
+
+        totalMeasurementsInDatabase = (
+            AGMeasurement.objects.filter(measurement_event=sim.event)
+            .filter(measurement_sensor=sim.sensor)
+            .count()
+        )
+        self.assertEqual(
+            totalMeasurementsInDatabase, int(randSeconds * randFrequencyInHz)
+        )
+
+    def test_simulator_log_continuous_measurements(self):
+        randEventIndex = randint(0, len(test_event_data) - 1)
+        randSensorIndex = randint(0, len(test_sensor_data) - 1)
+
+        sim = Simulator()
+        sim.createAnEventFromPresets(randEventIndex)
+        sim.createASensorFromPresets(randSensorIndex)
+
+        randFrequencyInHz = uniform(1, 100)
+        randSleepTimer = uniform(1, 15)
+
+        startTime = timezone.now()
+
+        sim.logContinuousRealTimeMeasurements(
+            frequencyInHz=randFrequencyInHz, sleepTimer=randSleepTimer
+        )
+
+        endTime = timezone.now()
+
+        secondsElapsed = endTime - startTime
+
+        self.assertTrue(
+            randSleepTimer - 1 <= secondsElapsed.seconds <= randSleepTimer + 1
+        )
