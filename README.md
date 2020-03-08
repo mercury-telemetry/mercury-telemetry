@@ -1,14 +1,12 @@
-# Team Sextants (The front)
-
 `develop`
 
-[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-frontend.svg?branch=develop)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-frontend)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-frontend/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-frontend?branch=develop&service=github)
+[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class.svg?branch=develop&service=github)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class)
+[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-class/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-class?branch=develop&service=github)
 
 `master`
 
-[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-frontend.svg?branch=master)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-frontend)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-frontend/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-frontend?branch=master&service=github)
+[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class.svg?branch=master&service=github)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class)
+[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-class/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-class?branch=master&service=github)
 
 # Team Project repo
 
