@@ -88,8 +88,12 @@ class Simulator:
         """
 
         # FIXME: handle situations when self.event or self.sensor is invalid
-        assert isinstance(self.event, models.AGEvent), "No event registered in the simulator"
-        assert isinstance(self.sensor, models.AGSensor), "No sensor registered in the simulator"
+        assert isinstance(
+            self.event, models.AGEvent
+        ), "No event registered in the simulator"
+        assert isinstance(
+            self.sensor, models.AGSensor
+        ), "No sensor registered in the simulator"
 
         if self.checkSensorFormat(0):
             return models.AGMeasurement.objects.create(
@@ -159,9 +163,7 @@ class Simulator:
         startTime = timezone.now()
         stopTime = startTime + timezone.timedelta(seconds=sleepTimer)
         while True:
-            self.logMeasurementsInThePastSeconds(
-                1, frequencyInHz, printProgress=False
-            )
+            self.logMeasurementsInThePastSeconds(1, frequencyInHz, printProgress=False)
             sampleInterval = 1 / frequencyInHz
             sleep(sampleInterval)
             if sleepTimer != 0 and stopTime < timezone.now():
