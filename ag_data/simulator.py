@@ -87,7 +87,6 @@ class Simulator:
             sensor.
         """
 
-        # FIXME: handle situations when self.event or self.sensor is invalid
         assert isinstance(
             self.event, models.AGEvent
         ), "No event registered in the simulator"
@@ -159,12 +158,48 @@ class Simulator:
         if printProgress is True:
             print("Time elapsed: " + str(endTime - startTime))
 
-    def logContinuousRealTimeMeasurements(self, frequencyInHz, sleepTimer=0):
+    def logLiveMeasurements(self, frequencyInHz, sleepTimer=0):
+        """log measurements as they generate in real time.
+
+        Here, the definition of "live" is defined as achieving at least 70% of insertion
+        in the unit test at frequency 1Hz - 100Hz for up to 15 seconds. In the case which
+        tests of this method cannot pass on a specific machine, some common causes to look
+        into include:
+
+        - Some sensor types require heavier resources to generate data, as each execution
+        of the unit test may choose random sensor type in the simulator.
+        - Database connection is limited, which impacts insertion performance, causing
+        following measurements to halt.
+        - Frequency for measurement generation is too high. The device running this program
+        does not have enough resources to generate required sensor measurements. Please
+        notice that for some sensors, data generation use various random number generations
+        extensively.
+
+        Arguments:
+
+            frequencyInHz {float} -- frequency for measurement generation. This method will
+            do its best to achieve the frequency at its best.
+
+        Keyword Arguments:
+
+            sleepTimer {float} -- time in seconds before automatically stop generate new
+            measurements. (default: {0} which will result in generating measurements
+            infinitely)
+        """
         startTime = timezone.now()
         stopTime = startTime + timezone.timedelta(seconds=sleepTimer)
+        sampleInterval = 1 / frequencyInHz
+        cycleEnd = startTime
+
         while True:
-            self.logMeasurementsInThePastSeconds(1, frequencyInHz, printProgress=False)
-            sampleInterval = 1 / frequencyInHz
-            sleep(sampleInterval)
+            self.logSingleMeasurement(timezone.now())
             if sleepTimer != 0 and stopTime < timezone.now():
                 break
+            cycleEnd = cycleEnd + timezone.timedelta(
+                microseconds=sampleInterval * 1000000
+            )
+            intervalOffset = (cycleEnd - timezone.now()).microseconds / 1000000
+            sleepInterval = sampleInterval - intervalOffset
+            if sleepInterval < 0:
+                sleepInterval = sleepInterval * sampleInterval
+            sleep(sampleInterval)

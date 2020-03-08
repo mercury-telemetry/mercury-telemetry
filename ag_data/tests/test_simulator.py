@@ -169,36 +169,61 @@ class SimulatorTest(TestCase):
             sys.stdout = saved_stdout
 
     def test_simulator_log_continuous_measurements(self):
+        """Tests the logLiveMeasurements(self, frequencyInHz, sleepTimer) method in the
+        Simulator class. By default, it will run the test 10 times.
+
+        To run this test case only, and to stop testing when any failure is encountered,
+        use this single command:
+
+        python manage.py test ag_data.tests.test_simulator.SimulatorTest.
+        test_simulator_log_continuous_measurements --failfast
+        """
         randEventIndex = randint(0, len(test_event_data) - 1)
         randSensorIndex = randint(0, len(test_sensor_data) - 1)
 
-        self.sim.createAnEventFromPresets(randEventIndex)
-        self.sim.createASensorFromPresets(randSensorIndex)
+        # Change the number of loops for testing on demand
+        for i in range(1):
+            self.sim.createAnEventFromPresets(randEventIndex)
+            self.sim.createASensorFromPresets(randSensorIndex)
 
-        randFrequencyInHz = uniform(1, 100)
-        randSleepTimer = uniform(1, 15)
+            randFrequencyInHz = uniform(1, 100)
+            randSleepTimer = uniform(1, 15)
 
-        startTime = timezone.now()
+            startTime = timezone.now()
 
-        self.sim.logContinuousRealTimeMeasurements(
-            frequencyInHz=randFrequencyInHz, sleepTimer=randSleepTimer
-        )
+            self.sim.logLiveMeasurements(
+                frequencyInHz=randFrequencyInHz, sleepTimer=randSleepTimer
+            )
 
-        endTime = timezone.now()
+            endTime = timezone.now()
+            secondsElapsed = endTime - startTime
 
-        secondsElapsed = endTime - startTime
+            # test sleep timer
+            self.assertTrue(
+                randSleepTimer - 1 <= secondsElapsed.seconds <= randSleepTimer + 1
+            )
 
-        # test sleep timer
-        self.assertTrue(
-            randSleepTimer - 1 <= secondsElapsed.seconds <= randSleepTimer + 1
-        )
+            # test total measurement count
+            totalMeasurementsInDatabase = (
+                AGMeasurement.objects.filter(measurement_event=self.sim.event)
+                .filter(measurement_sensor=self.sim.sensor)
+                .count()
+            )
 
-        # test total measurement count
-        totalMeasurementsInDatabase = (
-            AGMeasurement.objects.filter(measurement_event=self.sim.event)
-            .filter(measurement_sensor=self.sim.sensor)
-            .count()
-        )
-        self.assertEqual(
-            totalMeasurementsInDatabase, int(randSeconds * randFrequencyInHz)
-        )
+            expectedTotal = int(randSleepTimer * randFrequencyInHz)
+
+            # If this test fails on a device, uncomment following lines for more info.
+
+            # print("Actual: " + str(totalMeasurementsInDatabase))
+            # print("Expected: " + str(expectedTotal))
+            # print(
+            #     "Completion: {:3.1f}%".format(
+            #         totalMeasurementsInDatabase / expectedTotal * 100
+            #     )
+            # )
+
+            self.assertTrue(
+                expectedTotal * 0.7
+                <= totalMeasurementsInDatabase
+                <= expectedTotal * 1.1
+            )
