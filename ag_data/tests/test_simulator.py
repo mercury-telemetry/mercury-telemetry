@@ -127,6 +127,9 @@ class SimulatorTest(TestCase):
             # FIXME: test string/number restriant
 
     def test_simulator_log_multiple_measurements(self):
+        import sys
+        from io import StringIO
+
         randEventIndex = randint(0, len(test_event_data) - 1)
         randSensorIndex = randint(0, len(test_sensor_data) - 1)
 
@@ -140,6 +143,7 @@ class SimulatorTest(TestCase):
             seconds=randSeconds, frequencyInHz=randFrequencyInHz, printProgress=False
         )
 
+        # test number of measurements
         totalMeasurementsInDatabase = (
             AGMeasurement.objects.filter(measurement_event=self.sim.event)
             .filter(measurement_sensor=self.sim.sensor)
@@ -148,6 +152,21 @@ class SimulatorTest(TestCase):
         self.assertEqual(
             totalMeasurementsInDatabase, int(randSeconds * randFrequencyInHz)
         )
+
+        # test output prompts
+        saved_stdout = sys.stdout
+        try:
+            out = StringIO()
+            sys.stdout = out
+
+            self.sim.logMeasurementsInThePastSeconds(
+                seconds=randSeconds, frequencyInHz=randFrequencyInHz
+            )
+            outputString = out.getvalue().strip()
+            self.assertIn("({}% done!) Created ".format(100), outputString)
+            self.assertIn(str(totalMeasurementsInDatabase), outputString)
+        finally:
+            sys.stdout = saved_stdout
 
     def test_simulator_log_continuous_measurements(self):
         randEventIndex = randint(0, len(test_event_data) - 1)
@@ -169,6 +188,17 @@ class SimulatorTest(TestCase):
 
         secondsElapsed = endTime - startTime
 
+        # test sleep timer
         self.assertTrue(
             randSleepTimer - 1 <= secondsElapsed.seconds <= randSleepTimer + 1
+        )
+
+        # test total measurement count
+        totalMeasurementsInDatabase = (
+            AGMeasurement.objects.filter(measurement_event=self.sim.event)
+            .filter(measurement_sensor=self.sim.sensor)
+            .count()
+        )
+        self.assertEqual(
+            totalMeasurementsInDatabase, int(randSeconds * randFrequencyInHz)
         )
