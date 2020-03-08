@@ -7,10 +7,10 @@ from rest_framework.parsers import JSONParser
 import io
 
 
-class AGEventAPISerializationTest(TestCase):
+class AGEventSerializationTest(TestCase):
     def test_event_serialization(self):
         # prepare an event object
-        agEvent = common.create_event(common.test_event_data["event1"])
+        agEvent = common.create_event(common.test_event_data[0])
         # serialize data
         serializer = AGEventSerializer(agEvent)
         self.assertEqual(serializer.instance.event_name, agEvent.event_name)
