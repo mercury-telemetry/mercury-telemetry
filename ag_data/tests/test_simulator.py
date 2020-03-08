@@ -116,7 +116,12 @@ class SimulatorTest(TestCase):
         # test measurement payload format
         measurement_payload = measurement_in_database.measurement_value
         correct_payload_format = test_sensor_data[randSensorIndex]["agSensorFormat"]
-        for field in measurement_payload.keys():
+        # Cross comparison of all keys in payload and the expected specification
+        for field in correct_payload_format.keys():
             self.assertIn(field, measurement_payload.keys())
+        for field in measurement_payload.keys():
+            self.assertIn(field, correct_payload_format.keys())
+
+        # FIXME: test string/number restriant
 
         # FIXME: test string/number restriant
