@@ -81,13 +81,13 @@ class SimulatorTest(TestCase):
             sim.logSingleMeasurement(timestamp=timestamp)
         correct_assertion_message = "No event registered in the simulator"
         self.assertEqual(str(ae.exception), correct_assertion_message)
-    
+
     def test_simulator_log_single_measurement_no_sensor(self):
         randEventIndex = randint(0, len(test_event_data) - 1)
 
         sim = Simulator()
         sim.createAnEventFromPresets(randEventIndex)
-        
+
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             sim.logSingleMeasurement(timestamp=timestamp)
@@ -101,12 +101,14 @@ class SimulatorTest(TestCase):
         sim = Simulator()
         sim.createAnEventFromPresets(randEventIndex)
         sim.createASensorFromPresets(randSensorIndex)
-        
+
         timestamp = timezone.now()
         measurement = sim.logSingleMeasurement(timestamp=timestamp)
-        
+
         # test data in database
-        measurement_in_database = AGMeasurement.objects.get(pk=measurement.measurement_uuid)
+        measurement_in_database = AGMeasurement.objects.get(
+            pk=measurement.measurement_uuid
+        )
         self.assertEqual(measurement_in_database.measurement_timestamp, timestamp)
         self.assertEqual(measurement_in_database.measurement_event, sim.event)
         self.assertEqual(measurement_in_database.measurement_sensor, sim.sensor)
@@ -116,6 +118,5 @@ class SimulatorTest(TestCase):
         correct_payload_format = test_sensor_data[randSensorIndex]["agSensorFormat"]
         for field in measurement_payload.keys():
             self.assertIn(field, measurement_payload.keys())
-        
-        # FIXME: test string/number restriant
 
+        # FIXME: test string/number restriant
