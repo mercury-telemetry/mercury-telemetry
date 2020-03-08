@@ -14,7 +14,7 @@
         <div id="grafana-base">
             <div id="grafana-panel">
                 <h1>
-                    Raw Telemetry
+                    Reports
                     <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
                         <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
                         <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
@@ -26,6 +26,53 @@
                     <b>Note:</b> page refreshes every few seconds and populates tables with newest messages in the database.
                 </div>
             </div>
+
+            <div id="grafana-panel">
+
+                <div>
+                    <!-- events is a list passed in the context if there are any events, otherwise will be an empty list -->
+                    {% if events %}
+
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="displayForm()">
+                        Change event
+                        <i class="material-icons-outlined" id="show_form" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="hide_form" style="display: none">expand_less</i>
+                    </a>
+                    <div id="accordion-event-form">
+                        Select which event to change to.
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead>
+                                <tr bgcolor="#e0efdf">
+                                    <th>ID</th>
+                                    <th>NAME</th>
+                                    <th>LOCATION</th>
+                                    <th>DATE</th>
+                                    <th>COMMENTS</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in events %}
+                                    <tr>
+                                        <th>{{ item.id }}</th>
+                                        <td>{{ item.event_name }}</td>
+                                        <td>{{ item.event_location }}</td>
+                                        <td>{{ item.date }}</td>
+                                        <td>{{ item.comments }}</td>
+                                    </tr>
+                                {%  endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div>There are no events yet.</div>
+                    <div><a href="/event">Create an event</a></div>
+                    {% endif %}
+
+                </div>
+            </div>
+
             <br>
             <div class="row">
                 <div class="col-lg-6 col-md-6 mb-6">
@@ -51,8 +98,7 @@
                                 {%  endfor %}
                                 </tbody>
                             </table>
-                    
-                    </div>
+                        </div>
                     </div>
                     <br>
                     <div class="sim-panel">

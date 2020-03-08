@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from mercury.models import (
+    Event,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
@@ -21,11 +22,13 @@ class DashboardView(TemplateView):
         ws_data = WheelSpeedSensor.objects.all().order_by("-created_at")
         ss_data = SuspensionSensor.objects.all().order_by("-created_at")
         fl_data = FuelLevelSensor.objects.all().order_by("-created_at")
+        events = Event.objects.all().order_by("-date")
         context = {
             "temp_data": temp_data,
             "accel_data": accel_data,
             "ws_data": ws_data,
             "ss_data": ss_data,
             "fl_data": fl_data,
+            "events": events,
         }
         return render(request, self.template_name, context)

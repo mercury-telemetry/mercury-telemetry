@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from mercury.models import (
+    Event,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
@@ -105,11 +106,13 @@ class SimulatorView(TemplateView):
         form_ws = WheelSpeedForm(initial=initial_data)
         form_ss = SuspensionForm(initial=initial_data)
         form_fl = FuelLevelForm(initial=initial_data)
+        events = Event.objects.all().order_by("-date")
         context = {
             "form_temp": form_temp,
             "form_accel": form_accel,
             "form_ws": form_ws,
             "form_ss": form_ss,
             "form_fl": form_fl,
+            "events": events,
         }
         return render(request, self.template_name, context)

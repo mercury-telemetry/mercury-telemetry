@@ -2,12 +2,31 @@
 engine to accept input for various features of the site"""
 from django import forms
 from mercury.models import (
+    Event,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
     SuspensionSensor,
     FuelLevelSensor,
 )
+
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = "__all__"
+        widgets = {
+            "name": forms.TextInput(attrs={"id": "post-event-name", "required": True}),
+            "location": forms.TextInput(
+                attrs={"id": "post-event-location", "required": True}
+            ),
+            "date": forms.DateInput(
+                attrs={"id": "post-event-date", "required": True, "type": "date"}
+            ),
+            "comments": forms.Textarea(
+                attrs={"id": "post-event-comments", "required": False}
+            ),
+        }
 
 
 class TemperatureForm(forms.ModelForm):
