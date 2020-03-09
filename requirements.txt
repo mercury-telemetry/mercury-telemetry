@@ -5,3 +5,8 @@ django-heroku==0.3.*
 django-crispy-forms==1.8.*
 python-dotenv==0.10.*
 whitenoise==4.1.4
+pySerial
+djangorestframework
+markdown
+django-filter
+drf-yasg

@@ -24,7 +24,7 @@ class EventForm(forms.ModelForm):
                 attrs={"id": "post-event-date", "required": True, "type": "date"}
             ),
             "comments": forms.Textarea(
-                attrs={"id": "post-event-comments", "required": False},
+                attrs={"id": "post-event-comments", "required": False}
             ),
         }
 

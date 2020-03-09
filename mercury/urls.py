@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import simulator, views, dashboard, can, stopwatch, event
+from .views import simulator, views, dashboard, can, stopwatch, event, hardware
 
 app_name = "mercury"
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     path("api/can/", can.post, name="can-api"),  # CAN API Ingestion endpoint
     path("can/", can.CANUI.as_view(), name="can-ui"),  # CAN Decoder UI endpoint
     path("event/", event.CreateEventView.as_view(), name="event"),
+    path("hardware", hardware.HardwareView.as_view(), name="hardware"),  # Hardware API
 ]
