@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Configure Sensors</title>
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+        <script src="{% static "mercury/js/sensor.js" %}" defer></script>
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
+    </head>
+    <body>
+        {% include 'sidebar.html' %}
+        <div id="grafana-base">
+
+            <div class="panel">
+                <h1>
+                    Configure Sensors
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+                <div id="accordion-text">
+                        This page is used to add new sensors to the database as well as edit currently existing sensors within the database.
+                    <br>
+                </div>
+                <br>
+            </div>
+
+            <div id="existing_sensors">
+
+            </div>
+
+            <div id="grafana-panel">
+                <div>
+
+                    <h2>
+                        Create Sensor
+
+                    </h2>
+
+
+                    <form method="POST" action="" id="SensorForm">
+                    {% csrf_token %}
+                        <br>
+
+                        <ul class="sensor-list" id="sensor-list" name="sensor-list">
+
+                            <li class="sensor-list-sensor-name">
+                                <label for="sensor-name"><b><u>Sensor Name</u></b></label>
+
+                                <input type="text" id="sensor-name" name="sensor-name"/>
+                            </li>
+
+                            <br><br>
+
+                            <li class="sensor-list-field-name">
+                                <label for="field-name"><u>Field Name</u></label>
+                                <br>
+                                <input type="text" id="field-name" name="field-name"/>
+                            </li>
+
+                            <li class="sensor-list-field-type">
+                                <label for="field-type"><u>Field Type</u></label>
+                                <br>
+                                    <select id="field-type" name="field-type">
+                                        <option value="float">Float</option>
+                                        <option value="string">String</option>
+                                        <option value="bool">Boolean</option>
+                                    </select>
+                            </li>
+
+                            <hr>
+
+                        </ul class="end-sensor-list">
+                        <input align=right class="grafana-btn grafana-btn-blue" type="button" name="addfieldbutton" id="addfieldbutton" value="Add field""right">
+                        <br> <br>
+                        <div>
+                            <input class="simulator-btn grafana-btn
+                            grafana-btn-green" type="submit" name="submit"
+                            value="Create sensor">
+                        </div>
+                        <br> <br>
+                    </form>
+
+                    <br>
+                    <p class="error" id="para"></p>
+                </div>
+                
+
+            </div>
+        </div>
+    </body>
+</html>
