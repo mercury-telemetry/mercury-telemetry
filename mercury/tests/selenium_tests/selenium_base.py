@@ -12,12 +12,6 @@ class SeleniumTestBase(StaticLiveServerTestCase):
     def open(self, url):
         self.wd.get("{}{}".format(self.live_server_url, url))
 
-    def print_current_url(self):
-        url = self.wd.current_url
-        print("\n" + "-" * len(url))
-        print(url)
-        print("-" * len(url))
-
     def set_test_code(self):
         self.test_code = "testcode"
         EventCodeAccess.objects.create(event_code=self.test_code, enabled=True)
