@@ -9,7 +9,6 @@ class TestConfigureSensorView(TestCase):
     def setUp(self):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
-        self.sensor_data_url = "mercury:sensor_data"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
 
@@ -25,7 +24,3 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(True, session["event_code_known"])
-
-    def test_SensorDataView_GET_success(self):
-        response, session = self._get_with_event_code(self.sensor_data_url, TESTCODE)
-        self.assertEqual(200, response.status_code)
