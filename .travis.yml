@@ -1,29 +1,31 @@
-language: python
+jobs:
+    include:
+        - language: python
 
-python:
-- '3.6'
+        python:
+        - '3.6'
 
-services:
-- postgresql
+        services:
+        - postgresql
 
-install:
-- pip install --upgrade pip
-- pip install -r requirements.txt
-- pip install -r test-requirements.txt
+        install:
+        - pip install --upgrade pip
+        - pip install -r requirements.txt
+        - pip install -r test-requirements.txt
 
-before_script:
-- psql -c 'create database mercury;' -U postgres
-- python manage.py migrate
-- python manage.py collectstatic --noinput
+        before_script:
+        - psql -c 'create database mercury;' -U postgres
+        - python manage.py migrate
+        - python manage.py collectstatic --noinput
 
-script:
-- black --check --exclude "migrations/" mysite mercury
-- flake8 --exclude tests mysite/ mercury/
-- flake8 --ignore=E501 mercury/tests/
-- coverage run --source=mysite,mercury --omit="mercury/migrations/*" manage.py test
+        script:
+        - black --check --exclude "migrations/" mysite mercury
+        - flake8 --exclude tests mysite/ mercury/
+        - flake8 --ignore=E501 mercury/tests/
+        - coverage run --source=mysite,mercury --omit="mercury/migrations/*" manage.py test
 
-after_script:
-- coveralls
+        after_script:
+        - coveralls
 
 notifications:
     slack: gcivil-nyu:ahgpmz0a0XgrrUU3E9kPk9kZ
