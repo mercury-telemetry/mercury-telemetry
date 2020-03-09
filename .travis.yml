@@ -17,9 +17,9 @@ before_script:
 - python manage.py collectstatic --noinput
 
 script:
-- black --check --exclude "migrations/" mysite mercury
-- flake8 mysite/ mercury/
-- coverage run --source=mysite,mercury --omit="migrations/*" manage.py test
+- black --check --exclude "migrations/" mysite mercury ag_data
+- flake8 mysite/ mercury/ ag_data/
+- coverage run --source=mysite,mercury,ag_data --omit="migrations/*" manage.py test
 
 after_script:
 - coveralls
