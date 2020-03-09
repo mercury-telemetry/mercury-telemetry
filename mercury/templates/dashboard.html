@@ -48,17 +48,17 @@
                                     <th>NAME</th>
                                     <th>LOCATION</th>
                                     <th>DATE</th>
-                                    <th>COMMENTS</th>
+                                    <th>DESCRIPTION</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for item in events %}
                                     <tr>
-                                        <th>{{ item.id }}</th>
+                                        <th>{{ item.event_uuid }}</th>
                                         <td>{{ item.event_name }}</td>
                                         <td>{{ item.event_location }}</td>
-                                        <td>{{ item.date }}</td>
-                                        <td>{{ item.comments }}</td>
+                                        <td>{{ item.event_date }}</td>
+                                        <td>{{ item.event_description }}</td>
                                     </tr>
                                 {%  endfor %}
                                 </tbody>

@@ -24,5 +24,7 @@ urlpatterns = [
     path("event/", event.CreateEventView.as_view(), name="event"),
     path("sensor/", sensor.CreateSensorView.as_view(), name="sensor"),
     path("events/", events.CreateEventsView.as_view(), name="events"),
+    path("events/delete/<uuid:event_uuid>", events.delete_event),
+    path("events/update/<uuid:event_uuid>", events.update_event),
     path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
 ]

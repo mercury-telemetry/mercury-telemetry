@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from ..event_check import require_event_code
 
 from mercury.forms import EventForm
-from mercury.models import Event
+from mercury.models import AGEvent
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -25,13 +25,13 @@ class CreateEventView(TemplateView):
     def post(self, request, *args, **kwargs):
         post_event_name = request.POST.get("event_name")
         post_event_location = request.POST.get("event_location")
-        post_event_date = request.POST.get("date")
-        post_event_comments = request.POST.get("comments")
-        event_data = Event(
+        post_event_date = request.POST.get("event_date")
+        post_event_comments = request.POST.get("event_description")
+        event_data = AGEvent(
             event_name=post_event_name,
             event_location=post_event_location,
-            date=post_event_date,
-            comments=post_event_comments,
+            event_date=post_event_date,
+            event_description=post_event_comments,
         )
 
         event_data.save()
