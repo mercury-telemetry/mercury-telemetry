@@ -1,35 +1,7 @@
 from django.test import TestCase
-import datetime
 from django.urls import reverse
 from mercury.models import AGEvent, EventCodeAccess
 import datetime
-
-class TestEventModel(TestCase):
-    # Test value constants that should all work
-    TEST_NAME = "test_rockcrawl"
-    TEST_EVENT_LOCATION = "test_peoria"
-    TEST_COMMENTS = "this is coming from test_event.py"
-
-    def create_simulated_event(self):
-        AGEvent.objects.create(
-            event_name=self.TEST_NAME,
-            event_location=self.TEST_EVENT_LOCATION,
-            event_date=datetime.date.today(),
-            event_description=self.TEST_COMMENTS,
-        )
-
-    def setUp(self):
-        self.create_simulated_event()
-
-    def test_event(self):
-        foo = AGEvent.objects.get(event_name=self.TEST_NAME)
-        self.assertEqual(foo.event_name, self.TEST_NAME)
-
-        foo = AGEvent.objects.get(event_location=self.TEST_EVENT_LOCATION)
-        self.assertEqual(foo.event_location, self.TEST_EVENT_LOCATION)
-
-        foo = AGEvent.objects.get(event_description=self.TEST_COMMENTS)
-        self.assertEqual(foo.event_description, self.TEST_COMMENTS)
 
 
 class TestEventView(TestCase):
