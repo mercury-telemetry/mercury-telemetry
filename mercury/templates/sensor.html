@@ -30,52 +30,81 @@
                 <br>
             </div>
 
-            <div id="existing_sensors">
+            {% for sensor in sensors %}
+            <div class="panel">
+                <h2 contenteditable="true" id="{{ sensor.sensor_description }}">
+                {{ sensor.sensor_description }}</h2>
 
+                <h4 class="inline-block-child"><u>Field Name</u></h4>
+                <h4 class="inline-block-child"><u>Field Type</u></h4>
+                <h4 class="inline-block-child"><u>Field Unit</u></h4>
+
+                {% for field_name, unit_and_format in sensor.sensor_format.items %}
+                <div>
+                    <p class="inline-block-child"
+                    contenteditable="true">{{field_name}}</p>
+                    <select class="inline-block-child">
+                        {% if unit_and_format.format == "float" %}
+                        <option selected="true">Float</option>
+                        {% else %}
+                        <option >Float</option>
+                        {% endif %}
+
+                        {% if unit_and_format.format == "string" %}
+                        <option selected="true">String</option>
+                        {% else %}
+                        <option >String</option>
+                        {% endif %}
+
+                        {% if unit_and_format.format == "boolean" %}
+                        <option selected="true">Boolean</option>
+                        {% else %}
+                        <option >Boolean</option>
+                        {% endif %}
+                    </select>
+                    <p class="inline-block-child"
+                    contenteditable="true">{{unit_and_format.unit}}</p>
+                </div>
+                {% endfor %}
+                <input class="editbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="edit_sensor" value="Edit">
             </div>
+            {% endfor %}
 
-            <div id="grafana-panel">
+            <div class="panel">
                 <div>
 
                     <h2>
                         Create Sensor
-
                     </h2>
-
 
                     <form method="POST" action="" id="SensorForm">
                     {% csrf_token %}
                         <br>
 
-                        <ul class="sensor-list" id="sensor-list" name="sensor-list">
+                        <p>
+                            <label for="sensor-name"><b><u>Sensor Name</u></b></label>
+                            <input type="text" id="sensor-name" name="sensor-name"/>
+                        </p>
 
-                            <li class="sensor-list-sensor-name">
-                                <label for="sensor-name"><b><u>Sensor Name</u></b></label>
+                        <h4 class="inline-block-child"><u>Field Name</u></h4>
+                        <h4 class="inline-block-child"><u>Field Type</u></h4>
+                        <h4 class="inline-block-child"><u>Field Unit</u></h4>
 
-                                <input type="text" id="sensor-name" name="sensor-name"/>
-                            </li>
+                        <div id="field-list">
 
-                            <br><br>
-
-                            <li class="sensor-list-field-name">
-                                <label for="field-name"><u>Field Name</u></label>
-                                <br>
-                                <input type="text" id="field-name" name="field-name"/>
-                            </li>
-
-                            <li class="sensor-list-field-type">
-                                <label for="field-type"><u>Field Type</u></label>
-                                <br>
-                                    <select id="field-type" name="field-type">
-                                        <option value="float">Float</option>
-                                        <option value="string">String</option>
-                                        <option value="bool">Boolean</option>
-                                    </select>
-                            </li>
+                            <input class="inline-block-child" type="text" name="field-name"/>
+                            <select class="inline-block-child" name="field-type">
+                                <option value="float">Float</option>
+                                <option value="string">String</option>
+                                <option value="bool">Boolean</option>
+                            </select>
+                            <input class="inline-block-child" type="text"
+                            name="field-unit"/>
 
                             <hr>
 
-                        </ul class="end-sensor-list">
+                        </div>
+                        <br>
                         <input align=right class="grafana-btn grafana-btn-blue" type="button" name="addfieldbutton" id="addfieldbutton" value="Add field""right">
                         <br> <br>
                         <div>
@@ -89,8 +118,6 @@
                     <br>
                     <p class="error" id="para"></p>
                 </div>
-                
-
             </div>
         </div>
     </body>
