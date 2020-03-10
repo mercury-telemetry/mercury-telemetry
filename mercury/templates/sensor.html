@@ -32,8 +32,8 @@
 
             {% for sensor in sensors %}
             <div class="panel">
-                <h2 contenteditable="true" id="{{ sensor.sensor_description }}">
-                {{ sensor.sensor_description }}</h2>
+                <h2 contenteditable="true" id="{{ sensor.sensor_name }}">
+                {{ sensor.sensor_name }}</h2>
 
                 <h4 class="inline-block-child"><u>Field Name</u></h4>
                 <h4 class="inline-block-child"><u>Field Type</u></h4>
@@ -83,7 +83,8 @@
 
                         <p>
                             <label for="sensor-name"><b><u>Sensor Name</u></b></label>
-                            <input type="text" id="sensor-name" name="sensor-name"/>
+                            <input type="text" id="sensor-name" name="sensor-name"
+                            value="{{ sensor_name }}"/>
                         </p>
 
                         <h4 class="inline-block-child"><u>Field Name</u></h4>
@@ -91,6 +92,39 @@
                         <h4 class="inline-block-child"><u>Field Unit</u></h4>
 
                         <div id="field-list">
+
+                            {% if sensor_format %}
+
+                                {% for key, value in sensor_format.items %}
+
+                                    <input class="inline-block-child" type="text"
+                                name="field-name" value="{{ key }}"/>
+                                    <select class="inline-block-child" name="field-type">
+                                        {% if value.format == "Float" %}
+                                        <option selected="true">Float</option>
+                                        {% else %}
+                                        <option >Float</option>
+                                        {% endif %}
+
+                                        {% if value.format == "String" %}
+                                        <option selected="true">String</option>
+                                        {% else %}
+                                        <option >String</option>
+                                        {% endif %}
+
+                                        {% if value.format == "Boolean" %}
+                                        <option selected="true">Boolean</option>
+                                        {% else %}
+                                        <option >Boolean</option>
+                                        {% endif %}
+                                    </select>
+                                <input class="inline-block-child" type="text"
+                                name="field-unit" value="{{ value.unit }}"/>
+                                <hr>
+
+                                {% endfor %}
+
+                            {% endif %}
 
                             <input class="inline-block-child" type="text" name="field-name"/>
                             <select class="inline-block-child" name="field-type">
@@ -115,8 +149,12 @@
                         <br> <br>
                     </form>
 
+                    {% for message in messages %}
+                    <p class="error"> {{ message }} </p>
+                    {% endfor %}
+
                     <br>
-                    <p class="error" id="para"></p>
+
                 </div>
             </div>
         </div>

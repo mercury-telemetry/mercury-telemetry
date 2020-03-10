@@ -52,7 +52,7 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(True, session["event_code_known"])
 
-    def test_ConfigureSensorView_POST_redirects(self):
+    def test_ConfigureSensorView_POST_returns_status_ok(self):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -60,8 +60,7 @@ class TestConfigureSensorView(TestCase):
         response = self.post_sensor_data()
 
         # Check that POST redirects to sensor (same page reloads)
-        self.assertEqual(302, response.status_code)
-        self.assertEqual("/sensor/", response.url)
+        self.assertEqual(200, response.status_code)
 
     def test_ConfigureSensorView_POST_success_model_created(self):
         # Login
