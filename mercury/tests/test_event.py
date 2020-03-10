@@ -12,7 +12,7 @@ class TestEventView(TestCase):
         "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
         "description": "A very progressive test run at \
                 Sunnyside Daycare's Butterfly Room.",
-        "location": "New York, NY"
+        "location": "New York, NY",
     }
 
     def setUp(self):
@@ -81,6 +81,3 @@ class TestEventView(TestCase):
         self.assertEqual(event.event_date, self.test_event_data["date"])
         self.assertEqual(event.event_location, self.test_event_data["location"])
         self.assertEqual(event.event_description, self.test_event_data["description"])
-
-
-

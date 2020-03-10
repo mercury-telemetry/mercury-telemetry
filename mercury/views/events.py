@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from django.http import HttpResponse
 from mercury.forms import EventForm
 from mercury.models import AGEvent
 
