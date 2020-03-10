@@ -12,7 +12,7 @@ if models.AGEvent.objects.all().count() == 0:
         event_name=test_event_data1["agEventName"],
         event_date=test_event_data1["agEventDate"],
         event_description=test_event_data1["agEventDescription"],
-        event_location=test_event_data1["agEventLocation"]
+        event_location=test_event_data1["agEventLocation"],
     )
 else:
     event1 = models.AGEvent.objects.all().first()
@@ -24,26 +24,15 @@ if models.AGSensor.objects.all().count() == 0:
     sensor1 = models.AGSensor.objects.create(
         sensor_name="Temperature",
         sensor_processing_formula=0,
-        sensor_format={
-            "reading": {
-                "unit": "Celsius",
-                "format": "float"
-            }
-        }
+        sensor_format={"reading": {"unit": "Celsius", "format": "float"}},
     )
     sensor2 = models.AGSensor.objects.create(
         sensor_name="Temperature",
         sensor_processing_formula=0,
         sensor_format={
-            "internal": {
-                "unit": "Keivin",
-                "format": "float"
-            },
-            "external": {
-                "unit": "Keivin",
-                "format": "float"
-            }
-        }
+            "internal": {"unit": "Keivin", "format": "float"},
+            "external": {"unit": "Keivin", "format": "float"},
+        },
     )
 else:
     sensor1 = models.AGSensor.objects.all()[0]

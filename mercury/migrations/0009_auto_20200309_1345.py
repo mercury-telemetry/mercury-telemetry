@@ -17,7 +17,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AGEvent',
             fields=[
-                ('event_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('event_uuid', models.UUIDField(default=uuid.uuid4, editable=False,
+                                                primary_key=True, serialize=False)),
                 ('event_name', models.CharField(blank=True, max_length=40)),
                 ('event_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('event_description', models.CharField(blank=True, max_length=100)),
@@ -26,10 +27,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AGMeasurement',
             fields=[
-                ('measurement_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('measurement_timestamp', models.DateTimeField(default=django.utils.timezone.now)),
+                ('measurement_uuid', models.UUIDField(default=uuid.uuid4,
+                                                      editable=False, primary_key=True,
+                                                      serialize=False)),
+                ('measurement_timestamp', models.DateTimeField(default=django.utils.
+                                                               timezone.now)),
                 ('measurement_value', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('measurement_event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='mercury.AGEvent')),
+                ('measurement_event', models.ForeignKey(on_delete=django.db.models.
+                                                        deletion.CASCADE,
+                                                        to='mercury.AGEvent')),
             ],
         ),
         migrations.CreateModel(
@@ -48,6 +54,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='agmeasurement',
             name='measurement_sensor',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='mercury.AGSensor'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    to='mercury.AGSensor'),
         ),
     ]

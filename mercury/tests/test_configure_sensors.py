@@ -6,15 +6,10 @@ TESTCODE = "testcode"
 
 test_sensor = {
     "name": "Wind Speed Sensor",
-    "field-0": {
-        "field_type": "string",
-        "field_unit": "km"
-    },
-    "field-1": {
-        "field_type": "float",
-        "field_unit": "mph"
-    }
+    "field-0": {"field_type": "string", "field_unit": "km"},
+    "field-1": {"field_type": "float", "field_unit": "mph"},
 }
+
 
 class TestConfigureSensorView(TestCase):
     def setUp(self):
@@ -44,24 +39,39 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(302, response.status_code)
         self.assertEqual("index", response.url)
 
-        response = self.client.post(reverse(self.sensor_url), data={
-            "sensor-name": test_sensor["name"],
-            "field-name": ["field-0", "field-1"],
-            "field-type": [test_sensor["field-0"]["field_type"], test_sensor[
-                "field-1"]["field_type"]],
-            "field-unit": [test_sensor["field-0"]["field_unit"], test_sensor[
-                "field-1"]["field_unit"]]
-        })
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "sensor-name": test_sensor["name"],
+                "field-name": ["field-0", "field-1"],
+                "field-type": [
+                    test_sensor["field-0"]["field_type"],
+                    test_sensor["field-1"]["field_type"],
+                ],
+                "field-unit": [
+                    test_sensor["field-0"]["field_unit"],
+                    test_sensor["field-1"]["field_unit"],
+                ],
+            },
+        )
         self.assertEqual(302, response.status_code)
         sensors = AGSensor.objects.all()
         self.assertEqual(sensors.count(), 1)
         sensor = sensors[0]
         self.assertEqual(sensor.sensor_name, "Wind Speed Sensor")
-        self.assertEqual(sensor.sensor_format["field-0"]["format"], test_sensor[
-            "field-0"]["field_type"])
-        self.assertEqual(sensor.sensor_format["field-1"]["format"], test_sensor[
-            "field-1"]["field_type"])
-        self.assertEqual(sensor.sensor_format["field-0"]["unit"], test_sensor[
-            "field-0"]["field_unit"])
-        self.assertEqual(sensor.sensor_format["field-1"]["unit"], test_sensor[
-            "field-1"]["field_unit"])
+        self.assertEqual(
+            sensor.sensor_format["field-0"]["format"],
+            test_sensor["field-0"]["field_type"],
+        )
+        self.assertEqual(
+            sensor.sensor_format["field-1"]["format"],
+            test_sensor["field-1"]["field_type"],
+        )
+        self.assertEqual(
+            sensor.sensor_format["field-0"]["unit"],
+            test_sensor["field-0"]["field_unit"],
+        )
+        self.assertEqual(
+            sensor.sensor_format["field-1"]["unit"],
+            test_sensor["field-1"]["field_unit"],
+        )

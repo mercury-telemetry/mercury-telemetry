@@ -31,6 +31,7 @@ def delete_event(request, event_uuid=None):
 
 class CreateEventsView(TemplateView):
     """This is the view for creating a new event."""
+
     template_name = "events.html"
 
     @require_event_code
@@ -51,7 +52,6 @@ class CreateEventsView(TemplateView):
                 event_name=post_event_name,
                 event_location=post_event_location,
                 event_date=post_event_date,
-
                 event_description=post_event_description,
             )
             event_data.save()

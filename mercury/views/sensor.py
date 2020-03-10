@@ -3,7 +3,6 @@ from django.shortcuts import render, reverse, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
 from mercury.models import AGSensor
-import json
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -42,7 +41,7 @@ class CreateSensorView(TemplateView):
         sensor = AGSensor.objects.create(
             sensor_name=post_sensor_name,
             sensor_processing_formula=0,
-            sensor_format=sensor_format
+            sensor_format=sensor_format,
         )
         sensor.save()
 
