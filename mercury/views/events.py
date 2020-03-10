@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-
+from django.http import HttpResponse
 from mercury.forms import EventForm
 from mercury.models import AGEvent
 
@@ -58,4 +58,4 @@ class CreateEventsView(TemplateView):
             events = AGEvent.objects.all().order_by("event_uuid")
             event_form = EventForm()
             context = {"event_form": event_form, "events": events}
-            return render(request, "events.html", context)
+            return render(request, self.template_name, context)
