@@ -1,5 +1,20 @@
 from ag_data.models import AGEvent
 
+test_venue_data = [
+    {
+        "agVenueName": "Washington Square Park",
+        "agVenueDescription": "Sunnyside Daycare's Butterfly Room.",
+        "agVenueLatitude": 40.730812,
+        "agVenueLongitude": -73.997456,
+    },
+    {
+        "agVenueName": "Central Park",
+        "agVenueDescription": "Muddy Puddles",
+        "agVenueLatitude": 40.794692,
+        "agVenueLongitude": -73.959156,
+    },
+]
+
 test_event_data = [
     {
         "agEventName": "Sunny Day Test Drive",
@@ -17,16 +32,17 @@ test_event_data = [
 
 test_sensor_data = [
     {
-        "agSensorName": "Temperature",
-        "agSensorDescription": "Simple Temperature Sensor",
+        "agSensorName": "Simple Temperature Sensor",
         "agSensorFormula": 0,
-        "agSensorFormat": {"reading": "Celsius"},
+        "agSensorFormat": {"reading": {"unit": "Celsius", "format": "float"}},
     },
     {
-        "agSensorName": "Temperature",
-        "agSensorDescription": "Dual Temperature Sensor",
+        "agSensorName": "Dual Temperature Sensor",
         "agSensorFormula": 0,
-        "agSensorFormat": {"internal": "Keivin", "external": "Keivin"},
+        "agSensorFormat": {
+            "internal": {"unit": "Keivin", "format": "float"},
+            "external": {"unit": "Keivin", "format": "float"},
+        },
     },
 ]
 

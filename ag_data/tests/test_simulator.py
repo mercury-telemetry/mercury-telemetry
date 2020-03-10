@@ -5,8 +5,8 @@ from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 
 from ag_data.simulator import Simulator
-from ag_data.models import AGEvent, AGSensor, AGMeasurement
-from ag_data.tests.common import test_event_data, test_sensor_data
+from ag_data.models import AGVenue, AGEvent, AGSensor, AGMeasurement
+from ag_data.tests.common import test_venue_data, test_event_data, test_sensor_data
 
 
 class SimulatorTest(TestCase):
@@ -14,13 +14,44 @@ class SimulatorTest(TestCase):
         self.sim = Simulator()
 
     def test_simulator_creation(self):
+        self.assertEqual(self.sim.venue, None)
         self.assertEqual(self.sim.event, None)
         self.assertEqual(self.sim.sensor, None)
 
+    def test_simulator_create_venue(self):
+        totalTestVenues = len(test_venue_data)
+        # test venue creation for indices in range
+        for index in range(totalTestVenues):
+            self.sim.createAVenueFromPresets(index)
+            current_venue = test_venue_data[index]
+
+            venue = AGVenue.objects.get(pk=self.sim.venue.venue_uuid)
+            self.assertEqual(venue.venue_name, current_venue["agVenueName"])
+            self.assertEqual(
+                (venue.venue_description), current_venue["agVenueDescription"]
+            )
+            self.assertEqual(
+                venue.venue_latitude, current_venue["agVenueLatitude"]
+            )
+            self.assertEqual(
+                venue.venue_longitude, current_venue["agVenueLongitude"]
+            )
+
+        # test event creation for index out of range
+        with self.assertRaises(Exception) as e:
+            self.sim.createAVenueFromPresets(totalTestVenues)
+        correct_exception_message = (
+            "Cannot find requested venue (index "
+            + str(totalTestVenues)
+            + ") from presets"
+        )
+        self.assertEqual(str(e.exception), correct_exception_message)
+    
     def test_simulator_create_event(self):
         totalTestEvents = len(test_event_data)
         # test event creation for indices in range
         for index in range(totalTestEvents):
+            self.sim.createAVenueFromPresets(index)
             self.sim.createAnEventFromPresets(index)
             current_event = test_event_data[index]
 
@@ -53,9 +84,6 @@ class SimulatorTest(TestCase):
             sensor = AGSensor.objects.get(pk=self.sim.sensor.sensor_id)
             self.assertEqual(sensor.sensor_name, current_sensor["agSensorName"])
             self.assertEqual(
-                sensor.sensor_description, current_sensor["agSensorDescription"]
-            )
-            self.assertEqual(
                 sensor.sensor_processing_formula, current_sensor["agSensorFormula"]
             )
             self.assertEqual(sensor.sensor_format, current_sensor["agSensorFormat"])
@@ -71,30 +99,30 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_log_single_measurement_no_event(self):
-        randSensorIndex = randint(0, len(test_sensor_data) - 1)
+        randSensorIndex = self.randSensorIndex()
 
         self.sim.createASensorFromPresets(randSensorIndex)
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = "No event registered in the simulator"
+        correct_assertion_message = "No event registered in the simulator. Create one first before calling this."
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement_no_sensor(self):
-        randEventIndex = randint(0, len(test_event_data) - 1)
-
-        self.sim.createAnEventFromPresets(randEventIndex)
+        self.sim.createAVenueFromPresets(self.randVenueIndex())
+        self.sim.createAnEventFromPresets(self.randEventIndex())
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = "No sensor registered in the simulator"
+        correct_assertion_message = "No sensor registered in the simulator. Create one first before calling this."
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement(self):
-        randEventIndex = randint(0, len(test_event_data) - 1)
+        randEventIndex = self.randEventIndex()
 
+        self.sim.createAVenueFromPresets(self.randVenueIndex())
         self.sim.createAnEventFromPresets(randEventIndex)
 
         for index in range(len(test_sensor_data)):
@@ -130,11 +158,9 @@ class SimulatorTest(TestCase):
         import sys
         from io import StringIO
 
-        randEventIndex = randint(0, len(test_event_data) - 1)
-        randSensorIndex = randint(0, len(test_sensor_data) - 1)
-
-        self.sim.createAnEventFromPresets(randEventIndex)
-        self.sim.createASensorFromPresets(randSensorIndex)
+        self.sim.createAVenueFromPresets(self.randVenueIndex())
+        self.sim.createAnEventFromPresets(self.randEventIndex())
+        self.sim.createASensorFromPresets(self.randSensorIndex())
 
         randFrequencyInHz = uniform(1, 100)
         randSeconds = uniform(1, 60)
@@ -178,11 +204,13 @@ class SimulatorTest(TestCase):
         python manage.py test ag_data.tests.test_simulator.SimulatorTest.
         test_simulator_log_continuous_measurements --failfast
         """
-        randEventIndex = randint(0, len(test_event_data) - 1)
-        randSensorIndex = randint(0, len(test_sensor_data) - 1)
+        randVenueIndex = self.randVenueIndex()
+        randEventIndex = self.randEventIndex()
+        randSensorIndex = self.randSensorIndex()
 
         # Change the number of loops for testing on demand
         for i in range(1):
+            self.sim.createAVenueFromPresets(randVenueIndex)
             self.sim.createAnEventFromPresets(randEventIndex)
             self.sim.createASensorFromPresets(randSensorIndex)
 
@@ -227,3 +255,12 @@ class SimulatorTest(TestCase):
                 <= totalMeasurementsInDatabase
                 <= expectedTotal * 1.1
             )
+
+    def randVenueIndex(self):
+        return randint(0, len(test_venue_data) - 1)
+    
+    def randEventIndex(self):
+        return randint(0, len(test_event_data) - 1)
+    
+    def randSensorIndex(self):
+        return randint(0, len(test_sensor_data) - 1)

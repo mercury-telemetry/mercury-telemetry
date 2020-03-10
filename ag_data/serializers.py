@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AGEvent, AGSensor, AGMeasurement
+from .models import AGEvent, AGVenue, AGSensor, AGMeasurement
 import uuid
 
 
@@ -10,28 +10,48 @@ class AGEventSerializer(serializers.ModelSerializer):
     agEventName = serializers.CharField(source="event_name")
     agEventDate = serializers.DateTimeField(source="event_date")
     agEventDescription = serializers.CharField(source="event_description")
+    agEventVenue = serializers.CharField(source="event_venue")
 
     class Meta:
         model = AGEvent
-        fields = ["agEventID", "agEventName", "agEventDate", "agEventDescription"]
+        fields = [
+            "agEventID",
+            "agEventName",
+            "agEventDate",
+            "agEventDescription",
+            "agEventVenue",
+        ]
+
+
+class AGVenueSerializer(serializers.ModelSerializer):
+    agVenueID = serializers.UUIDField(
+        source="venue_uuid", read_only=True, default=uuid.uuid4
+    )
+    agVenueName = serializers.CharField(source="venue_name")
+    agVenueDescription = serializers.CharField(source="venue_description")
+    agVenueLatitude = serializers.CharField(source="venue_latitude")
+    agVenueLongitude = serializers.CharField(source="venue_longitude")
+
+    class Meta:
+        model = AGVenue
+        fields = [
+            "agVenueID",
+            "agVenueName",
+            "agVenueDescription",
+            "agVenueLatitude",
+            "agVenueLongitude",
+        ]
 
 
 class AGSensorSerializer(serializers.ModelSerializer):
     agSensorID = serializers.IntegerField(source="sensor_id", read_only=True)
     agSensorName = serializers.CharField(source="sensor_name")
-    agSensorDescription = serializers.CharField(source="sensor_description")
     agSensorFormula = serializers.IntegerField(source="sensor_processing_formula")
     agSensorFormat = serializers.CharField(source="sensor_format")
 
     class Meta:
         model = AGSensor
-        fields = [
-            "agSensorID",
-            "agSensorName",
-            "agSensorDescription",
-            "agSensorFormula",
-            "agSensorFormat",
-        ]
+        fields = ["agSensorID", "agSensorName", "agSensorFormula", "agSensorFormat"]
 
 
 class AGMeasurementSerializer(serializers.ModelSerializer):

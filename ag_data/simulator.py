@@ -9,8 +9,36 @@ from ag_data.tests import common
 
 class Simulator:
 
+    venue = None
     event = None
     sensor = None
+
+    def createAVenueFromPresets(self, index):
+        """Create a venue from available presets of venues
+
+        Arguments:
+
+            index {int} -- the index of the sensor preset to use.
+
+        Raises:
+
+            Exception: an exception raises when the index is not valid in presets.
+        """
+        if index > len(common.test_venue_data) - 1:
+            raise Exception(
+                "Cannot find requested venue (index " + str(index) + ") from presets"
+            )
+        else:
+            pass
+
+        test_venue_data = common.test_venue_data[index]
+
+        self.venue = models.AGVenue.objects.create(
+            venue_name=test_venue_data["agVenueName"],
+            venue_description=test_venue_data["agVenueDescription"],
+            venue_latitude=test_venue_data["agVenueLatitude"],
+            venue_longitude=test_venue_data["agVenueLongitude"],
+        )
 
     def createAnEventFromPresets(self, index):
         """Create an event from available presets of events
@@ -22,6 +50,9 @@ class Simulator:
         Raises:
 
             Exception: an exception raises when the index is not valid in presets.
+
+            Assertion: an assertion error raises when there is no venue prior to the
+            creation of the event.
         """
         if index > len(common.test_event_data) - 1:
             raise Exception(
@@ -32,10 +63,13 @@ class Simulator:
 
         test_event_data = common.test_event_data[index]
 
+        self.assertVenue()
+
         self.event = models.AGEvent.objects.create(
             event_name=test_event_data["agEventName"],
             event_date=test_event_data["agEventDate"],
             event_description=test_event_data["agEventDescription"],
+            event_venue=self.venue,
         )
 
     def createASensorFromPresets(self, index):
@@ -60,7 +94,6 @@ class Simulator:
 
         self.sensor = models.AGSensor.objects.create(
             sensor_name=test_sensor_data["agSensorName"],
-            sensor_description=test_sensor_data["agSensorDescription"],
             sensor_processing_formula=test_sensor_data["agSensorFormula"],
             sensor_format=test_sensor_data["agSensorFormat"],
         )
@@ -87,12 +120,8 @@ class Simulator:
             sensor.
         """
 
-        assert isinstance(
-            self.event, models.AGEvent
-        ), "No event registered in the simulator"
-        assert isinstance(
-            self.sensor, models.AGSensor
-        ), "No sensor registered in the simulator"
+        self.assertEvent()
+        self.assertSensor()
 
         if self.checkSensorFormat(0):
             return models.AGMeasurement.objects.create(
@@ -203,3 +232,18 @@ class Simulator:
             if sleepInterval < 0:
                 sleepInterval = sleepInterval * sampleInterval
             sleep(sampleInterval)
+
+    def assertVenue(self):
+        assert isinstance(
+            self.venue, models.AGVenue
+        ), "No venue registered in the simulator. Create one first before calling this."
+    
+    def assertEvent(self):
+        assert isinstance(
+            self.event, models.AGEvent
+        ), "No event registered in the simulator. Create one first before calling this."
+
+    def assertSensor(self):
+        assert isinstance(
+            self.sensor, models.AGSensor
+        ), "No sensor registered in the simulator. Create one first before calling this."
