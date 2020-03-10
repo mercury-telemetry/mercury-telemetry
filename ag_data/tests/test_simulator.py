@@ -30,12 +30,8 @@ class SimulatorTest(TestCase):
             self.assertEqual(
                 (venue.venue_description), current_venue["agVenueDescription"]
             )
-            self.assertEqual(
-                venue.venue_latitude, current_venue["agVenueLatitude"]
-            )
-            self.assertEqual(
-                venue.venue_longitude, current_venue["agVenueLongitude"]
-            )
+            self.assertEqual(venue.venue_latitude, current_venue["agVenueLatitude"])
+            self.assertEqual(venue.venue_longitude, current_venue["agVenueLongitude"])
 
         # test event creation for index out of range
         with self.assertRaises(Exception) as e:
@@ -46,7 +42,7 @@ class SimulatorTest(TestCase):
             + ") from presets"
         )
         self.assertEqual(str(e.exception), correct_exception_message)
-    
+
     def test_simulator_create_event(self):
         totalTestEvents = len(test_event_data)
         # test event creation for indices in range
@@ -106,7 +102,8 @@ class SimulatorTest(TestCase):
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = "No event registered in the simulator. Create one first before calling this."
+        correct_assertion_message = "No event registered in the simulator. "
+        "Create one first before calling this."
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement_no_sensor(self):
@@ -116,7 +113,8 @@ class SimulatorTest(TestCase):
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = "No sensor registered in the simulator. Create one first before calling this."
+        correct_assertion_message = "No sensor registered in the simulator. "
+        "Create one first before calling this."
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement(self):
@@ -258,9 +256,9 @@ class SimulatorTest(TestCase):
 
     def randVenueIndex(self):
         return randint(0, len(test_venue_data) - 1)
-    
+
     def randEventIndex(self):
         return randint(0, len(test_event_data) - 1)
-    
+
     def randSensorIndex(self):
         return randint(0, len(test_sensor_data) - 1)

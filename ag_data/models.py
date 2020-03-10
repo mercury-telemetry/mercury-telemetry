@@ -22,9 +22,7 @@ class AGEvent(models.Model):
     event_name = models.CharField(max_length=40, blank=True)
     event_date = models.DateTimeField(default=timezone.now)
     event_description = models.CharField(max_length=100, null=False, blank=True)
-    event_venue = models.ForeignKey(
-        AGVenue, null=True, on_delete=models.SET_NULL
-    )
+    event_venue = models.ForeignKey(AGVenue, null=True, on_delete=models.SET_NULL)
 
 
 class AGSensor(models.Model):

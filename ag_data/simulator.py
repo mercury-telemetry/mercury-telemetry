@@ -237,7 +237,7 @@ class Simulator:
         assert isinstance(
             self.venue, models.AGVenue
         ), "No venue registered in the simulator. Create one first before calling this."
-    
+
     def assertEvent(self):
         assert isinstance(
             self.event, models.AGEvent

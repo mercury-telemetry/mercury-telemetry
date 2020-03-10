@@ -7,28 +7,35 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('ag_data', '0001_initial'),
-    ]
+    dependencies = [("ag_data", "0001_initial")]
 
     operations = [
         migrations.CreateModel(
-            name='AGVenue',
+            name="AGVenue",
             fields=[
-                ('venue_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('venue_name', models.CharField(blank=True, max_length=100)),
-                ('venue_description', models.CharField(blank=True, max_length=100)),
-                ('venue_latitude', models.FloatField()),
-                ('venue_longitude', models.FloatField()),
+                (
+                    "venue_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("venue_name", models.CharField(blank=True, max_length=100)),
+                ("venue_description", models.CharField(blank=True, max_length=100)),
+                ("venue_latitude", models.FloatField()),
+                ("venue_longitude", models.FloatField()),
             ],
         ),
-        migrations.RemoveField(
-            model_name='agsensor',
-            name='sensor_description',
-        ),
+        migrations.RemoveField(model_name="agsensor", name="sensor_description"),
         migrations.AddField(
-            model_name='agevent',
-            name='event_venue',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='ag_data.AGVenue'),
+            model_name="agevent",
+            name="event_venue",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="ag_data.AGVenue",
+            ),
         ),
     ]

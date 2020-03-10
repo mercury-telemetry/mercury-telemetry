@@ -11,37 +11,67 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='AGEvent',
+            name="AGEvent",
             fields=[
-                ('event_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('event_name', models.CharField(blank=True, max_length=40)),
-                ('event_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('event_description', models.CharField(blank=True, max_length=100)),
+                (
+                    "event_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("event_name", models.CharField(blank=True, max_length=40)),
+                ("event_date", models.DateTimeField(default=django.utils.timezone.now)),
+                ("event_description", models.CharField(blank=True, max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='AGSensor',
+            name="AGSensor",
             fields=[
-                ('sensor_id', models.AutoField(primary_key=True, serialize=False)),
-                ('sensor_name', models.CharField(blank=True, max_length=1024)),
-                ('sensor_description', models.CharField(blank=True, max_length=1024)),
-                ('sensor_processing_formula', models.IntegerField(default=0)),
-                ('sensor_format', django.contrib.postgres.fields.jsonb.JSONField()),
+                ("sensor_id", models.AutoField(primary_key=True, serialize=False)),
+                ("sensor_name", models.CharField(blank=True, max_length=1024)),
+                ("sensor_description", models.CharField(blank=True, max_length=1024)),
+                ("sensor_processing_formula", models.IntegerField(default=0)),
+                ("sensor_format", django.contrib.postgres.fields.jsonb.JSONField()),
             ],
         ),
         migrations.CreateModel(
-            name='AGMeasurement',
+            name="AGMeasurement",
             fields=[
-                ('measurement_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('measurement_timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('measurement_value', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('measurement_event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ag_data.AGEvent')),
-                ('measurement_sensor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ag_data.AGSensor')),
+                (
+                    "measurement_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "measurement_timestamp",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                ("measurement_value", django.contrib.postgres.fields.jsonb.JSONField()),
+                (
+                    "measurement_event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="ag_data.AGEvent",
+                    ),
+                ),
+                (
+                    "measurement_sensor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="ag_data.AGSensor",
+                    ),
+                ),
             ],
         ),
     ]
