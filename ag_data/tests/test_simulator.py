@@ -95,7 +95,6 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_log_single_measurement_no_venue(self):
-        self.sim.createAnEventFromPresets(self.randEventIndex())
         self.sim.createASensorFromPresets(self.randSensorIndex())
 
         with self.assertRaises(AssertionError) as ae:
