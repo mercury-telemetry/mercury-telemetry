@@ -120,6 +120,7 @@ class Simulator:
             sensor.
         """
 
+        self.assertVenue()
         self.assertEvent()
         self.assertSensor()
 

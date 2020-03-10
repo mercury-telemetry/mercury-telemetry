@@ -94,16 +94,30 @@ class SimulatorTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def test_simulator_log_single_measurement_no_event(self):
-        randSensorIndex = self.randSensorIndex()
-
-        self.sim.createASensorFromPresets(randSensorIndex)
+    def test_simulator_log_single_measurement_no_venue(self):
+        self.sim.createAnEventFromPresets(self.randEventIndex())
+        self.sim.createASensorFromPresets(self.randSensorIndex())
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = "No event registered in the simulator. "
-        "Create one first before calling this."
+        correct_assertion_message = (
+            "No venue registered in the simulator. "
+            + "Create one first before calling this."
+        )
+        self.assertEqual(str(ae.exception), correct_assertion_message)
+
+    def test_simulator_log_single_measurement_no_event(self):
+        self.sim.createAVenueFromPresets(self.randVenueIndex())
+        self.sim.createASensorFromPresets(self.randSensorIndex())
+
+        with self.assertRaises(AssertionError) as ae:
+            timestamp = timezone.now()
+            self.sim.logSingleMeasurement(timestamp=timestamp)
+        correct_assertion_message = (
+            "No event registered in the simulator. "
+            + "Create one first before calling this."
+        )
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement_no_sensor(self):
@@ -113,8 +127,10 @@ class SimulatorTest(TestCase):
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
             self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = "No sensor registered in the simulator. "
-        "Create one first before calling this."
+        correct_assertion_message = (
+            "No sensor registered in the simulator. "
+            + "Create one first before calling this."
+        )
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement(self):
