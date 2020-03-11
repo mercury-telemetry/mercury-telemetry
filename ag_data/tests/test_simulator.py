@@ -197,7 +197,7 @@ class SimulatorTest(TestCase):
             # test data in database
             measurement_in_database = AGMeasurement.objects.get(pk=measurement.uuid)
             self.assertEqual(measurement_in_database.timestamp, timestamp)
-            self.assertEqual(measurement_in_database.measurement_event, self.sim.event)
+            self.assertEqual(measurement_in_database.event_uuid, self.sim.event)
             self.assertEqual(measurement_in_database.sensor_id, self.sim.sensor)
 
             # test measurement payload format by cross comparison of all keys in payload
@@ -234,7 +234,7 @@ class SimulatorTest(TestCase):
 
         # test number of measurements
         totalMeasurementsInDatabase = (
-            AGMeasurement.objects.filter(measurement_event=self.sim.event)
+            AGMeasurement.objects.filter(event_uuid=self.sim.event)
             .filter(sensor_id=self.sim.sensor)
             .count()
         )
@@ -298,7 +298,7 @@ class SimulatorTest(TestCase):
 
             # test total measurement count
             totalMeasurementsInDatabase = (
-                AGMeasurement.objects.filter(measurement_event=self.sim.event)
+                AGMeasurement.objects.filter(event_uuid=self.sim.event)
                 .filter(sensor_id=self.sim.sensor)
                 .count()
             )

@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
                 ('value', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('measurement_event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ag_data.AGEvent')),
+                ('event_uuid', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ag_data.AGEvent')),
                 ('sensor_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ag_data.AGSensor')),
             ],
         ),

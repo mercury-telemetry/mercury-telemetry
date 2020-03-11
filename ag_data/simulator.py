@@ -8,7 +8,7 @@ from ag_data import presets
 
 
 class Simulator:
-    
+
     venue = None
     event = None
     sensorType = None
@@ -181,14 +181,14 @@ class Simulator:
         if self.checkSensorFormat(0):
             return models.AGMeasurement.objects.create(
                 timestamp=timestamp,
-                measurement_event=self.event,
+                event_uuid=self.event,
                 sensor_id=self.sensor,
                 value={"reading": gauss(23, 3)},
             )
         elif self.checkSensorFormat(1):
             return models.AGMeasurement.objects.create(
                 timestamp=timestamp,
-                measurement_event=self.event,
+                event_uuid=self.event,
                 sensor_id=self.sensor,
                 value={"internal": gauss(15, 3), "external": gauss(20, 2)},
             )
