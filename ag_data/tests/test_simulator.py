@@ -75,9 +75,9 @@ class SimulatorTest(TestCase):
     def test_simulator_create_sensor_type(self):
         totalTestSensorTypes = len(presets.sensor_type_presets)
 
-        # test sensor creation for indices in range
+        # test sensor type creation for indices in range
         for index in range(totalTestSensorTypes):
-            self.sim.createASensorTypeFromPresets(index)
+            self.sim.createOrResetASensorTypeFromPresets(index)
 
             expected_sensor_type = presets.sensor_type_presets[index]
 
@@ -93,9 +93,34 @@ class SimulatorTest(TestCase):
                 sensorType.sensorType_format, expected_sensor_type["agSensorTypeFormat"]
             )
 
+            # test when the method is called when the record already exists
+
+            sensorType.sensorType_name = expected_sensor_type["agSensorTypeName"] + " "
+            sensorType.sensorType_processingFormula = (
+                expected_sensor_type["agSensorTypeFormula"] + 1
+            )
+            sensorType.sensorType_format = (
+                [expected_sensor_type["agSensorTypeFormat"]]
+            )
+            sensorType.save()
+
+            self.sim.createOrResetASensorTypeFromPresets(index)
+            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensorType_id)
+
+            self.assertEqual(
+                sensorType.sensorType_name, expected_sensor_type["agSensorTypeName"]
+            )
+            self.assertEqual(
+                sensorType.sensorType_processingFormula,
+                expected_sensor_type["agSensorTypeFormula"],
+            )
+            self.assertEqual(
+                sensorType.sensorType_format, expected_sensor_type["agSensorTypeFormat"]
+            )
+
         # test sensor type creation for index out of range
         with self.assertRaises(Exception) as e:
-            self.sim.createASensorTypeFromPresets(totalTestSensorTypes)
+            self.sim.createOrResetASensorTypeFromPresets(totalTestSensorTypes)
         correct_exception_message = (
             "Cannot find requested sensor type (index "
             + str(totalTestSensorTypes)
@@ -110,7 +135,7 @@ class SimulatorTest(TestCase):
         for index in range(totalTestSensors):
             # create the corresponding sensor type, if it is not present
             sensorTypeID = presets.sensor_presets[index]["agSensorType"]
-            self.sim.createASensorTypeFromPresets(sensorTypeID)
+            self.sim.createOrResetASensorTypeFromPresets(sensorTypeID)
 
             self.sim.createASensorFromPresets(index)
             current_sensor = presets.sensor_presets[index]
@@ -120,9 +145,9 @@ class SimulatorTest(TestCase):
 
         # test sensor creation for index out of range
         with self.assertRaises(Exception) as e:
-            self.sim.createASensorFromPresets(totalTestSensors)
+            self.sim.createOrResetASensorTypeFromPresets(totalTestSensors)
         correct_exception_message = (
-            "Cannot find requested sensor (index "
+            "Cannot find requested sensor type (index "
             + str(totalTestSensors)
             + ") from presets"
         )

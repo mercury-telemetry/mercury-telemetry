@@ -75,8 +75,12 @@ class Simulator:
             event_venue=self.venue,
         )
 
-    def createASensorTypeFromPresets(self, index):
+    def createOrResetASensorTypeFromPresets(self, index):
         """Create a sensor type object from available presets of sensor types
+
+        The sensor type record is a prerequisite for any sensor whose type is set to this.
+        The sensor type ID is also hardcoded in the database. Therefore, for the same sensor
+        type, if this method is called when the record exists, it will update the record.
 
         Arguments:
 
@@ -98,12 +102,24 @@ class Simulator:
 
         preset = presets.sensor_type_presets[index]
 
-        self.sensorType = models.AGSensorType.objects.create(
-            sensorType_id=preset["agSensorTypeID"],
-            sensorType_name=preset["agSensorTypeName"],
-            sensorType_processingFormula=preset["agSensorTypeFormula"],
-            sensorType_format=preset["agSensorTypeFormat"],
+        # If the sensor type record does not exist in the table, create the record.
+        record = models.AGSensorType.objects.filter(
+            sensorType_id=preset["agSensorTypeID"]
         )
+
+        if record.count() == 0:
+            self.sensorType = models.AGSensorType.objects.create(
+                sensorType_id=preset["agSensorTypeID"],
+                sensorType_name=preset["agSensorTypeName"],
+                sensorType_processingFormula=preset["agSensorTypeFormula"],
+                sensorType_format=preset["agSensorTypeFormat"],
+            )
+        else:
+            record = record.first()
+            record.sensorType_name = preset["agSensorTypeName"]
+            record.sensorType_processingFormula = preset["agSensorTypeFormula"]
+            record.sensorType_format = preset["agSensorTypeFormat"]
+            record.save()
 
     def createASensorFromPresets(self, index, cascadeCreation=False):
         """Create a sensor from available presets of sensors
@@ -130,7 +146,7 @@ class Simulator:
         preset = presets.sensor_presets[index]
 
         if cascadeCreation:
-            self.createASensorTypeFromPresets(preset["agSensorType"])
+            self.createOrResetASensorTypeFromPresets(preset["agSensorType"])
         else:
             self.assertSensorType()
 
