@@ -145,7 +145,7 @@ class SimulatorTest(TestCase):
         with self.assertRaises(Exception) as e:
             self.sim.createASensorFromPresets(totalTestSensors)
         correct_exception_message = (
-            "Cannot find requested sensor type (index "
+            "Cannot find requested sensor (index "
             + str(totalTestSensors)
             + ") from presets"
         )
