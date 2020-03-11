@@ -21,7 +21,7 @@ class AGVenue(models.Model):
 
 
 class AGEvent(models.Model):
-    """Stores the information about events including name, date and description. 
+    """Stores the information about events including name, date and description.
     """
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -58,7 +58,7 @@ class AGMeasurement(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(default=timezone.now, blank=False)
-    measurement_event = models.ForeignKey(
+    event_uuid = models.ForeignKey(
         AGEvent, on_delete=models.CASCADE, blank=False, null=False
     )
     sensor_id = models.ForeignKey(
