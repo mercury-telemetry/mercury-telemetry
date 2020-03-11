@@ -9,8 +9,12 @@ class AGVenue(models.Model):
     venue_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     venue_name = models.CharField(max_length=100, blank=True)
     venue_description = models.CharField(max_length=100, null=False, blank=True)
-    venue_latitude = models.FloatField()
-    venue_longitude = models.FloatField()
+    venue_latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
+    venue_longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
 
 
 class AGEvent(models.Model):
