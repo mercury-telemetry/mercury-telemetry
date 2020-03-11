@@ -8,7 +8,7 @@ from ag_data import presets
 
 
 class Simulator:
-    
+
     venue = None
     event = None
     sensorType = None
