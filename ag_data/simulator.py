@@ -91,7 +91,7 @@ class Simulator:
             Exception: an exception raises when the index is not valid in presets.
         """
 
-        if index > len(presets.type_id_presets) - 1:
+        if index > len(presets.sensor_type_presets) - 1:
             raise Exception(
                 "Cannot find requested sensor type (index "
                 + str(index)
@@ -100,7 +100,7 @@ class Simulator:
         else:
             pass
 
-        preset = presets.type_id_presets[index]
+        preset = presets.sensor_type_presets[index]
 
         # If the sensor type record does not exist in the table, create the record.
         record = models.AGSensorType.objects.filter(id=preset["agSensorTypeID"])
@@ -196,7 +196,7 @@ class Simulator:
     def checkSensorFormat(self, index):
         return (
             self.sensor.type_id.format
-            == presets.type_id_presets[index]["agSensorTypeFormat"]
+            == presets.sensor_type_presets[index]["agSensorTypeFormat"]
         )
 
     def logMeasurementsInThePastSeconds(
