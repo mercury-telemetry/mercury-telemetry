@@ -100,8 +100,6 @@ def main():
     )
     args = parser.parse_args(sys.argv[1:])
 
-    print(args)
-
     if args.verbose:
         print('pyserial version = {}'.format(serial.__version__))
         print('   vid =', args.vid)
