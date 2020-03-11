@@ -8,7 +8,7 @@ from ag_data import presets
 
 
 class Simulator:
-
+    """So far, here's no test data for genericData"""
     venue = None
     event = None
     sensorType = None
