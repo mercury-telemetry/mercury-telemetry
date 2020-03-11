@@ -99,9 +99,7 @@ class SimulatorTest(TestCase):
             sensorType.sensorType_processingFormula = (
                 expected_sensor_type["agSensorTypeFormula"] + 1
             )
-            sensorType.sensorType_format = (
-                [expected_sensor_type["agSensorTypeFormat"]]
-            )
+            sensorType.sensorType_format = [expected_sensor_type["agSensorTypeFormat"]]
             sensorType.save()
 
             self.sim.createOrResetASensorTypeFromPresets(index)
