@@ -46,9 +46,7 @@ class AGSensor(models.Model):
 
 class AGMeasurement(models.Model):
 
-    uuid = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False
-    )
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(default=timezone.now, blank=False)
     measurement_event = models.ForeignKey(
         AGEvent, on_delete=models.CASCADE, blank=False, null=False

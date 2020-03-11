@@ -103,9 +103,7 @@ class Simulator:
         preset = presets.type_id_presets[index]
 
         # If the sensor type record does not exist in the table, create the record.
-        record = models.AGSensorType.objects.filter(
-            id=preset["agSensorTypeID"]
-        )
+        record = models.AGSensorType.objects.filter(id=preset["agSensorTypeID"])
 
         if record.count() == 0:
             self.sensorType = models.AGSensorType.objects.create(
