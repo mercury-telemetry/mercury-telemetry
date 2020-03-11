@@ -1,4 +1,5 @@
 from random import randint, uniform
+from decimal import Decimal
 
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
@@ -31,8 +32,12 @@ class SimulatorTest(TestCase):
             self.assertEqual(
                 (venue.venue_description), current_venue["agVenueDescription"]
             )
-            self.assertEqual(venue.venue_latitude, current_venue["agVenueLatitude"])
-            self.assertEqual(venue.venue_longitude, current_venue["agVenueLongitude"])
+            self.assertEqual(
+                venue.venue_latitude, Decimal(str(current_venue["agVenueLatitude"]))
+            )
+            self.assertEqual(
+                venue.venue_longitude, Decimal(str(current_venue["agVenueLongitude"]))
+            )
 
         # test event creation for index out of range
         with self.assertRaises(Exception) as e:

@@ -39,8 +39,8 @@ class Migration(migrations.Migration):
                 ('venue_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('venue_name', models.CharField(blank=True, max_length=100)),
                 ('venue_description', models.CharField(blank=True, max_length=100)),
-                ('venue_latitude', models.FloatField()),
-                ('venue_longitude', models.FloatField()),
+                ('venue_latitude', models.DecimalField(blank=True, decimal_places=6, max_digits=9, null=True)),
+                ('venue_longitude', models.DecimalField(blank=True, decimal_places=6, max_digits=9, null=True)),
             ],
         ),
         migrations.CreateModel(
