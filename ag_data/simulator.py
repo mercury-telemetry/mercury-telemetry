@@ -26,6 +26,7 @@ class Simulator:
 
             Exception: an exception raises when the index is not valid in presets.
         """
+
         if index > len(common.test_venue_data) - 1:
             raise Exception(
                 "Cannot find requested venue (index " + str(index) + ") from presets"
@@ -56,6 +57,7 @@ class Simulator:
             Assertion: an assertion error raises when there is no venue prior to the
             creation of the event.
         """
+
         if index > len(common.test_event_data) - 1:
             raise Exception(
                 "Cannot find requested event (index " + str(index) + ") from presets"
@@ -85,6 +87,7 @@ class Simulator:
 
             Exception: an exception raises when the index is not valid in presets.
         """
+
         if index > len(common.presets_sensor_types) - 1:
             raise Exception(
                 "Cannot find requested sensor type (index "
@@ -117,6 +120,7 @@ class Simulator:
 
             Exception: an exception raises when the index is not valid in presets.
         """
+
         if index > len(common.test_sensor_data) - 1:
             raise Exception(
                 "Cannot find requested sensor (index " + str(index) + ") from presets"
@@ -194,6 +198,7 @@ class Simulator:
 
             frequencyInHz {int} -- sampling frequency for the simulated sensor
         """
+
         startTime = timezone.now()
         earliestReading = startTime - timezone.timedelta(seconds=seconds)
         sampleInterval = 1 / frequencyInHz
@@ -253,6 +258,7 @@ class Simulator:
             measurements. (default: {0} which will result in generating measurements
             infinitely)
         """
+
         startTime = timezone.now()
         stopTime = startTime + timezone.timedelta(seconds=sleepTimer)
         sampleInterval = 1 / frequencyInHz
