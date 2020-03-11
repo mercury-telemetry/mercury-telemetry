@@ -43,5 +43,21 @@ sudo dpkg -i anydesk*.deb
 sudo apt-get install -f
 sudo systemctl daemon-reload
 
-showStatus 'Completed Raspberry Pi Common Setup'
 cd ~/
+
+echo "Completed Raspberry Pi Common Setup
+
+Your Raspberry Pi is update to date. The following packages were installed and enabled:
+- SSH: remote secure shell
+- VNC: remote access on the same network, works without internet
+- AnyDesk: remote access via internet
+- Vim: file editing in SSH
+- curl and wget: for file downloads and ping, Rasbian comes with these.
+- htop: an interactive process viewer for Unix systems
+- screen: virtual terminals to run tasks in background
+- nmap: for scanning IP of devices connected in the network
+
+
+NOTE!!!
+
+- Changing HOSTNAME of Raspberry Pi from raspberrypi would also change url for communication server. Default URL for communication server is http://raspberrypi.local"
