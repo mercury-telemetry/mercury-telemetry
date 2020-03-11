@@ -31,10 +31,10 @@ class AGEvent(models.Model):
 
 class AGSensorType(models.Model):
 
-    sensorType_id = models.AutoField(primary_key=True)
-    sensorType_name = models.CharField(max_length=1024, blank=True)
-    sensorType_processingFormula = models.IntegerField(default=0, null=False)
-    sensorType_format = JSONField()
+    sensor_type_id = models.AutoField(primary_key=True)
+    sensor_type_name = models.CharField(max_length=1024, blank=True)
+    sensor_type_processingFormula = models.IntegerField(default=0, null=False)
+    sensor_type_format = JSONField()
 
 
 class AGSensor(models.Model):

@@ -86,39 +86,41 @@ class SimulatorTest(TestCase):
 
             expected_sensor_type = presets.sensor_type_presets[index]
 
-            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensorType_id)
+            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensor_type_id)
             self.assertEqual(
-                sensorType.sensorType_name, expected_sensor_type["agSensorTypeName"]
+                sensorType.sensor_type_name, expected_sensor_type["agSensorTypeName"]
             )
             self.assertEqual(
-                sensorType.sensorType_processingFormula,
+                sensorType.sensor_type_processingFormula,
                 expected_sensor_type["agSensorTypeFormula"],
             )
             self.assertEqual(
-                sensorType.sensorType_format, expected_sensor_type["agSensorTypeFormat"]
+                sensorType.sensor_type_format,
+                expected_sensor_type["agSensorTypeFormat"],
             )
 
             # test when the method is called when the record already exists
 
-            sensorType.sensorType_name = expected_sensor_type["agSensorTypeName"] + " "
-            sensorType.sensorType_processingFormula = (
+            sensorType.sensor_type_name = expected_sensor_type["agSensorTypeName"] + " "
+            sensorType.sensor_type_processingFormula = (
                 expected_sensor_type["agSensorTypeFormula"] + 1
             )
-            sensorType.sensorType_format = [expected_sensor_type["agSensorTypeFormat"]]
+            sensorType.sensor_type_format = [expected_sensor_type["agSensorTypeFormat"]]
             sensorType.save()
 
             self.sim.createOrResetASensorTypeFromPresets(index)
-            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensorType_id)
+            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensor_type_id)
 
             self.assertEqual(
-                sensorType.sensorType_name, expected_sensor_type["agSensorTypeName"]
+                sensorType.sensor_type_name, expected_sensor_type["agSensorTypeName"]
             )
             self.assertEqual(
-                sensorType.sensorType_processingFormula,
+                sensorType.sensor_type_processingFormula,
                 expected_sensor_type["agSensorTypeFormula"],
             )
             self.assertEqual(
-                sensorType.sensorType_format, expected_sensor_type["agSensorTypeFormat"]
+                sensorType.sensor_type_format,
+                expected_sensor_type["agSensorTypeFormat"],
             )
 
         # test sensor type creation for index out of range

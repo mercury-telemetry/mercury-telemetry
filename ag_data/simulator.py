@@ -104,21 +104,21 @@ class Simulator:
 
         # If the sensor type record does not exist in the table, create the record.
         record = models.AGSensorType.objects.filter(
-            sensorType_id=preset["agSensorTypeID"]
+            sensor_type_id=preset["agSensorTypeID"]
         )
 
         if record.count() == 0:
             self.sensorType = models.AGSensorType.objects.create(
-                sensorType_id=preset["agSensorTypeID"],
-                sensorType_name=preset["agSensorTypeName"],
-                sensorType_processingFormula=preset["agSensorTypeFormula"],
-                sensorType_format=preset["agSensorTypeFormat"],
+                sensor_type_id=preset["agSensorTypeID"],
+                sensor_type_name=preset["agSensorTypeName"],
+                sensor_type_processingFormula=preset["agSensorTypeFormula"],
+                sensor_type_format=preset["agSensorTypeFormat"],
             )
         else:
             record = record.first()
-            record.sensorType_name = preset["agSensorTypeName"]
-            record.sensorType_processingFormula = preset["agSensorTypeFormula"]
-            record.sensorType_format = preset["agSensorTypeFormat"]
+            record.sensor_type_name = preset["agSensorTypeName"]
+            record.sensor_type_processingFormula = preset["agSensorTypeFormula"]
+            record.sensor_type_format = preset["agSensorTypeFormat"]
             record.save()
 
     def createASensorFromPresets(self, index, cascadeCreation=False):
@@ -197,7 +197,7 @@ class Simulator:
 
     def checkSensorFormat(self, index):
         return (
-            self.sensor.sensor_type.sensorType_format
+            self.sensor.sensor_type.sensor_type_format
             == presets.sensor_type_presets[index]["agSensorTypeFormat"]
         )
 
