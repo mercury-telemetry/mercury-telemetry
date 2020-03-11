@@ -34,6 +34,9 @@ sudo apt-get install git htop -y
 showStatus 'Installing screen'
 sudo apt-get install screen -y
 
+showStatus 'Installing nmap'
+sudo apt-get install nmap -y
+
 showStatus 'Installing AnyDesk'
 wget https://download.anydesk.com/rpi/anydesk_5.5.4-1_armhf.deb
 sudo dpkg -i anydesk*.deb
