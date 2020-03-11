@@ -6,7 +6,6 @@ from django.utils import timezone
 
 from ag_data.simulator import Simulator
 from ag_data.models import AGVenue, AGEvent, AGSensorType, AGSensor, AGMeasurement
-from ag_data.presets import test_venue_data, test_event_data, test_sensor_data
 from ag_data import presets
 
 
@@ -20,11 +19,11 @@ class SimulatorTest(TestCase):
         self.assertEqual(self.sim.sensor, None)
 
     def test_simulator_create_venue(self):
-        totalTestVenues = len(test_venue_data)
+        totalTestVenues = len(presets.venue_presets)
         # test venue creation for indices in range
         for index in range(totalTestVenues):
             self.sim.createAVenueFromPresets(index)
-            current_venue = test_venue_data[index]
+            current_venue = presets.venue_presets[index]
 
             venue = AGVenue.objects.get(pk=self.sim.venue.venue_uuid)
             self.assertEqual(venue.venue_name, current_venue["agVenueName"])
@@ -45,12 +44,12 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_create_event(self):
-        totalTestEvents = len(test_event_data)
+        totalTestEvents = len(presets.event_presets)
         # test event creation for indices in range
         for index in range(totalTestEvents):
             self.sim.createAVenueFromPresets(index)
             self.sim.createAnEventFromPresets(index)
-            current_event = test_event_data[index]
+            current_event = presets.event_presets[index]
 
             event = AGEvent.objects.get(pk=self.sim.event.event_uuid)
             self.assertEqual(event.event_name, current_event["agEventName"])
@@ -72,13 +71,13 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_create_sensor_type(self):
-        totalTestSensorTypes = len(presets.presets_sensor_types)
+        totalTestSensorTypes = len(presets.sensor_type_presets)
 
         # test sensor creation for indices in range
         for index in range(totalTestSensorTypes):
             self.sim.createASensorTypeFromPresets(index)
 
-            expected_sensor_type = presets.presets_sensor_types[index]
+            expected_sensor_type = presets.sensor_type_presets[index]
 
             sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensorType_id)
             self.assertEqual(
@@ -103,15 +102,15 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_create_sensor(self):
-        totalTestSensors = len(test_sensor_data)
+        totalTestSensors = len(presets.sensor_presets)
         # test sensor creation for indices in range
         for index in range(totalTestSensors):
             # create the corresponding sensor type, if it is not present
-            sensorTypeID = presets.test_sensor_data[index]["agSensorType"]
+            sensorTypeID = presets.sensor_presets[index]["agSensorType"]
             self.sim.createASensorTypeFromPresets(sensorTypeID)
 
             self.sim.createASensorFromPresets(index)
-            current_sensor = test_sensor_data[index]
+            current_sensor = presets.sensor_presets[index]
 
             sensor = AGSensor.objects.get(pk=self.sim.sensor.sensor_id)
             self.assertEqual(sensor.sensor_name, current_sensor["agSensorName"])
@@ -174,7 +173,7 @@ class SimulatorTest(TestCase):
         self.sim.createAVenueFromPresets(self.randVenueIndex())
         self.sim.createAnEventFromPresets(randEventIndex)
 
-        for index in range(len(test_sensor_data)):
+        for index in range(len(presets.sensor_presets)):
             self.sim.createASensorFromPresets(
                 index, cascadeCreation=True
             )  # FIXME: add another condition
@@ -195,7 +194,7 @@ class SimulatorTest(TestCase):
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
             measurement_payload = measurement_in_database.measurement_value
-            correct_payload_format = presets.presets_sensor_types[index][
+            correct_payload_format = presets.sensor_type_presets[index][
                 "agSensorTypeFormat"
             ]
 
@@ -314,10 +313,13 @@ class SimulatorTest(TestCase):
             )
 
     def randVenueIndex(self):
-        return randint(0, len(test_venue_data) - 1)
+        return randint(0, len(presets.venue_presets) - 1)
 
     def randEventIndex(self):
-        return randint(0, len(test_event_data) - 1)
+        return randint(0, len(presets.event_presets) - 1)
+
+    def randSensorTypeIndex(self):
+        return randint(0, len(presets.sensor_type_presets) - 1)
 
     def randSensorIndex(self):
-        return randint(0, len(test_sensor_data) - 1)
+        return randint(0, len(presets.sensor_presets) - 1)

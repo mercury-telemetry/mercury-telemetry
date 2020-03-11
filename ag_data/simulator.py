@@ -4,7 +4,6 @@ from time import sleep
 from django.utils import timezone
 
 from ag_data import models
-from ag_data import presets as common
 from ag_data import presets
 
 
@@ -27,20 +26,20 @@ class Simulator:
             Exception: an exception raises when the index is not valid in presets.
         """
 
-        if index > len(common.test_venue_data) - 1:
+        if index > len(presets.venue_presets) - 1:
             raise Exception(
                 "Cannot find requested venue (index " + str(index) + ") from presets"
             )
         else:
             pass
 
-        test_venue_data = common.test_venue_data[index]
+        preset = presets.venue_presets[index]
 
         self.venue = models.AGVenue.objects.create(
-            venue_name=test_venue_data["agVenueName"],
-            venue_description=test_venue_data["agVenueDescription"],
-            venue_latitude=test_venue_data["agVenueLatitude"],
-            venue_longitude=test_venue_data["agVenueLongitude"],
+            venue_name=preset["agVenueName"],
+            venue_description=preset["agVenueDescription"],
+            venue_latitude=preset["agVenueLatitude"],
+            venue_longitude=preset["agVenueLongitude"],
         )
 
     def createAnEventFromPresets(self, index):
@@ -58,21 +57,21 @@ class Simulator:
             creation of the event.
         """
 
-        if index > len(common.test_event_data) - 1:
+        if index > len(presets.event_presets) - 1:
             raise Exception(
                 "Cannot find requested event (index " + str(index) + ") from presets"
             )
         else:
             pass
 
-        test_event_data = common.test_event_data[index]
+        preset = presets.event_presets[index]
 
         self.assertVenue()
 
         self.event = models.AGEvent.objects.create(
-            event_name=test_event_data["agEventName"],
-            event_date=test_event_data["agEventDate"],
-            event_description=test_event_data["agEventDescription"],
+            event_name=preset["agEventName"],
+            event_date=preset["agEventDate"],
+            event_description=preset["agEventDescription"],
             event_venue=self.venue,
         )
 
@@ -88,7 +87,7 @@ class Simulator:
             Exception: an exception raises when the index is not valid in presets.
         """
 
-        if index > len(common.presets_sensor_types) - 1:
+        if index > len(presets.sensor_type_presets) - 1:
             raise Exception(
                 "Cannot find requested sensor type (index "
                 + str(index)
@@ -97,7 +96,7 @@ class Simulator:
         else:
             pass
 
-        preset = common.presets_sensor_types[index]
+        preset = presets.sensor_type_presets[index]
 
         self.sensorType = models.AGSensorType.objects.create(
             sensorType_id=preset["agSensorTypeID"],
@@ -121,22 +120,22 @@ class Simulator:
             Exception: an exception raises when the index is not valid in presets.
         """
 
-        if index > len(common.test_sensor_data) - 1:
+        if index > len(presets.sensor_presets) - 1:
             raise Exception(
                 "Cannot find requested sensor (index " + str(index) + ") from presets"
             )
         else:
             pass
 
-        test_sensor_data = common.test_sensor_data[index]
+        preset = presets.sensor_presets[index]
 
         if cascadeCreation:
-            self.createASensorTypeFromPresets(test_sensor_data["agSensorType"])
+            self.createASensorTypeFromPresets(preset["agSensorType"])
         else:
             self.assertSensorType()
 
         self.sensor = models.AGSensor.objects.create(
-            sensor_name=test_sensor_data["agSensorName"], sensor_type=self.sensorType
+            sensor_name=preset["agSensorName"], sensor_type=self.sensorType
         )
 
     def logSingleMeasurement(self, timestamp):
@@ -183,7 +182,7 @@ class Simulator:
     def checkSensorFormat(self, index):
         return (
             self.sensor.sensor_type.sensorType_format
-            == presets.presets_sensor_types[index]["agSensorTypeFormat"]
+            == presets.sensor_type_presets[index]["agSensorTypeFormat"]
         )
 
     def logMeasurementsInThePastSeconds(

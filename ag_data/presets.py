@@ -1,4 +1,4 @@
-test_venue_data = [
+venue_presets = [
     {
         "agVenueName": "Washington Square Park",
         "agVenueDescription": "Sunnyside Daycare's Butterfly Room.",
@@ -13,7 +13,7 @@ test_venue_data = [
     },
 ]
 
-test_event_data = [
+event_presets = [
     {
         "agEventName": "Sunny Day Test Drive",
         "agEventDate": "2020-02-02T20:21:22",
@@ -28,7 +28,7 @@ test_event_data = [
     },
 ]
 
-presets_sensor_types = [
+sensor_type_presets = [
     {
         "agSensorTypeID": 0,
         "agSensorTypeName": "Simple Temperature Sensor",
@@ -46,7 +46,7 @@ presets_sensor_types = [
     },
 ]
 
-test_sensor_data = [
+sensor_presets = [
     {"agSensorName": "Simple Temperature Sensor", "agSensorType": 0},
     {"agSensorName": "Sample Dual Temperature", "agSensorType": 1},
 ]
