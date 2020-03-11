@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function showStatus() {
 	printf "\n${1}\n"
 }
