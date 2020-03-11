@@ -143,7 +143,7 @@ class SimulatorTest(TestCase):
 
         # test sensor creation for index out of range
         with self.assertRaises(Exception) as e:
-            self.sim.createOrResetASensorTypeFromPresets(totalTestSensors)
+            self.sim.createASensorFromPresets(totalTestSensors)
         correct_exception_message = (
             "Cannot find requested sensor type (index "
             + str(totalTestSensors)
@@ -343,9 +343,6 @@ class SimulatorTest(TestCase):
 
     def randEventIndex(self):
         return randint(0, len(presets.event_presets) - 1)
-
-    def randSensorTypeIndex(self):
-        return randint(0, len(presets.sensor_type_presets) - 1)
 
     def randSensorIndex(self):
         return randint(0, len(presets.sensor_presets) - 1)
