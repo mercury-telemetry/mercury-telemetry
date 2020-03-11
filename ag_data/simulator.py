@@ -118,6 +118,7 @@ class Simulator:
             record.processing_formula = preset["agSensorTypeFormula"]
             record.format = preset["agSensorTypeFormat"]
             record.save()
+            self.sensorType = record
 
     def createASensorFromPresets(self, index, cascadeCreation=False):
         """Create a sensor from available presets of sensors
