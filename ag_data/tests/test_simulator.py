@@ -20,6 +20,7 @@ class SimulatorTest(TestCase):
 
     def test_simulator_create_venue(self):
         totalTestVenues = len(presets.venue_presets)
+
         # test venue creation for indices in range
         for index in range(totalTestVenues):
             self.sim.createAVenueFromPresets(index)
@@ -45,6 +46,7 @@ class SimulatorTest(TestCase):
 
     def test_simulator_create_event(self):
         totalTestEvents = len(presets.event_presets)
+
         # test event creation for indices in range
         for index in range(totalTestEvents):
             self.sim.createAVenueFromPresets(index)
@@ -103,6 +105,7 @@ class SimulatorTest(TestCase):
 
     def test_simulator_create_sensor(self):
         totalTestSensors = len(presets.sensor_presets)
+
         # test sensor creation for indices in range
         for index in range(totalTestSensors):
             # create the corresponding sensor type, if it is not present
