@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AGEvent, AGVenue, AGSensor, AGMeasurement
+from .models import AGEvent, AGVenue, AGSensorType, AGSensor, AGMeasurement
 import uuid
 
 
@@ -43,15 +43,30 @@ class AGVenueSerializer(serializers.ModelSerializer):
         ]
 
 
+class AGSensorTypeSerializer(serializers.ModelSerializer):
+    agSensorTypeID = serializers.IntegerField(source="sensor_id", read_only=True)
+    agSensorTypeName = serializers.CharField(source="sensor_name")
+    agSensorTypeFormula = serializers.IntegerField(source="sensor_processing_formula")
+    agSensorTypeFormat = serializers.CharField(source="sensor_format")
+
+    class Meta:
+        model = AGSensorType
+        fields = [
+            "agSensorTypeID",
+            "agSensorTypeName",
+            "agSensorTypeFormula",
+            "agSensorTypeFormat",
+        ]
+
+
 class AGSensorSerializer(serializers.ModelSerializer):
     agSensorID = serializers.IntegerField(source="sensor_id", read_only=True)
     agSensorName = serializers.CharField(source="sensor_name")
-    agSensorFormula = serializers.IntegerField(source="sensor_processing_formula")
-    agSensorFormat = serializers.CharField(source="sensor_format")
+    agSensorType = serializers.IntegerField(source="sensor_id", read_only=True)
 
     class Meta:
         model = AGSensor
-        fields = ["agSensorID", "agSensorName", "agSensorFormula", "agSensorFormat"]
+        fields = ["agSensorID", "agSensorName", "agSensorType"]
 
 
 class AGMeasurementSerializer(serializers.ModelSerializer):
@@ -60,7 +75,7 @@ class AGMeasurementSerializer(serializers.ModelSerializer):
     )
     agMeasurementTimestamp = serializers.DateTimeField(source="measurement_timestamp")
     agMeasurementEvent = serializers.UUIDField(source="measurement_event")
-    agMeasurementSensor = serializers.UUIDField(source="measurement_sensor")
+    agMeasurementSensor = serializers.IntegerField(source="measurement_sensor")
     agMeasurementValue = serializers.JSONField(source="measurement_value")
 
     class Meta:

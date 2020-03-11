@@ -25,12 +25,19 @@ class AGEvent(models.Model):
     event_venue = models.ForeignKey(AGVenue, null=True, on_delete=models.SET_NULL)
 
 
+class AGSensorType(models.Model):
+
+    sensorType_id = models.AutoField(primary_key=True)
+    sensorType_name = models.CharField(max_length=1024, blank=True)
+    sensorType_processingFormula = models.IntegerField(default=0, null=False)
+    sensorType_format = JSONField()
+
+
 class AGSensor(models.Model):
 
     sensor_id = models.AutoField(primary_key=True)
     sensor_name = models.CharField(max_length=1024, blank=True)
-    sensor_processing_formula = models.IntegerField(default=0, null=False)
-    sensor_format = JSONField()
+    sensor_type = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
 
 
 class AGMeasurement(models.Model):

@@ -1,5 +1,3 @@
-from ag_data.models import AGEvent
-
 test_venue_data = [
     {
         "agVenueName": "Washington Square Park",
@@ -30,26 +28,25 @@ test_event_data = [
     },
 ]
 
-test_sensor_data = [
+presets_sensor_types = [
     {
-        "agSensorName": "Simple Temperature Sensor",
-        "agSensorFormula": 0,
-        "agSensorFormat": {"reading": {"unit": "Celsius", "format": "float"}},
+        "agSensorTypeID": 0,
+        "agSensorTypeName": "Simple Temperature Sensor",
+        "agSensorTypeFormula": 0,
+        "agSensorTypeFormat": {"reading": {"unit": "Celsius", "format": "float"}},
     },
     {
-        "agSensorName": "Dual Temperature Sensor",
-        "agSensorFormula": 0,
-        "agSensorFormat": {
+        "agSensorTypeID": 1,
+        "agSensorTypeName": "Dual Temperature Sensor",
+        "agSensorTypeFormula": 0,
+        "agSensorTypeFormat": {
             "internal": {"unit": "Keivin", "format": "float"},
             "external": {"unit": "Keivin", "format": "float"},
         },
     },
 ]
 
-
-def create_event(event_data):
-    return AGEvent(
-        event_name=event_data["agEventName"],
-        event_date=event_data["agEventDate"],
-        event_description=event_data["agEventDescription"],
-    )
+test_sensor_data = [
+    {"agSensorName": "Simple Temperature Sensor", "agSensorType": 0},
+    {"agSensorName": "Sample Dual Temperature", "agSensorType": 1},
+]

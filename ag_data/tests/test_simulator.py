@@ -5,8 +5,9 @@ from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 
 from ag_data.simulator import Simulator
-from ag_data.models import AGVenue, AGEvent, AGSensor, AGMeasurement
-from ag_data.tests.common import test_venue_data, test_event_data, test_sensor_data
+from ag_data.models import AGVenue, AGEvent, AGSensorType, AGSensor, AGMeasurement
+from ag_data.presets import test_venue_data, test_event_data, test_sensor_data
+from ag_data import presets
 
 
 class SimulatorTest(TestCase):
@@ -70,19 +71,50 @@ class SimulatorTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
+    def test_simulator_create_sensor_type(self):
+        totalTestSensorTypes = len(presets.presets_sensor_types)
+
+        # test sensor creation for indices in range
+        for index in range(totalTestSensorTypes):
+            self.sim.createASensorTypeFromPresets(index)
+
+            expected_sensor_type = presets.presets_sensor_types[index]
+
+            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensorType_id)
+            self.assertEqual(
+                sensorType.sensorType_name, expected_sensor_type["agSensorTypeName"]
+            )
+            self.assertEqual(
+                sensorType.sensorType_processingFormula,
+                expected_sensor_type["agSensorTypeFormula"],
+            )
+            self.assertEqual(
+                sensorType.sensorType_format, expected_sensor_type["agSensorTypeFormat"]
+            )
+
+        # test sensor type creation for index out of range
+        with self.assertRaises(Exception) as e:
+            self.sim.createASensorTypeFromPresets(totalTestSensorTypes)
+        correct_exception_message = (
+            "Cannot find requested sensor type (index "
+            + str(totalTestSensorTypes)
+            + ") from presets"
+        )
+        self.assertEqual(str(e.exception), correct_exception_message)
+
     def test_simulator_create_sensor(self):
         totalTestSensors = len(test_sensor_data)
         # test sensor creation for indices in range
         for index in range(totalTestSensors):
+            # create the corresponding sensor type, if it is not present
+            sensorTypeID = presets.test_sensor_data[index]["agSensorType"]
+            self.sim.createASensorTypeFromPresets(sensorTypeID)
+
             self.sim.createASensorFromPresets(index)
             current_sensor = test_sensor_data[index]
 
             sensor = AGSensor.objects.get(pk=self.sim.sensor.sensor_id)
             self.assertEqual(sensor.sensor_name, current_sensor["agSensorName"])
-            self.assertEqual(
-                sensor.sensor_processing_formula, current_sensor["agSensorFormula"]
-            )
-            self.assertEqual(sensor.sensor_format, current_sensor["agSensorFormat"])
 
         # test sensor creation for index out of range
         with self.assertRaises(Exception) as e:
@@ -95,7 +127,9 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_log_single_measurement_no_venue(self):
-        self.sim.createASensorFromPresets(self.randSensorIndex())
+        self.sim.createASensorFromPresets(
+            self.randSensorIndex(), cascadeCreation=True
+        )  # FIXME: another condition
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
@@ -108,7 +142,9 @@ class SimulatorTest(TestCase):
 
     def test_simulator_log_single_measurement_no_event(self):
         self.sim.createAVenueFromPresets(self.randVenueIndex())
-        self.sim.createASensorFromPresets(self.randSensorIndex())
+        self.sim.createASensorFromPresets(
+            self.randSensorIndex(), cascadeCreation=True
+        )  # FIXME: another condition
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
@@ -139,7 +175,9 @@ class SimulatorTest(TestCase):
         self.sim.createAnEventFromPresets(randEventIndex)
 
         for index in range(len(test_sensor_data)):
-            self.sim.createASensorFromPresets(index)
+            self.sim.createASensorFromPresets(
+                index, cascadeCreation=True
+            )  # FIXME: add another condition
 
             timestamp = timezone.now()
             measurement = self.sim.logSingleMeasurement(timestamp=timestamp)
@@ -157,7 +195,9 @@ class SimulatorTest(TestCase):
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
             measurement_payload = measurement_in_database.measurement_value
-            correct_payload_format = test_sensor_data[index]["agSensorFormat"]
+            correct_payload_format = presets.presets_sensor_types[index][
+                "agSensorTypeFormat"
+            ]
 
             # NOTE: limitation: this only checks the keys at root level of the payload
             for field in correct_payload_format.keys():
@@ -173,7 +213,9 @@ class SimulatorTest(TestCase):
 
         self.sim.createAVenueFromPresets(self.randVenueIndex())
         self.sim.createAnEventFromPresets(self.randEventIndex())
-        self.sim.createASensorFromPresets(self.randSensorIndex())
+        self.sim.createASensorFromPresets(
+            self.randSensorIndex(), cascadeCreation=True
+        )  # FIXME: add another condition
 
         randFrequencyInHz = uniform(1, 100)
         randSeconds = uniform(1, 60)
@@ -225,7 +267,9 @@ class SimulatorTest(TestCase):
         for i in range(1):
             self.sim.createAVenueFromPresets(randVenueIndex)
             self.sim.createAnEventFromPresets(randEventIndex)
-            self.sim.createASensorFromPresets(randSensorIndex)
+            self.sim.createASensorFromPresets(
+                randSensorIndex, cascadeCreation=True
+            )  # FIXME: add another condition
 
             randFrequencyInHz = uniform(1, 100)
             randSleepTimer = uniform(1, 15)

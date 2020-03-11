@@ -4,13 +4,15 @@ from time import sleep
 from django.utils import timezone
 
 from ag_data import models
-from ag_data.tests import common
+from ag_data import presets as common
+from ag_data import presets
 
 
 class Simulator:
 
     venue = None
     event = None
+    sensorType = None
     sensor = None
 
     def createAVenueFromPresets(self, index):
@@ -72,18 +74,50 @@ class Simulator:
             event_venue=self.venue,
         )
 
-    def createASensorFromPresets(self, index):
+    def createASensorTypeFromPresets(self, index):
+        """Create a sensor type object from available presets of sensor types
+
+        Arguments:
+
+            index {int} -- the index of the sensor type preset to use.
+
+        Raises:
+
+            Exception: an exception raises when the index is not valid in presets.
+        """
+        if index > len(common.presets_sensor_types) - 1:
+            raise Exception(
+                "Cannot find requested sensor type (index "
+                + str(index)
+                + ") from presets"
+            )
+        else:
+            pass
+
+        preset = common.presets_sensor_types[index]
+
+        self.sensorType = models.AGSensorType.objects.create(
+            sensorType_id=preset["agSensorTypeID"],
+            sensorType_name=preset["agSensorTypeName"],
+            sensorType_processingFormula=preset["agSensorTypeFormula"],
+            sensorType_format=preset["agSensorTypeFormat"],
+        )
+
+    def createASensorFromPresets(self, index, cascadeCreation=False):
         """Create a sensor from available presets of sensors
 
         Arguments:
 
             index {int} -- the index of the sensor preset to use.
 
+            cascadeCreation {bool=False} -- whether or not to create a corresponding sensor
+            type which the chosen sensor preset needs (default: {False})
+
         Raises:
 
             Exception: an exception raises when the index is not valid in presets.
         """
-        if index > len(common.test_event_data) - 1:
+        if index > len(common.test_sensor_data) - 1:
             raise Exception(
                 "Cannot find requested sensor (index " + str(index) + ") from presets"
             )
@@ -92,10 +126,13 @@ class Simulator:
 
         test_sensor_data = common.test_sensor_data[index]
 
+        if cascadeCreation:
+            self.createASensorTypeFromPresets(test_sensor_data["agSensorType"])
+        else:
+            self.assertSensorType()
+
         self.sensor = models.AGSensor.objects.create(
-            sensor_name=test_sensor_data["agSensorName"],
-            sensor_processing_formula=test_sensor_data["agSensorFormula"],
-            sensor_format=test_sensor_data["agSensorFormat"],
+            sensor_name=test_sensor_data["agSensorName"], sensor_type=self.sensorType
         )
 
     def logSingleMeasurement(self, timestamp):
@@ -141,8 +178,8 @@ class Simulator:
 
     def checkSensorFormat(self, index):
         return (
-            self.sensor.sensor_format
-            == common.test_sensor_data[index]["agSensorFormat"]
+            self.sensor.sensor_type.sensorType_format
+            == presets.presets_sensor_types[index]["agSensorTypeFormat"]
         )
 
     def logMeasurementsInThePastSeconds(
@@ -243,6 +280,12 @@ class Simulator:
         assert isinstance(
             self.event, models.AGEvent
         ), "No event registered in the simulator. Create one first before calling this."
+
+    def assertSensorType(self):
+        assert isinstance(self.sensorType, models.AGSensorType), (
+            "No sensor type registered in the simulator. "
+            + "Create one first before calling this."
+        )
 
     def assertSensor(self):
         assert isinstance(
