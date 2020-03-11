@@ -27,16 +27,16 @@ class SimulatorTest(TestCase):
             self.sim.createAVenueFromPresets(index)
             current_venue = presets.venue_presets[index]
 
-            venue = AGVenue.objects.get(pk=self.sim.venue.venue_uuid)
-            self.assertEqual(venue.venue_name, current_venue["agVenueName"])
+            venue = AGVenue.objects.get(pk=self.sim.venue.uuid)
+            self.assertEqual(venue.name, current_venue["agVenueName"])
             self.assertEqual(
-                (venue.venue_description), current_venue["agVenueDescription"]
+                (venue.description), current_venue["agVenueDescription"]
             )
             self.assertEqual(
-                venue.venue_latitude, Decimal(str(current_venue["agVenueLatitude"]))
+                venue.latitude, Decimal(str(current_venue["agVenueLatitude"]))
             )
             self.assertEqual(
-                venue.venue_longitude, Decimal(str(current_venue["agVenueLongitude"]))
+                venue.longitude, Decimal(str(current_venue["agVenueLongitude"]))
             )
 
         # test event creation for index out of range
@@ -58,13 +58,13 @@ class SimulatorTest(TestCase):
             self.sim.createAnEventFromPresets(index)
             current_event = presets.event_presets[index]
 
-            event = AGEvent.objects.get(pk=self.sim.event.event_uuid)
-            self.assertEqual(event.event_name, current_event["agEventName"])
+            event = AGEvent.objects.get(pk=self.sim.event.uuid)
+            self.assertEqual(event.name, current_event["agEventName"])
             self.assertEqual(
-                (event.event_date), parse_datetime(current_event["agEventDate"])
+                (event.date), parse_datetime(current_event["agEventDate"])
             )
             self.assertEqual(
-                event.event_description, current_event["agEventDescription"]
+                event.description, current_event["agEventDescription"]
             )
 
         # test event creation for index out of range
@@ -77,50 +77,50 @@ class SimulatorTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def test_simulator_create_sensor_type(self):
-        totalTestSensorTypes = len(presets.sensor_type_presets)
+    def test_simulator_create_type_id(self):
+        totalTestSensorTypes = len(presets.type_id_presets)
 
         # test sensor type creation for indices in range
         for index in range(totalTestSensorTypes):
             self.sim.createOrResetASensorTypeFromPresets(index)
 
-            expected_sensor_type = presets.sensor_type_presets[index]
+            expected_type_id = presets.type_id_presets[index]
 
-            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensor_type_id)
+            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.id)
             self.assertEqual(
-                sensorType.sensor_type_name, expected_sensor_type["agSensorTypeName"]
+                sensorType.name, expected_type_id["agSensorTypeName"]
             )
             self.assertEqual(
-                sensorType.sensor_type_processingFormula,
-                expected_sensor_type["agSensorTypeFormula"],
+                sensorType.processing_formula,
+                expected_type_id["agSensorTypeFormula"],
             )
             self.assertEqual(
-                sensorType.sensor_type_format,
-                expected_sensor_type["agSensorTypeFormat"],
+                sensorType.format,
+                expected_type_id["agSensorTypeFormat"],
             )
 
             # test when the method is called when the record already exists
 
-            sensorType.sensor_type_name = expected_sensor_type["agSensorTypeName"] + " "
-            sensorType.sensor_type_processingFormula = (
-                expected_sensor_type["agSensorTypeFormula"] + 1
+            sensorType.name = expected_type_id["agSensorTypeName"] + " "
+            sensorType.processing_formula = (
+                expected_type_id["agSensorTypeFormula"] + 1
             )
-            sensorType.sensor_type_format = [expected_sensor_type["agSensorTypeFormat"]]
+            sensorType.format = [expected_type_id["agSensorTypeFormat"]]
             sensorType.save()
 
             self.sim.createOrResetASensorTypeFromPresets(index)
-            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.sensor_type_id)
+            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.id)
 
             self.assertEqual(
-                sensorType.sensor_type_name, expected_sensor_type["agSensorTypeName"]
+                sensorType.name, expected_type_id["agSensorTypeName"]
             )
             self.assertEqual(
-                sensorType.sensor_type_processingFormula,
-                expected_sensor_type["agSensorTypeFormula"],
+                sensorType.processing_formula,
+                expected_type_id["agSensorTypeFormula"],
             )
             self.assertEqual(
-                sensorType.sensor_type_format,
-                expected_sensor_type["agSensorTypeFormat"],
+                sensorType.format,
+                expected_type_id["agSensorTypeFormat"],
             )
 
         # test sensor type creation for index out of range
@@ -145,8 +145,8 @@ class SimulatorTest(TestCase):
             self.sim.createASensorFromPresets(index)
             current_sensor = presets.sensor_presets[index]
 
-            sensor = AGSensor.objects.get(pk=self.sim.sensor.sensor_id)
-            self.assertEqual(sensor.sensor_name, current_sensor["agSensorName"])
+            sensor = AGSensor.objects.get(pk=self.sim.sensor.id)
+            self.assertEqual(sensor.name, current_sensor["agSensorName"])
 
         # test sensor creation for index out of range
         with self.assertRaises(Exception) as e:
@@ -216,18 +216,18 @@ class SimulatorTest(TestCase):
 
             # test data in database
             measurement_in_database = AGMeasurement.objects.get(
-                pk=measurement.measurement_uuid
+                pk=measurement.uuid
             )
-            self.assertEqual(measurement_in_database.measurement_timestamp, timestamp)
+            self.assertEqual(measurement_in_database.timestamp, timestamp)
             self.assertEqual(measurement_in_database.measurement_event, self.sim.event)
             self.assertEqual(
-                measurement_in_database.measurement_sensor, self.sim.sensor
+                measurement_in_database.sensor_id, self.sim.sensor
             )
 
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
-            measurement_payload = measurement_in_database.measurement_value
-            correct_payload_format = presets.sensor_type_presets[index][
+            measurement_payload = measurement_in_database.value
+            correct_payload_format = presets.type_id_presets[index][
                 "agSensorTypeFormat"
             ]
 
@@ -259,7 +259,7 @@ class SimulatorTest(TestCase):
         # test number of measurements
         totalMeasurementsInDatabase = (
             AGMeasurement.objects.filter(measurement_event=self.sim.event)
-            .filter(measurement_sensor=self.sim.sensor)
+            .filter(sensor_id=self.sim.sensor)
             .count()
         )
         self.assertEqual(
@@ -323,7 +323,7 @@ class SimulatorTest(TestCase):
             # test total measurement count
             totalMeasurementsInDatabase = (
                 AGMeasurement.objects.filter(measurement_event=self.sim.event)
-                .filter(measurement_sensor=self.sim.sensor)
+                .filter(sensor_id=self.sim.sensor)
                 .count()
             )
 

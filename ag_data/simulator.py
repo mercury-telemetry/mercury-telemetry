@@ -36,10 +36,10 @@ class Simulator:
         preset = presets.venue_presets[index]
 
         self.venue = models.AGVenue.objects.create(
-            venue_name=preset["agVenueName"],
-            venue_description=preset["agVenueDescription"],
-            venue_latitude=preset["agVenueLatitude"],
-            venue_longitude=preset["agVenueLongitude"],
+            name=preset["agVenueName"],
+            description=preset["agVenueDescription"],
+            latitude=preset["agVenueLatitude"],
+            longitude=preset["agVenueLongitude"],
         )
 
     def createAnEventFromPresets(self, index):
@@ -69,10 +69,10 @@ class Simulator:
         self.assertVenue()
 
         self.event = models.AGEvent.objects.create(
-            event_name=preset["agEventName"],
-            event_date=preset["agEventDate"],
-            event_description=preset["agEventDescription"],
-            event_venue=self.venue,
+            name=preset["agEventName"],
+            date=preset["agEventDate"],
+            description=preset["agEventDescription"],
+            venue_uuid=self.venue,
         )
 
     def createOrResetASensorTypeFromPresets(self, index):
@@ -91,7 +91,7 @@ class Simulator:
             Exception: an exception raises when the index is not valid in presets.
         """
 
-        if index > len(presets.sensor_type_presets) - 1:
+        if index > len(presets.type_id_presets) - 1:
             raise Exception(
                 "Cannot find requested sensor type (index "
                 + str(index)
@@ -100,25 +100,25 @@ class Simulator:
         else:
             pass
 
-        preset = presets.sensor_type_presets[index]
+        preset = presets.type_id_presets[index]
 
         # If the sensor type record does not exist in the table, create the record.
         record = models.AGSensorType.objects.filter(
-            sensor_type_id=preset["agSensorTypeID"]
+            id=preset["agSensorTypeID"]
         )
 
         if record.count() == 0:
             self.sensorType = models.AGSensorType.objects.create(
-                sensor_type_id=preset["agSensorTypeID"],
-                sensor_type_name=preset["agSensorTypeName"],
-                sensor_type_processingFormula=preset["agSensorTypeFormula"],
-                sensor_type_format=preset["agSensorTypeFormat"],
+                id=preset["agSensorTypeID"],
+                name=preset["agSensorTypeName"],
+                processing_formula=preset["agSensorTypeFormula"],
+                format=preset["agSensorTypeFormat"],
             )
         else:
             record = record.first()
-            record.sensor_type_name = preset["agSensorTypeName"]
-            record.sensor_type_processingFormula = preset["agSensorTypeFormula"]
-            record.sensor_type_format = preset["agSensorTypeFormat"]
+            record.name = preset["agSensorTypeName"]
+            record.processing_formula = preset["agSensorTypeFormula"]
+            record.format = preset["agSensorTypeFormat"]
             record.save()
 
     def createASensorFromPresets(self, index, cascadeCreation=False):
@@ -151,7 +151,7 @@ class Simulator:
             self.assertSensorType()
 
         self.sensor = models.AGSensor.objects.create(
-            sensor_name=preset["agSensorName"], sensor_type=self.sensorType
+            name=preset["agSensorName"], type_id=self.sensorType
         )
 
     def logSingleMeasurement(self, timestamp):
@@ -182,23 +182,23 @@ class Simulator:
 
         if self.checkSensorFormat(0):
             return models.AGMeasurement.objects.create(
-                measurement_timestamp=timestamp,
+                timestamp=timestamp,
                 measurement_event=self.event,
-                measurement_sensor=self.sensor,
-                measurement_value={"reading": gauss(23, 3)},
+                sensor_id=self.sensor,
+                value={"reading": gauss(23, 3)},
             )
         elif self.checkSensorFormat(1):
             return models.AGMeasurement.objects.create(
-                measurement_timestamp=timestamp,
+                timestamp=timestamp,
                 measurement_event=self.event,
-                measurement_sensor=self.sensor,
-                measurement_value={"internal": gauss(15, 3), "external": gauss(20, 2)},
+                sensor_id=self.sensor,
+                value={"internal": gauss(15, 3), "external": gauss(20, 2)},
             )
 
     def checkSensorFormat(self, index):
         return (
-            self.sensor.sensor_type.sensor_type_format
-            == presets.sensor_type_presets[index]["agSensorTypeFormat"]
+            self.sensor.type_id.format
+            == presets.type_id_presets[index]["agSensorTypeFormat"]
         )
 
     def logMeasurementsInThePastSeconds(

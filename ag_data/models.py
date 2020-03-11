@@ -6,54 +6,54 @@ from django.utils import timezone
 
 class AGVenue(models.Model):
 
-    venue_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    venue_name = models.CharField(max_length=100, blank=True)
-    venue_description = models.CharField(max_length=100, null=False, blank=True)
-    venue_latitude = models.DecimalField(
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, blank=True)
+    description = models.CharField(max_length=100, null=False, blank=True)
+    latitude = models.DecimalField(
         max_digits=9, decimal_places=6, blank=True, null=True
     )
-    venue_longitude = models.DecimalField(
+    longitude = models.DecimalField(
         max_digits=9, decimal_places=6, blank=True, null=True
     )
 
 
 class AGEvent(models.Model):
     """This model stores the information about events. When a new event is created,
-    a UUID4-typed event_uuid will be assigned to this event and also store the current
+    a UUID4-typed uuid will be assigned to this event and also store the current
     date for this event. """
 
-    event_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    event_name = models.CharField(max_length=40, blank=True)
-    event_date = models.DateTimeField(default=timezone.now)
-    event_description = models.CharField(max_length=100, null=False, blank=True)
-    event_venue = models.ForeignKey(AGVenue, null=True, on_delete=models.SET_NULL)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=40, blank=True)
+    date = models.DateTimeField(default=timezone.now)
+    description = models.CharField(max_length=100, null=False, blank=True)
+    venue_uuid = models.ForeignKey(AGVenue, null=True, on_delete=models.SET_NULL)
 
 
 class AGSensorType(models.Model):
 
-    sensor_type_id = models.AutoField(primary_key=True)
-    sensor_type_name = models.CharField(max_length=1024, blank=True)
-    sensor_type_processingFormula = models.IntegerField(default=0, null=False)
-    sensor_type_format = JSONField()
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=1024, blank=True)
+    processing_formula = models.IntegerField(default=0, null=False)
+    format = JSONField()
 
 
 class AGSensor(models.Model):
 
-    sensor_id = models.AutoField(primary_key=True)
-    sensor_name = models.CharField(max_length=1024, blank=True)
-    sensor_type = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=1024, blank=True)
+    type_id = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
 
 
 class AGMeasurement(models.Model):
 
-    measurement_uuid = models.UUIDField(
+    uuid = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False
     )
-    measurement_timestamp = models.DateTimeField(default=timezone.now, blank=False)
+    timestamp = models.DateTimeField(default=timezone.now, blank=False)
     measurement_event = models.ForeignKey(
         AGEvent, on_delete=models.CASCADE, blank=False, null=False
     )
-    measurement_sensor = models.ForeignKey(
+    sensor_id = models.ForeignKey(
         AGSensor, on_delete=models.CASCADE, blank=False, null=False
     )
-    measurement_value = JSONField()
+    value = JSONField()
