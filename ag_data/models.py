@@ -5,7 +5,8 @@ from django.utils import timezone
 
 
 class AGVenue(models.Model):
-
+    """This models store the location where events happens, including name, description,
+    latitude and longtitude"""
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=True)
     description = models.CharField(max_length=100, null=False, blank=True)
@@ -18,10 +19,9 @@ class AGVenue(models.Model):
 
 
 class AGEvent(models.Model):
-    """This model stores the information about events. When a new event is created,
-    a UUID4-typed uuid will be assigned to this event and also store the current
+    """This model stores the information about events including name, date and description. 
+    When a new event is created, a UUID4-typed uuid will be assigned to this event and also store the current
     date for this event. """
-
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=40, blank=True)
     date = models.DateTimeField(default=timezone.now)
@@ -30,7 +30,8 @@ class AGEvent(models.Model):
 
 
 class AGSensorType(models.Model):
-
+    """This model stores the information about SensorType which is used to provide a sensor template
+    and related formula for user"""
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=1024, blank=True)
     processing_formula = models.IntegerField(default=0, null=False)
@@ -38,14 +39,16 @@ class AGSensorType(models.Model):
 
 
 class AGSensor(models.Model):
-
+    """This model stores the information about sensor including name and type_id used to retrieve the
+    related formula"""
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=1024, blank=True)
     type_id = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
 
 
 class AGMeasurement(models.Model):
-
+    """This model store the information about generic data unit, including timestamp, event, sensor_id 
+    and value field"""
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(default=timezone.now, blank=False)
     measurement_event = models.ForeignKey(
