@@ -6,17 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0009_auto_20200309_1345'),
+        ("mercury", "0009_auto_20200309_1345"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='agsensor',
-            name='sensor_description',
-        ),
+        migrations.RemoveField(model_name="agsensor", name="sensor_description",),
         migrations.AddField(
-            model_name='agevent',
-            name='event_location',
+            model_name="agevent",
+            name="event_location",
             field=models.CharField(blank=True, max_length=100),
         ),
     ]
