@@ -192,7 +192,7 @@ class TestConfigureSensorView(TestCase):
             reverse(self.sensor_url),
             data={
                 "sensor-name": "",
-                "field-name": [self.field_name_1, self.field_name_1],
+                "field-name": [self.field_name_1, self.field_name_2],
                 "field-type": [
                     self.test_sensor[self.field_name_1]["field_type"],
                     self.test_sensor[self.field_name_2]["field_type"],
