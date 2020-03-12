@@ -92,7 +92,7 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "sensor-name": self.test_sensor["name"],
@@ -213,7 +213,7 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "sensor-name": "",
@@ -244,8 +244,8 @@ class TestConfigureSensorView(TestCase):
             data={
                 "sensor-name": self.test_sensor["name"],
                 "field-name": [""],
-                "field-type": [self.test_sensor[self.field_name_1]["field_type"],],
-                "field-unit": [self.test_sensor[self.field_name_1]["field_unit"],],
+                "field-type": [self.test_sensor[self.field_name_1]["field_type"]],
+                "field-unit": [self.test_sensor[self.field_name_1]["field_unit"]],
             },
         )
 
@@ -258,14 +258,13 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "sensor-name": self.test_sensor["name"],
                 "field-name": [""],
-                "field-type": [self.test_sensor[self.field_name_1]["field_type"],],
-                "field-unit": [self.test_sensor[self.field_name_1]["field_unit"],],
+                "field-type": [self.test_sensor[self.field_name_1]["field_type"]],
+                "field-unit": [self.test_sensor[self.field_name_1]["field_unit"]],
             },
         )
 
