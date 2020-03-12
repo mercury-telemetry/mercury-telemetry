@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Create Event</title>
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+    </head>
+    <body>
+    {% include 'sidebar.html' %}
+    <div class="topbar-container">
+        <h1>Events</h1>
+        <p>Events page to add a new event, update existing event, export data of events</p>
+        <div class="grafana-btn grafana-btn-green" id="all_events" onclick="toggle_button()">All Events</div>
+        <a class="grafana-btn grafana-btn-green">Create Event</a>
+        <a class="grafana-btn grafana-btn-green">Update Existing Event</a>
+        <a class="grafana-btn grafana-btn-green">Export Event Data</a>
+        <a class="grafana-btn grafana-btn-green">Delete Event</a>
+        {% if all_events %}
+            events on
+        {% else %}
+            events off
+        {% endif %}
+        <!--Event Details -->
+        <div class="mt-50">
+        {% if events %}
+            <h1>All Events</h1>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                    <tr bgcolor="#e0efdf">
+                        <th>EVENT ID</th>
+                        <th>NAME</th>
+                        <th>ANALYSE IN</th>
+                        <th>LOCATION</th>
+                        <th>DATE</th>
+                        <th>DESCRIPTION</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in events %}
+                        <tr>
+                            <th>{{ item.event_uuid }}</th>
+                            <td>{{ item.event_name }}</td>
+                            <td><a href="http://127.0.0.1:3000/d/-9u2aQlWz/event1?orgId=1" target="_blank">Grafana</a> </td>
+                            <td>{{ item.event_location }}</td>
+                            <td>{{ item.event_date }}</td>
+                            <td>{{ item.event_description }}</td>
+                        </tr>
+                    {%  endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+                <div>There are no events to show.</div>
+            {% endif %}
+        </div>
+
+        <div class="mt-50">
+            <h1>Create Event</h1>
+            {% if event_form %}
+                <form method="POST" action="" id="EventForm">
+                    {% csrf_token %} {% load crispy_forms_tags %} {{ event_form|crispy }}
+                    <br>
+                    <div>
+                        <input class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
+                    </div>
+                    <br> <br>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="mt-50">
+            <h1>Update Event</h1>
+            {% if events %}
+               <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                    <tr bgcolor="#e0efdf">
+                        <th>EVENT ID</th>
+                        <th>NAME</th>
+                        <th>LOCATION</th>
+                        <th>DATE</th>
+                        <th>DESCRIPTION</th>
+                        <th>UPDATE</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in events %}
+                        <form method="POST" action="update/{{ item.event_uuid }}">
+                        {% csrf_token %}
+                        <tr>
+                            <th>{{ item.event_uuid }}</th>
+                            <td><input type="text" name="event_name" id="id_event_name"
+                             value={{ item.event_name }}></td>
+                            <td><input type="text" name="event_location"
+                            id="id_event_location" value={{ item.event_location }}></td>
+                            <td><input type="date" name="event_date" id="id_event_date"
+                            value={{
+                            item.event_date }}></td>
+                            <td><input type="text" name="event_description"
+                            id="id_event_description"
+                            value={{ item.event_description }}></td>
+                            <td>
+                                <input type="submit" value="Update">
+                            </td>
+                        </tr>
+                        </form>
+                    {%  endfor %}
+                    </tbody>
+                </table>
+                </div>
+            {% else %}
+                    <div>There are no events to update.</div>
+            {% endif %}
+        </div>
+
+
+
+        <h1>Delete Events</h1>
+        {% if events %}
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                    <tr bgcolor="#e0efdf">
+                        <th>EVENT ID</th>
+                        <th>NAME</th>
+                        <th>LOCATION</th>
+                        <th>DATE</th>
+                        <th>DESCRIPTION</th>
+                        <th>DELETE</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in events %}
+                            <th>{{ item.event_uuid }}</th>
+                            <td>{{ item.event_name }}</td>
+                            <td>{{ item.event_location }}</td>
+                            <td>{{ item.event_date }}</td>
+                            <td>{{ item.event_description }}</td>
+                            <td>
+                               <a href="delete/{{ item.event_uuid }}">Delete</a>
+                            </td>
+                        </tr>
+                    {%  endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div>There are no events to delete.</div>
+        {% endif %}
+        </div>
+
+
+    </div>
+    </body>
+</html>
