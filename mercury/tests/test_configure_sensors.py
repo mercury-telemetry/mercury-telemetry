@@ -271,3 +271,64 @@ class TestConfigureSensorView(TestCase):
         # Check that AGSensor object is created in db with expected params
         sensors = AGSensor.objects.all()
         self.assertEqual(sensors.count(), 0)
+
+    # Sensor name already in use - still returns status OK
+    def test_ConfigureSensorView_invalid_POST_sensor_name_taken_status_ok(self):
+        sensor_format = {
+            self.field_name_1: {
+                "unit": self.test_sensor[self.field_name_1]["field_type"],
+                "format": self.test_sensor[self.field_name_1]["field_unit"],
+            }
+        }
+
+        AGSensor.objects.create(
+            sensor_name=self.test_sensor["name"], sensor_format=sensor_format
+        )
+
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # POST sensor data
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "sensor-name": self.test_sensor["name"],
+                "field-name": [""],
+                "field-type": [self.test_sensor[self.field_name_1]["field_type"]],
+                "field-unit": [self.test_sensor[self.field_name_1]["field_unit"]],
+            },
+        )
+
+        # Check that POST redirects to sensor (same page reloads)
+        self.assertEqual(200, response.status_code)
+
+    # Sensor name already in use - new AGSensor object not created
+    def test_ConfigureSensorView_invalid_POST_sensor_name_taken_no_object_created(self):
+        sensor_format = {
+            self.field_name_1: {
+                "unit": self.test_sensor[self.field_name_1]["field_type"],
+                "format": self.test_sensor[self.field_name_1]["field_unit"],
+            }
+        }
+
+        AGSensor.objects.create(
+            sensor_name=self.test_sensor["name"], sensor_format=sensor_format
+        )
+
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # POST sensor data
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "sensor-name": self.test_sensor["name"],
+                "field-name": [""],
+                "field-type": [self.test_sensor[self.field_name_1]["field_type"]],
+                "field-unit": [self.test_sensor[self.field_name_1]["field_unit"]],
+            },
+        )
+
+        # Check that additional AGSensor object is not created in db
+        sensors = AGSensor.objects.all()
+        self.assertEqual(sensors.count(), 1)
