@@ -64,7 +64,7 @@ jobs:
         - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
         
         - docker info
-        - docker ps
+        #- docker ps
         - info "Testing docker image"
         - grep -q "Hello, Docker!" hello.txt
 
