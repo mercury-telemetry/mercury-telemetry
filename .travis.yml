@@ -4,58 +4,58 @@ os: linux
 language: ruby
 
 jobs:
-    include:
-        - language: python
+  include:
+    - language: python
 
-        python:
+      python:
         - '3.6'
 
-        addons:
-            firefox: latest
+      addons:
+        firefox: latest
 
-        dist: xenial
-        services:
-            - xvfb
+      dist: xenial
+      services:
+        - xvfb
 
-        services:
+      services:
         - postgresql
 
-        before_install:
-            - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
-            - mkdir geckodriver
-            - tar -xzf geckodriver-v0.26.0-linux64.tar.gz -C geckodriver
-            - export PATH=$PATH:$PWD/geckodriver
+      before_install:
+        - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+        - mkdir geckodriver
+        - tar -xzf geckodriver-v0.26.0-linux64.tar.gz -C geckodriver
+        - export PATH=$PATH:$PWD/geckodriver
 
-        install:
+      install:
         - pip install --upgrade pip
         - pip install -r requirements.txt
         - pip install -r test-requirements.txt
 
-        before_script:
+      before_script:
         - psql -c 'create database mercury;' -U postgres
         - python manage.py migrate
         - python manage.py collectstatic --noinput
 
-        script:
+      script:
         - black . --check
         - flake8 --exclude tests mysite/ mercury/
         - flake8 --ignore=E501 mercury/tests/
         - coverage run --source=mysite,mercury --omit="mercury/migrations/*" manage.py test
 
-        after_script:
+      after_script:
         - coveralls
         - cat geckodriver.log
 
         # run the hardware tests
-        - services:
-            - docker
+    - services:
+          - docker
         
-        before_script:
-            # prepare qemu
-            - docker run --rm --priviledged multiarch/qemu-user-static:register --register
-            # build image
-            - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+      before_script:
+        # prepare qemu
+        - docker run --rm --priviledged multiarch/qemu-user-static:register --register
+        # build image
+        - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
         
-        script:
-            - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
+      script:
+        - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
             
