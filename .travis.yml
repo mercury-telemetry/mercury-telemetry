@@ -1,3 +1,4 @@
+sudo: true
 dist: xenial
 os: linux
 language: ruby
@@ -44,3 +45,17 @@ jobs:
         after_script:
         - coveralls
         - cat geckodriver.log
+
+        # run the hardware tests
+        - services:
+            - docker
+        
+        before_script:
+            # prepare qemu
+            - docker run --rm --priviledged multiarch/qemu-user-static:register --register
+            # build image
+            - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+        
+        script:
+            - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
+            
