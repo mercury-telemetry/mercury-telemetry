@@ -4,6 +4,7 @@ language: ruby
 
 jobs:
   include:
+    # run django tests
     - language: python
 
       python: '3.6'
@@ -42,20 +43,19 @@ jobs:
         - coveralls
         - cat geckodriver.log
 
-        # run the hardware tests
+    # run the hardware tests
     - language: bash
       
       services:
           - docker
         
       before_script:
-        # prepare qemu
+        # prepare qemu for arm emulation on x64 hardware
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
         - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
         
       script:
-        
         # basic help world test to see if it's working
         - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
 
