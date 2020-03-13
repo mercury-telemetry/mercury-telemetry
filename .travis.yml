@@ -55,16 +55,8 @@ jobs:
         - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
         
       script:
-        # prepare qemu
-        #- docker run --rm --privileged multiarch/qemu-user-static:register --reset
-        # build image
-        #- docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
-        #- docker run gcivil-nyu-org/spring2020-cs-gy-9223-class
-        #- docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
-        - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
         
-        #- docker info
-        #- docker ps
+        # basic help world test to see if it's working
         - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
 
             
