@@ -65,6 +65,6 @@ jobs:
         
         #- docker info
         #- docker ps
-        - grep -q "Hello, Docker!" hello.txt
+        - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
 
             
