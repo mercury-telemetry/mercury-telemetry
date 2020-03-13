@@ -51,14 +51,14 @@ jobs:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
         - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
-
-        - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
         
       script:
         # prepare qemu
         #- docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
         #- docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
-
-        - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
+        
+        - docker info
+        - docker ps
+        #- docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
             
