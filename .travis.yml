@@ -1,3 +1,7 @@
+dist: xenial
+os: linux
+language: ruby
+
 jobs:
     include:
         - language: python
