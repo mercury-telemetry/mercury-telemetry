@@ -1,4 +1,3 @@
-sudo: true
 dist: xenial
 os: linux
 language: ruby
@@ -7,8 +6,7 @@ jobs:
   include:
     - language: python
 
-      python:
-        - '3.6'
+      python: '3.6'
 
       addons:
         firefox: latest
@@ -16,8 +14,6 @@ jobs:
       dist: xenial
       services:
         - xvfb
-
-      services:
         - postgresql
 
       before_install:
@@ -55,7 +51,14 @@ jobs:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
         - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+
+        - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
         
       script:
+        # prepare qemu
+        #- docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        # build image
+        #- docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+
         - docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
             
