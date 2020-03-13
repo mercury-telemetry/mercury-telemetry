@@ -43,7 +43,9 @@ jobs:
         - cat geckodriver.log
 
         # run the hardware tests
-    - services:
+    - language: bash
+      
+      services:
           - docker
         
       before_script:
@@ -57,8 +59,10 @@ jobs:
         #- docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
         #- docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+        - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class
         
         - docker info
         - docker ps
+        - info "Testing docker image"
         #- docker run -rm gcivil-nyu-org/spring2020-cs-gy-9223-class cat hello.txt
             
