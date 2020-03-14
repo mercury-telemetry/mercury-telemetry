@@ -6,19 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0006_delete_simulateddata'),
+        ("mercury", "0006_delete_simulateddata"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True,
-                 serialize=False, verbose_name='ID')),
-                ('event_name', models.CharField(max_length=100, unique=True)),
-                ('event_location', models.CharField(max_length=100, null=True)),
-                ('date', models.DateTimeField()),
-                ('comments', models.TextField(null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("event_name", models.CharField(max_length=100, unique=True)),
+                ("event_location", models.CharField(max_length=100, null=True)),
+                ("date", models.DateTimeField()),
+                ("comments", models.TextField(null=True)),
             ],
         ),
     ]

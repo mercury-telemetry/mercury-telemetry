@@ -134,3 +134,6 @@ env/
 .vscode/
 staticfiles/
 db.sqlite3
+
+# Vim temporary files
+*.swp
