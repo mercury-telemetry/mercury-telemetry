@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Pit Crew View</title>
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/accordian.js" %}"></script>
+    </head>
+    <body>
+        {% include 'sidebar.html' %}
+        <div id="grafana-base">
+            <div id="grafana-panel" style="width: 375px">
+                <h1>
+                    Pit Crew Display
+                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
+                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
+                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
+                    </a>
+                </h1>
+
+                <div id="accordion-text">
+                        The Pit Crew View  <br><br>
+                        <b>Where amazing stuff is displayed,</b> Alas Babylon
+                    <br>
+                </div>
+                <br>
+            </div>
+        </div>
+    </body>
+</html>

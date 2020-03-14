@@ -10,13 +10,6 @@
     </a>
     <br><br><br>
 
-    <!-- Dashboard -->
-    <a class="grafana-btn grafana-btn-green sidebar-btn" href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s" target="_blank">
-        <i class="material-icons-outlined">open_in_new</i>
-        <br>Dashboard
-    </a>
-    <br><br>
-
     <!-- Home / Index -->
     {% if request.path == "/index"%}
         <div class="grafana-current-tab sidebar-btn">
@@ -31,32 +24,67 @@
     {% endif %}
     <br><br>
 
-    <!-- Stopwatch -->
-    {% if request.path == "/stopwatch/" %}
+    <!-- Pit Crew Display -->
+    {% if request.path == "/pitcrew/" %}
         <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons">timer</i>
-            <br>Stopwatch
+            <i class="material-icons">insert_chart_outlined</i>
+            <br>Pit Crew Display
         </div>
     {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:stopwatch' %}">
-            <i class="material-icons">timer</i>
-            <br>Stopwatch
+        <a class="grafana-btn grafana-btn-green sidebar-btn" href="{% url 'mercury:pitcrew' %}">
+            <i class="material-icons">insert_chart_outlined</i>
+            <br>Pit Crew Display
         </a>
     {% endif %}
     <br><br>
 
-    <!-- Raw Telemetry -->
+    <!-- Manage Events -->
+    {% if request.path == "/events/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">folder_open</i>
+            <br>Manage Events
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:events' %}">
+            <i class="material-icons">folder_open</i>
+            <br> Manage Events
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- View Data Tables -->
     {% if request.path == "/dashboard/" %}
         <div class="grafana-current-tab sidebar-btn">
             <i class="material-icons-outlined">table_chart</i>
-            <br>Reports
+            <br>View Data Tables
         </div>
     {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:dashboard' %}">
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:dashboard' %}"> <!-- should dashboard be name of URL??? -->
             <i class="material-icons-outlined">table_chart</i>
-            <br>Reports
+            <br>View Data Tables
         </a>
     {% endif %}
+    <br><br>
+
+    <!-- Configure Sensors -->
+    {% if request.path == "/sensor/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">tune</i>
+            <br>Configure Sensors
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:sensor' %}">
+            <i class="material-icons">tune</i>
+            <br>Configure Sensors
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- Analyze in Grafana-->
+    <a class="grafana-btn grafana-btn-gray sidebar-btn" href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s" target="_blank">
+        <i class="material-icons-outlined">open_in_new</i>
+        <br>Analyze in Grafana
+    </a>
     <br><br>
 
     <!-- Simulator -->
@@ -83,6 +111,20 @@
         <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:can-ui' %}">
             <i class="material-icons">lock_open</i>
             <br>CAN Decoder
+        </a>
+    {% endif %}
+    <br><br>
+
+    <!-- Stopwatch -->
+    {% if request.path == "/stopwatch/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">bathtub</i>
+            <br>Stopwatch
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:stopwatch' %}">
+            <i class="material-icons">bathtub</i>
+            <br>Stopwatch
         </a>
     {% endif %}
     <br><br>

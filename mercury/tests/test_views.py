@@ -25,6 +25,7 @@ class TestViewsWithActiveEvent(TestCase):
         self.simulator_url = "mercury:simulator"
         self.can_url = "mercury:can-ui"
         self.stopwatch_url = "mercury:stopwatch"
+        self.pitcrew_url = "mercury:pitcrew"
 
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
@@ -97,6 +98,12 @@ class TestViewsWithActiveEvent(TestCase):
 
     def test_StopWatch_GET_success(self):
         response, session = self._get_with_event_code(self.stopwatch_url, TESTCODE)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(True, session["event_code_active"])
+        self.assertEqual(True, session["event_code_known"])
+
+    def test_PitCrewView_GET_success(self):
+        response, session = self._get_with_event_code(self.pitcrew_url, TESTCODE)
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(True, session["event_code_known"])
