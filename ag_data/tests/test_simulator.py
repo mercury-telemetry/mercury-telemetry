@@ -19,6 +19,27 @@ class SimulatorTest(TestCase):
         self.assertEqual(self.sim.event, None)
         self.assertEqual(self.sim.sensor, None)
 
+    def test_simulator_multiple_instances(self):
+        sim2 = Simulator()
+
+        self.sim.createAVenueFromPresets(0)
+        self.sim.createAnEventFromPresets(0)
+        self.sim.createASensorFromPresets(0, cascadeCreation=True)
+        self.sim.logMeasurementsInThePastSeconds(
+            10, frequencyInHz=1, printProgress=False
+        )
+
+        sim2.createAVenueFromPresets(0)
+        sim2.createAnEventFromPresets(0)
+        sim2.createASensorFromPresets(0, cascadeCreation=True)
+        sim2.logMeasurementsInThePastSeconds(5, frequencyInHz=3, printProgress=False)
+
+        self.assertEqual(AGVenue.objects.all().count(), 2)
+        self.assertEqual(AGEvent.objects.all().count(), 2)
+        self.assertEqual(AGSensorType.objects.all().count(), 1)
+        self.assertEqual(AGSensor.objects.all().count(), 2)
+        self.assertEqual(AGMeasurement.objects.all().count(), 25)
+
     def test_simulator_create_venue(self):
         totalTestVenues = len(presets.venue_presets)
 
