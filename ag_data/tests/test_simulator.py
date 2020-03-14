@@ -19,6 +19,27 @@ class SimulatorTest(TestCase):
         self.assertEqual(self.sim.event, None)
         self.assertEqual(self.sim.sensor, None)
 
+    def test_simulator_multiple_instances(self):
+        sim2 = Simulator()
+
+        self.sim.createAVenueFromPresets(0)
+        self.sim.createAnEventFromPresets(0)
+        self.sim.createASensorFromPresets(0, cascadeCreation=True)
+        self.sim.logMeasurementsInThePastSeconds(
+            10, frequencyInHz=1, printProgress=False
+        )
+
+        sim2.createAVenueFromPresets(0)
+        sim2.createAnEventFromPresets(0)
+        sim2.createASensorFromPresets(0, cascadeCreation=True)
+        sim2.logMeasurementsInThePastSeconds(5, frequencyInHz=3, printProgress=False)
+
+        self.assertEqual(AGVenue.objects.all().count(), 2)
+        self.assertEqual(AGEvent.objects.all().count(), 2)
+        self.assertEqual(AGSensorType.objects.all().count(), 1)
+        self.assertEqual(AGSensor.objects.all().count(), 2)
+        self.assertEqual(AGMeasurement.objects.all().count(), 25)
+
     def test_simulator_create_venue(self):
         totalTestVenues = len(presets.venue_presets)
 
@@ -72,13 +93,13 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_create_type_id(self):
-        totalTestSensorTypes = len(presets.type_id_presets)
+        totalTestSensorTypes = len(presets.sensor_type_presets)
 
         # test sensor type creation for indices in range
         for index in range(totalTestSensorTypes):
             self.sim.createOrResetASensorTypeFromPresets(index)
 
-            expected_type_id = presets.type_id_presets[index]
+            expected_type_id = presets.sensor_type_presets[index]
 
             sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.id)
             self.assertEqual(sensorType.name, expected_type_id["agSensorTypeName"])
@@ -203,7 +224,7 @@ class SimulatorTest(TestCase):
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
             measurement_payload = measurement_in_database.value
-            correct_payload_format = presets.type_id_presets[index][
+            correct_payload_format = presets.sensor_type_presets[index][
                 "agSensorTypeFormat"
             ]
 
