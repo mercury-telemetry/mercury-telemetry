@@ -72,13 +72,13 @@ class SimulatorTest(TestCase):
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_simulator_create_type_id(self):
-        totalTestSensorTypes = len(presets.type_id_presets)
+        totalTestSensorTypes = len(presets.sensor_type_presets)
 
         # test sensor type creation for indices in range
         for index in range(totalTestSensorTypes):
             self.sim.createOrResetASensorTypeFromPresets(index)
 
-            expected_type_id = presets.type_id_presets[index]
+            expected_type_id = presets.sensor_type_presets[index]
 
             sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.id)
             self.assertEqual(sensorType.name, expected_type_id["agSensorTypeName"])
@@ -203,7 +203,7 @@ class SimulatorTest(TestCase):
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
             measurement_payload = measurement_in_database.value
-            correct_payload_format = presets.type_id_presets[index][
+            correct_payload_format = presets.sensor_type_presets[index][
                 "agSensorTypeFormat"
             ]
 

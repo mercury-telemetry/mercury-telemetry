@@ -28,7 +28,7 @@ event_presets = [
     },
 ]
 
-type_id_presets = [
+sensor_type_presets = [
     {
         "agSensorTypeID": 0,
         "agSensorTypeName": "Simple Temperature Sensor",
