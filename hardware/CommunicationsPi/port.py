@@ -26,20 +26,19 @@ class AsyncSerialProtocol(asyncio.Protocol):
             print(message)
         except json.JSONDecodeError:
             print()
-        
+
         # print(repr(data))
         # json_to_models(repr(data))
         # if len(repr(data).split(";")) > 2:
         self.transport.close()
 
-        
     def connection_lost(self, exc):
         print("port closed")
         asyncio.get_event_loop().stop()
 
 
 def json_to_models(json_str, event_id):
-        """
+    """
         Json example:
         {
         sensors:{
@@ -53,11 +52,11 @@ def json_to_models(json_str, event_id):
             date : “2014-03-12T13:37:27+00:00” /*ISO 8601 dates*/
         };
         """
-        res = []
-        sensors = json_str["sensors"]
-        ss_id = int(sensors["ss_id"])
-        ss_value = sensors["ss_value"]
-        date = dateparse.parse_datetime(sensors["date"])
+    res = []
+    sensors = json_str["sensors"]
+    ss_id = int(sensors["ss_id"])
+    ss_value = sensors["ss_value"]
+    date = dateparse.parse_datetime(sensors["date"])
 
 
 ser = serial.Serial()
@@ -78,13 +77,11 @@ ser.open()
 #         print(x)
 
 loop = asyncio.new_event_loop()
-coro = serial_asyncio.create_serial_connection(
-    loop, AsyncSerialProtocol, ports[0]
-)
+coro = serial_asyncio.create_serial_connection(loop, AsyncSerialProtocol, ports[0])
 try:
     loop.run_until_complete(coro)
     loop.run_forever()
 except KeyboardInterrupt:
-    sys.stdout.write('\n')
+    sys.stdout.write("\n")
 finally:
     loop.close()
