@@ -30,7 +30,7 @@ before_script:
 - python manage.py collectstatic --noinput
 
 script:
-- black --check --exclude "migrations/" mysite mercury
+- black . --check
 - flake8 --exclude tests mysite/ mercury/
 - flake8 --ignore=E501 mercury/tests/
 - coverage run --source=mysite,mercury --omit="mercury/migrations/*" manage.py test
