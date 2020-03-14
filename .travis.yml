@@ -37,3 +37,4 @@ script:
 after_script:
 - coveralls
 - cat geckodriver.log
+
