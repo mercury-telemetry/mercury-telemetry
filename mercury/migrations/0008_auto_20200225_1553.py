@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0007_event'),
+        ("mercury", "0007_event"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='event_location',
-            field=models.CharField(default='Mexico', max_length=100),
+            model_name="event",
+            name="event_location",
+            field=models.CharField(default="Mexico", max_length=100),
             preserve_default=False,
         ),
     ]
