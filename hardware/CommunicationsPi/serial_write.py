@@ -1,11 +1,17 @@
 # test firmware to run from RPi that transmit JSON over serial
 
+import os
 import time
 import serial
 import json
 
+from utils import get_logger, get_serial_stream
+
+logging = get_logger('TRANSMITTER_LOG_FILE')
+
+print('Opening serial')
 ser = serial.Serial(
-    port="/dev/ttyUSB0",
+    port=os.environ['RADIO_TRANSMITTER_PORT'],
     baudrate=9600,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
@@ -13,17 +19,13 @@ ser = serial.Serial(
     timeout=1,
 )
 
-while 1:
+print('sending')
 
-    # JSON message
+while 1:
     message = {
         "id": 5,
         "value": {"value_a_name": 15.0, "value_b_name": 26.5, "value_c_name": 13.3},
     }
-
-    message_serial = json.dumps(message)
-    ser.write(
-        str(message_serial) + "\n"
-    )  # newline gives linebreak needed for ser.readline() on receiving end
-
+    ser.write(get_serial_stream(message))
+    logging.info(message)
     time.sleep(1)
