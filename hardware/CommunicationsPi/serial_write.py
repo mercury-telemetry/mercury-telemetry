@@ -1,5 +1,3 @@
-# test firmware to run from RPi that transmit JSON over serial
-
 import os
 import time
 import serial
