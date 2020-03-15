@@ -37,11 +37,7 @@ class DataTooShortException(Exception):
             f"field being sent in the request that the length matches the requirement."
         )
         log.error(error)
-        self.error = {
-            "error": error,
-            "words_expected": expected,
-            "words_found": found,
-        }
+        self.error = {"error": error, "words_expected": expected, "words_found": found}
 
 
 def _bad_request(decoded_data, error_message, *args, **kwargs):
@@ -53,7 +49,7 @@ def _bad_request(decoded_data, error_message, *args, **kwargs):
     decoded_data["data_word_3"] = decoded_data.get("data_word_3")
 
     return JsonResponse(
-        OrderedDict(error=error_message, can_msg=decoded_data, **kwargs), status=400,
+        OrderedDict(error=error_message, can_msg=decoded_data, **kwargs), status=400
     )
 
 

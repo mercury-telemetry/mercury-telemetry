@@ -257,7 +257,7 @@ class TestSimulatorPost(TestCase):
         self.assertTemplateUsed("simulator.html")
 
         foo = AccelerationSensor.objects.get(
-            created_at=CREATED_AT, acceleration_x=x, acceleration_y=y, acceleration_z=z,
+            created_at=CREATED_AT, acceleration_x=x, acceleration_y=y, acceleration_z=z
         )
         self.assertEqual(EXPECTED_CREATED_AT, foo.created_at)
         self.assertEqual(x, foo.acceleration_x)
