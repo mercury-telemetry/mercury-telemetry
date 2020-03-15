@@ -5,7 +5,7 @@ from utils import get_logger, get_serial_stream
 
 logging = get_logger("RECEIVER_LOG_FILE")
 
-print("Opening serial")
+logging.info("Opening serial")
 ser = serial.Serial(
     port=os.environ["RADIO_RECEIVER_PORT"],
     baudrate=9600,
@@ -15,7 +15,7 @@ ser = serial.Serial(
     timeout=1,
 )
 
-print("listening")
+logging.info("listening")
 while 1:
     x = ser.readline().decode("utf-8")
     if x is not "":
