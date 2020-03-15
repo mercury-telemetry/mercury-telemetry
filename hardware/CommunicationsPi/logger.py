@@ -3,8 +3,15 @@ import os
 import logging
 from logging import DEBUG, INFO, ERROR
 
+
 class Logger(object):
-    def __init__(self, name, filename, format="%(asctime)s | %(levelname)s | %(message)s", level=INFO):
+    def __init__(
+        self,
+        name,
+        filename,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        level=INFO,
+    ):
         # Initial construct.
         self.format = format
         self.level = level
@@ -12,7 +19,7 @@ class Logger(object):
 
         # Logger configuration.
         self.console_formatter = logging.Formatter(self.format)
-        self.console_logger = logging.FileHandler(self.get_logger_file(filename), 'w')
+        self.console_logger = logging.FileHandler(self.get_logger_file(filename), "w")
         self.console_logger.setFormatter(self.console_formatter)
 
         # Complete logging config.
@@ -21,10 +28,10 @@ class Logger(object):
         self.logger.addHandler(self.console_logger)
 
     def get_logger_file(self, file_name):
-        d = os.environ['LOG_DIRECTORY']
+        d = os.environ["LOG_DIRECTORY"]
         if not os.path.exists(d):
             os.makedirs(d)
-        return d + '/' + file_name
+        return d + "/" + file_name
 
     def info(self, msg, extra=None):
         print(msg)

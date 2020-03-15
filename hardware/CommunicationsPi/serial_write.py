@@ -5,11 +5,11 @@ import json
 
 from utils import get_logger, get_serial_stream
 
-logging = get_logger('TRANSMITTER_LOG_FILE')
+logging = get_logger("TRANSMITTER_LOG_FILE")
 
-print('Opening serial')
+print("Opening serial")
 ser = serial.Serial(
-    port=os.environ['RADIO_TRANSMITTER_PORT'],
+    port=os.environ["RADIO_TRANSMITTER_PORT"],
     baudrate=9600,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
@@ -17,7 +17,7 @@ ser = serial.Serial(
     timeout=1,
 )
 
-print('sending')
+print("sending")
 
 while 1:
     message = {
