@@ -19,6 +19,7 @@ def check_if_duplicates(elements):
 
 class CreateSensorView(TemplateView):
     """This is the view for creating a new event."""
+
     template_name = "sensor.html"
 
     @require_event_code
