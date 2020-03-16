@@ -46,6 +46,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "mercury.apps.MercuryConfig",
+    "schema_demo",
+    "ag_data.apps.AgDataConfig",
+    "rest_framework",
+    "drf_yasg",
 ]
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_SAVE_EVERY_REQUEST = True
@@ -90,6 +94,7 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 
 DATABASES = {}
 DATABASES["default"] = dj_database_url.config(conn_max_age=600)
+
 if "TRAVIS" in os.environ:  # pragma: no cover
     DEBUG = True
     DATABASES = {
@@ -102,6 +107,7 @@ if "TRAVIS" in os.environ:  # pragma: no cover
             "PORT": "5432",
         }
     }
+
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)  # pragma: no cover

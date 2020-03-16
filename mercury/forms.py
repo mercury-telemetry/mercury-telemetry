@@ -22,6 +22,9 @@ class EventForm(forms.ModelForm):
             "event_date": forms.DateInput(
                 attrs={"id": "post-event-date", "required": True, "type": "date"}
             ),
+            "comments": forms.Textarea(
+                attrs={"id": "post-event-comments", "required": False}
+            ),
             "event_description": forms.Textarea(
                 attrs={"id": "post-event-description", "required": False},
             ),
