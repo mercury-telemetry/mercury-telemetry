@@ -19,15 +19,12 @@ def check_if_duplicates(elements):
 
 class CreateSensorView(TemplateView):
     """This is the view for creating a new event."""
-
     template_name = "sensor.html"
 
     @require_event_code
     def get(self, request, *args, **kwargs):
         sensors = AGSensor.objects.all()
-
         context = {"sensors": sensors}
-
         return render(request, self.template_name, context)
 
     @require_event_code
@@ -81,17 +78,17 @@ class CreateSensorView(TemplateView):
                     "format": field_types[i],
                 }
 
-        sensors = AGSensor.objects.all()
-
         if form_valid:
             sensor = AGSensor.objects.create(
                 sensor_name=post_sensor_name,
                 sensor_processing_formula=0,
                 sensor_format=sensor_format,
             )
-            context = {"sensors": sensors}
             sensor.save()
+            sensors = AGSensor.objects.all()
+            context = {"sensors": sensors}
         else:
+            sensors = AGSensor.objects.all()
             context = {
                 "sensors": sensors,
                 "sensor_name": post_sensor_name,
