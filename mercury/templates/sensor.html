@@ -10,7 +10,7 @@
     <script src="{% static "mercury/js/sensor.js" %}" defer></script>
 </head>
 
-<body>
+<body onload="selectView();">
     {% include 'sidebar.html' %}
     <div id="grafana-base"> <!-- app default background -->
         <div class="panel">
@@ -23,7 +23,7 @@
         <div class="panel">
             <nav>
                 <ul>
-                    <li><button onclick="displayCurrentSensors()" id="current-sensor-btn" class="grafana-btn" style="background-color:var(--green);"> Modify Current Sensors </button></li>
+                    <li><button onclick="displayCurrentSensors()" id="current-sensor-btn" class="grafana-btn"> Modify Current Sensors </button></li>
                     <li><button onclick="displayAddNewSensor()" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
                 </ul>
             </nav>
@@ -78,7 +78,7 @@
             {% endif%}
         </div> <!-- end existing sensors -->
 
-        <div class="panel" id="add-new-sensor" style="display:none;">
+        <div class="panel" id="add-new-sensor">
             <h2>Add a New Sensor</h2>
             <br>
 

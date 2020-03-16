@@ -48,28 +48,38 @@ add_field_button.onclick = function() {
   addRow();
 }
 
-function displayCurrentSensors() {
+/*
+selectView displays the correct view of the "Add or Modify Sensors" page
+-the default view is to show existing sensors
+-if a user submits a new sensor which posts and reloads page, then the add new sensor view should remain
+*/
+function selectView() {
   var newSensorDiv = document.getElementById("add-new-sensor");
   var existingSensorDiv = document.getElementById("existing-sensors");
   var modifyButton = document.getElementById("current-sensor-btn");
   var newButton = document.getElementById("add-sensor-btn");
-  if (existingSensorDiv.style.display === "none") {
-    newSensorDiv.style.display = "none";
-    existingSensorDiv.style.display = 'block';
-    modifyButton.style.backgroundColor = 'var(--green)';
-    newButton.style.backgroundColor = 'var(--light-accent)';
-  }
+    if (sessionStorage.getItem('viewing') == 'addingNew'){
+        newSensorDiv.style.display = "block";
+        existingSensorDiv.style.display = 'none';
+
+        modifyButton.style.backgroundColor = 'var(--light-accent)';
+        newButton.style.backgroundColor = 'var(--green)';
+    }
+    else {
+        newSensorDiv.style.display = "none";
+        existingSensorDiv.style.display = 'block';
+
+        modifyButton.style.backgroundColor = 'var(--green)';
+        newButton.style.backgroundColor = 'var(--light-accent)';
+    }
+}
+
+function displayCurrentSensors() {
+  sessionStorage.setItem('viewing', 'existing');
+  selectView()
 }
 
 function displayAddNewSensor() {
-  var newSensorDiv = document.getElementById("add-new-sensor");
-  var existingSensorDiv = document.getElementById("existing-sensors");
-  var modifyButton = document.getElementById("current-sensor-btn");
-  var newButton = document.getElementById("add-sensor-btn");
-  if (newSensorDiv.style.display === "none") {
-    newSensorDiv.style.display = "block";
-    existingSensorDiv.style.display = 'none';
-    modifyButton.style.backgroundColor = 'var(--light-accent)';
-    newButton.style.backgroundColor = 'var(--green)';
-  }
+  sessionStorage.setItem('viewing', 'addingNew');
+  selectView()
 }
