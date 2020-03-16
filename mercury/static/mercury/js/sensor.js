@@ -47,3 +47,29 @@ var add_field_button = document.getElementById("addfieldbutton");
 add_field_button.onclick = function() {
   addRow();
 }
+
+function displayCurrentSensors() {
+  var newSensorDiv = document.getElementById("add-new-sensor");
+  var existingSensorDiv = document.getElementById("existing-sensors");
+  var modifyButton = document.getElementById("current-sensor-btn");
+  var newButton = document.getElementById("add-sensor-btn");
+  if (existingSensorDiv.style.display === "none") {
+    newSensorDiv.style.display = "none";
+    existingSensorDiv.style.display = 'block';
+    modifyButton.style.backgroundColor = 'var(--green)';
+    newButton.style.backgroundColor = 'var(--light-accent)';
+  }
+}
+
+function displayAddNewSensor() {
+  var newSensorDiv = document.getElementById("add-new-sensor");
+  var existingSensorDiv = document.getElementById("existing-sensors");
+  var modifyButton = document.getElementById("current-sensor-btn");
+  var newButton = document.getElementById("add-sensor-btn");
+  if (newSensorDiv.style.display === "none") {
+    newSensorDiv.style.display = "block";
+    existingSensorDiv.style.display = 'none';
+    modifyButton.style.backgroundColor = 'var(--light-accent)';
+    newButton.style.backgroundColor = 'var(--green)';
+  }
+}

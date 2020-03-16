@@ -11,6 +11,12 @@ body {
 
 tr:nth-child(even) {background-color: #f2f2f2;}
 
+li{
+    list-style-type: none; /* removes bulleting */
+    display: inline-block;
+    margin: 0% 5%;
+}
+
 .topbar-container {
   margin-left: 14%;
   position: fixed;
