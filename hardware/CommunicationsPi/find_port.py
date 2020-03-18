@@ -6,7 +6,7 @@ import serial.tools.list_ports
 
 
 def is_usb_serial(port, args):
-    if port.vid is None:
+    if port["vid"] is None:
         return False
     if not args.vid is None:
         if port.vid != args.vid:
