@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from requests.exceptions import HTTPError
 from utils import get_logger
@@ -13,7 +14,7 @@ while True:
             'key1': 'value1',
             'key2': 'value2'
         }
-        loggin.info('pinging: ' + url)
+        logging.info('pinging: ' + url)
         response = requests.post(url, data=payload)
         response.raise_for_status()
     except HTTPError as http_err:
@@ -21,4 +22,4 @@ while True:
     except Exception as err:
         logging.error('error occurred: {}'.format(str(err)))
     else:
-        logging.info('Success!')
+        time.sleep(1)
