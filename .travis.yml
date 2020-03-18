@@ -1,40 +1,61 @@
-language: python
-
-python:
-- '3.6'
-
-addons:
-    firefox: latest
-
 dist: xenial
-services:
-    - xvfb
+os: linux
+language: ruby
 
-services:
-- postgresql
+jobs:
+  include:
+    # run django tests
+    - language: python
 
-before_install:
-    - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
-    - mkdir geckodriver
-    - tar -xzf geckodriver-v0.26.0-linux64.tar.gz -C geckodriver
-    - export PATH=$PATH:$PWD/geckodriver
+      python: '3.6'
 
-install:
-- pip install --upgrade pip
-- pip install -r requirements.txt
-- pip install -r test-requirements.txt
+      addons:
+        firefox: latest
 
-before_script:
-- psql -c 'create database mercury;' -U postgres
-- python manage.py migrate
-- python manage.py collectstatic --noinput
+      dist: xenial
+      services:
+        - xvfb
+        - postgresql
 
-script:
-- black --check --exclude "migrations/" mysite mercury ag_data
-- flake8 mysite/ mercury/ ag_data/
-- coverage run --source=mysite,mercury,ag_data --omit="migrations/*" manage.py test
+      before_install:
+        - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+        - mkdir geckodriver
+        - tar -xzf geckodriver-v0.26.0-linux64.tar.gz -C geckodriver
+        - export PATH=$PATH:$PWD/geckodriver
 
-after_script:
-- coveralls
-- cat geckodriver.log
+      install:
+        - pip install --upgrade pip
+        - pip install -r requirements.txt
+        - pip install -r test-requirements.txt
 
+      before_script:
+        - psql -c 'create database mercury;' -U postgres
+        - python manage.py migrate
+        - python manage.py collectstatic --noinput
+
+      script:
+        - black --check --exclude "migrations/" mysite mercury ag_data
+        - flake8 mysite/ mercury/ ag_data/
+        - coverage run --source=mysite,mercury,ag_data --omit="migrations/*" manage.py test
+
+      after_script:
+        - coveralls
+        - cat geckodriver.log
+
+    # run the hardware tests
+    - language: bash
+      
+      services:
+          - docker
+        
+      before_script:
+        # prepare qemu for arm emulation on x64 hardware
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        # build image
+        - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+        
+      script:
+        # basic help world test to see if it's working
+        - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
+
+            
