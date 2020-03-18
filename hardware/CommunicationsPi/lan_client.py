@@ -8,13 +8,14 @@ logging = get_logger("LAN_CLIENT_LOG_FILE")
 
 url = os.environ["LAN_SERVER"]
 
+logging.info('Pinging')
 while True:
     try:
         payload = {
             'key1': 'value1',
             'key2': 'value2'
         }
-        logging.info('pinging: ' + url)
+        logging.info('data: ' + json.dumps(payload))
         response = requests.post(url, data=payload)
         response.raise_for_status()
     except HTTPError as http_err:
