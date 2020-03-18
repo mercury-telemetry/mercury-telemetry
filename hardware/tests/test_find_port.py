@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from ..CommunicationsPi.find_port import is_usb_serial
 
+
 class IsUsbSerialTests(TestCase):
     """
     Tests for the is_usb_serial function
