@@ -1,3 +1,5 @@
+<!-- Page styling must be fixed -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -13,23 +15,17 @@
 <body onload="selectView();">
     {% include 'sidebar.html' %}
     <div id="grafana-base"> <!-- app default background -->
-        <div class="panel">
-            <h1> Add or Modify Sensors </h1>
-            <p>
-                This page is used to add new sensors to the database as well as edit currently existing sensors within the database.
-            </p>
-        </div>
+        <h1> Add or Modify Sensors </h1>
 
-        <div class="panel">
-            <nav>
-                <ul>
-                    <li><button onclick="displayCurrentSensors()" id="current-sensor-btn" class="grafana-btn"> Modify Current Sensors </button></li>
-                    <li><button onclick="displayAddNewSensor()" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
-                </ul>
-            </nav>
-        </div>
+        <nav>
+            <ul>
+                <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
+                <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> Modify Current Sensors </button></li>
+                <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
+            </ul>
+        </nav>
 
-        <div class="panel" id="existing-sensors">
+        <div id="existing-sensors">
             <h2>Existing sensors</h2>
 
             {% if sensors %}
@@ -78,83 +74,66 @@
             {% endif%}
         </div> <!-- end existing sensors -->
 
-        <div class="panel" id="add-new-sensor">
-            <h2>Add a New Sensor</h2>
+
+        <div id="add-new-sensor">
+            <h2>Configure a New Sensor</h2>
             <br>
+            <form method="POST">
+                {% csrf_token %}
+                <div id = "sensor-container"> <!-- single div for configuring entire sensor -->
+                    <div class="inline-box">
+                        <label for="sensor-name"> <b>Sensor Name</b> </label>
+                        <input type="text" id="sensor-name" name="sensor-name" required/>
 
-            <form method="POST" action="" id="SensorForm"> <!-- Should there be an action? Does sensorForm imply anything?-->
-            {% csrf_token %}
-                <div>
-                    <label for="sensor-name"><b><u>Sensor Name</u></b></label>
-                    <input type="text" id="sensor-name" name="sensor-name"
-                    value="{{ sensor_name }}"/>
-                </div>
+                        <label for="sensor-id-num"> <b>Sensor ID Number</b> </label>
+                        <input type="text" id="sensor-id-num" name="sensor-id-num" required/>
+                    </div> <br>
 
-                <h4 class="inline-block-child">Field Name</h4>
-                <h4 class="inline-block-child">Field Type</h4>
-                <h4 class="inline-block-child">Field Unit</h4>
+                    <table id="new-sensor-table">
+                        <thead>
+                            <tr>
+                                <th><b> Field Number </b></th>
+                                <th><b> Field Name </b></th>
+                                <th><b> Field Data Type </b></th>
+                                <th><b> Unit </b> (optional) </th>
+                            </tr>
+                        </thead>
 
-                <div id="field-list">
+                        <tbody>
+                            <tr>
+                                <td> 1 </td>
 
-                    {% if sensor_format %}
+                                <td> <input type="text" id="field-name" name="field-names" required/> </td>
 
-                        {% for key, value in sensor_format.items %}
+                                <td>
+                                    <select id="data-type" name="data-types"/>
+                                        <option> Numeric </option>
+                                        <option> Character </option>
+                                        <option> Boolean </option>
+                                    </select>
+                                </td>
 
-                            <input class="inline-block-child" type="text"
-                        name="field-name" value="{{ key }}"/>
-                            <select class="inline-block-child" name="field-type">
-                                {% if value.format == "Float" %}
-                                <option selected="true">Float</option>
-                                {% else %}
-                                <option >Float</option>
-                                {% endif %}
+                                <td> <input type="text" id="unit" name="units"/> </td>
+                            </tr>
+                        </tbody>
+                    </table> <br>
 
-                                {% if value.format == "String" %}
-                                <option selected="true">String</option>
-                                {% else %}
-                                <option >String</option>
-                                {% endif %}
+                    <div class="inline-box">
+                        <button type="button" onclick="addRow()" class="grafana-btn grafana-btn-gray"> Add Another Sensor Field </button>
+                        <button type="button" onclick="deleteRow()" class="grafana-btn grafana-btn-red"> Delete Last Sensor Field </button> <br><br>
+                    </div>
 
-                                {% if value.format == "Boolean" %}
-                                <option selected="true">Boolean</option>
-                                {% else %}
-                                <option >Boolean</option>
-                                {% endif %}
-                            </select>
-                        <input class="inline-block-child" type="text"
-                        name="field-unit" value="{{ value.unit }}"/>
-                        <hr>
+                </div> <br> <!-- end new sensor container -->
 
-                        {% endfor %}
-
-                    {% endif %}
-
-                    <input class="inline-block-child" type="text" name="field-name"/>
-                    <select class="inline-block-child" name="field-type">
-                        <option value="float">Float</option>
-                        <option value="string">String</option>
-                        <option value="bool">Boolean</option>
-                    </select>
-                    <input class="inline-block-child" type="text"
-                    name="field-unit"/>
-
-                    <hr>
-
-                </div>
-                <br>
-                <input align=right class="grafana-btn grafana-btn-blue" type="button" name="addfieldbutton" id="addfieldbutton" value="Add field""right">
-                <br> <br>
-                <div>
-                    <input class="simulator-btn grafana-btn
-                    grafana-btn-green" type="submit" name="submit"
-                    value="Create sensor">
-                </div>
-                <br> <br>
+                <button type="submit" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
             </form>
+            <br>
+        </div>
 
             {% for message in messages %}
             <p class="error"> {{ message }} </p>
             {% endfor %}
+
         </div> <!-- end add new sensors -->
     </div> <!-- end grafana-base -->
 </body>

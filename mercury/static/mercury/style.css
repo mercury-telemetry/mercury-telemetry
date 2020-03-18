@@ -11,10 +11,41 @@ body {
 
 tr:nth-child(even) {background-color: #f2f2f2;}
 
-li{
-    list-style-type: none; /* removes bulleting */
+nav ul{
+    display:flex;
+    justify-content: space-around;
+}
+
+nav li{
     display: inline-block;
-    margin: 0% 5%;
+    list-style-type: none; /* removes bulleting */
+}
+
+#sensor-container{
+    background-color:lightgray;
+}
+
+.inline-box{
+    display: inline-block;
+}
+
+.inline-box label{
+    text-align:right;
+    width: auto;
+    min-width:150px;
+}
+
+.sensor-field-row{
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid black;
+}
+
+.sensor-field-row-item{
+   display: inline-block;
+   vertical-align: middle;
+   margin: 5px;
+   min-height: 30px;
 }
 
 .topbar-container {
@@ -407,7 +438,7 @@ input#id_can_msg{
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
-  article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
+  article, aside, figcaption, figure, footer, header, hgroup, main, section {
     display: block;
   }
 
@@ -424,6 +455,7 @@ input#id_can_msg{
   h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
     margin-bottom: 0.5rem;
+    text-align: center;
   }
 
   p {
