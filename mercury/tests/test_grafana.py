@@ -4,9 +4,6 @@ from mercury.models import EventCodeAccess
 from ag_data.models import AGSensor
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
-import os
-import json
-import requests
 
 
 # This test needs to have access to a test deployment of grafana, otherwise

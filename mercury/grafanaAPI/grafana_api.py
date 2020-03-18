@@ -6,7 +6,8 @@ import requests
 class Grafana:
     def __init__(
         self,
-        token="eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9",
+        token="eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9Zbkd"
+              "Eelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9",
         hostname="https://daisycrego.grafana.net",
     ):
         self.api_token = token
@@ -40,7 +41,8 @@ class Grafana:
 
         # Retrieve current dashboard
         os.system(
-            f'curl -H "Authorization: Bearer {self.api_token}" {self.home_dashboard_endpoint} > {self.temp_file}'
+            f'curl -H "Authorization: Bearer {self.api_token}" '
+            f'{self.home_dashboard_endpoint} > {self.temp_file}'
         )
 
         with open(f"{self.temp_file}") as f:
@@ -49,12 +51,9 @@ class Grafana:
         print(dashboard_info["dashboard"]["uid"])
 
         """
-        
         dashboard_info["dashboard"]["uid"] = None
         dashboard_info["dashboard"]["title"] = "Sensors - TEST"
-        
         updated_dashboard = self.create_dashboard_update_dict(dashboard_info, [], False)
-
         # POST updated dashboard with new panel
         authorization = f"Bearer {self.api_token}"
         headers = {"Content-Type": "application/json", "Authorization": authorization}
@@ -83,7 +82,8 @@ class Grafana:
         """
         # Retrieve current dashboard
         os.system(
-            f'curl -H "Authorization: Bearer {self.api_token}" {self.dashboard_get_endpoint}/uid/'
+            f'curl -H "Authorization: Bearer {self.api_token}" '
+            f'{self.dashboard_get_endpoint}/uid/'
             f"{dashboard_uid} > {self.temp_file}"
         )
 
@@ -267,7 +267,8 @@ class Grafana:
         :param sensor: Sensor object's sensor type will be used to create the
         SQL query for the new panel.
         :param dashboard_uid: UID of the target dashboard
-        :return: New panel with SQL query based on sensor type will be added to dashboard.
+        :return: New panel with SQL query based on sensor type
+        will be added to dashboard.
         """
 
         if not sensor:
