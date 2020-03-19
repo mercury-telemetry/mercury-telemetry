@@ -8,20 +8,20 @@ import serial.tools.list_ports
 def is_usb_serial(port, args):
     if port["vid"] is None:
         return False
-    if not args.vid is None:
-        if port.vid != args.vid:
+    if not args["vid"] is None:
+        if port["vid"] != args["vid"]:
             return False
-    if not args.pid is None:
-        if port.pid != args.pid:
+    if not args["pid"] is None:
+        if port["pid"] != args["pid"]:
             return False
-    if not args.vendor is None:
-        if not port.manufacturer.startswith(args.vendor):
+    if not args["vendor"] is None:
+        if not port["manufacturer"].startswith(args["vendor"]):
             return False
-    if not args.serial is None:
-        if not port.serial_number.startswith(args.serial):
+    if not args["serial"] is None:
+        if not port["serial_number"].startswith(args["serial"]):
             return False
-    if not args.intf is None:
-        if port.interface is None or not args.intf in port.interface:
+    if not args["intf"] is None:
+        if port["interface"] is None or not args["intf"] in port["interface"]:
             return False
     return True
 

@@ -7,6 +7,7 @@ from utils import get_logger
 # Logs status in a file
 log = get_logger("LAN_SERVER_LOG_FILE")
 
+
 class S(BaseHTTPRequestHandler):
     def _set_response(self):
         self.send_response(200)
@@ -31,7 +32,7 @@ class S(BaseHTTPRequestHandler):
             str(self.headers),
             post_data.decode("utf-8"),
         )
-        log.info('data: ' + str(post_data))
+        log.info("data: " + str(post_data))
 
         self._set_response()
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
