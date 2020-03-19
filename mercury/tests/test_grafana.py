@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGSensor
+from ag_data.models import AGSensor, AGSensorType
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 
@@ -20,6 +20,7 @@ class TestGrafana(TestCase):
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
 
+
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
         self.client.post(reverse(self.login_url), data={"eventcode": event_code})
@@ -27,29 +28,45 @@ class TestGrafana(TestCase):
         session = self.client.session
         return response, session
 
-    def test_create_grafana_panel(self):
+    def test_create_grafana_panels(self):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         self.sim.createOrResetASensorTypeFromPresets(0)
+        self.sim.createOrResetASensorTypeFromPresets(1)
         self.sim.createASensorFromPresets(0)
+        self.sim.createASensorFromPresets(1)
 
-        sensors = AGSensor.objects.filter(type_id=0)
-        self.assertTrue(sensors)
-        sensor = sensors[0]
-
-        self.grafana.delete_grafana_panels(self.grafana.uid)
+        sensors_type0 = AGSensor.objects.filter(type_id=0)
+        sensors_type1 = AGSensor.objects.filter(type_id=1)
+        print(sensors_type0)
+        print(sensors_type1)
+        sensor0 = sensors_type0[0]
+        sensor1 = sensors_type1[0]
 
         dashboard_info = self.grafana.get_dashboard_with_uid(self.grafana.uid)
         panels = dashboard_info["dashboard"]["panels"]
 
-        # Assert that no panel exists yet
+        # delete all grafana panels
+        print(panels)
+        self.grafana.delete_grafana_panels(self.grafana.uid)
+        print(panels)
         self.assertTrue(len(panels) == 0)
 
-        self.grafana.add_grafana_panel(sensor, self.grafana.uid)
+        # Assert that no panel exists yet
+
+        self.grafana.add_grafana_panel(sensor0, self.grafana.uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(self.grafana.uid)
         panels = dashboard_info["dashboard"]["panels"]
 
         # Assert that a panel was created
-        self.assertTrue(len(panels) > 0)
+        self.assertTrue(len(panels) == 1)
+
+        self.grafana.add_grafana_panel(sensor1, self.grafana.uid)
+
+        dashboard_info = self.grafana.get_dashboard_with_uid(self.grafana.uid)
+        panels = dashboard_info["dashboard"]["panels"]
+
+        # Assert that a panel was created
+        self.assertTrue(len(panels) == 2)

@@ -30,7 +30,8 @@ class Grafana:
 
         self.datasource = "Heroku PostgreSQL (sextants-telemetry)"  # needs to come
         # from dashboard after configuring postgres
-        self.uid = "XwC1wLXZz"  # needs to come from dashboard
+        #self.uid = "XwC1wLXZz"  # needs to come from dashboard
+        self.uid = "9UF7VluWz"
 
         # Default panel sizes
         self.base_panel_width = 15
@@ -261,6 +262,7 @@ class Grafana:
             data=json.dumps(updated_dashboard),
             headers=headers,
         )
+
 
     def add_grafana_panel(self, sensor, dashboard_uid):
         """
