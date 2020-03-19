@@ -9,12 +9,31 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
-def check_if_duplicates(elements):
-    """Check if given list contains any duplicates"""
-    if len(elements) == len(set(elements)):
-        return False
-    else:
-        return True
+def validate_add_sensor_inputs(sensor_name, field_name_list, request):
+    form_valid = True
+
+    # no sensor name
+    if not sensor_name:
+        messages.error(request, "Sensor name is missing or invalid.")
+        form_valid = False
+
+    # missing field names
+    for name in field_name_list:
+        if not name:
+            messages.error(request, "Sensor has missing field name(s).")
+            form_valid = False
+
+    # duplicated sensor name
+    if AGSensor.objects.filter(sensor_name=sensor_name).count() > 0:
+        messages.error(request, "Sensor name is already taken.")
+        form_valid = False
+
+    # duplicated field names
+    if len(field_name_list) > len(set(field_name_list)):
+        messages.error(request, "Field names must be unique.")
+        form_valid = False
+
+    return form_valid, request
 
 
 class CreateSensorView(TemplateView):
@@ -36,15 +55,10 @@ class CreateSensorView(TemplateView):
         field_types = request.POST.getlist("data-types")
         field_units = request.POST.getlist("units")
 
-        # error checking. Note that sensor name, field name and id number
-        # are required by the HTML form. See sensor.HTMLgit
-        form_valid = True
-        if len(AGSensor.objects.filter(sensor_name=sensor_name)) > 0:
-            messages.error(request, "Sensor name is already taken.")
-            form_valid = False
-        if check_if_duplicates(field_names):
-            messages.error(request, "Field names must be unique.")
-            form_valid = False
+        # reformat then validate inputs to avoid duplicated names or bad inputs like " "
+        sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
+        field_names = [string.strip().lower() for string in field_names]
+        valid, request = validate_add_sensor_inputs(sensor_name, field_names, request)
 
         # create sensor format which is dictionary of dictionaries
         sensor_format = {}
@@ -52,7 +66,7 @@ class CreateSensorView(TemplateView):
         for field in fields:
             sensor_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-        if form_valid:
+        if valid:
             sensor = AGSensor.objects.create(
                 sensor_id=id_num,
                 sensor_name=sensor_name,
