@@ -122,15 +122,12 @@ class IsUsbSerialTests(TestCase):
 
 
 class ExtraInfoTests(TestCase):
-
     def test_manufacturer(self):
         """
         insure that the manufacturer is added to the
         extra_items list if it is present in port
         """
-        port = {
-            "manufacturer": "Microsoft"
-        }
+        port = {"manufacturer": "Microsoft"}
         response = extra_info(port)
         self.assertTrue(port["manufacturer"] in response)
 
@@ -139,9 +136,7 @@ class ExtraInfoTests(TestCase):
         insure that extra_info returns the empty string if 
         none of the keys match
         """
-        port = {
-            "foo": "bar"
-        }
+        port = {"foo": "bar"}
         self.assertTrue(extra_info(port) is "")
 
     def test_serial_number(self):
@@ -149,9 +144,7 @@ class ExtraInfoTests(TestCase):
         insure that the serial_number is added to the
         extra_items list if it is present in port
         """
-        port = {
-            "serial_number": "123"
-        }
+        port = {"serial_number": "123"}
         response = extra_info(port)
         self.assertTrue(port["serial_number"] in response)
 
@@ -160,38 +153,38 @@ class ExtraInfoTests(TestCase):
         insure that the interface is added to the
         extra_items list if it is present in port
         """
-        port = {
-            "interface": "123interface"
-        }
+        port = {"interface": "123interface"}
         response = extra_info(port)
         self.assertTrue(port["interface"] in response)
 
-class GetPortTests(TestCase):
 
+class GetPortTests(TestCase):
     @mock.patch("serial.tools.list_ports.comports")
     def test_get_port_match(self, port_mocks):
 
-        port_mocks.return_value = [{
-            "vid": "vid",
-            "pid": None,
-            "manufacturer": None,
-            "serial_number": None,
-            "interface": None,
-            "device": "usb"
-        }]
+        port_mocks.return_value = [
+            {
+                "vid": "vid",
+                "pid": None,
+                "manufacturer": None,
+                "serial_number": None,
+                "interface": None,
+                "device": "usb",
+            }
+        ]
         self.assertTrue("port found" in get_port())
-    
+
     @mock.patch("serial.tools.list_ports.comports")
     def test_get_port_empty(self, port_mocks):
 
-        port_mocks.return_value = [{
-            "vid": None,
-            "pid": None,
-            "manufacturer": None,
-            "serial_number": None,
-            "interface": None,
-            "device": "usb"
-        }]
+        port_mocks.return_value = [
+            {
+                "vid": None,
+                "pid": None,
+                "manufacturer": None,
+                "serial_number": None,
+                "interface": None,
+                "device": "usb",
+            }
+        ]
         self.assertIsNone(get_port())
-
-
