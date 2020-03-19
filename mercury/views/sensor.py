@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
 from mercury.models import AGSensor
-from mercury.models import FuelLevelSensor
 from django.contrib import messages
 
 log = logging.getLogger(__name__)
@@ -37,7 +36,8 @@ class CreateSensorView(TemplateView):
         field_types = request.POST.getlist("data-types")
         field_units = request.POST.getlist("units")
 
-        # error checking. Note that sensor name, field name and id number are required by the HTML form. See sensor.HTML
+        # error checking. Note that sensor name, field name and id number
+        # are required by the HTML form. See sensor.HTMLgit
         form_valid = True
         if len(AGSensor.objects.filter(sensor_name=sensor_name)) > 0:
             messages.error(request, "Sensor name is already taken.")
