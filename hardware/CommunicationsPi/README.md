@@ -9,3 +9,9 @@ export variables before running any service.
   cd hardware
   if [ -f env ]; then export $(cat env | sed 's/#.*//g' | xargs); fi
 ```
+
+##### Scripts
+- `lan_client.py`: Sends post data via LAN to Local LAN server
+- `lan_server.py`: Listens to LAN clients
+- `serial_write.py`: Sends data via radio serial
+- `serial_read.py`: Listens to radio serial
