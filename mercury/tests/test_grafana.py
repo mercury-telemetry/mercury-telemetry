@@ -33,29 +33,21 @@ class TestGrafana(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         self.sim.createOrResetASensorTypeFromPresets(0)
-        self.sim.createOrResetASensorTypeFromPresets(1)
         self.sim.createASensorFromPresets(0)
-        self.sim.createASensorFromPresets(1)
 
-        sensors_type0 = AGSensor.objects.filter(type_id=0)
-        sensors_type1 = AGSensor.objects.filter(type_id=1)
-        print(sensors_type0)
-        print(sensors_type1)
-        sensor0 = sensors_type0[0]
-        sensor1 = sensors_type1[0]
+        sensors = AGSensor.objects.filter(type_id=0)
+        sensor = sensors[0]
 
         dashboard_info = self.grafana.get_dashboard_with_uid(self.grafana.uid)
         panels = dashboard_info["dashboard"]["panels"]
 
         # delete all grafana panels
-        print(panels)
         self.grafana.delete_grafana_panels(self.grafana.uid)
-        print(panels)
-        self.assertTrue(len(panels) == 0)
 
         # Assert that no panel exists yet
+        self.assertTrue(len(panels) == 0)
 
-        self.grafana.add_grafana_panel(sensor0, self.grafana.uid)
+        self.grafana.add_grafana_panel(sensor, self.grafana.uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(self.grafana.uid)
         panels = dashboard_info["dashboard"]["panels"]
@@ -63,10 +55,4 @@ class TestGrafana(TestCase):
         # Assert that a panel was created
         self.assertTrue(len(panels) == 1)
 
-        self.grafana.add_grafana_panel(sensor1, self.grafana.uid)
-
-        dashboard_info = self.grafana.get_dashboard_with_uid(self.grafana.uid)
-        panels = dashboard_info["dashboard"]["panels"]
-
-        # Assert that a panel was created
-        self.assertTrue(len(panels) == 2)
+        self.grafana.add_grafana_panel(sensor, self.grafana.uid)
