@@ -16,11 +16,24 @@ class AGEvent(models.Model):
     event_location = models.CharField(max_length=100, null=False, blank=True)
 
 
+class AGSensorType(models.Model):
+    """Stores the information about sensor types which is used to provide a sensor template
+    and related formula for different types of sensors.
+    """
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=1024, blank=True)
+    processing_formula = models.IntegerField(default=0, null=False)
+    format = JSONField()
+
+
 class AGSensor(models.Model):
-    sensor_id = models.AutoField(primary_key=True)
-    sensor_name = models.CharField(max_length=1024, blank=True)
-    sensor_processing_formula = models.IntegerField(default=0, null=False)
-    sensor_format = JSONField()
+    """Stores the information about sensors including name and type id.
+    """
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=1024, blank=True)
+    type_id = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
 
 
 class AGMeasurement(models.Model):
