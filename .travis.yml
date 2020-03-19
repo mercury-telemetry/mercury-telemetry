@@ -45,6 +45,8 @@ jobs:
     # run the hardware tests
     - language: bash
       
+      # python: '3.6'
+      
       services:
           - docker
         
@@ -57,5 +59,6 @@ jobs:
       script:
         # basic help world test to see if it's working
         - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
+        # - black --check --exclude "migrations/" hardware
 
             
