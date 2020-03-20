@@ -1,7 +1,7 @@
 import os
 import json
 import serial
-from utils import get_logger  # , get_serial_stream
+from utils import get_logger
 
 logging = get_logger("RECEIVER_LOG_FILE")
 
