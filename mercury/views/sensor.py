@@ -2,7 +2,9 @@ import logging
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
+
 from ag_data.models import AGSensor, AGSensorType
+
 from django.contrib import messages
 
 log = logging.getLogger(__name__)
