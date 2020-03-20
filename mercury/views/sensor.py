@@ -25,8 +25,8 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
             messages.error(request, "Type has missing field name(s).")
             form_valid = False
 
-    # duplicated sensor name
-    if AGSensor.objects.filter(name=type_name).count() > 0:
+    # duplicated type name
+    if AGSensorType.objects.filter(name=type_name).count() > 0:
         messages.error(request, "Type name is already taken.")
         form_valid = False
 
@@ -37,6 +37,22 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
 
     return form_valid, request
 
+def validate_add_sensor_inputs(sensor_name, request):
+    form_valid = True
+    print("\n\n")
+    print("IN VALIDATE")
+    print("\n") #DEBUG
+    # no sensor name
+    if not sensor_name:
+        messages.error(request, "Sensor name is missing or invalid.")
+        form_valid = False
+
+    # duplicated sensor name
+    if AGSensor.objects.filter(name=sensor_name).count() > 0:
+        messages.error(request, "Sensor name is already taken.")
+        form_valid = False
+
+    return form_valid, request
 
 class CreateSensorView(TemplateView):
     """This is the view for creating a new event."""
@@ -52,39 +68,62 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
-        id_num = request.POST.get("type-id-num")
-        type_name = request.POST.get("type-name")
-        field_names = request.POST.getlist("field-names")
-        field_types = request.POST.getlist("data-types")
-        field_units = request.POST.getlist("units")
-        print("\n\n FIELD TYPES: " + str(field_types) + "\n\n")
+        if ("submit_new_type" in request.POST):
+            print("SUBMITTING NEW TYPE")
+            type_name = request.POST.get("type-name")
+            field_names = request.POST.getlist("field-names")
+            field_types = request.POST.getlist("data-types")
+            field_units = request.POST.getlist("units")
 
-        # reformat then validate inputs to avoid duplicated names or bad inputs like " "
-        type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
-        field_names = [string.strip().lower() for string in field_names]
-        valid, request = validate_add_sensor_type_inputs(type_name, field_names, request)
+            # reformat then validate inputs to avoid duplicated names or bad inputs like " "
+            type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
+            field_names = [string.strip().lower() for string in field_names]
+            valid, request = validate_add_sensor_type_inputs(type_name, field_names, request)
 
-        # create sensor format which is dictionary of dictionaries
-        type_format = {}
-        fields = zip(field_names, field_types, field_units)
-        for field in fields:
-            type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
+            # create sensor format which is dictionary of dictionaries
+            type_format = {}
+            fields = zip(field_names, field_types, field_units)
+            for field in fields:
+                type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-        # Left over from when this was for old models, not sure if it's valuable later:
-        # sensor = AGSensorType(name='Homer_Simpson', processing_formula=0, format=type_format)
-        # sensor.save()
+            # Left over from when this was for old models, not sure if it's valuable later:
+            # sensor = AGSensorType(name='Homer_Simpson', processing_formula=0, format=type_format)
+            # sensor.save()
 
-        if valid:
-            new_type = AGSensorType.objects.create(name=type_name, id=id_num, processing_formula = 0, format= type_format)
-            new_type.save()
-            sensor_types = AGSensorType.objects.all()
-            context = {"sensor_types": sensor_types}
-        else:
-            sensor_types = AGSensorType.objects.all()
-            context = {
-                "sensors": sensor_types,
-                "type_name": type_name,
-                "type_format": type_format,
-            }
+            if valid:
+                new_type = AGSensorType.objects.create(name=type_name, processing_formula=0, format=type_format)
+                new_type.save()
+                sensor_types = AGSensorType.objects.all()
+                context = {"sensor_types": sensor_types}
+            else:
+                sensor_types = AGSensorType.objects.all()
+                context = {
+                    "sensor_types": sensor_types,
+                    "type_name": type_name,
+                    "type_format": type_format,
+                }
 
-        return render(request, self.template_name, context)
+            return render(request, self.template_name, context)
+            
+        elif ("submit_new_sensor" in request.POST):
+            sensor_name = request.POST.get("sensor-name")
+            sensor_type = request.POST.get("select-sensor-type")
+            sensor_type = AGSensorType.objects.get(name=sensor_type)
+
+            # reformat then validate name to avoid duplicated names or bad inputs like " "
+            sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
+            valid, request = validate_add_sensor_inputs(sensor_name, request)
+
+            if valid:
+                new_sensor = AGSensor.objects.create(name=sensor_name, type_id=sensor_type)
+                new_sensor.save()
+                sensors = AGSensor.objects.all()
+                context = {"sensors": sensors}
+            else:
+                sensors = AGSensor.objects.all()
+                context = {
+                    "sensors": sensors,
+                    "sensor_name": sensor_name,
+                    "sensor_type": sensor_type,
+                }
+            return render(request, self.template_name, context)

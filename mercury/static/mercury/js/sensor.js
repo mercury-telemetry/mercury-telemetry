@@ -44,8 +44,8 @@ function selectView() {
 
         modifyButton.style.backgroundColor = 'var(--light-accent)';
         newSensorButton.style.backgroundColor = 'var(--green)';
-        newTypeButton.style.backgroundColor = 'var(--light--accent)';
-        viewTypesButton.style.backgroundColor = 'var(--light--accent)';
+        newTypeButton.style.backgroundColor = 'var(--light-accent)';
+        viewTypesButton.style.backgroundColor = 'var(--light-accent)';
     }
     else if (sessionStorage.getItem('viewing') == 'view-sensors'){
         newSensorDiv.style.display = "none";
@@ -56,7 +56,7 @@ function selectView() {
         modifyButton.style.backgroundColor = 'var(--green)';
         newSensorButton.style.backgroundColor = 'var(--light-accent)';
         newTypeButton.style.backgroundColor = 'var(--light-accent)';
-        viewTypesButton.style.backgroundColor = 'var(--light--accent)';
+        viewTypesButton.style.backgroundColor = 'var(--light-accent)';
     }
     else if (sessionStorage.getItem('viewing') == 'addingNewType'){
         newSensorDiv.style.display = "none";
@@ -67,7 +67,7 @@ function selectView() {
         modifyButton.style.backgroundColor = 'var(--light-accent)';
         newSensorButton.style.backgroundColor = 'var(--light-accent)';
         newTypeButton.style.backgroundColor = 'var(--green)';
-        viewTypesButton.style.backgroundColor = 'var(--light--accent)';
+        viewTypesButton.style.backgroundColor = 'var(--light-accent)';
     }
     else if (sessionStorage.getItem('viewing') == 'viewingTypes'){
         newSensorDiv.style.display = "none";
@@ -77,7 +77,7 @@ function selectView() {
 
         modifyButton.style.backgroundColor = 'var(--light-accent)';
         newSensorButton.style.backgroundColor = 'var(--light-accent)';
-        newTypeButton.style.backgroundColor = 'var(--light--accent)';
+        newTypeButton.style.backgroundColor = 'var(--light-accent)';
         viewTypesButton.style.backgroundColor = 'var(--green)';
     }
 }
