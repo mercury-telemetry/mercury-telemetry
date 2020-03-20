@@ -20,7 +20,6 @@ class TestGrafana(TestCase):
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
 
-
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
         self.client.post(reverse(self.login_url), data={"eventcode": event_code})

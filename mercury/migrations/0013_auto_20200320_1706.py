@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0012_gfconfig'),
+        ("mercury", "0012_gfconfig"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='gfconfig',
-            name='gf_current',
+            model_name="gfconfig",
+            name="gf_current",
             field=models.BooleanField(blank=True, default=False),
         ),
     ]

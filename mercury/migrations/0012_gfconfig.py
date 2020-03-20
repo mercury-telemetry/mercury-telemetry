@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0011_merge_20200314_0111'),
+        ("mercury", "0011_merge_20200314_0111"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GFConfig',
+            name="GFConfig",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('gf_name', models.CharField(max_length=64)),
-                ('gf_host', models.CharField(max_length=128)),
-                ('gf_token', models.CharField(max_length=256)),
-                ('gf_current', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("gf_name", models.CharField(max_length=64)),
+                ("gf_host", models.CharField(max_length=128)),
+                ("gf_token", models.CharField(max_length=256)),
+                ("gf_current", models.BooleanField(default=False)),
             ],
         ),
     ]

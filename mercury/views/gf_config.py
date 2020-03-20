@@ -33,12 +33,12 @@ class GFConfigView(TemplateView):
     def post(self, request, *args, **kwargs):
         if "submit" in request.POST:
             config_data = GFConfig(
-                gf_name = request.POST.get("gf_name"),
-                gf_host = request.POST.get("gf_host"),
-                gf_token = request.POST.get("gf_token"),
+                gf_name=request.POST.get("gf_name"),
+                gf_host=request.POST.get("gf_host"),
+                gf_token=request.POST.get("gf_token"),
             )
             config_data.save()
-            
+
             configs = GFConfig.objects.all().order_by("id")
             config_form = GFConfigForm()
             context = {"config_form": config_form, "configs": configs}

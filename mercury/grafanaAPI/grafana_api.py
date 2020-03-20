@@ -9,6 +9,7 @@ class Grafana:
     hostname: https://daisycrego.grafana.net
     token: eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9
     """
+
     def __init__(self):
         gf_config = GFConfig.objects.filter(gf_current=True).first()
         if not gf_config:
@@ -33,7 +34,7 @@ class Grafana:
 
         self.datasource = "Heroku PostgreSQL (sextants-telemetry)"  # needs to come
         # from dashboard after configuring postgres
-        #self.uid = "XwC1wLXZz"  # needs to come from dashboard
+        # self.uid = "XwC1wLXZz"  # needs to come from dashboard
         self.uid = "9UF7VluWz"
 
         # Default panel sizes
@@ -46,7 +47,7 @@ class Grafana:
         # Retrieve current dashboard
         os.system(
             f'curl -H "Authorization: Bearer {self.api_token}" '
-            f'{self.home_dashboard_endpoint} > {self.temp_file}'
+            f"{self.home_dashboard_endpoint} > {self.temp_file}"
         )
 
         with open(f"{self.temp_file}") as f:
@@ -87,7 +88,7 @@ class Grafana:
         # Retrieve current dashboard
         os.system(
             f'curl -H "Authorization: Bearer {self.api_token}" '
-            f'{self.dashboard_get_endpoint}/uid/'
+            f"{self.dashboard_get_endpoint}/uid/"
             f"{dashboard_uid} > {self.temp_file}"
         )
 
@@ -265,7 +266,6 @@ class Grafana:
             data=json.dumps(updated_dashboard),
             headers=headers,
         )
-
 
     def add_grafana_panel(self, sensor, dashboard_uid):
         """

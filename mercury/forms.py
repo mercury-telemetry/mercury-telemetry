@@ -42,7 +42,7 @@ class GFConfigForm(forms.ModelForm):
         labels = {
             "gf_name": "Host Label",
             "gf_host": "Host Address",
-            "gf_token": "API Token (Without \"Bearer\" prefix)",
+            "gf_token": 'API Token (Without "Bearer" prefix)',
         }
 
 
