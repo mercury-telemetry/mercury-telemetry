@@ -7,7 +7,7 @@ import json
 
 import serial
 import serial_asyncio
-from django.utils import dateparse
+# from django.utils import dateparse
 
 
 class AsyncSerialProtocol(asyncio.Protocol):
@@ -52,11 +52,11 @@ def json_to_models(json_str, event_id):
             date : “2014-03-12T13:37:27+00:00” /*ISO 8601 dates*/
         };
         """
-    res = []
-    sensors = json_str["sensors"]
-    ss_id = int(sensors["ss_id"])
-    ss_value = sensors["ss_value"]
-    date = dateparse.parse_datetime(sensors["date"])
+    # res = []
+    # sensors = json_str["sensors"]
+    # ss_id = int(sensors["ss_id"])
+    # ss_value = sensors["ss_value"]
+    # date = dateparse.parse_datetime(sensors["date"])
 
 
 ser = serial.Serial()

@@ -1,7 +1,7 @@
 import os
 import time
 import serial
-import json
+# import json
 
 from utils import get_logger, get_serial_stream
 

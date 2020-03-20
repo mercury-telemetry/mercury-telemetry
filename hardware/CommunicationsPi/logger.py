@@ -1,7 +1,8 @@
-import sys
+# import sys
 import os
 import logging
-from logging import DEBUG, INFO, ERROR
+# from logging import DEBUG, INFO, ERROR
+from logging import INFO
 
 
 class Logger(object):

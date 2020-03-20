@@ -1,7 +1,7 @@
 import os
 import json
 import serial
-from utils import get_logger, get_serial_stream
+from utils import get_logger  # , get_serial_stream
 
 logging = get_logger("RECEIVER_LOG_FILE")
 
@@ -18,7 +18,7 @@ ser = serial.Serial(
 logging.info("listening")
 while 1:
     x = ser.readline().decode("utf-8")
-    if x is not "":
+    if x != "":
         try:
             message = json.loads(x)
             logging.info(message)

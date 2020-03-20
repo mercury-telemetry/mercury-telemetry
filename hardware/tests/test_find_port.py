@@ -133,11 +133,11 @@ class ExtraInfoTests(TestCase):
 
     def test_no_matches(self):
         """
-        insure that extra_info returns the empty string if 
+        insure that extra_info returns the empty string if
         none of the keys match
         """
         port = {"foo": "bar"}
-        self.assertTrue(extra_info(port) is "")
+        self.assertTrue(extra_info(port) == "")
 
     def test_serial_number(self):
         """
