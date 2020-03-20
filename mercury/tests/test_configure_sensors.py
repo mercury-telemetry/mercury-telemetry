@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from mercury.models import EventCodeAccess, AGSensor
+from mercury.models import EventCodeAccess
+from ag_data.models import AGSensor
 
 
 class TestConfigureSensorView(TestCase):

@@ -3,53 +3,6 @@ from django.contrib.postgres.fields import JSONField
 import uuid
 from django.utils import timezone
 
-
-class AGEvent(models.Model):
-    """This model stores the information about events. When a new event is created,
-    a UUID4-typed event_uuid will be assigned to this event and also store the current
-    date for this event. """
-
-    event_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    event_name = models.CharField(max_length=40, blank=True)
-    event_date = models.DateTimeField(default=timezone.now)
-    event_description = models.CharField(max_length=100, null=False, blank=True)
-    event_location = models.CharField(max_length=100, null=False, blank=True)
-
-
-class AGSensorType(models.Model):
-    """Stores the information about sensor types which is used to provide a sensor template
-    and related formula for different types of sensors.
-    """
-
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=1024, blank=True)
-    processing_formula = models.IntegerField(default=0, null=False)
-    format = JSONField()
-
-
-class AGSensor(models.Model):
-    """Stores the information about sensors including name and type id.
-    """
-
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=1024, blank=True)
-    type_id = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
-
-
-class AGMeasurement(models.Model):
-    measurement_uuid = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False
-    )
-    measurement_timestamp = models.DateTimeField(default=timezone.now, blank=False)
-    measurement_event = models.ForeignKey(
-        AGEvent, on_delete=models.CASCADE, blank=False, null=False
-    )
-    measurement_sensor = models.ForeignKey(
-        AGSensor, on_delete=models.CASCADE, blank=False, null=False
-    )
-    measurement_value = JSONField()
-
-
 class TemperatureSensor(models.Model):
     """This model represents the Temperature sensor that we expect to
     be potentially available in the future in the NYU Motorsports

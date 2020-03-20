@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from mercury.models import AGSensor
+from ag_data.models import AGSensor, AGSensorType
 from django.contrib import messages
 
 log = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def validate_add_sensor_inputs(sensor_name, field_name_list, request):
             form_valid = False
 
     # duplicated sensor name
-    if AGSensor.objects.filter(sensor_name=sensor_name).count() > 0:
+    if AGSensor.objects.filter(name=sensor_name).count() > 0:
         messages.error(request, "Sensor name is already taken.")
         form_valid = False
 
@@ -66,13 +66,11 @@ class CreateSensorView(TemplateView):
         for field in fields:
             sensor_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
+        sensor_type = AGSensorType(name='Homer_Simpson', processing_formula=0, format=sensor_format)
+        sensor_type.save()
+
         if valid:
-            sensor = AGSensor.objects.create(
-                sensor_id=id_num,
-                sensor_name=sensor_name,
-                sensor_processing_formula=0,
-                sensor_format=sensor_format,
-            )  # processing formula needs to be adapted
+            sensor = AGSensor.objects.create(name=sensor_name, type_id=sensor_type)
             sensor.save()
             sensors = AGSensor.objects.all()
             context = {"sensors": sensors}
