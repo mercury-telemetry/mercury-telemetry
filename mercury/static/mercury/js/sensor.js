@@ -1,5 +1,5 @@
 function addRow(){
-    var table = document.getElementById("new-sensor-table");
+    var table = document.getElementById("new-type-table");
     var rowCount = table.rows.length;
     var colCount = table.rows[0].cells.length;
     var newRow = table.insertRow(rowCount);
@@ -12,7 +12,7 @@ function addRow(){
 }
 
 function deleteRow() {
-    var table = document.getElementById("new-sensor-table");
+    var table = document.getElementById("new-type-table");
     var rowCount = table.rows.length;
     if (rowCount > 2){
         table.deleteRow(rowCount-1)
@@ -25,32 +25,79 @@ selectView displays the correct view of the "Add or Modify Sensors" page
 -if a user submits a new sensor which posts and reloads page, then the add new sensor view should remain
 */
 function selectView() {
+
     var newSensorDiv = document.getElementById("add-new-sensor");
     var existingSensorDiv = document.getElementById("existing-sensors");
+    var newTypeDiv = document.getElementById("add-new-type");
+    var viewTypesDiv = document.getElementById("view-existing-types");
+
     var modifyButton = document.getElementById("current-sensor-btn");
-    var newButton = document.getElementById("add-sensor-btn");
+    var newSensorButton = document.getElementById("add-sensor-btn");
+    var newTypeButton = document.getElementById("add-sensor-type-btn");
+    var viewTypesButton = document.getElementById("view-sensor-types-btn");
+
     if (sessionStorage.getItem('viewing') == 'addingNew'){
         newSensorDiv.style.display = "block";
         existingSensorDiv.style.display = 'none';
+        newTypeDiv.style.display = "none";
+        viewTypesDiv.style.display = "none";
 
         modifyButton.style.backgroundColor = 'var(--light-accent)';
-        newButton.style.backgroundColor = 'var(--green)';
+        newSensorButton.style.backgroundColor = 'var(--green)';
+        newTypeButton.style.backgroundColor = 'var(--light--accent)';
+        viewTypesButton.style.backgroundColor = 'var(--light--accent)';
     }
-    else {
+    else if (sessionStorage.getItem('viewing') == 'view-sensors'){
         newSensorDiv.style.display = "none";
         existingSensorDiv.style.display = 'block';
+        newTypeDiv.style.display = "none";
+        viewTypesDiv.style.display = "none";
 
         modifyButton.style.backgroundColor = 'var(--green)';
-        newButton.style.backgroundColor = 'var(--light-accent)';
+        newSensorButton.style.backgroundColor = 'var(--light-accent)';
+        newTypeButton.style.backgroundColor = 'var(--light-accent)';
+        viewTypesButton.style.backgroundColor = 'var(--light--accent)';
+    }
+    else if (sessionStorage.getItem('viewing') == 'addingNewType'){
+        newSensorDiv.style.display = "none";
+        existingSensorDiv.style.display = 'none';
+        newTypeDiv.style.display = "block";
+        viewTypesDiv.style.display = "none";
+
+        modifyButton.style.backgroundColor = 'var(--light-accent)';
+        newSensorButton.style.backgroundColor = 'var(--light-accent)';
+        newTypeButton.style.backgroundColor = 'var(--green)';
+        viewTypesButton.style.backgroundColor = 'var(--light--accent)';
+    }
+    else if (sessionStorage.getItem('viewing') == 'viewingTypes'){
+        newSensorDiv.style.display = "none";
+        existingSensorDiv.style.display = 'none';
+        newTypeDiv.style.display = "none";
+        viewTypesDiv.style.display = "block";
+
+        modifyButton.style.backgroundColor = 'var(--light-accent)';
+        newSensorButton.style.backgroundColor = 'var(--light-accent)';
+        newTypeButton.style.backgroundColor = 'var(--light--accent)';
+        viewTypesButton.style.backgroundColor = 'var(--green)';
     }
 }
 
 function displayCurrentSensors() {
-    sessionStorage.setItem('viewing', 'existing');
+    sessionStorage.setItem('viewing', 'view-sensors');
     selectView()
 }
 
 function displayAddNewSensor() {
   sessionStorage.setItem('viewing', 'addingNew');
   selectView()
+}
+
+function displayAddNewSensorType() {
+    sessionStorage.setItem('viewing', 'addingNewType');
+    selectView()
+}
+
+function displaySensorTypes() {
+    sessionStorage.setItem('viewing', 'viewingTypes');
+    selectView()
 }

@@ -22,6 +22,8 @@
                 <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
                 <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> Modify Current Sensors </button></li>
                 <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
+                <li><button onclick="displayAddNewSensorType()" type= "button" id="add-sensor-type-btn" class="grafana-btn"> Add New Sensor Type </button></li>
+                <li><button onclick="displaySensorTypes()" type= "button" id="view-sensor-types-btn" class="grafana-btn"> View Sensor Types </button></li>
             </ul>
         </nav>
 
@@ -76,20 +78,52 @@
 
 
         <div id="add-new-sensor">
-            <h2>Configure a New Sensor</h2>
+            <h2>Add a New Sensor</h2>
             <br>
             <form method="POST">
                 {% csrf_token %}
                 <div id = "sensor-container"> <!-- single div for configuring entire sensor -->
                     <div class="inline-box">
-                        <label for="sensor-name"> <b>Sensor Name</b> </label>
+                        <label for="sensor-name"> <b>Sensor Name:</b> </label>
                         <input type="text" id="sensor-name" name="sensor-name" required/>
 
-                        <label for="sensor-id-num"> <b>Sensor ID Number</b> </label>
+                        <label for="sensor-id-num"> <b>Sensor ID Number:</b> </label>
                         <input type="text" id="sensor-id-num" name="sensor-id-num" required/>
+
+                        <label for="select-sensor-type"> <b>Sensor Type:</b> </label>
+                        <select id="select-sensor-type" name="select-sensor-type"/>
+                            <option> Fuel level </option>
+                            <option> Live feed </option>
+                            <option> Accelerometer </option>
+                            <!-- TODO: NEED TO GET SENSOR TYPES FROM DB, JUST FOR SHOW-->
+                        </select>
+
+                    </div> <br>
+                </div> <br> <!-- end new sensor container -->
+                <h4>Preview</h4> <!-- TODO: need to add preview feature ---> 
+
+                <button type="submit" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
+            </form>
+            <br>
+        </div>
+
+        <div id = "add-new-type">
+            <h2>Add a New Sensor Type</h2>
+            <br>
+            <form method="POST">
+                {% csrf_token %}
+                <div id = "type-container"> <!-- single div for configuring entire sensor type -->
+                    <div class="inline-box">
+                        <label for="type-name"> <b>Type Name:</b> </label>
+                        <input type="text" id="type-name" name="type-name" required/>
+                        
+                        <br>
+
+                        <label for="type-id-num"> <b>Type ID Number:</b> </label>
+                        <input type="text" id="type-id-num" name="type-id-num" required/>
                     </div> <br>
 
-                    <table id="new-sensor-table">
+                    <table id="new-type-table">
                         <thead>
                             <tr>
                                 <th><b> Field Number </b></th>
@@ -123,18 +157,70 @@
                         <button type="button" onclick="deleteRow()" class="grafana-btn grafana-btn-red"> Delete Last Sensor Field </button> <br><br>
                     </div>
 
-                </div> <br> <!-- end new sensor container -->
+                </div> <br> <!-- end new sensor type container -->
 
-                <button type="submit" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
+                <button type="submit" class="grafana-btn grafana-btn-green"> Add New Sensor Type </button>
             </form>
             <br>
-        </div>
 
             {% for message in messages %}
             <p class="error"> {{ message }} </p>
             {% endfor %}
 
-        </div> <!-- end add new sensors -->
+        </div> <!-- end add new type -->
+
+        <div id="view-existing-types">
+            <h2>Existing Types</h2>
+
+            {% if sensor_types %}
+                {% for sensor_type in sensor_types %}
+                <div class="panel">
+                    <h2 contenteditable="true" id="{{ sensor_type.type_name }}">
+                    {{ sensor_type.name }}</h2>
+
+                    <h4 class="inline-block-child"><u>Field Name</u></h4>
+                    <h4 class="inline-block-child"><u>Field Type</u></h4>
+                    <h4 class="inline-block-child"><u>Field Unit</u></h4>
+
+                    {% for field_name, unit_and_format in sensor_type.format.items %}
+                    <div>
+                        <p class="inline-block-child"
+                        contenteditable="true">{{field_name}}</p>
+                        <p class="inline-block-child"
+                        contenteditable="true">{{unit_and_format.data_type}}</p>
+                        <!-- <select class="inline-block-child">
+                            {% if unit_and_format.format == "Numeric" %}
+                            <option selected="true">Float</option>
+                            {% else %}
+                            <option >Float</option>
+                            {% endif %}
+
+                            {% if unit_and_format.format == "Character" %}
+                            <option selected="true">String</option>
+                            {% else %}
+                            <option >String</option>
+                            {% endif %}
+
+                            {% if unit_and_format.format == "Boolean" %}
+                            <option selected="true">Boolean</option>
+                            {% else %}
+                            <option >Boolean</option>
+                            {% endif %}
+                        </select> -->
+                        <p class="inline-block-child"
+                        contenteditable="true">{{unit_and_format.unit}}</p>
+                    </div>
+                    {% endfor %}
+                    <input class="editbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="edit_type" value="Edit">
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color:red;"><b> There are no types to display </b></p>
+                <img src="{% static 'mercury/technical_difficulties.jpg' %}">
+            {% endif%}
+
+        </div> <!-- end view existing types -->
+        
     </div> <!-- end grafana-base -->
 </body>
 </html>

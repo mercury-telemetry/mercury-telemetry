@@ -21,9 +21,9 @@ nav li{
     list-style-type: none; /* removes bulleting */
 }
 
-#sensor-container{
+/* #sensor-container{
     background-color:lightgray;
-}
+} */
 
 .inline-box{
     display: inline-block;
