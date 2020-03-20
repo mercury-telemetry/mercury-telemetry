@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGSensor, AGSensorType
+from ag_data.models import AGSensor
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 

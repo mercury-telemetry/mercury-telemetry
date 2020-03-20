@@ -3,19 +3,20 @@ import json
 import requests
 from mercury.models import GFConfig
 
+TOKEN = "eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9"
+HOST = "https://daisycrego.grafana.net"
+
 
 class Grafana:
-    """
-    hostname: https://daisycrego.grafana.net
-    token: eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9
-    """
-
     def __init__(self):
         gf_config = GFConfig.objects.filter(gf_current=True).first()
-        if not gf_config:
-            raise ValueError("There are no current hosts")
-        self.api_token = gf_config.gf_token
-        self.hostname = gf_config.gf_host
+        if gf_config:
+            self.api_token = gf_config.gf_token
+            self.hostname = gf_config.gf_host
+        else:
+            self.api_token = TOKEN
+            self.hostname = HOST
+
         self.temp_file = "dashboard_output.json"
         self.auth_url = "api/auth/keys"
         self.dashboard_post_url = "api/dashboards/db"

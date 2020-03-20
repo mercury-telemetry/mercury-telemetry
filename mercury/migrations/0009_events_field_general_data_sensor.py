@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("field_id", "sensor_id")},},
+            options={"unique_together": {("field_id", "sensor_id")}, },
         ),
         migrations.CreateModel(
             name="General_data",
@@ -101,6 +101,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("event_id", "sensor_id", "field_id")},},
+            options={"unique_together": {("event_id", "sensor_id", "field_id")}, },
         ),
     ]
