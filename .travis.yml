@@ -35,7 +35,9 @@ jobs:
 
       script:
         - black --check --diff .
+        # modify .flake8 env file to update flake8 configuration
         - flake8 .
+        # modify .coveragerc env file to update test configuration
         - coverage run manage.py test
 
       after_script:
