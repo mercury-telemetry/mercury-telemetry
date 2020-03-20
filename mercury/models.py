@@ -37,6 +37,16 @@ class AGMeasurement(models.Model):
     measurement_value = JSONField()
 
 
+class GFConfig(models.Model):
+    """
+    Grafana configs
+    """
+    gf_name = models.CharField(max_length=64)
+    gf_host = models.CharField(max_length=128)
+    gf_token = models.CharField(max_length=256) # token only, without the prefix "Bearer "
+    gf_current = models.BooleanField(default=False, blank=True)
+
+
 class TemperatureSensor(models.Model):
     """This model represents the Temperature sensor that we expect to
     be potentially available in the future in the NYU Motorsports
