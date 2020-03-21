@@ -39,9 +39,7 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
 
 def validate_add_sensor_inputs(sensor_name, request):
     form_valid = True
-    print("\n\n")
-    print("IN VALIDATE")
-    print("\n") #DEBUG
+
     # no sensor name
     if not sensor_name:
         messages.error(request, "Sensor name is missing or invalid.")
@@ -69,7 +67,6 @@ class CreateSensorView(TemplateView):
     @require_event_code
     def post(self, request, *args, **kwargs):
         if ("submit_new_type" in request.POST):
-            print("SUBMITTING NEW TYPE")
             type_name = request.POST.get("type-name")
             field_names = request.POST.getlist("field-names")
             field_types = request.POST.getlist("data-types")
@@ -90,17 +87,22 @@ class CreateSensorView(TemplateView):
             # sensor = AGSensorType(name='Homer_Simpson', processing_formula=0, format=type_format)
             # sensor.save()
 
+            sensors = AGSensor.objects.all() #for when we return context later
             if valid:
                 new_type = AGSensorType.objects.create(name=type_name, processing_formula=0, format=type_format)
                 new_type.save()
                 sensor_types = AGSensorType.objects.all()
-                context = {"sensor_types": sensor_types}
+                context = {
+                    "sensor_types": sensor_types,
+                    "sensors": sensors,
+                    }
             else:
                 sensor_types = AGSensorType.objects.all()
                 context = {
                     "sensor_types": sensor_types,
                     "type_name": type_name,
                     "type_format": type_format,
+                    "sensors": sensors,
                 }
 
             return render(request, self.template_name, context)
@@ -108,22 +110,27 @@ class CreateSensorView(TemplateView):
         elif ("submit_new_sensor" in request.POST):
             sensor_name = request.POST.get("sensor-name")
             sensor_type = request.POST.get("select-sensor-type")
-            sensor_type = AGSensorType.objects.get(name=sensor_type)
+            sensor_type = AGSensorType.objects.get(name=sensor_type) #str --> AGSensorType 
 
             # reformat then validate name to avoid duplicated names or bad inputs like " "
             sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
             valid, request = validate_add_sensor_inputs(sensor_name, request)
 
+            sensor_types = AGSensorType.objects.all() #for when we return context later
             if valid:
                 new_sensor = AGSensor.objects.create(name=sensor_name, type_id=sensor_type)
                 new_sensor.save()
                 sensors = AGSensor.objects.all()
-                context = {"sensors": sensors}
+                context = {
+                    "sensors": sensors,
+                    "sensor_types": sensor_types,
+                    }
             else:
                 sensors = AGSensor.objects.all()
                 context = {
                     "sensors": sensors,
                     "sensor_name": sensor_name,
                     "sensor_type": sensor_type,
+                    "sensor_types": sensor_types,
                 }
             return render(request, self.template_name, context)
