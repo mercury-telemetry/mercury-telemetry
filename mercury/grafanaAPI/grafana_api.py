@@ -3,18 +3,17 @@ import json
 import requests
 from mercury.models import GFConfig
 
-TOKEN = "eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9"
-HOST = "https://daisycrego.grafana.net"
 
 class Grafana:
-    def __init__(self):
+    def __init__(self, host=None, token=None):
         gf_config = GFConfig.objects.filter(gf_current=True).first()
         if gf_config:
-            self.api_token = gf_config.gf_token
             self.hostname = gf_config.gf_host
+            self.api_token = gf_config.gf_token
         else:
-            self.api_token = TOKEN
-            self.hostname = HOST
+            # for test purposes, a test case should init this class with credentials
+            self.hostname = host
+            self.api_token = token
 
         # self.uid = "XwC1wLXZz"  # needs to come from dashboard
         self.uid = "9UF7VluWz"
@@ -28,7 +27,8 @@ class Grafana:
         self.search_url = "api/search?"
         self.search_endpoint = os.path.join(self.hostname, self.search_url)
         self.dashboard_uid_endpoint = os.path.join(
-            self.hostname, self.dashboard_uid_url)
+            self.hostname, self.dashboard_uid_url
+        )
         self.auth_endpoint = os.path.join(self.hostname, self.auth_url)
         self.dashboard_post_endpoint = os.path.join(
             self.hostname, self.dashboard_post_url
@@ -50,10 +50,10 @@ class Grafana:
     def delete_all_dashboards(self):
         print(self.search_endpoint)
         tag_search_endpoint = os.path.join(self.search_endpoint)
-        headers = {"Content-Type":"application/json"}
-        response = requests.get(url=tag_search_endpoint,
-                                auth=("api_key", self.api_token),
-                                headers=headers)
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=tag_search_endpoint, auth=("api_key", self.api_token), headers=headers
+        )
 
         dashboards = response.json()
         if len(dashboards) > 0:
@@ -63,15 +63,16 @@ class Grafana:
     # Locates dashboard and deletes if exists. Returns true if successful else false.
     def delete_dashboard(self, uid):
         dashboard_endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
-        response = requests.delete(url=dashboard_endpoint,
-                                   auth=("api_key", self.api_token))
+        response = requests.delete(
+            url=dashboard_endpoint, auth=("api_key", self.api_token)
+        )
 
         if "deleted" not in response.json()["message"]:
             print(f"Error deleting dashboard with uid: {uid}")
             return False
         return True
 
-    ## TODO: Handle error case where title is already taken
+    # TODO: Handle error case where title is already taken
     # Create a new Grafana dashboard. returns an object with details on new
     # dashboard or error message(s)
     # Example success output
@@ -93,15 +94,17 @@ class Grafana:
                 "tags": ["templated"],
                 "timezone": "browser",
                 "schemaVersion": None,
-                "version": 0
+                "version": 0,
             },
             "folderId": 0,
-            "overwrite": False
+            "overwrite": False,
         }
 
-        response = requests.post(url=self.dashboard_post_endpoint,
-                                 auth=("api_key",self.api_token),
-                                 json=dashboard_base)
+        response = requests.post(
+            url=self.dashboard_post_endpoint,
+            auth=("api_key", self.api_token),
+            json=dashboard_base,
+        )
 
         post_output = response.json()
 
@@ -118,10 +121,12 @@ class Grafana:
         :param uid: uid of the target dashboard
         :return: dict of the current dashboard
         """
-        headers = {"Content-Type":"application/json"}
+        headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
         print(endpoint)
-        response = requests.get(url=endpoint, headers=headers, auth=("api_key", self.api_token))
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.api_token)
+        )
         dashboard_dict = response.json()
 
         print(response.text)
@@ -247,9 +252,9 @@ class Grafana:
         uid = dashboard_info["dashboard"]["uid"]
         title = dashboard_info["dashboard"]["title"]
         schema_version = dashboard_info["dashboard"]["schemaVersion"]
-        #style = dashboard_info["dashboard"]["style"]
+        # style = dashboard_info["dashboard"]["style"]
         tags = dashboard_info["dashboard"]["tags"]
-        #templating = dashboard_info["dashboard"]["templating"]
+        # templating = dashboard_info["dashboard"]["templating"]
         version = dashboard_info["meta"]["version"]
         folder_id = dashboard_info["meta"]["folderId"]
 
@@ -380,5 +385,5 @@ class Grafana:
             self.dashboard_post_endpoint,
             data=json.dumps(updated_dashboard),
             headers=headers,
-            auth=("api_key", self.api_token)
+            auth=("api_key", self.api_token),
         )
