@@ -2,21 +2,28 @@ import os
 import json
 import requests
 
-
 class Grafana:
     def __init__(
         self,
-        token="eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9Zbkd"
-              "Eelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9",
-        hostname="https://daisycrego.grafana.net",
+        token="eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9",
+        hostname="https://dbc291.grafana.net",
     ):
+        # self.uid = "XwC1wLXZz"  # needs to come from dashboard
+        self.uid = "9UF7VluWz"
+
         self.api_token = token
         self.hostname = hostname
+
         self.temp_file = "dashboard_output.json"
         self.auth_url = "api/auth/keys"
         self.dashboard_post_url = "api/dashboards/db"
+        self.dashboard_uid_url = "api/dashboards/uid/"
         self.dashboard_get_url = "api/dashboards"
         self.home_dashboard_url = "api/dashboards/home"
+        self.search_url = "api/search?"
+        self.search_endpoint = os.path.join(self.hostname, self.search_url)
+        self.dashboard_uid_endpoint = os.path.join(
+            self.hostname, self.dashboard_uid_url)
         self.auth_endpoint = os.path.join(self.hostname, self.auth_url)
         self.dashboard_post_endpoint = os.path.join(
             self.hostname, self.dashboard_post_url
@@ -30,66 +37,91 @@ class Grafana:
 
         self.datasource = "Heroku PostgreSQL (sextants-telemetry)"  # needs to come
         # from dashboard after configuring postgres
-        #self.uid = "XwC1wLXZz"  # needs to come from dashboard
-        self.uid = "9UF7VluWz"
+
+
 
         # Default panel sizes
         self.base_panel_width = 15
         self.base_panel_height = 12
 
-    # Still working on this
-    def create_dashboard_get_uid(self):
+    def delete_all_dashboards(self):
+        print(self.search_endpoint)
+        tag_search_endpoint = os.path.join(self.search_endpoint)
+        headers = {"Content-Type":"application/json"}
+        response = requests.get(url=tag_search_endpoint,
+                                auth=("api_key", self.api_token),
+                                headers=headers)
 
-        # Retrieve current dashboard
-        os.system(
-            f'curl -H "Authorization: Bearer {self.api_token}" '
-            f'{self.home_dashboard_endpoint} > {self.temp_file}'
-        )
+        dashboards = response.json()
+        if len(dashboards) > 0:
+            for dashboard in dashboards:
+                self.delete_dashboard(dashboard["uid"])
 
-        with open(f"{self.temp_file}") as f:
-            dashboard_info = json.load(f)
+    # Locates dashboard and deletes if exists. Returns true if successful else false.
+    def delete_dashboard(self, uid):
+        dashboard_endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
+        response = requests.delete(url=dashboard_endpoint,
+                                   auth=("api_key", self.api_token))
 
-        print(dashboard_info["dashboard"]["uid"])
+        if "deleted" not in response.json()["message"]:
+            print(f"Error deleting dashboard with uid: {uid}")
+            return False
+        return True
 
-        """
-        dashboard_info["dashboard"]["uid"] = None
-        dashboard_info["dashboard"]["title"] = "Sensors - TEST"
-        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, [], False)
-        # POST updated dashboard with new panel
-        authorization = f"Bearer {self.api_token}"
-        headers = {"Content-Type": "application/json", "Authorization": authorization}
+    ## TODO: Handle error case where title is already taken
+    # Create a new Grafana dashboard. returns an object with details on new
+    # dashboard or error message(s)
+    # Example success output
+    # eg {  'id': 4,
+    #       'slug':
+    #       'sensors',
+    #       'status':
+    #       'success',
+    #       'uid': 'GjrBC6uZz',
+    #       'url': '/d/GjrBC6uZz/sensors',
+    #       'version': 1
+    # }
+    def create_dashboard(self, title="Sensors"):
+        dashboard_base = {
+            "dashboard": {
+                "id": None,
+                "uid": None,
+                "title": title,
+                "tags": ["templated"],
+                "timezone": "browser",
+                "schemaVersion": None,
+                "version": 0
+            },
+            "folderId": 0,
+            "overwrite": False
+        }
 
-        requests.post(self.dashboard_post_endpoint, data=json.dumps(updated_dashboard),
-                      headers=headers)
-        """
+        response = requests.post(url=self.dashboard_post_endpoint,
+                                 auth=("api_key",self.api_token),
+                                 json=dashboard_base)
 
-    # Still working on this
-    def get_api_token(self, endpoint="http://admin:admin@localhost:3000/api/auth/keys"):
-        os.system(
-            f"curl '{self.auth_endpoint}' - X POST - H \"Content-Type: "
-            f'application/json"  - d {{"role":"Admin","name":"grafana_key"}}'
-        )
+        post_output = response.json()
+
+        return post_output
 
     # Still working on this
     def configure_postgres_db(self):
         pass
 
-    def get_dashboard_with_uid(self, dashboard_uid):
+    def get_dashboard_with_uid(self, uid):
         """
         Retrieves dashboard dict for given dashboard uid
 
-        :param dashboard_uid: uid of the target dashboard
+        :param uid: uid of the target dashboard
         :return: dict of the current dashboard
         """
-        # Retrieve current dashboard
-        os.system(
-            f'curl -H "Authorization: Bearer {self.api_token}" '
-            f'{self.dashboard_get_endpoint}/uid/'
-            f"{dashboard_uid} > {self.temp_file}"
-        )
+        headers = {"Content-Type":"application/json"}
+        endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
+        print(endpoint)
+        response = requests.get(url=endpoint, headers=headers, auth=("api_key", self.api_token))
+        dashboard_dict = response.json()
 
-        with open(f"{self.temp_file}") as f:
-            dashboard_dict = json.load(f)
+        print(response.text)
 
         return dashboard_dict
 
@@ -212,9 +244,9 @@ class Grafana:
         uid = dashboard_info["dashboard"]["uid"]
         title = dashboard_info["dashboard"]["title"]
         schema_version = dashboard_info["dashboard"]["schemaVersion"]
-        style = dashboard_info["dashboard"]["style"]
+        #style = dashboard_info["dashboard"]["style"]
         tags = dashboard_info["dashboard"]["tags"]
-        templating = dashboard_info["dashboard"]["templating"]
+        #templating = dashboard_info["dashboard"]["templating"]
         version = dashboard_info["meta"]["version"]
         folder_id = dashboard_info["meta"]["folderId"]
 
@@ -228,9 +260,9 @@ class Grafana:
                 "panels": panels,
                 "refresh": False,
                 "schemaVersion": schema_version,
-                "style": style,
+                "style": "dark",
                 "tags": tags,
-                "templating": templating,
+                "templating": {"list": []},
                 "folderId": folder_id,
                 "overwrite": overwrite,
             }
@@ -238,23 +270,24 @@ class Grafana:
 
         return updated_dashboard
 
-    def delete_grafana_panels(self, dashboard_uid):
+    def delete_grafana_panels(self, uid):
         """
 
         Deletes all panels from dashboard with given uid.
 
-        :param dashboard_uid: uid of dashboard to delete
+        :param uid: uid of dashboard to delete
         :return: None.
         """
 
         # Retrieve current dashboard dict
-        dashboard_info = self.get_dashboard_with_uid(dashboard_uid)
+        dashboard_info = self.get_dashboard_with_uid(uid)
 
         # Create updated dashboard dict with empty list of panels
         panels = []
         updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
 
         # POST updated dashboard with empty list of panels
+        authorization = f"Bearer {self.api_token}"
         authorization = f"Bearer {self.api_token}"
         headers = {"Content-Type": "application/json", "Authorization": authorization}
         requests.post(
@@ -263,12 +296,11 @@ class Grafana:
             headers=headers,
         )
 
-
-    def add_grafana_panel(self, sensor, dashboard_uid):
+    def add_grafana_panel(self, sensor, uid):
         """
         :param sensor: Sensor object's sensor type will be used to create the
         SQL query for the new panel.
-        :param dashboard_uid: UID of the target dashboard
+        :param uid: UID of the target dashboard
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.
         """
@@ -285,10 +317,14 @@ class Grafana:
             field_array.append(field)
 
         # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(dashboard_uid)
+        dashboard_info = self.get_dashboard_with_uid(uid)
+        print(dashboard_info)
 
         # Retrieve current panels
-        panels = dashboard_info["dashboard"]["panels"]
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except KeyError:
+            panels = []
 
         # If first panel
         if len(panels) == 0:
@@ -336,10 +372,10 @@ class Grafana:
         updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
 
         # POST updated dashboard
-        authorization = f"Bearer {self.api_token}"
-        headers = {"Content-Type": "application/json", "Authorization": authorization}
+        headers = {"Content-Type": "application/json"}
         requests.post(
             self.dashboard_post_endpoint,
             data=json.dumps(updated_dashboard),
             headers=headers,
+            auth=("api_key", self.api_token)
         )
