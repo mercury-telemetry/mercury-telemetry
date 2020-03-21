@@ -70,7 +70,7 @@
     {% if request.path == "/sensor/" %}
         <div class="grafana-current-tab sidebar-btn">
             <i class="material-icons">tune</i>
-            <br>Configure Sensors
+            <br>Add or Modify Sensors
         </div>
     {% else %}
         <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:sensor' %}">
@@ -80,11 +80,18 @@
     {% endif %}
     <br><br>
 
-    <!-- Analyze in Grafana-->
-    <a class="grafana-btn grafana-btn-gray sidebar-btn" href="https://nyu-mercury-grafana.herokuapp.com/d/BjN37GJZk/nyu-motorsports-telemetry-dashboard?orgId=1&refresh=5s" target="_blank">
-        <i class="material-icons-outlined">open_in_new</i>
-        <br>Analyze in Grafana
-    </a>
+    <!-- Configure Grafana-->
+    {% if request.path == "/gfconfig/" %}
+        <div class="grafana-current-tab sidebar-btn">
+            <i class="material-icons">tune</i>
+            <br>Configure Grafana
+        </div>
+    {% else %}
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:gfconfig' %}">
+            <i class="material-icons">tune</i>
+            <br>Configure Grafana
+        </a>
+    {% endif %}
     <br><br>
 
     <!-- Simulator -->

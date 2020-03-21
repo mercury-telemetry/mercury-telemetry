@@ -1,162 +1,161 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Configure Sensors</title>
-        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
-        <!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
-        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
-        <script src="{% static "mercury/js/sensor.js" %}" defer></script>
-        <script src="{% static "mercury/js/accordian.js" %}"></script>
-    </head>
-    <body>
-        {% include 'sidebar.html' %}
-        <div id="grafana-base">
+<head>
+    <meta charset="UTF-8">
+    <title>Add or Modify Sensors</title>
+    <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+    <link rel="preload" href="{% static 'mercury/technical_difficulties.jpg' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+    <script src="{% static "mercury/js/sensor.js" %}" defer></script>
+</head>
 
-            <div class="panel">
-                <h1>
-                    Configure Sensors
-                    <a class="grafana-btn grafana-btn-gray" id= "accordion-btn" onclick="myFunction()">
-                        <i class="material-icons-outlined" id="expand_more" style="display: block">expand_more</i>
-                        <i class="material-icons-outlined" id="expand_less" style="display: none">expand_less</i>
-                    </a>
-                </h1>
-                <div id="accordion-text">
-                        This page is used to add new sensors to the database as well as edit currently existing sensors within the database.
-                    <br>
-                </div>
-                <br>
-            </div>
+<body onload="selectView();">
+    {% include 'sidebar.html' %}
+    <div id="grafana-base"> <!-- app default background -->
+        <div class="panel">
+            <h1> Add or Modify Sensors </h1>
+            <p>
+                This page is used to add new sensors to the database as well as edit currently existing sensors within the database.
+            </p>
+        </div>
 
-            {% for sensor in sensors %}
-            <div class="panel">
-                <h2 contenteditable="true" id="{{ sensor.sensor_name }}">
-                {{ sensor.sensor_name }}</h2>
+        <div class="panel">
+            <nav>
+                <ul>
+                    <li><button onclick="displayCurrentSensors()" id="current-sensor-btn" class="grafana-btn"> Modify Current Sensors </button></li>
+                    <li><button onclick="displayAddNewSensor()" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
+                </ul>
+            </nav>
+        </div>
 
-                <h4 class="inline-block-child"><u>Field Name</u></h4>
-                <h4 class="inline-block-child"><u>Field Type</u></h4>
-                <h4 class="inline-block-child"><u>Field Unit</u></h4>
+        <div class="panel" id="existing-sensors">
+            <h2>Existing sensors</h2>
 
-                {% for field_name, unit_and_format in sensor.sensor_format.items %}
-                <div>
-                    <p class="inline-block-child"
-                    contenteditable="true">{{field_name}}</p>
-                    <select class="inline-block-child">
-                        {% if unit_and_format.format == "float" %}
-                        <option selected="true">Float</option>
-                        {% else %}
-                        <option >Float</option>
-                        {% endif %}
+            {% if sensors %}
+                {% for sensor in sensors %}
+                <div class="panel">
+                    <h2 contenteditable="true" id="{{ sensor.sensor_name }}">
+                    {{ sensor.sensor_name }}</h2>
 
-                        {% if unit_and_format.format == "string" %}
-                        <option selected="true">String</option>
-                        {% else %}
-                        <option >String</option>
-                        {% endif %}
+                    <h4 class="inline-block-child"><u>Field Name</u></h4>
+                    <h4 class="inline-block-child"><u>Field Type</u></h4>
+                    <h4 class="inline-block-child"><u>Field Unit</u></h4>
 
-                        {% if unit_and_format.format == "boolean" %}
-                        <option selected="true">Boolean</option>
-                        {% else %}
-                        <option >Boolean</option>
-                        {% endif %}
-                    </select>
-                    <p class="inline-block-child"
-                    contenteditable="true">{{unit_and_format.unit}}</p>
-                </div>
-                {% endfor %}
-                <input class="editbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="edit_sensor" value="Edit">
-            </div>
-            {% endfor %}
-
-            <div class="panel">
-                <div>
-
-                    <h2>
-                        Create Sensor
-                    </h2>
-
-                    <form method="POST" action="" id="SensorForm">
-                    {% csrf_token %}
-                        <br>
-
-                        <p>
-                            <label for="sensor-name"><b><u>Sensor Name</u></b></label>
-                            <input type="text" id="sensor-name" name="sensor-name"
-                            value="{{ sensor_name }}"/>
-                        </p>
-
-                        <h4 class="inline-block-child"><u>Field Name</u></h4>
-                        <h4 class="inline-block-child"><u>Field Type</u></h4>
-                        <h4 class="inline-block-child"><u>Field Unit</u></h4>
-
-                        <div id="field-list">
-
-                            {% if sensor_format %}
-
-                                {% for key, value in sensor_format.items %}
-
-                                    <input class="inline-block-child" type="text"
-                                name="field-name" value="{{ key }}"/>
-                                    <select class="inline-block-child" name="field-type">
-                                        {% if value.format == "Float" %}
-                                        <option selected="true">Float</option>
-                                        {% else %}
-                                        <option >Float</option>
-                                        {% endif %}
-
-                                        {% if value.format == "String" %}
-                                        <option selected="true">String</option>
-                                        {% else %}
-                                        <option >String</option>
-                                        {% endif %}
-
-                                        {% if value.format == "Boolean" %}
-                                        <option selected="true">Boolean</option>
-                                        {% else %}
-                                        <option >Boolean</option>
-                                        {% endif %}
-                                    </select>
-                                <input class="inline-block-child" type="text"
-                                name="field-unit" value="{{ value.unit }}"/>
-                                <hr>
-
-                                {% endfor %}
-
+                    {% for field_name, unit_and_format in sensor.sensor_format.items %}
+                    <div>
+                        <p class="inline-block-child"
+                        contenteditable="true">{{field_name}}</p>
+                        <select class="inline-block-child">
+                            {% if unit_and_format.format == "float" %}
+                            <option selected="true">Float</option>
+                            {% else %}
+                            <option >Float</option>
                             {% endif %}
 
-                            <input class="inline-block-child" type="text" name="field-name"/>
-                            <select class="inline-block-child" name="field-type">
-                                <option value="float">Float</option>
-                                <option value="string">String</option>
-                                <option value="bool">Boolean</option>
-                            </select>
-                            <input class="inline-block-child" type="text"
-                            name="field-unit"/>
+                            {% if unit_and_format.format == "string" %}
+                            <option selected="true">String</option>
+                            {% else %}
+                            <option >String</option>
+                            {% endif %}
 
-                            <hr>
-
-                        </div>
-                        <br>
-                        <input align=right class="grafana-btn grafana-btn-blue" type="button" name="addfieldbutton" id="addfieldbutton" value="Add field""right">
-                        <br> <br>
-                        <div>
-                            <input class="simulator-btn grafana-btn
-                            grafana-btn-green" type="submit" name="submit"
-                            value="Create sensor">
-                        </div>
-                        <br> <br>
-                    </form>
-
-                    {% for message in messages %}
-                    <p class="error"> {{ message }} </p>
+                            {% if unit_and_format.format == "boolean" %}
+                            <option selected="true">Boolean</option>
+                            {% else %}
+                            <option >Boolean</option>
+                            {% endif %}
+                        </select>
+                        <p class="inline-block-child"
+                        contenteditable="true">{{unit_and_format.unit}}</p>
+                    </div>
                     {% endfor %}
+                    <input class="editbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="edit_sensor" value="Edit">
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color:red;"><b> There are no sensors to display </b></p>
+                <img src="{% static 'mercury/technical_difficulties.jpg' %}">
+            {% endif%}
+        </div> <!-- end existing sensors -->
 
-                    <br>
+        <div class="panel" id="add-new-sensor">
+            <h2>Add a New Sensor</h2>
+            <br>
+
+            <form method="POST" action="" id="SensorForm"> <!-- Should there be an action? Does sensorForm imply anything?-->
+            {% csrf_token %}
+                <div>
+                    <label for="sensor-name"><b><u>Sensor Name</u></b></label>
+                    <input type="text" id="sensor-name" name="sensor-name"
+                    value="{{ sensor_name }}"/>
+                </div>
+
+                <h4 class="inline-block-child">Field Name</h4>
+                <h4 class="inline-block-child">Field Type</h4>
+                <h4 class="inline-block-child">Field Unit</h4>
+
+                <div id="field-list">
+
+                    {% if sensor_format %}
+
+                        {% for key, value in sensor_format.items %}
+
+                            <input class="inline-block-child" type="text"
+                        name="field-name" value="{{ key }}"/>
+                            <select class="inline-block-child" name="field-type">
+                                {% if value.format == "Float" %}
+                                <option selected="true">Float</option>
+                                {% else %}
+                                <option >Float</option>
+                                {% endif %}
+
+                                {% if value.format == "String" %}
+                                <option selected="true">String</option>
+                                {% else %}
+                                <option >String</option>
+                                {% endif %}
+
+                                {% if value.format == "Boolean" %}
+                                <option selected="true">Boolean</option>
+                                {% else %}
+                                <option >Boolean</option>
+                                {% endif %}
+                            </select>
+                        <input class="inline-block-child" type="text"
+                        name="field-unit" value="{{ value.unit }}"/>
+                        <hr>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                    <input class="inline-block-child" type="text" name="field-name"/>
+                    <select class="inline-block-child" name="field-type">
+                        <option value="float">Float</option>
+                        <option value="string">String</option>
+                        <option value="bool">Boolean</option>
+                    </select>
+                    <input class="inline-block-child" type="text"
+                    name="field-unit"/>
+
+                    <hr>
 
                 </div>
-            </div>
-        </div>
-    </body>
+                <br>
+                <input align=right class="grafana-btn grafana-btn-blue" type="button" name="addfieldbutton" id="addfieldbutton" value="Add field""right">
+                <br> <br>
+                <div>
+                    <input class="simulator-btn grafana-btn
+                    grafana-btn-green" type="submit" name="submit"
+                    value="Create sensor">
+                </div>
+                <br> <br>
+            </form>
+
+            {% for message in messages %}
+            <p class="error"> {{ message }} </p>
+            {% endfor %}
+        </div> <!-- end add new sensors -->
+    </div> <!-- end grafana-base -->
+</body>
 </html>

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGSensor, AGSensorType
+from ag_data.models import AGSensor
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 
@@ -41,7 +41,7 @@ class TestGrafana(TestCase):
 
     def tearDown(self):
         # Clear all of the created dashboards
-        #self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_dashboards()
         pass
 
     def _get_with_event_code(self, url, event_code):
@@ -51,7 +51,6 @@ class TestGrafana(TestCase):
         session = self.client.session
         return response, session
 
-    """
     def test_create_grafana_dashboard(self):
         dashboard = self.grafana.create_dashboard(self.title)
 
@@ -65,7 +64,6 @@ class TestGrafana(TestCase):
         ## don't trust the function output itself
 
         self.grafana.delete_all_dashboards()
-    """
 
     def not_test_delete_grafana_dashboard(self):
         dashboard = self.grafana.create_dashboard(self.title)

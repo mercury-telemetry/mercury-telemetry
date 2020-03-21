@@ -1,18 +1,23 @@
 import os
 import json
 import requests
+from mercury.models import GFConfig
+
+TOKEN = "eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9"
+HOST = "https://daisycrego.grafana.net"
 
 class Grafana:
-    def __init__(
-        self,
-        token="eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9",
-        hostname="https://dbc291.grafana.net",
-    ):
+    def __init__(self):
+        gf_config = GFConfig.objects.filter(gf_current=True).first()
+        if gf_config:
+            self.api_token = gf_config.gf_token
+            self.hostname = gf_config.gf_host
+        else:
+            self.api_token = TOKEN
+            self.hostname = HOST
+
         # self.uid = "XwC1wLXZz"  # needs to come from dashboard
         self.uid = "9UF7VluWz"
-
-        self.api_token = token
-        self.hostname = hostname
 
         self.temp_file = "dashboard_output.json"
         self.auth_url = "api/auth/keys"
@@ -37,8 +42,6 @@ class Grafana:
 
         self.datasource = "Heroku PostgreSQL (sextants-telemetry)"  # needs to come
         # from dashboard after configuring postgres
-
-
 
         # Default panel sizes
         self.base_panel_width = 15
