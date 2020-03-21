@@ -411,7 +411,7 @@ class Grafana:
         # Retrieve current dashboard structure
         dashboard_info = self.get_dashboard_with_uid(uid)
 
-        if dashboard_info is not None:
+        if dashboard_info is None:
             raise ValueError("Dashboard uid not found.")
 
         # Retrieve current panels
