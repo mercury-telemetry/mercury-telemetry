@@ -20,15 +20,17 @@
         <nav>
             <ul>
                 <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
-                <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> Modify Sensors </button></li>
+                <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> View Sensors </button></li>
+                <li><button onclick="displaySensorTypes()" type= "button" id="view-sensor-types-btn" class="grafana-btn"> View Sensor Types </button></li>
                 <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
                 <li><button onclick="displayAddNewSensorType()" type= "button" id="add-sensor-type-btn" class="grafana-btn"> Add New Sensor Type </button></li>
-                <li><button onclick="displaySensorTypes()" type= "button" id="view-sensor-types-btn" class="grafana-btn"> Modify Sensor Types </button></li>
+                <li><button onclick="displayEditSensors()" type= "button" id="edit-sensors-btn" class="grafana-btn"> Edit Existing Sensors </button></li>
+                <li><button onclick="displayEditSensorTypes()" type= "button" id="edit-sensor-types-btn" class="grafana-btn"> Edit Existing Sensor Types </button></li>
             </ul>
         </nav>
 
         <div id="existing-sensors">
-            <h2>Existing sensors</h2>
+            <h2>Existing Sensors</h2>
             <br>
             {% if sensors %}
                 {% for sensor in sensors %}
@@ -65,7 +67,6 @@
             {% endif%}
         </div> <!-- end existing sensors -->
 
-
         <div id="add-new-sensor">
             <h2>Add a New Sensor</h2>
             <br>
@@ -98,7 +99,6 @@
 
         <div id = "add-new-type">
             <h2>Add a New Sensor Type</h2>
-            <br>
             <form method="POST">
                 {% csrf_token %}
                 <div id = "type-container"> <!-- single div for configuring entire sensor type -->
@@ -191,6 +191,109 @@
             {% endif%}
 
         </div> <!-- end view existing types -->
+
+        <div id="edit-sensors">
+            <h2>Edit Existing Sensors</h2>
+            <br>
+            {% if sensors %}
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-bordered table-striped mb-0">
+                        <thead>
+                        <tr bgcolor="#e0efdf">
+                            <th>SENSOR ID</th>
+                            <th>SENSOR NAME</th>
+                            <th>SENSOR TYPE</th>
+                            <th>UPDATE</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                {% for sensor in sensors %}
+                    <form method="POST" action="update_sensor/{{ sensor.id }}">
+                        {% csrf_token %}
+                        <tr>
+                            <th>{{ sensor.id }}</th>
+                            <td><input type="text" name="edit-sensor-name" id="edit-sensor-name"
+                             value={{ sensor.name }}></td>
+                            <td><select id="edit-select-sensor-type" name="edit-select-sensor-type"/> <!-- add default value later-->
+                                {% for sensor_type in sensor_types %}
+                                    {% if sensor_type == sensor.type_id %}
+                                        <option selected="selected">{{ sensor_type.name }}</option>
+                                    {% else %}
+                                        <option>{{ sensor_type.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            <td>
+                                <input type="submit" value="Update">
+                            </td>
+                        </tr>
+                    </form>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <h3 style="color:red;"><b> There are no sensors to edit </b></h3>
+                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
+            {% endif%}
+        </div> <!-- end view edit sensors-->
+
+        <div id="edit-sensor-types">
+            <h2>Edit Existing Sensor Types</h2>
+            <br> <hr> <br>
+            {% for sensor_type in sensor_types %}
+            <form method="POST" action="update_type/{{ sensor_type.id }}">
+                {% csrf_token %}
+                <div id = "type-container"> <!-- single div for configuring entire sensor type -->
+                    <div class="inline-box">
+                        <label for="type-name"> <b>Type Name:</b> </label>
+                        <input type="text" id="edit-type-name" name="edit-type-name" value={{ sensor_type.name }} required/>
+                    </div> <br>
+
+                    <table id="edit-type-table">
+                        <thead>
+                            <tr>
+                                <th><b> Field Name </b></th>
+                                <th><b> Field Data Type </b></th>
+                                <th><b> Unit </b> </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for field_name, unit_and_format in sensor_type.format.items %}
+                            <tr>
+                                <td> <input type="text" id="edit-field-name" name="edit-field-names" value={{ field_name }} required/> </td>
+
+                                <td>
+                                    <select id="edit-data-type" name="edit-data-types"/>
+                                    {% if unit_and_format.data_type == "Numeric" %}
+                                            <option selected="selected"> Numeric </option>
+                                            <option> Character </option>
+                                            <option> Boolean </option>
+                                    {% else %}
+                                        {% if unit_and_format.data_type == "Character" %}
+                                            <option> Numeric </option>
+                                            <option selected="selected"> Character </option>
+                                            <option> Boolean </option>
+                                        {% else %}
+                                            <option> Numeric </option>
+                                            <option> Character </option>
+                                            <option selected="selected"> Boolean </option>
+                                        {% endif %}
+                                    {% endif %}
+                                    </select>
+                                </td>
+
+                                <td> <input type="text" id="edit-unit" name="edit-units" value={{ unit_and_format.unit }} /> </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table> <br>
+                    <input class="grafana-btn grafana-btn-green" type="submit" value="Update">
+                    <br> <hr> <br>
+                {% endfor %}
+                </div> <br>
+            </form>
+        </div> <!-- end view edit sensor types-->
         
     </div> <!-- end grafana-base -->
 </body>

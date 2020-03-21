@@ -70,6 +70,81 @@ def delete_sensor_type(request, type_id):
     type_to_delete.delete()
     return redirect("/sensor")
 
+def update_sensor(request, sensor_id):
+    """This updates a sensor from the database based on user input"""
+
+    sensor_to_update = AGSensor.objects.get(id=sensor_id)
+
+    sensor_name = request.POST.get("edit-sensor-name")
+    # reformat then validate name to avoid duplicated names or bad inputs like " "
+    sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
+    valid, request = validate_add_sensor_inputs(sensor_name, request)
+
+    sensor_types = AGSensorType.objects.all() #for when we return context later
+    if valid:
+        sensor_to_update.name = sensor_name
+        sensor_type = request.POST.get("edit-select-sensor-type")
+        sensor_to_update.type_id = AGSensorType.objects.get(name=sensor_type)
+        sensor_to_update.save()
+        sensors = AGSensor.objects.all()
+        context = {
+            "sensors": sensors,
+            "sensor_types": sensor_types,
+            }
+    else:
+        sensors = AGSensor.objects.all()
+        context = {
+            "sensors": sensors,
+            "sensor_name": sensor_name,
+            "sensor_type": sensor_type,
+            "sensor_types": sensor_types,
+        }
+    return render(request, "sensor.html", context)
+
+
+def update_sensor_type(request, type_id):
+    type_to_update = AGSensorType.objects.get(id=type_id)
+    print("\n\n" + str(type_to_update.name) + "NAME BEFORE \n")
+    type_name = request.POST.get("edit-type-name")
+    field_names = request.POST.getlist("edit-field-names")
+    field_types = request.POST.getlist("edit-data-types")
+    field_units = request.POST.getlist("edit-units")
+
+    # reformat then validate inputs to avoid duplicated names or bad inputs like " "
+    type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
+    field_names = [string.strip().lower() for string in field_names]
+    valid, request = validate_add_sensor_type_inputs(type_name, field_names, request)
+
+    # create sensor format which is dictionary of dictionaries
+    type_format = {}
+    fields = zip(field_names, field_types, field_units)
+    for field in fields:
+        type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
+
+    sensors = AGSensor.objects.all() #for when we return context later
+    if valid:
+        type_to_update.name=type_name
+        print("\n\n" + str(type_to_update.name) + "NAME AFTER \n")
+        type_to_update.processing_formula=0
+        type_to_update.format=type_format
+        type_to_update.save()
+        sensor_types = AGSensorType.objects.all()
+        context = {
+            "sensor_types": sensor_types,
+            "sensors": sensors,
+            }
+    else:
+        sensor_types = AGSensorType.objects.all()
+        context = {
+            "sensor_types": sensor_types,
+            "type_name": type_name,
+            "type_format": type_format,
+            "sensors": sensors,
+        }
+
+    return render(request, "sensor.html", context)
+
+
 class CreateSensorView(TemplateView):
     """This is the view for creating a new event."""
 
@@ -101,9 +176,6 @@ class CreateSensorView(TemplateView):
             for field in fields:
                 type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-            # Left over from when this was for old models, not sure if it's valuable later:
-            # sensor = AGSensorType(name='Homer_Simpson', processing_formula=0, format=type_format)
-            # sensor.save()
 
             sensors = AGSensor.objects.all() #for when we return context later
             if valid:
