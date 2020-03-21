@@ -34,7 +34,9 @@ class RadioReceiverView(APIView):
 
         enable = params.get("enable")
         if enable is None:
-            return Response("Missing enable value in url", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                "Missing enable value in url", status=status.HTTP_400_BAD_REQUEST
+            )
         enable = int(enable)
         ser = serial.Serial()
         ports = glob.glob("/dev/tty.*")
@@ -88,11 +90,16 @@ class RadioReceiverView(APIView):
         json_data = request.data
 
         if len(json_data) != 3:
-            return Response("Missing required params", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                "Missing required params", status=status.HTTP_400_BAD_REQUEST
+            )
 
         res = {"measurement_event": event_uuid}
-        dic = {"measurement_timestamp": "date",
-               "measurement_sensor": "sensor_id", "measurement_value": "values"}
+        dic = {
+            "measurement_timestamp": "date",
+            "measurement_sensor": "sensor_id",
+            "measurement_value": "values",
+        }
 
         for d in dic:
             res[d] = json_data[dic[d]]
@@ -108,5 +115,4 @@ class RadioReceiverView(APIView):
         Run a shell script to receive radio sensor data from the vehicle
         This script will call local server to store all data received
         """
-        s_para = para
         # subprocess.call()

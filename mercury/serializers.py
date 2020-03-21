@@ -13,10 +13,19 @@ class AGMeasurementSerializer(serializers.ModelSerializer):
     """
     Serializer for the Model AGMeasurement.
     """
-    measurement_sensor = serializers.PrimaryKeyRelatedField(read_only=False, queryset=AGSensor.objects.all())
-    measurement_event = serializers.PrimaryKeyRelatedField(read_only=False, queryset=AGEvent.objects.all())
+
+    measurement_sensor = serializers.PrimaryKeyRelatedField(
+        read_only=False, queryset=AGSensor.objects.all()
+    )
+    measurement_event = serializers.PrimaryKeyRelatedField(
+        read_only=False, queryset=AGEvent.objects.all()
+    )
 
     class Meta:
         model = AGMeasurement
-        fields = ("measurement_timestamp", "measurement_sensor",
-                  "measurement_event", "measurement_value")
+        fields = (
+            "measurement_timestamp",
+            "measurement_sensor",
+            "measurement_event",
+            "measurement_value",
+        )
