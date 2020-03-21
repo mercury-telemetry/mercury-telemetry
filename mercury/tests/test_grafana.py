@@ -7,6 +7,10 @@ from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
 
+# default host and token, use this if user did not provide anything
+HOST = "https://dbc291.grafana.net"
+TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
+
 
 # This test needs to have access to a test deployment of grafana, otherwise
 # we will need to wipe out the sensors each time it runs it runs
@@ -14,21 +18,15 @@ class TestGrafana(TestCase):
     TESTCODE = "testcode"
 
     sim = simulator.Simulator()
-    grafana = Grafana()
+    grafana = Grafana(HOST, TOKEN)
 
     title = "Bar"
 
     test_sensor_name = "Wind Sensor"
     test_sensor_type = "Dual wind"
     test_sensor_format = {
-        "left_gust": {
-            "unit": "km/h",
-            "format": "float"
-        },
-        "right_gust": {
-            "unit": "km/h",
-            "format": "float"
-        },
+        "left_gust": {"unit": "km/h", "format": "float"},
+        "right_gust": {"unit": "km/h", "format": "float"},
     }
 
     def setUp(self):
@@ -59,15 +57,18 @@ class TestGrafana(TestCase):
 
         # deleted should be true if delete_datasource_by_name returns true
         deleted = self.grafana.delete_datasource_by_name(
-            self.grafana.database_grafana_name)
+            self.grafana.database_grafana_name
+        )
         self.assertTrue(deleted)
 
         # figure out whether the datasource was actually deleted
-        endpoint = os.path.join(self.grafana.datasource_name_endpoint,
-                                self.grafana.database_grafana_name)
+        endpoint = os.path.join(
+            self.grafana.datasource_name_endpoint, self.grafana.database_grafana_name
+        )
         headers = {"Content-Type": "application/json"}
-        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
-                                                                     self.grafana.api_token))
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
+        )
 
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Data source not found")
@@ -77,11 +78,13 @@ class TestGrafana(TestCase):
         self.grafana.create_postgres_datasource()
 
         # confirm that the datasource exists
-        endpoint = os.path.join(self.grafana.datasource_name_endpoint,
-                                self.grafana.database_grafana_name)
+        endpoint = os.path.join(
+            self.grafana.datasource_name_endpoint, self.grafana.database_grafana_name
+        )
         headers = {"Content-Type": "application/json"}
-        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
-                                                                     self.grafana.api_token))
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
+        )
 
         self.assertEquals(response.json()["name"], self.grafana.database_grafana_name)
 
@@ -96,10 +99,11 @@ class TestGrafana(TestCase):
         uid = dashboard["uid"]
 
         # check that the new dashboard can be queried from the API
-        endpoint = os.path.join(self.grafana.dashboard_uid_endpoint,uid)
+        endpoint = os.path.join(self.grafana.dashboard_uid_endpoint, uid)
         headers = {"Content-Type": "application/json"}
-        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
-                                                                     self.grafana.api_token))
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
+        )
 
         self.assertEquals(response.json()["dashboard"]["uid"], uid)
         self.assertEquals(response.json()["dashboard"]["title"], self.title)
@@ -114,11 +118,11 @@ class TestGrafana(TestCase):
         self.assertTrue(deleted_dashboard)
 
         # figure out whether the dashboard was actually deleted
-        endpoint = os.path.join(self.grafana.dashboard_uid_endpoint,
-                                dashboard["uid"])
+        endpoint = os.path.join(self.grafana.dashboard_uid_endpoint, dashboard["uid"])
         headers = {"Content-Type": "application/json"}
-        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
-                                                                     self.grafana.api_token))
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
+        )
 
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Dashboard not found")
@@ -141,12 +145,11 @@ class TestGrafana(TestCase):
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
             processing_formula=0,
-            format=self.test_sensor_format
+            format=self.test_sensor_format,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
-            name=self.test_sensor_name,
-            type_id=sensor_type
+            name=self.test_sensor_name, type_id=sensor_type
         )
         sensor.save()
 
@@ -157,8 +160,9 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
         self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 1)
-        self.assertTrue(dashboard_info["dashboard"]["panels"][0]["title"] ==
-                        sensor.name)
+        self.assertTrue(
+            dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
+        )
 
         # check that created panel can be queried
 
@@ -183,12 +187,11 @@ class TestGrafana(TestCase):
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
             processing_formula=0,
-            format=self.test_sensor_format
+            format=self.test_sensor_format,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
-            name=self.test_sensor_name,
-            type_id=sensor_type
+            name=self.test_sensor_name, type_id=sensor_type
         )
         sensor.save()
 
@@ -204,5 +207,9 @@ class TestGrafana(TestCase):
         self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 4)
         # simple check that 4 panels with the expected titles were made
         for i in range(4):
-            self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] ==
-                            sensor.name)
+            self.assertTrue(
+                dashboard_info["dashboard"]["panels"][i]["title"] == sensor.name
+            )
+            self.assertTrue(
+                dashboard_info["dashboard"]["panels"][i]["title"] == sensor.name
+            )

@@ -12,12 +12,13 @@ DB_NAME = "d76k4515q6qv"
 DB_USERNAME = "qvqhuplbiufdyq"
 DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
+
 class Grafana:
-    def __init__(self):
+    def __init__(self, host=None, token=None):
         gf_config = GFConfig.objects.filter(gf_current=True).first()
         if gf_config:
-            self.api_token = gf_config.gf_token
             self.hostname = gf_config.gf_host
+            self.api_token = gf_config.gf_token
             self.uid = gf_config.gf_host
             self.database_hostname = gf_config.gf_host
             self.database_name = gf_config.gf_db_name
@@ -25,14 +26,18 @@ class Grafana:
             self.database_password = gf_config.gf_db_pw
             self.database_grafana_name = gf_config.gf_db_grafana_name
         else:
-            self.api_token = TOKEN
-            self.hostname = HOST
+            # for test purposes, a test case should init this class with credentials
+            self.api_token = token
+            self.hostname = host
             self.uid = DASHBOARD_UID
             self.database_hostname = DB_HOSTNAME
             self.database_name = DB_NAME
             self.database_username = DB_USERNAME
             self.database_password = DB_PASSWORD
             self.database_grafana_name = DB_GRAFANA_NAME
+
+        # self.uid = "XwC1wLXZz"  # needs to come from dashboard
+        self.uid = "9UF7VluWz"
 
         self.temp_file = "dashboard_output.json"
         self.auth_url = "api/auth/keys"
@@ -44,11 +49,13 @@ class Grafana:
         self.datasource_name_url = "api/datasources/name"
 
         self.search_endpoint = os.path.join(self.hostname, self.search_url)
-        self.datasource_name_endpoint = os.path.join(self.hostname,
-                                                      self.datasource_name_url)
+        self.datasource_name_endpoint = os.path.join(
+            self.hostname, self.datasource_name_url
+        )
 
         self.dashboard_uid_endpoint = os.path.join(
-            self.hostname, self.dashboard_uid_url)
+            self.hostname, self.dashboard_uid_url
+        )
         self.auth_endpoint = os.path.join(self.hostname, self.auth_url)
         self.dashboard_post_endpoint = os.path.join(
             self.hostname, self.dashboard_post_url
@@ -66,10 +73,10 @@ class Grafana:
 
     def delete_all_dashboards(self):
         tag_search_endpoint = os.path.join(self.search_endpoint)
-        headers = {"Content-Type":"application/json"}
-        response = requests.get(url=tag_search_endpoint,
-                                auth=("api_key", self.api_token),
-                                headers=headers)
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=tag_search_endpoint, auth=("api_key", self.api_token), headers=headers
+        )
 
         dashboards = response.json()
         if len(dashboards) > 0:
@@ -79,15 +86,16 @@ class Grafana:
     # Locates dashboard and deletes if exists. Returns true if successful else false.
     def delete_dashboard(self, uid):
         dashboard_endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
-        response = requests.delete(url=dashboard_endpoint,
-                                   auth=("api_key", self.api_token))
+        response = requests.delete(
+            url=dashboard_endpoint, auth=("api_key", self.api_token)
+        )
 
         if "deleted" not in response.json()["message"]:
             print(f"Error deleting dashboard with uid: {uid}")
             return False
         return True
 
-    ## TODO: Handle error case where title is already taken
+    # TODO: Handle error case where title is already taken
     # Create a new Grafana dashboard. returns an object with details on new
     # dashboard or error message(s)
     # Example success output
@@ -109,15 +117,17 @@ class Grafana:
                 "tags": ["templated"],
                 "timezone": "browser",
                 "schemaVersion": None,
-                "version": 0
+                "version": 0,
             },
             "folderId": 0,
-            "overwrite": False
+            "overwrite": False,
         }
 
-        response = requests.post(url=self.dashboard_post_endpoint,
-                                 auth=("api_key",self.api_token),
-                                 json=dashboard_base)
+        response = requests.post(
+            url=self.dashboard_post_endpoint,
+            auth=("api_key", self.api_token),
+            json=dashboard_base,
+        )
 
         post_output = response.json()
 
@@ -126,16 +136,17 @@ class Grafana:
             return post_output
         except KeyError:
             if "Access denied" in post_output["message"]:
-                raise ValueError('Access denied - check hostname and API token')
+                raise ValueError("Access denied - check hostname and API token")
             else:
-                raise ValueError('Create_dashboard() failed: ' + post_output['message'])
+                raise ValueError("Create_dashboard() failed: " + post_output["message"])
 
     # Returns true if datasource was deleted, false otherwise
     def delete_datasource_by_name(self, name):
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.hostname, "api/datasources/name", name)
-        response = requests.delete(url=endpoint, headers=headers,
-                                 auth=("api_key", self.api_token))
+        response = requests.delete(
+            url=endpoint, headers=headers, auth=("api_key", self.api_token)
+        )
         json = response.json()
         try:
             if json["message"] == "Data source deleted":
@@ -155,30 +166,31 @@ class Grafana:
             "url": self.database_hostname,
             "password": self.database_password,
             "user": self.database_username,
-            "database":self.database_name,
+            "database": self.database_name,
             "basicAuth": False,
-            "jsonData": {
-                "postgresVersion": 903,
-                "sslmode": "require",
-            },
+            "jsonData": {"postgresVersion": 903, "sslmode": "require"},
         }
 
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url=os.path.join(self.hostname, "api/datasources"),
-                      headers=headers,
-                      json=db, auth=("api_key",self.api_token))
+        response = requests.post(
+            url=os.path.join(self.hostname, "api/datasources"),
+            headers=headers,
+            json=db,
+            auth=("api_key", self.api_token),
+        )
 
         datasource = response.json()
-        try :
+        try:
             if datasource["message"] == "Datasource added":
                 return datasource
             elif "Access denied" in datasource["message"]:
-                raise ValueError('Access denied - check hostname and API token')
+                raise ValueError("Access denied - check hostname and API token")
             else:
-                raise ValueError('Create_postgres_datasource() failed: ' + datasource[
-                            'message'])
+                raise ValueError(
+                    "Create_postgres_datasource() failed: " + datasource["message"]
+                )
         except KeyError:
-            raise ValueError('Create_postgres_datasource() failed: ' + datasource)
+            raise ValueError("Create_postgres_datasource() failed: " + datasource)
 
     def get_dashboard_with_uid(self, uid):
         """
@@ -187,9 +199,11 @@ class Grafana:
         :param uid: uid of the target dashboard
         :return: dict of the current dashboard
         """
-        headers = {"Content-Type":"application/json"}
+        headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
-        response = requests.get(url=endpoint, headers=headers, auth=("api_key", self.api_token))
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.api_token)
+        )
         dashboard_dict = response.json()
 
         return dashboard_dict
@@ -313,9 +327,9 @@ class Grafana:
         uid = dashboard_info["dashboard"]["uid"]
         title = dashboard_info["dashboard"]["title"]
         schema_version = dashboard_info["dashboard"]["schemaVersion"]
-        #style = dashboard_info["dashboard"]["style"]
+        # style = dashboard_info["dashboard"]["style"]
         tags = dashboard_info["dashboard"]["tags"]
-        #templating = dashboard_info["dashboard"]["templating"]
+        # templating = dashboard_info["dashboard"]["templating"]
         version = dashboard_info["meta"]["version"]
         folder_id = dashboard_info["meta"]["folderId"]
 
@@ -448,5 +462,5 @@ class Grafana:
             self.dashboard_post_endpoint,
             data=json.dumps(updated_dashboard),
             headers=headers,
-            auth=("api_key", self.api_token)
+            auth=("api_key", self.api_token),
         )

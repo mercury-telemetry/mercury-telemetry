@@ -19,7 +19,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gfconfig',
             name='gf_db_host',
-            field=models.CharField(default='ec2-35-168-54-239.compute-1.amazonaws.com:5432', max_length=128),
+            field=models.CharField(default='ec2-35-168-54-239.compute-1.amazonaws.com'
+                                           ':5432', max_length=128),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -31,7 +32,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gfconfig',
             name='gf_db_pw',
-            field=models.CharField(default='f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5', max_length=256),
+            field=models.CharField(default='f45a1cfe8458ff9236ead8a7943eba31dcef761471e'
+                                           '0d6d62b043b4e3d2e10e5', max_length=256),
             preserve_default=False,
         ),
         migrations.AddField(
