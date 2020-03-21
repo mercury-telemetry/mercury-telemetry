@@ -20,41 +20,48 @@
         <nav>
             <ul>
                 <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
-                <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> Modify Current Sensors </button></li>
+                <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> Modify Sensors </button></li>
                 <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
                 <li><button onclick="displayAddNewSensorType()" type= "button" id="add-sensor-type-btn" class="grafana-btn"> Add New Sensor Type </button></li>
-                <li><button onclick="displaySensorTypes()" type= "button" id="view-sensor-types-btn" class="grafana-btn"> View Sensor Types </button></li>
+                <li><button onclick="displaySensorTypes()" type= "button" id="view-sensor-types-btn" class="grafana-btn"> Modify Sensor Types </button></li>
             </ul>
         </nav>
 
         <div id="existing-sensors">
             <h2>Existing sensors</h2>
-
+            <br>
             {% if sensors %}
                 {% for sensor in sensors %}
                 <div class="panel">
                     <h2 contenteditable="false" id="{{ sensor.name }}">
                     {{ sensor.name }}</h2>
 
-                    <h4 class="inline-block-child"><u>Sensor Name</u></h4>
-                    <h4 class="inline-block-child"><u>Sensor ID</u></h4>
-                    <h4 class="inline-block-child"><u>Sensor Type</u></h4>
+                    <h5 contenteditable="false" id="{{ sensor_type.id }}">
+                        ID: {{ sensor.id }}
+                    </h5>
+                    <br>
 
+                    <h4 class="inline-block-child"><u>Field Name</u></h4>
+                    <h4 class="inline-block-child"><u>Field Type</u></h4>
+                    <h4 class="inline-block-child"><u>Field Unit</u></h4>
+
+                    {% for field_name, unit_and_format in sensor.type_id.format.items %}
                     <div>
                         <p class="inline-block-child"
-                        contenteditable="false">{{ sensor.name }}</p>
+                        contenteditable="false">{{field_name}}</p>
                         <p class="inline-block-child"
-                        contenteditable="false">{{ sensor.id }}</p>
+                        contenteditable="false">{{unit_and_format.data_type}}</p>
                         <p class="inline-block-child"
-                        contenteditable="false">{{ sensor.type_id }}</p>
+                        contenteditable="false">{{unit_and_format.unit}}</p>
                     </div>
-                    
-                    <input class="editbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="edit_sensor" value="Edit">
+                    {% endfor %}
+                    <a href="delete_sensor/{{ sensor.id }}">Delete</a>
+                    <a href="delete_sensor/{{ sensor.id }}">Edit</a>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="color:red;"><b> There are no sensors to display </b></p>
-                <img src="{% static 'mercury/technical_difficulties.jpg' %}">
+                <h3 style="color:red;"><b> There are no sensors to display </b></h3>
+                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
             {% endif%}
         </div> <!-- end existing sensors -->
 
@@ -62,20 +69,18 @@
         <div id="add-new-sensor">
             <h2>Add a New Sensor</h2>
             <br>
-            <form method="POST">
-                {% csrf_token %}
-                <div id = "sensor-container"> <!-- single div for configuring entire sensor -->
-                    <div class="inline-box">
-                        <label for="sensor-name"> <b>Sensor Name:</b> </label>
-                        <input type="text" id="sensor-name" name="sensor-name" required/>
-
-                        <label for="select-sensor-type"> <b>Sensor Type:</b> </label>
-                        <select id="select-sensor-type" name="select-sensor-type"/>
-                            {% if sensor_types %}
-                            {% for sensor_type in sensor_types %}
-                                <option>{{ sensor_type.name }}</option>
-                            {% endfor %}
-                            {% endif%}
+            {% if sensor_types %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <div id = "sensor-container"> <!-- single div for configuring entire sensor -->
+                        <div class="inline-box">
+                            <label for="sensor-name"> <b>Sensor Name:</b> </label>
+                            <input type="text" id="sensor-name" name="sensor-name" required/>
+                                <label for="select-sensor-type"> <b>Sensor Type:</b> </label>
+                                <select id="select-sensor-type" name="select-sensor-type"/>
+                                {% for sensor_type in sensor_types %}
+                                    <option>{{ sensor_type.name }}</option>
+                                {% endfor %}
                         </select>
 
                     </div> <br>
@@ -84,6 +89,10 @@
 
                 <button type="submit" name="submit_new_sensor" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
             </form>
+            {% else %}
+                <h3 style="color:red"><b>Add a sensor type in "Add New Sensor Type" to proceed</b></h3>
+                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
+            {% endif%}
             <br>
         </div>
 
@@ -146,7 +155,7 @@
 
         <div id="view-existing-types">
             <h2>Existing Types</h2>
-
+            <br>
             {% if sensor_types %}
                 {% for sensor_type in sensor_types %}
                 <div class="panel">
@@ -156,6 +165,7 @@
                     <h5 contenteditable="false" id="{{ sensor_type.id }}">
                         ID: {{ sensor_type.id }}
                     </h5>
+                    <br>
 
                     <h4 class="inline-block-child"><u>Field Name</u></h4>
                     <h4 class="inline-block-child"><u>Field Type</u></h4>
@@ -171,12 +181,13 @@
                         contenteditable="false">{{unit_and_format.unit}}</p>
                     </div>
                     {% endfor %}
-                    <input class="editbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="edit_type" value="Edit">
+                    <a href="delete_type/{{ sensor_type.id }}">Delete</a>
+                    <a href="delete_type/{{ sensor_type.id }}">Edit</a>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="color:red;"><b> There are no types to display </b></p>
-                <img src="{% static 'mercury/technical_difficulties.jpg' %}">
+                <h3 style="color:red;"><b> There are no types to display </b></h3>
+                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
             {% endif%}
 
         </div> <!-- end view existing types -->

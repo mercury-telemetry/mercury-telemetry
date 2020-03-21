@@ -4405,4 +4405,11 @@ a {
   .rounded {
     border-radius: 0.35rem !important;
   }
+  
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
 

@@ -1,5 +1,5 @@
 import logging
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
 
@@ -12,6 +12,8 @@ log.setLevel(logging.ERROR)
 
 
 def validate_add_sensor_type_inputs(type_name, field_name_list, request):
+    """This validates the form before a user submits a new sensor type to prevent bad inputs"""
+
     form_valid = True
 
     # no type name
@@ -38,6 +40,8 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
     return form_valid, request
 
 def validate_add_sensor_inputs(sensor_name, request):
+    """This validates the form before a user submits a new sensor to prevent bad inputs"""
+
     form_valid = True
 
     # no sensor name
@@ -51,6 +55,20 @@ def validate_add_sensor_inputs(sensor_name, request):
         form_valid = False
 
     return form_valid, request
+
+def delete_sensor(request, sensor_id):
+    """This deletes a sensor from the database based on user button click"""
+
+    sensor_to_delete = AGSensor.objects.get(id=sensor_id)
+    sensor_to_delete.delete()
+    return redirect("/sensor")
+
+def delete_sensor_type(request, type_id):
+    """This deletes a sensor type from the database based on user button click"""
+
+    type_to_delete = AGSensorType.objects.get(id=type_id)
+    type_to_delete.delete()
+    return redirect("/sensor")
 
 class CreateSensorView(TemplateView):
     """This is the view for creating a new event."""
