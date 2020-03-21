@@ -337,7 +337,7 @@ class Grafana:
             version = dashboard_info["meta"]["version"]
             folder_id = dashboard_info["meta"]["folderId"]
         except KeyError:
-            raise ValueError("dashboard_info object is invalid")
+            raise ValueError(f"dashboard_info object is invalid: {dashboard_info}")
 
         # Prepare updated_dashboard object
         updated_dashboard = {
