@@ -207,8 +207,11 @@ class Grafana:
         response = requests.get(
             url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
-        dashboard_dict = response.json()
 
+        if "Dashboard not found" in response.json().message:
+            return None
+
+        dashboard_dict = response.json()
         return dashboard_dict
 
     def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
@@ -369,7 +372,7 @@ class Grafana:
         """
 
         # Retrieve current dashboard dict
-        dashboard_info = self.get_dashboard_with_uid(uid)
+        self.get_dashboard_with_uid(uid)
 
         # Create updated dashboard dict with empty list of panels
         panels = []
@@ -406,10 +409,10 @@ class Grafana:
             field_array.append(field)
 
         # Retrieve current dashboard structure
-        try:
-            dashboard_info = self.get_dashboard_with_uid(uid)
-        except ValueError as error:
-            raise ValueError(repr(error))
+        dashboard_info = self.get_dashboard_with_uid(uid)
+
+        if dashboard_info is not None:
+            raise ValueError("Dashboard uid not found.")
 
         # Retrieve current panels
         try:
