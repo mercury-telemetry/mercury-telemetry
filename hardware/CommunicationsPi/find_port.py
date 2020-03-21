@@ -41,7 +41,6 @@ def extra_info(port):
 
 def get_port():
     for port in serial.tools.list_ports.comports():
-        print(f"port is {port}")
         if is_usb_serial(port, {}):
             print(port)
             print(port["device"])
