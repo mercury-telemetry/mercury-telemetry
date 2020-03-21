@@ -38,6 +38,7 @@ class TestGrafana(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
         # Clear all of existing dashboards
         self.grafana.delete_all_dashboards()
+        self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
 
     def tearDown(self):
         # Clear all of the created dashboards

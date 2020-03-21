@@ -91,7 +91,6 @@ class Grafana:
         )
 
         if "deleted" not in response.json()["message"]:
-            print(f"Error deleting dashboard with uid: {uid}")
             return False
         return True
 
@@ -108,6 +107,7 @@ class Grafana:
     #       'url': '/d/GjrBC6uZz/sensors',
     #       'version': 1
     # }
+    # Returns true if the dashboard was created, false otherwise
     def create_dashboard(self, title="Sensors"):
         dashboard_base = {
             "dashboard": {
@@ -137,6 +137,9 @@ class Grafana:
         except KeyError:
             if "Access denied" in post_output["message"]:
                 raise ValueError("Access denied - check hostname and API token")
+            elif "A dashboard with the same name in the folder already exists" in \
+                    post_output["message"]:
+                raise ValueError("Dashboard already exists")
             else:
                 raise ValueError("Create_dashboard() failed: " + post_output["message"])
 
@@ -322,16 +325,19 @@ class Grafana:
         :return: dict which can be posted to Create/Update Dashboard API endpoint
         """
 
-        # Extract attributes from existing dashboard
-        id = dashboard_info["dashboard"]["id"]
-        uid = dashboard_info["dashboard"]["uid"]
-        title = dashboard_info["dashboard"]["title"]
-        schema_version = dashboard_info["dashboard"]["schemaVersion"]
-        # style = dashboard_info["dashboard"]["style"]
-        tags = dashboard_info["dashboard"]["tags"]
-        # templating = dashboard_info["dashboard"]["templating"]
-        version = dashboard_info["meta"]["version"]
-        folder_id = dashboard_info["meta"]["folderId"]
+        try:
+            # Extract attributes from existing dashboard
+            id = dashboard_info["dashboard"]["id"]
+            uid = dashboard_info["dashboard"]["uid"]
+            title = dashboard_info["dashboard"]["title"]
+            schema_version = dashboard_info["dashboard"]["schemaVersion"]
+            # style = dashboard_info["dashboard"]["style"]
+            tags = dashboard_info["dashboard"]["tags"]
+            # templating = dashboard_info["dashboard"]["templating"]
+            version = dashboard_info["meta"]["version"]
+            folder_id = dashboard_info["meta"]["folderId"]
+        except KeyError:
+            raise ValueError("dashboard_info object is invalid")
 
         # Prepare updated_dashboard object
         updated_dashboard = {
