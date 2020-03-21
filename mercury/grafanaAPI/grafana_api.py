@@ -208,7 +208,7 @@ class Grafana:
             url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
 
-        if "Dashboard not found" in response.json().message:
+        if "Dashboard not found" in response.json()["message"]:
             return None
 
         dashboard_dict = response.json()
