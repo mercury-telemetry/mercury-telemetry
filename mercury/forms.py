@@ -3,6 +3,7 @@ engine to accept input for various features of the site"""
 from django import forms
 from mercury.models import (
     AGEvent,
+    GFConfig,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
@@ -31,6 +32,17 @@ class EventForm(forms.ModelForm):
             "event_location": forms.TextInput(
                 attrs={"id": "post-event-location", "required": True}
             ),
+        }
+
+
+class GFConfigForm(forms.ModelForm):
+    class Meta:
+        model = GFConfig
+        fields = ["gf_name", "gf_host", "gf_token"]
+        labels = {
+            "gf_name": "Host Label",
+            "gf_host": "Host Address",
+            "gf_token": 'API Token (Without "Bearer" prefix)',
         }
 
 
