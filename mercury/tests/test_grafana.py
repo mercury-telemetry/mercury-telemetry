@@ -1,9 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGSensor
+from ag_data.models import AGSensor, AGSensorType
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
+import requests
+import os
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
@@ -37,12 +39,12 @@ class TestGrafana(TestCase):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
         # Clear all of existing dashboards
-        #self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_dashboards()
 
     def tearDown(self):
         # Clear all of the created dashboards
         self.grafana.delete_all_dashboards()
-        pass
+        self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
 
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
@@ -51,37 +53,80 @@ class TestGrafana(TestCase):
         session = self.client.session
         return response, session
 
+    def test_delete_postgres_datasource(self):
+        # create the datasource
+        self.grafana.create_postgres_datasource()
+
+        # deleted should be true if delete_datasource_by_name returns true
+        deleted = self.grafana.delete_datasource_by_name(
+            self.grafana.database_grafana_name)
+        self.assertTrue(deleted)
+
+        # figure out whether the datasource was actually deleted
+        endpoint = os.path.join(self.grafana.datasource_name_endpoint,
+                                self.grafana.database_grafana_name)
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
+                                                                     self.grafana.api_token))
+
+        self.assertTrue(response.json()["message"])
+        self.assertEquals(response.json()["message"], "Data source not found")
+
+    def test_create_postgres_datasource(self):
+        # create datasource
+        self.grafana.create_postgres_datasource()
+
+        # confirm that the datasource exists
+        endpoint = os.path.join(self.grafana.datasource_name_endpoint,
+                                self.grafana.database_grafana_name)
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
+                                                                     self.grafana.api_token))
+
+        self.assertEquals(response.json()["name"], self.grafana.database_grafana_name)
+
     def test_create_grafana_dashboard(self):
         dashboard = self.grafana.create_dashboard(self.title)
-
-        print(dashboard)
-
         self.assertTrue(dashboard)
+
+        # check that the returned dashboard object has a success status message and
+        # expected slug (name)
         self.assertEquals(dashboard["status"], "success")
         self.assertEquals(dashboard["slug"], self.title.lower())
+        uid = dashboard["uid"]
 
-        ## should check in some other way that the dashboard was created,
-        ## don't trust the function output itself
+        # check that the new dashboard can be queried from the API
+        endpoint = os.path.join(self.grafana.dashboard_uid_endpoint,uid)
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
+                                                                     self.grafana.api_token))
 
-        self.grafana.delete_all_dashboards()
+        self.assertEquals(response.json()["dashboard"]["uid"], uid)
+        self.assertEquals(response.json()["dashboard"]["title"], self.title)
 
-    def not_test_delete_grafana_dashboard(self):
+    def test_delete_grafana_dashboard(self):
         dashboard = self.grafana.create_dashboard(self.title)
 
         self.assertTrue(dashboard)
-        self.assertTrue(self.grafana.delete_dashboard(dashboard["uid"]))
 
-        ## should check in some other way that the dashboard was deleted
-        ## don't trust the function output itself
-        ## query to see if other dashboards exist
+        deleted_dashboard = self.grafana.delete_dashboard(dashboard["uid"])
 
-    def not_test_add_grafana_panel(self):
+        self.assertTrue(deleted_dashboard)
+
+        # figure out whether the dashboard was actually deleted
+        endpoint = os.path.join(self.grafana.dashboard_uid_endpoint,
+                                dashboard["uid"])
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(url=endpoint, headers=headers, auth=("api_key",
+                                                                     self.grafana.api_token))
+
+        self.assertTrue(response.json()["message"])
+        self.assertEquals(response.json()["message"], "Dashboard not found")
+
+    def test_add_grafana_panel(self):
         dashboard = self.grafana.create_dashboard(self.title)
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
-
-        self.assertTrue(dashboard)
-        self.assertEquals(dashboard["status"], "success")
 
         self.sim.createOrResetASensorTypeFromPresets(0)
         self.sim.createASensorFromPresets(0)
@@ -108,7 +153,6 @@ class TestGrafana(TestCase):
         self.grafana.add_grafana_panel(sensor, uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
-        print(dashboard_info)
 
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
@@ -116,7 +160,9 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard_info["dashboard"]["panels"][0]["title"] ==
                         sensor.name)
 
-    def test_add_grafana_panels(self):
+        # check that created panel can be queried
+
+    def test_add_multiple_grafana_panels(self):
         dashboard = self.grafana.create_dashboard(self.title)
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
@@ -152,7 +198,6 @@ class TestGrafana(TestCase):
         self.grafana.add_grafana_panel(sensor, uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
-        print(dashboard_info)
 
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
@@ -161,30 +206,3 @@ class TestGrafana(TestCase):
         for i in range(4):
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] ==
                             sensor.name)
-
-    """
-    def test_create_grafana_panels(self, uid="GjrBC6uZz"):
-    
-        dashboard = self.grafana.create_dashboard()
-
-        self.sim.createOrResetASensorTypeFromPresets(0)
-        self.sim.createASensorFromPresets(0)
-
-        
-
-        # delete all grafana panels
-        self.grafana.delete_grafana_panels(uid)
-
-        # Assert that no panel exists yet
-        self.assertTrue(len(panels) == 0)
-
-        self.grafana.add_grafana_panel(sensor, uid)
-
-        dashboard_info = self.grafana.get_dashboard_with_uid(uid)
-        panels = dashboard_info["dashboard"]["panels"]
-
-        # Assert that a panel was created
-        self.assertTrue(len(panels) == 1)
-
-        self.grafana.add_grafana_panel(sensor, uid)
-    """

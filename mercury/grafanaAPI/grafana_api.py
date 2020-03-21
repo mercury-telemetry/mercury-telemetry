@@ -3,8 +3,14 @@ import json
 import requests
 from mercury.models import GFConfig
 
-TOKEN = "eyJrIjoiV2NmTWF1aVZUb3F4aWNGS25qcXA3VU9ZbkdEelgxb1EiLCJuIjoia2V5IiwiaWQiOjF9"
-HOST = "https://daisycrego.grafana.net"
+TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
+HOST = "https://dbc291.grafana.net"
+DASHBOARD_UID = "9UF7VluWz"
+DB_GRAFANA_NAME = "Heroku PostgreSQL (sextants-telemetry)"
+DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
+DB_NAME = "d76k4515q6qv"
+DB_USERNAME = "qvqhuplbiufdyq"
+DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 class Grafana:
     def __init__(self):
@@ -12,21 +18,35 @@ class Grafana:
         if gf_config:
             self.api_token = gf_config.gf_token
             self.hostname = gf_config.gf_host
+            self.uid = gf_config.gf_host
+            self.database_hostname = gf_config.gf_host
+            self.database_name = gf_config.gf_db_name
+            self.database_username = gf_config.gf_db_username
+            self.database_password = gf_config.gf_db_pw
+            self.database_grafana_name = gf_config.gf_db_grafana_name
         else:
             self.api_token = TOKEN
             self.hostname = HOST
-
-        # self.uid = "XwC1wLXZz"  # needs to come from dashboard
-        self.uid = "9UF7VluWz"
+            self.uid = DASHBOARD_UID
+            self.database_hostname = DB_HOSTNAME
+            self.database_name = DB_NAME
+            self.database_username = DB_USERNAME
+            self.database_password = DB_PASSWORD
+            self.database_grafana_name = DB_GRAFANA_NAME
 
         self.temp_file = "dashboard_output.json"
         self.auth_url = "api/auth/keys"
         self.dashboard_post_url = "api/dashboards/db"
-        self.dashboard_uid_url = "api/dashboards/uid/"
+        self.dashboard_uid_url = "api/dashboards/uid"
         self.dashboard_get_url = "api/dashboards"
         self.home_dashboard_url = "api/dashboards/home"
         self.search_url = "api/search?"
+        self.datasource_name_url = "api/datasources/name"
+
         self.search_endpoint = os.path.join(self.hostname, self.search_url)
+        self.datasource_name_endpoint = os.path.join(self.hostname,
+                                                      self.datasource_name_url)
+
         self.dashboard_uid_endpoint = os.path.join(
             self.hostname, self.dashboard_uid_url)
         self.auth_endpoint = os.path.join(self.hostname, self.auth_url)
@@ -40,15 +60,11 @@ class Grafana:
             self.hostname, self.home_dashboard_url
         )
 
-        self.datasource = "Heroku PostgreSQL (sextants-telemetry)"  # needs to come
-        # from dashboard after configuring postgres
-
         # Default panel sizes
         self.base_panel_width = 15
         self.base_panel_height = 12
 
     def delete_all_dashboards(self):
-        print(self.search_endpoint)
         tag_search_endpoint = os.path.join(self.search_endpoint)
         headers = {"Content-Type":"application/json"}
         response = requests.get(url=tag_search_endpoint,
@@ -105,11 +121,64 @@ class Grafana:
 
         post_output = response.json()
 
-        return post_output
+        try:
+            post_output["id"]
+            return post_output
+        except KeyError:
+            if "Access denied" in post_output["message"]:
+                raise ValueError('Access denied - check hostname and API token')
+            else:
+                raise ValueError('Create_dashboard() failed: ' + post_output['message'])
 
-    # Still working on this
-    def configure_postgres_db(self):
-        pass
+    # Returns true if datasource was deleted, false otherwise
+    def delete_datasource_by_name(self, name):
+        headers = {"Content-Type": "application/json"}
+        endpoint = os.path.join(self.hostname, "api/datasources/name", name)
+        response = requests.delete(url=endpoint, headers=headers,
+                                 auth=("api_key", self.api_token))
+        json = response.json()
+        try:
+            if json["message"] == "Data source deleted":
+                return True
+            else:
+                return False
+        except KeyError:
+            return False
+
+    def create_postgres_datasource(self):
+        db = {
+            "id": None,
+            "orgId": None,
+            "name": self.database_grafana_name,
+            "type": "postgres",
+            "access": "proxy",
+            "url": self.database_hostname,
+            "password": self.database_password,
+            "user": self.database_username,
+            "database":self.database_name,
+            "basicAuth": False,
+            "jsonData": {
+                "postgresVersion": 903,
+                "sslmode": "require",
+            },
+        }
+
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url=os.path.join(self.hostname, "api/datasources"),
+                      headers=headers,
+                      json=db, auth=("api_key",self.api_token))
+
+        datasource = response.json()
+        try :
+            if datasource["message"] == "Datasource added":
+                return datasource
+            elif "Access denied" in datasource["message"]:
+                raise ValueError('Access denied - check hostname and API token')
+            else:
+                raise ValueError('Create_postgres_datasource() failed: ' + datasource[
+                            'message'])
+        except KeyError:
+            raise ValueError('Create_postgres_datasource() failed: ' + datasource)
 
     def get_dashboard_with_uid(self, uid):
         """
@@ -120,11 +189,8 @@ class Grafana:
         """
         headers = {"Content-Type":"application/json"}
         endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
-        print(endpoint)
         response = requests.get(url=endpoint, headers=headers, auth=("api_key", self.api_token))
         dashboard_dict = response.json()
-
-        print(response.text)
 
         return dashboard_dict
 
@@ -150,7 +216,7 @@ class Grafana:
             "bars": False,
             "dashLength": 10,
             "dashes": False,
-            "datasource": self.datasource,
+            "datasource": self.database_grafana_name,
             "fill": 1,
             "fillGradient": 0,
             "gridPos": {"h": 9, "w": 12, "x": x, "y": y},
@@ -320,8 +386,10 @@ class Grafana:
             field_array.append(field)
 
         # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(uid)
-        print(dashboard_info)
+        try:
+            dashboard_info = self.get_dashboard_with_uid(uid)
+        except ValueError as error:
+            raise ValueError(repr(error))
 
         # Retrieve current panels
         try:
