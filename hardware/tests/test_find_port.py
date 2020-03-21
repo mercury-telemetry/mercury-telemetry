@@ -1,11 +1,11 @@
-from django.test import TestCase
+from django.test import SimpleTestCase
 
 from unittest import mock
 
 from ..CommunicationsPi.find_port import is_usb_serial, extra_info, get_port
 
 
-class IsUsbSerialTests(TestCase):
+class IsUsbSerialTests(SimpleTestCase):
     """
     Tests for the is_usb_serial function
     """
@@ -121,7 +121,7 @@ class IsUsbSerialTests(TestCase):
         self.assertTrue(response)
 
 
-class ExtraInfoTests(TestCase):
+class ExtraInfoTests(SimpleTestCase):
     def test_manufacturer(self):
         """
         insure that the manufacturer is added to the
@@ -158,7 +158,7 @@ class ExtraInfoTests(TestCase):
         self.assertTrue(port["interface"] in response)
 
 
-class GetPortTests(TestCase):
+class GetPortTests(SimpleTestCase):
     @mock.patch("serial.tools.list_ports.comports")
     def test_get_port_match(self, port_mocks):
 
