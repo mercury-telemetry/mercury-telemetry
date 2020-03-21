@@ -139,7 +139,7 @@ class Grafana:
                 raise ValueError("Access denied - check hostname and API token")
             elif "A dashboard with the same name in the folder already exists" in \
                     post_output["message"]:
-                raise ValueError("Dashboard already exists")
+                return None
             else:
                 raise ValueError("Create_dashboard() failed: " + post_output["message"])
 
@@ -208,11 +208,11 @@ class Grafana:
             url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
 
-        if "Dashboard not found" in response.json()["message"]:
+        if "dashboard" in response.json():
+            return response.json()
+        else:
+            print(response.json())
             return None
-
-        dashboard_dict = response.json()
-        return dashboard_dict
 
     def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
         """
