@@ -137,6 +137,7 @@ class TestGrafana(TestCase):
         self.sim.createASensorFromPresets(0)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
+        print(dashboard_info)
         try:
             panels = dashboard_info["dashboard"]["panels"]
         except KeyError:
