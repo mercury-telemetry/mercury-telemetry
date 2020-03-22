@@ -201,8 +201,11 @@ class CreateSensorView(TemplateView):
             
         elif ("submit_new_sensor" in request.POST):
             sensor_name = request.POST.get("sensor-name")
+            print("\n\n" + str(sensor_name) + "\n")
             sensor_type = request.POST.get("select-sensor-type")
+            print("\n\n" + str(sensor_type) + "\n")
             sensor_type = AGSensorType.objects.get(name=sensor_type) #str --> AGSensorType 
+            print("\n\n" + str(sensor_type) + "\n")
 
             # reformat then validate name to avoid duplicated names or bad inputs like " "
             sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
