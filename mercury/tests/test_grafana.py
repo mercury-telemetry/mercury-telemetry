@@ -158,8 +158,8 @@ class TestGrafana(TestCase):
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
 
-        self.(dashboard_info)
-        self.(dashboard_info["dashboard"])
+        self.assertTrue(dashboard_info)
+        self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
         self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 1)
         self.assertTrue(
