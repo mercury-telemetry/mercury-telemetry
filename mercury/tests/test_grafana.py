@@ -106,6 +106,7 @@ class TestGrafana(TestCase):
             url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
         )
 
+        print(response.json())
         self.assertEquals(response.json()["dashboard"]["uid"], uid)
         self.assertEquals(response.json()["dashboard"]["title"], self.title)
 
