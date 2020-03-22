@@ -109,7 +109,7 @@ class TestGrafana(TestCase):
         self.assertEquals(response.json()["dashboard"]["uid"], uid)
         self.assertEquals(response.json()["dashboard"]["title"], self.title)
 
-    def not_test_delete_grafana_dashboard(self):
+    def test_delete_grafana_dashboard(self):
         dashboard = self.grafana.create_dashboard(self.title)
 
         self.assertTrue(dashboard)
