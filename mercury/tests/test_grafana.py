@@ -106,7 +106,6 @@ class TestGrafana(TestCase):
             url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
         )
 
-        print(response.json())
         self.assertEquals(response.json()["dashboard"]["uid"], uid)
         self.assertEquals(response.json()["dashboard"]["title"], self.title)
 
@@ -129,7 +128,7 @@ class TestGrafana(TestCase):
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Dashboard not found")
 
-    def test_add_grafana_panel(self):
+    def test_add_panel(self):
         dashboard = self.grafana.create_dashboard(self.title)
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
@@ -155,11 +154,12 @@ class TestGrafana(TestCase):
         )
         sensor.save()
 
-        self.grafana.add_grafana_panel(sensor, uid)
+        self.grafana.add_panel(sensor, uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
 
-        self.assertTrue(dashboard_info["dashboard"])
+        self.(dashboard_info)
+        self.(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
         self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 1)
         self.assertTrue(
@@ -198,10 +198,10 @@ class TestGrafana(TestCase):
         )
         sensor.save()
 
-        self.grafana.add_grafana_panel(sensor, uid)
-        self.grafana.add_grafana_panel(sensor, uid)
-        self.grafana.add_grafana_panel(sensor, uid)
-        self.grafana.add_grafana_panel(sensor, uid)
+        self.grafana.add_panel(sensor, uid)
+        self.grafana.add_panel(sensor, uid)
+        self.grafana.add_panel(sensor, uid)
+        self.grafana.add_panel(sensor, uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
         self.assertTrue(dashboard_info)

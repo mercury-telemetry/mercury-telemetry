@@ -71,28 +71,24 @@ class Grafana:
         self.base_panel_width = 15
         self.base_panel_height = 12
 
-    def delete_all_dashboards(self):
-        tag_search_endpoint = os.path.join(self.search_endpoint)
+    def get_dashboard_with_uid(self, uid):
+        """
+        Retrieves dashboard dict for given dashboard uid
+
+        :param uid: uid of the target dashboard
+        :return: dict of the current dashboard
+        """
         headers = {"Content-Type": "application/json"}
+        endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
         response = requests.get(
-            url=tag_search_endpoint, auth=("api_key", self.api_token), headers=headers
+            url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
 
-        dashboards = response.json()
-        if len(dashboards) > 0:
-            for dashboard in dashboards:
-                self.delete_dashboard(dashboard["uid"])
-
-    # Locates dashboard and deletes if exists. Returns true if successful else false.
-    def delete_dashboard(self, uid):
-        dashboard_endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
-        response = requests.delete(
-            url=dashboard_endpoint, auth=("api_key", self.api_token)
-        )
-
-        if "deleted" not in response.json()["message"]:
-            return False
-        return True
+        if "dashboard" in response.json():
+            return response.json()
+        else:
+            print("No dashboard found:" + response.json())
+            return None
 
     # TODO: Handle error case where title is already taken
     # Create a new Grafana dashboard. returns an object with details on new
@@ -145,21 +141,28 @@ class Grafana:
             else:
                 raise ValueError("Create_dashboard() failed: " + post_output["message"])
 
-    # Returns true if datasource was deleted, false otherwise
-    def delete_datasource_by_name(self, name):
-        headers = {"Content-Type": "application/json"}
-        endpoint = os.path.join(self.hostname, "api/datasources/name", name)
+    # Locates dashboard and deletes if exists. Returns true if successful else false.
+    def delete_dashboard(self, uid):
+        dashboard_endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
         response = requests.delete(
-            url=endpoint, headers=headers, auth=("api_key", self.api_token)
+            url=dashboard_endpoint, auth=("api_key", self.api_token)
         )
-        json = response.json()
-        try:
-            if json["message"] == "Data source deleted":
-                return True
-            else:
-                return False
-        except KeyError:
+
+        if "deleted" not in response.json()["message"]:
             return False
+        return True
+
+    def delete_all_dashboards(self):
+        tag_search_endpoint = os.path.join(self.search_endpoint)
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=tag_search_endpoint, auth=("api_key", self.api_token), headers=headers
+        )
+
+        dashboards = response.json()
+        if len(dashboards) > 0:
+            for dashboard in dashboards:
+                self.delete_dashboard(dashboard["uid"])
 
     def create_postgres_datasource(self):
         db = {
@@ -199,25 +202,134 @@ class Grafana:
         except KeyError:
             raise ValueError("Create_postgres_datasource() failed: " + datasource)
 
-    def get_dashboard_with_uid(self, uid):
-        """
-        Retrieves dashboard dict for given dashboard uid
-
-        :param uid: uid of the target dashboard
-        :return: dict of the current dashboard
-        """
+    # Returns true if datasource was deleted, false otherwise
+    def delete_datasource_by_name(self, name):
         headers = {"Content-Type": "application/json"}
-        endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
-        response = requests.get(
+        endpoint = os.path.join(self.hostname, "api/datasources/name", name)
+        response = requests.delete(
             url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
+        json = response.json()
+        try:
+            if json["message"] == "Data source deleted":
+                return True
+            else:
+                return False
+        except KeyError:
+            return False
 
-        if "dashboard" in response.json():
-            return response.json()
+    def add_panel(self, sensor, uid):
+        """
+        :param sensor: Sensor object's sensor type will be used to create the
+        SQL query for the new panel.
+        :param uid: UID of the target dashboard
+        :return: New panel with SQL query based on sensor type
+        will be added to dashboard.
+        """
+
+        if not sensor:
+            return
+
+        # Retrieve id, title, and fields from AGSensor object
+        sensor_id = sensor.id
+        title = sensor.name
+        field_dict = sensor.type_id.format
+        field_array = []
+        for field in field_dict:
+            field_array.append(field)
+
+        # Retrieve current dashboard structure
+        dashboard_info = self.get_dashboard_with_uid(uid)
+
+        if dashboard_info is None:
+            raise ValueError("Dashboard uid not found.")
+
+        # Retrieve current panels
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        # If first panel
+        if len(panels) == 0:
+            new_panel_id = 0  # id = 0
+            x = 0  # col = 0
+            y = 0  # row = 0
+        # Otherwise, determine (a) left/right col and (b) row
         else:
-            print(response.json())
-            return None
+            row = (len(panels) + 1) % 2
+            y = row * self.base_panel_height
 
+            # even-numbered panels are in right col
+            if (len(panels) + 1) % 2 == 0:
+                x = self.base_panel_width
+            # other panels in left col
+            else:
+                x = 0
+
+            new_panel_id = panels[-1]["id"] + 1
+
+        # Build fields portion of SELECT query (select each field)
+        fields_query = ""
+        if len(field_array):
+            for i in range(0, len(field_array) - 1):
+                fields_query += f"value->'{field_array[i]}' AS {field_array[i]},\n"
+            fields_query += f"value->'{field_array[-1]}' AS {field_array[-1]}"
+
+        # Build SQL query
+        panel_sql_query = f"""
+        SELECT \"timestamp\" AS \"time\",
+        {fields_query}
+        FROM ag_data_agmeasurement
+        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id}\n
+        """
+
+        # Build a panel dict for the new panel
+        panel = self.create_panel_dict(
+            new_panel_id, field_array, panel_sql_query, title, x, y
+        )
+
+        # Add new panel to list of panels
+        panels.append(panel)
+
+        # Create updated dashboard dict with updated list of panels
+        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
+
+        # POST updated dashboard
+        headers = {"Content-Type": "application/json"}
+        requests.post(
+            self.dashboard_post_endpoint,
+            data=json.dumps(updated_dashboard),
+            headers=headers,
+            auth=("api_key", self.api_token),
+        )
+
+    def delete_all_panels(self, uid):
+        """
+
+        Deletes all panels from dashboard with given uid.
+
+        :param uid: uid of dashboard to delete
+        :return: None.
+        """
+
+        # Retrieve current dashboard dict
+        dashboard_info = self.get_dashboard_with_uid(uid)
+
+        # Create updated dashboard dict with empty list of panels
+        panels = []
+        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
+
+        # POST updated dashboard with empty list of panels
+        headers = {"Content-Type": "application/json"}
+        requests.post(
+            self.dashboard_post_endpoint,
+            data=json.dumps(updated_dashboard),
+            headers=headers,
+            auth=("api_key", self.api_token),
+        )
+
+    # Helper methods for add_panel
     def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
         """
         Creates a panel dict which can be added to an updated dashboard dict and
@@ -366,113 +478,6 @@ class Grafana:
 
         return updated_dashboard
 
-    def delete_grafana_panels(self, uid):
-        """
 
-        Deletes all panels from dashboard with given uid.
 
-        :param uid: uid of dashboard to delete
-        :return: None.
-        """
 
-        # Retrieve current dashboard dict
-        dashboard_info = self.get_dashboard_with_uid(uid)
-
-        # Create updated dashboard dict with empty list of panels
-        panels = []
-        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
-
-        # POST updated dashboard with empty list of panels
-        headers = {"Content-Type": "application/json"}
-        requests.post(
-            self.dashboard_post_endpoint,
-            data=json.dumps(updated_dashboard),
-            headers=headers,
-            auth=("api_key", self.api_token),
-        )
-
-    def add_grafana_panel(self, sensor, uid):
-        """
-        :param sensor: Sensor object's sensor type will be used to create the
-        SQL query for the new panel.
-        :param uid: UID of the target dashboard
-        :return: New panel with SQL query based on sensor type
-        will be added to dashboard.
-        """
-
-        if not sensor:
-            return
-
-        # Retrieve id, title, and fields from AGSensor object
-        sensor_id = sensor.id
-        title = sensor.name
-        field_dict = sensor.type_id.format
-        field_array = []
-        for field in field_dict:
-            field_array.append(field)
-
-        # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(uid)
-
-        if dashboard_info is None:
-            raise ValueError("Dashboard uid not found.")
-
-        # Retrieve current panels
-        try:
-            panels = dashboard_info["dashboard"]["panels"]
-        except KeyError:
-            panels = []
-
-        # If first panel
-        if len(panels) == 0:
-            new_panel_id = 0  # id = 0
-            x = 0  # col = 0
-            y = 0  # row = 0
-        # Otherwise, determine (a) left/right col and (b) row
-        else:
-            row = (len(panels) + 1) % 2
-            y = row * self.base_panel_height
-
-            # even-numbered panels are in right col
-            if (len(panels) + 1) % 2 == 0:
-                x = self.base_panel_width
-            # other panels in left col
-            else:
-                x = 0
-
-            new_panel_id = panels[-1]["id"] + 1
-
-        # Build fields portion of SELECT query (select each field)
-        fields_query = ""
-        if len(field_array):
-            for i in range(0, len(field_array) - 1):
-                fields_query += f"value->'{field_array[i]}' AS {field_array[i]},\n"
-            fields_query += f"value->'{field_array[-1]}' AS {field_array[-1]}"
-
-        # Build SQL query
-        panel_sql_query = f"""
-        SELECT \"timestamp\" AS \"time\",
-        {fields_query}
-        FROM ag_data_agmeasurement
-        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id}\n
-        """
-
-        # Build a panel dict for the new panel
-        panel = self.create_panel_dict(
-            new_panel_id, field_array, panel_sql_query, title, x, y
-        )
-
-        # Add new panel to list of panels
-        panels.append(panel)
-
-        # Create updated dashboard dict with updated list of panels
-        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
-
-        # POST updated dashboard
-        headers = {"Content-Type": "application/json"}
-        requests.post(
-            self.dashboard_post_endpoint,
-            data=json.dumps(updated_dashboard),
-            headers=headers,
-            auth=("api_key", self.api_token),
-        )
