@@ -65,13 +65,14 @@ def delete_sensor(request, sensor_id):
 
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
-
+    for sensor in AGSensor.objects.all(): #delete sensors with this type first to avoid foreignkey error
+        sensor.delete()
     type_to_delete = AGSensorType.objects.get(id=type_id)
     type_to_delete.delete()
     return redirect("/sensor")
 
 def update_sensor(request, sensor_id):
-    """This updates a sensor from the database based on user input"""
+    """This updates a sensor in the database based on user input"""
 
     sensor_to_update = AGSensor.objects.get(id=sensor_id)
 
@@ -103,8 +104,10 @@ def update_sensor(request, sensor_id):
 
 
 def update_sensor_type(request, type_id):
+    """This updates a sensor type in the database based on user input"""
+    #Currently causing a strange URL bug, need to debug
+
     type_to_update = AGSensorType.objects.get(id=type_id)
-    print("\n\n" + str(type_to_update.name) + "NAME BEFORE \n")
     type_name = request.POST.get("edit-type-name")
     field_names = request.POST.getlist("edit-field-names")
     field_types = request.POST.getlist("edit-data-types")
@@ -124,7 +127,6 @@ def update_sensor_type(request, type_id):
     sensors = AGSensor.objects.all() #for when we return context later
     if valid:
         type_to_update.name=type_name
-        print("\n\n" + str(type_to_update.name) + "NAME AFTER \n")
         type_to_update.processing_formula=0
         type_to_update.format=type_format
         type_to_update.save()

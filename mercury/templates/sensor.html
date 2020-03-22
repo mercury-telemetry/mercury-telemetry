@@ -57,8 +57,6 @@
                         contenteditable="false">{{unit_and_format.unit}}</p>
                     </div>
                     {% endfor %}
-                    <a href="delete_sensor/{{ sensor.id }}">Delete</a>
-                    <a href="delete_sensor/{{ sensor.id }}">Edit</a>
                 </div>
                 {% endfor %}
             {% else %}
@@ -181,8 +179,6 @@
                         contenteditable="false">{{unit_and_format.unit}}</p>
                     </div>
                     {% endfor %}
-                    <a href="delete_type/{{ sensor_type.id }}">Delete</a>
-                    <a href="delete_type/{{ sensor_type.id }}">Edit</a>
                 </div>
                 {% endfor %}
             {% else %}
@@ -204,6 +200,7 @@
                             <th>SENSOR NAME</th>
                             <th>SENSOR TYPE</th>
                             <th>UPDATE</th>
+                            <th>DELETE</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -225,6 +222,7 @@
                             <td>
                                 <input type="submit" value="Update">
                             </td>
+                            <td><a href="delete_sensor/{{ sensor.id }}">Delete</a></td>
                         </tr>
                     </form>
                     {% endfor %}
@@ -239,6 +237,7 @@
 
         <div id="edit-sensor-types">
             <h2>Edit Existing Sensor Types</h2>
+            <h5>Warning: deleting sensor types will delete all sensors of that type.</h5>
             <br> <hr> <br>
             {% for sensor_type in sensor_types %}
             <form method="POST" action="update_type/{{ sensor_type.id }}">
@@ -289,6 +288,7 @@
                         </tbody>
                     </table> <br>
                     <input class="grafana-btn grafana-btn-green" type="submit" value="Update">
+                    <a href="delete_type/{{ sensor_type.id }}">Delete</a>
                     <br> <hr> <br>
                 {% endfor %}
                 </div> <br>
