@@ -74,7 +74,7 @@ class TestGrafana(TestCase):
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Data source not found")
 
-    def not_test_create_postgres_datasource(self):
+    def test_create_postgres_datasource(self):
         # create datasource
         self.grafana.create_postgres_datasource()
 
