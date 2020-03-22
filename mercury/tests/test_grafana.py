@@ -167,7 +167,7 @@ class TestGrafana(TestCase):
 
         # check that created panel can be queried
 
-    def test_add_multiple_grafana_panels(self):
+    def not_test_add_multiple_grafana_panels(self):
         self.grafana.create_postgres_datasource()
         dashboard = self.grafana.create_dashboard(self.title)
         self.assertTrue(dashboard)
