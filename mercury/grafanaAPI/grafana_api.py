@@ -137,8 +137,10 @@ class Grafana:
         except KeyError:
             if "Access denied" in post_output["message"]:
                 raise ValueError("Access denied - check hostname and API token")
-            elif "A dashboard with the same name in the folder already exists" in \
-                    post_output["message"]:
+            elif (
+                "A dashboard with the same name in the folder already exists"
+                in post_output["message"]
+            ):
                 return None
             else:
                 raise ValueError("Create_dashboard() failed: " + post_output["message"])
@@ -374,20 +376,19 @@ class Grafana:
         """
 
         # Retrieve current dashboard dict
-        self.get_dashboard_with_uid(uid)
+        dashboard_info = self.get_dashboard_with_uid(uid)
 
         # Create updated dashboard dict with empty list of panels
         panels = []
         updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
 
         # POST updated dashboard with empty list of panels
-        authorization = f"Bearer {self.api_token}"
-        authorization = f"Bearer {self.api_token}"
-        headers = {"Content-Type": "application/json", "Authorization": authorization}
+        headers = {"Content-Type": "application/json"}
         requests.post(
             self.dashboard_post_endpoint,
             data=json.dumps(updated_dashboard),
             headers=headers,
+            auth=("api_key", self.api_token),
         )
 
     def add_grafana_panel(self, sensor, uid):
