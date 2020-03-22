@@ -198,9 +198,11 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name, type_id=sensor_type
         )
         sensor.save()
-        """
 
         self.grafana.add_grafana_panel(sensor, uid)
+        """
+
+        
         self.grafana.add_grafana_panel(sensor, uid)
         self.grafana.add_grafana_panel(sensor, uid)
         self.grafana.add_grafana_panel(sensor, uid)
