@@ -205,7 +205,6 @@ class TestGrafana(TestCase):
         self.grafana.add_grafana_panel(sensor, uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
-        print(dashboard_info)
         self.assertTrue(dashboard_info)
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
