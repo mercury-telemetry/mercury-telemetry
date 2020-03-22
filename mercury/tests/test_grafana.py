@@ -128,7 +128,7 @@ class TestGrafana(TestCase):
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Dashboard not found")
 
-    def not_test_add_grafana_panel(self):
+    def test_add_grafana_panel(self):
         dashboard = self.grafana.create_dashboard(self.title)
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
