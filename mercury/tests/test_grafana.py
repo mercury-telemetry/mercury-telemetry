@@ -52,7 +52,7 @@ class TestGrafana(TestCase):
         session = self.client.session
         return response, session
 
-    def not_test_delete_postgres_datasource(self):
+    def test_delete_postgres_datasource(self):
         # create the datasource
         self.grafana.create_postgres_datasource()
 
