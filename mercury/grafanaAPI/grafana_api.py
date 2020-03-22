@@ -477,7 +477,3 @@ class Grafana:
         }
 
         return updated_dashboard
-
-
-
-
