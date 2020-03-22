@@ -188,6 +188,8 @@ class Grafana:
                 return datasource
             elif "Access denied" in datasource["message"]:
                 raise ValueError("Access denied - check hostname and API token")
+            elif "Data source with same name already exists" in datasource["message"]:
+                return None
             else:
                 raise ValueError(
                     "Create_postgres_datasource() failed: " + datasource["message"]
