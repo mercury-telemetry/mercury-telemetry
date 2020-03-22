@@ -201,18 +201,19 @@ class TestGrafana(TestCase):
 
         self.grafana.add_grafana_panel(sensor, uid)
         self.grafana.add_grafana_panel(sensor, uid)
-        """
 
-        
-        
         self.grafana.add_grafana_panel(sensor, uid)
         self.grafana.add_grafana_panel(sensor, uid)
 
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
-
+        self.assertTrue(dashboard_info)
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
         self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 4)
+        """
+
+        
+        
         # simple check that 4 panels with the expected titles were made
         for i in range(4):
             self.assertTrue(
