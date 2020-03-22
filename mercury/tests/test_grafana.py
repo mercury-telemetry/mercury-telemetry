@@ -167,7 +167,7 @@ class TestGrafana(TestCase):
 
         # check that created panel can be queried
 
-    def not_test_add_multiple_grafana_panels(self):
+    def test_add_multiple_grafana_panels(self):
         dashboard = self.grafana.create_dashboard(self.title)
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
