@@ -200,10 +200,11 @@ class TestGrafana(TestCase):
         sensor.save()
 
         self.grafana.add_grafana_panel(sensor, uid)
+        self.grafana.add_grafana_panel(sensor, uid)
         """
 
         
-        self.grafana.add_grafana_panel(sensor, uid)
+        
         self.grafana.add_grafana_panel(sensor, uid)
         self.grafana.add_grafana_panel(sensor, uid)
 
