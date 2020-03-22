@@ -209,10 +209,7 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
         self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 4)
-        """
 
-        
-        
         # simple check that 4 panels with the expected titles were made
         for i in range(4):
             self.assertTrue(
@@ -221,4 +218,3 @@ class TestGrafana(TestCase):
             self.assertTrue(
                 dashboard_info["dashboard"]["panels"][i]["title"] == sensor.name
             )
-        """
