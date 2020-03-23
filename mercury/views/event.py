@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from ..event_check import require_event_code
 
 from mercury.forms import EventForm
-from ag_data.models import AGEvent
+from mercury.models import AGEvent
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)

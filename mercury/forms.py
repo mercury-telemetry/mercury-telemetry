@@ -1,8 +1,8 @@
 """This module defines the ModelForms (or Forms) that are used by the rendering
 engine to accept input for various features of the site"""
 from django import forms
-from ag_data.models import AGEvent
 from mercury.models import (
+    AGEvent,
     GFConfig,
     TemperatureSensor,
     AccelerationSensor,

@@ -3,8 +3,8 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from ag_data.models import AGEvent
 from mercury.models import (
+    AGEvent,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
