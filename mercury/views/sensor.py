@@ -2,10 +2,10 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-
 from ag_data.models import AGSensor, AGSensorType
-
+from mercury.models import GFConfig
 from django.contrib import messages
+from mercury.grafanaAPI.grafana_api import Grafana
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -215,6 +215,16 @@ class CreateSensorView(TemplateView):
             if valid:
                 new_sensor = AGSensor.objects.create(name=sensor_name, type_id=sensor_type)
                 new_sensor.save()
+
+                gf_configs = GFConfig.objects.all()
+                if len(gf_configs) > 0:
+                    gf_config = gf_configs[0]
+                    grafana = Grafana(gf_config.gf_host, gf_config.gf_token)
+                    grafana.add_panel(new_sensor, gf_config.gf_dashboard_uid)
+                    # error - no gf_config available, please do that first
+                    # or silently fail
+                    pass
+
                 sensors = AGSensor.objects.all()
                 context = {
                     "sensors": sensors,
