@@ -11,6 +11,23 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+def validate_add_sensor_inputs(sensor_name, request):
+    """This validates the form before a user submits a new sensor to prevent bad inputs"""
+
+    form_valid = True
+
+    # no sensor name
+    if not sensor_name:
+        messages.error(request, "Sensor name is missing or invalid.")
+        form_valid = False
+
+    # duplicated sensor name
+    if AGSensor.objects.filter(name=sensor_name).count() > 0:
+        messages.error(request, "Sensor name is already taken.")
+        form_valid = False
+
+    return form_valid, request
+
 def validate_add_sensor_type_inputs(type_name, field_name_list, request):
     """This validates the form before a user submits a new sensor type to prevent bad inputs"""
 
@@ -35,23 +52,6 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
     # duplicated field names
     if len(field_name_list) > len(set(field_name_list)):
         messages.error(request, "Field names must be unique.")
-        form_valid = False
-
-    return form_valid, request
-
-def validate_add_sensor_inputs(sensor_name, request):
-    """This validates the form before a user submits a new sensor to prevent bad inputs"""
-
-    form_valid = True
-
-    # no sensor name
-    if not sensor_name:
-        messages.error(request, "Sensor name is missing or invalid.")
-        form_valid = False
-
-    # duplicated sensor name
-    if AGSensor.objects.filter(name=sensor_name).count() > 0:
-        messages.error(request, "Sensor name is already taken.")
         form_valid = False
 
     return form_valid, request
@@ -201,11 +201,8 @@ class CreateSensorView(TemplateView):
             
         elif ("submit_new_sensor" in request.POST):
             sensor_name = request.POST.get("sensor-name")
-            print("\n\n" + str(sensor_name) + "\n")
             sensor_type = request.POST.get("select-sensor-type")
-            print("\n\n" + str(sensor_type) + "\n")
             sensor_type = AGSensorType.objects.get(name=sensor_type) #str --> AGSensorType 
-            print("\n\n" + str(sensor_type) + "\n")
 
             # reformat then validate name to avoid duplicated names or bad inputs like " "
             sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
