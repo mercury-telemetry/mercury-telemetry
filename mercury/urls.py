@@ -9,6 +9,7 @@ from .views import (
     sensor,
     events,
     pitcrew,
+    gf_config,
 )
 
 app_name = "mercury"
@@ -31,4 +32,7 @@ urlpatterns = [
     path("events/delete/<uuid:event_uuid>", events.delete_event),
     path("events/update/<uuid:event_uuid>", events.update_event),
     path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
+    path("gfconfig/", gf_config.GFConfigView.as_view(), name="gfconfig"),
+    path("gfconfig/delete/<int:gf_id>", gf_config.delete_config),
+    path("gfconfig/update/<int:gf_id>", gf_config.update_config),
 ]
