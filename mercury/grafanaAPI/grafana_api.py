@@ -19,7 +19,6 @@ class Grafana:
         if gf_config:
             self.hostname = gf_config.gf_host
             self.api_token = gf_config.gf_token
-            self.uid = gf_config.gf_host
             self.database_hostname = gf_config.gf_host
             self.database_name = gf_config.gf_db_name
             self.database_username = gf_config.gf_db_username
@@ -27,45 +26,37 @@ class Grafana:
             self.database_grafana_name = gf_config.gf_db_grafana_name
         else:
             # for test purposes, a test case should init this class with credentials
-            self.api_token = token
             self.hostname = host
-            self.uid = DASHBOARD_UID
+            self.api_token = token
             self.database_hostname = DB_HOSTNAME
             self.database_name = DB_NAME
             self.database_username = DB_USERNAME
             self.database_password = DB_PASSWORD
             self.database_grafana_name = DB_GRAFANA_NAME
+        self.uid = None
 
         # self.uid = "XwC1wLXZz"  # needs to come from dashboard
         self.uid = "9UF7VluWz"
 
-        self.temp_file = "dashboard_output.json"
-        self.auth_url = "api/auth/keys"
-        self.dashboard_post_url = "api/dashboards/db"
-        self.dashboard_uid_url = "api/dashboards/uid"
-        self.dashboard_get_url = "api/dashboards"
-        self.home_dashboard_url = "api/dashboards/home"
-        self.search_url = "api/search?"
-        self.datasource_name_url = "api/datasources/name"
+        self.urls = {
+            "dashboard_post": "api/dashboards/db",
+            "dashboard_get": "api/dashboards",
+            "dashboard_home": "api/dashboards/home",
+            'dashboard_uid': "api/dashboards/uid",
+            "search": "api/search?",
+            "datasources": "api/datasources",
+            "datasource_name": "api/datasources/name"
+        }
 
-        self.search_endpoint = os.path.join(self.hostname, self.search_url)
-        self.datasource_name_endpoint = os.path.join(
-            self.hostname, self.datasource_name_url
-        )
-
-        self.dashboard_uid_endpoint = os.path.join(
-            self.hostname, self.dashboard_uid_url
-        )
-        self.auth_endpoint = os.path.join(self.hostname, self.auth_url)
-        self.dashboard_post_endpoint = os.path.join(
-            self.hostname, self.dashboard_post_url
-        )
-        self.dashboard_get_endpoint = os.path.join(
-            self.hostname, self.dashboard_get_url
-        )
-        self.home_dashboard_endpoint = os.path.join(
-            self.hostname, self.home_dashboard_url
-        )
+        self.endpoints = {
+            "dashboard_post": os.path.join(self.hostname, self.urls["dashboard_post"]),
+            "dashboard_get": os.path.join(self.hostname, self.urls["dashboard_get"]),
+            "dashboard_home": os.path.join(self.hostname, self.urls["dashboard_home"]),
+            "dashboard_uid": os.path.join(self.hostname, self.urls["dashboard_uid"]),
+            "search": os.path.join(self.hostname, self.urls["search"]),
+            "datasources": os.path.join(self.hostname, self.urls["datasources"]),
+            "datasource_name": os.path.join(self.hostname, self.urls["datasource_name"])
+        }
 
         # Default panel sizes
         self.base_panel_width = 15
@@ -73,13 +64,12 @@ class Grafana:
 
     def get_dashboard_with_uid(self, uid):
         """
-        Retrieves dashboard dict for given dashboard uid
-
         :param uid: uid of the target dashboard
-        :return: dict of the current dashboard
+        :return: Returns dashboard dictionary for given uid.
+        Returns None if no dashboard is found.
         """
         headers = {"Content-Type": "application/json"}
-        endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
+        endpoint = os.path.join(self.endpoints["dashboard_uid"], uid)
         response = requests.get(
             url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
@@ -87,7 +77,6 @@ class Grafana:
         if "dashboard" in response.json():
             return response.json()
         else:
-            print("No dashboard found:" + response.json())
             return None
 
     # TODO: Handle error case where title is already taken
@@ -120,30 +109,46 @@ class Grafana:
         }
 
         response = requests.post(
-            url=self.dashboard_post_endpoint,
+            url=self.endpoints["dashboard_post"],
             auth=("api_key", self.api_token),
             json=dashboard_base,
         )
 
         post_output = response.json()
 
-        try:
-            post_output["id"]
-            return post_output
-        except KeyError:
-            if "Access denied" in post_output["message"]:
-                raise ValueError("Access denied - check hostname and API token")
-            elif (
-                "A dashboard with the same name in the folder already exists"
-                in post_output["message"]
-            ):
-                return None
+        print("POST_OUTPUT")
+        print(post_output)
+
+        # post_output will contain either a "message" if there was an error or an object
+        # with id, uid, slug, etc., describing the new dashboard
+        if post_output:
+
+            error_message = post_output.get("message")
+            if error_message:
+                if "Access denied" in error_message:
+                    raise ValueError("Access denied - check API permissions")
+                elif "Invalid API key" in error_message:
+                    raise ValueError("Invalid API key")
+                elif "A dashboard with the same name in the folder already exists" in \
+                        error_message:
+                    raise ValueError("Dashboard with the same name already exists")
+                else:
+                    raise ValueError(
+                        "Create_dashboard() failed: " + error_message)
             else:
-                raise ValueError("Create_dashboard() failed: " + post_output["message"])
+                try:
+                    dashboard_title = post_output["slug"]  # could throw KeyError
+                    if dashboard_title == title.lower():
+                        return post_output
+                except KeyError: # catch KeyError if thrown
+                    raise ValueError(
+                        "Create_dashboard() failed: " + post_output)
+        else:
+            return None
 
     # Locates dashboard and deletes if exists. Returns true if successful else false.
     def delete_dashboard(self, uid):
-        dashboard_endpoint = os.path.join(self.dashboard_uid_endpoint, uid)
+        dashboard_endpoint = os.path.join(self.endpoints["dashboard_uid"], uid)
         response = requests.delete(
             url=dashboard_endpoint, auth=("api_key", self.api_token)
         )
@@ -153,10 +158,10 @@ class Grafana:
         return True
 
     def delete_all_dashboards(self):
-        tag_search_endpoint = os.path.join(self.search_endpoint)
+        search_endpoint = os.path.join(self.endpoints["search"])
         headers = {"Content-Type": "application/json"}
         response = requests.get(
-            url=tag_search_endpoint, auth=("api_key", self.api_token), headers=headers
+            url=search_endpoint, auth=("api_key", self.api_token), headers=headers
         )
 
         dashboards = response.json()
@@ -181,7 +186,7 @@ class Grafana:
 
         headers = {"Content-Type": "application/json"}
         response = requests.post(
-            url=os.path.join(self.hostname, "api/datasources"),
+            url=self.endpoints["datasources"],
             headers=headers,
             json=db,
             auth=("api_key", self.api_token),
@@ -205,7 +210,7 @@ class Grafana:
     # Returns true if datasource was deleted, false otherwise
     def delete_datasource_by_name(self, name):
         headers = {"Content-Type": "application/json"}
-        endpoint = os.path.join(self.hostname, "api/datasources/name", name)
+        endpoint = os.path.join(self.endpoints["datasource_name"], name)
         response = requests.delete(
             url=endpoint, headers=headers, auth=("api_key", self.api_token)
         )
@@ -298,7 +303,7 @@ class Grafana:
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
         requests.post(
-            self.dashboard_post_endpoint,
+            self.endpoints["dashboard_post"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
@@ -323,7 +328,7 @@ class Grafana:
         # POST updated dashboard with empty list of panels
         headers = {"Content-Type": "application/json"}
         requests.post(
-            self.dashboard_post_endpoint,
+            self.urls["dashboard_post"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
