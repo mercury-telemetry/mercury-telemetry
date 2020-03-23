@@ -14,6 +14,7 @@
     <div class="topbar-container">
         <!--Configs Table -->
         <div class="mt-50">
+
         {% if configs %}
             <h2>Existing Grafana Hosts</h2>
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -56,8 +57,11 @@
                 </form>
             {% endif %}
         </div>
-    
-    
+
+        {% for message in messages %}
+        <p class="error"> {{ message }} </p>
+        {% endfor %}
+
     </div>
     </body>
 </html>
