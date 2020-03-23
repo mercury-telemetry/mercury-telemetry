@@ -214,26 +214,3 @@ class TestGrafana(TestCase):
 
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Data source not found")
-
-    def test_delete_postgres_datasource(self):
-        # create the datasource
-        self.grafana.create_postgres_datasource()
-
-        # deleted should be true if delete_datasource_by_name returns true
-        deleted = self.grafana.delete_datasource_by_name(
-            self.grafana.database_grafana_name
-        )
-        self.assertTrue(deleted)
-
-        # figure out whether the datasource was actually deleted
-        endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"],
-            self.grafana.database_grafana_name,
-        )
-        headers = {"Content-Type": "application/json"}
-        response = requests.get(
-            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
-        )
-
-        self.assertTrue(response.json()["message"])
-        self.assertEquals(response.json()["message"], "Data source not found")

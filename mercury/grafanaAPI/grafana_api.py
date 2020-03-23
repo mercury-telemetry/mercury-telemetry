@@ -297,9 +297,7 @@ class Grafana:
         elif "Data source with same name already exists" in message:
             raise ValueError("Datasource with the same name already exists")
         else:
-            raise ValueError(
-                f"Create_postgres_datasource() failed: {message}")
-
+            raise ValueError(f"Create_postgres_datasource() failed: {message}")
 
     def delete_datasource_by_name(self, name):
         """
