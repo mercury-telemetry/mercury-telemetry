@@ -15,6 +15,20 @@ DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 class Grafana:
     def __init__(self, host=None, token=None):
+        """
+
+        Initialize parameters needed to use the API: hostname, admin-level API token,
+        and the following postgres credentials:
+        - hostname
+        - grafana_name
+        - name
+        - username
+        - password
+        Initialize Grafana API endpoints based on hostname.
+
+        :param host: Grafana hostname, e.g. https://dbc291.grafana.net
+        :param token: API key with admin-level permissions
+        """
         gf_config = GFConfig.objects.filter(gf_current=True).first()
         if gf_config:
             self.hostname = gf_config.gf_host
@@ -33,11 +47,8 @@ class Grafana:
             self.database_username = DB_USERNAME
             self.database_password = DB_PASSWORD
             self.database_grafana_name = DB_GRAFANA_NAME
-        self.uid = None
 
-        # self.uid = "XwC1wLXZz"  # needs to come from dashboard
-        self.uid = "9UF7VluWz"
-
+        # URLs for all Grafana API endpoints
         self.urls = {
             "dashboard_post": "api/dashboards/db",
             "dashboard_get": "api/dashboards",
@@ -48,6 +59,7 @@ class Grafana:
             "datasource_name": "api/datasources/name"
         }
 
+        # Grafana API endpoints constructed with hostname + url
         self.endpoints = {
             "dashboard_post": os.path.join(self.hostname, self.urls["dashboard_post"]),
             "dashboard_get": os.path.join(self.hostname, self.urls["dashboard_get"]),
@@ -65,7 +77,29 @@ class Grafana:
     def get_dashboard_with_uid(self, uid):
         """
         :param uid: uid of the target dashboard
-        :return: Returns dashboard dictionary for given uid.
+        :return:
+        Returns dashboard dictionary for given uid:
+        e.g. {
+            'meta':
+                {
+                    ...
+                    'slug': 'bar',
+                    'url': '/d/nJ1Yj49Zk/bar',
+                    'version': 1,
+                    'folderId': 0,
+                    ...
+                },
+            'dashboard': {
+                'id': 623,
+                'schemaVersion': None,
+                'tags': ['templated'],
+                'timezone': 'browser',
+                'title': 'Bar',
+                'uid': 'nJ1Yj49Zk',
+                'version': 1
+            }
+        }
+
         Returns None if no dashboard is found.
         """
         headers = {"Content-Type": "application/json"}
@@ -79,21 +113,26 @@ class Grafana:
         else:
             return None
 
-    # TODO: Handle error case where title is already taken
-    # Create a new Grafana dashboard. returns an object with details on new
-    # dashboard or error message(s)
-    # Example success output
-    # eg {  'id': 4,
-    #       'slug':
-    #       'sensors',
-    #       'status':
-    #       'success',
-    #       'uid': 'GjrBC6uZz',
-    #       'url': '/d/GjrBC6uZz/sensors',
-    #       'version': 1
-    # }
-    # Returns true if the dashboard was created, false otherwise
     def create_dashboard(self, title="Sensors"):
+        """
+        :param title: Name for the new dashboard.
+        :return: Returns dictionary of dashboard metadata if dashboard was created.
+        E.g.
+        {   'id': 4,
+            'slug': 'sensors',
+            'status': 'success',
+            'uid': 'GjrBC6uZz',
+            'url': '/d/GjrBC6uZz/sensors',
+            'version': 1
+        }
+        Raises ValueError otherwise:
+        - Access denied - check API permissions
+        - Invalid API key
+        - Dashboard with the same name already exists
+        """
+
+        # Grafana API expects a dashboard object of this structure to be posted
+        # to create a new dashboard
         dashboard_base = {
             "dashboard": {
                 "id": None,
@@ -108,22 +147,42 @@ class Grafana:
             "overwrite": False,
         }
 
+        # Prepare post request
         response = requests.post(
             url=self.endpoints["dashboard_post"],
             auth=("api_key", self.api_token),
             json=dashboard_base,
         )
 
+        # Convert response to json
         post_output = response.json()
 
-        print("POST_OUTPUT")
-        print(post_output)
+        # This will contain either a "message" if there was an error or an object
+        # describing the new dashboard:
+        #
+        # { 'message': 'Invalid API key'}
+        #
+        # { 'id': 4,
+        #   'slug': 'sensors',
+        #   'status': 'success',
+        #   'uid': 'GjrBC6uZz',
+        #   'url': '/d/GjrBC6uZz/sensors',
+        #   'version': 1
+        # }
 
-        # post_output will contain either a "message" if there was an error or an object
-        # with id, uid, slug, etc., describing the new dashboard
-        if post_output:
+        id = post_output.get("id")  # Set to None if post_output has no "id"
 
+        # If a dashboard was created, return the metadata
+        if id:
+            return post_output
+        # If a dashboard wasn't created, inspect the error message and throw
+        # a ValueError
+        else:
+            # Set to None if post_output has no "message"
             error_message = post_output.get("message")
+
+            # Raise appropriate ValueError depending on the error message
+            # If this is a novel error, raise a generic message
             if error_message:
                 if "Access denied" in error_message:
                     raise ValueError("Access denied - check API permissions")
@@ -135,29 +194,34 @@ class Grafana:
                 else:
                     raise ValueError(
                         "Create_dashboard() failed: " + error_message)
-            else:
-                try:
-                    dashboard_title = post_output["slug"]  # could throw KeyError
-                    if dashboard_title == title.lower():
-                        return post_output
-                except KeyError: # catch KeyError if thrown
-                    raise ValueError(
-                        "Create_dashboard() failed: " + post_output)
-        else:
-            return None
 
-    # Locates dashboard and deletes if exists. Returns true if successful else false.
     def delete_dashboard(self, uid):
+        """
+        Deletes the dashboard with target uid.
+
+        :param uid: UID of the target dashboard.
+        :return: Returns True if the dashboard was deleted successfully. Returns
+        False otherwise (e.g. if the operation fails OR if no dashboard with the UID
+        exists).
+        """
+        # Send a DELETE request to the delete api endpoint for the target uid
         dashboard_endpoint = os.path.join(self.endpoints["dashboard_uid"], uid)
         response = requests.delete(
             url=dashboard_endpoint, auth=("api_key", self.api_token)
         )
 
-        if "deleted" not in response.json()["message"]:
-            return False
-        return True
+        # Response will contain "deleted" if the dashboard was deleted
+        if "deleted" in response.json()["message"]:
+            return True
+        return False
 
     def delete_all_dashboards(self):
+        """
+        Deletes all dashboards associated with the current hostname of the class.
+
+        :return: Returns true if all dashboards were found and deleted. Returns
+        false if no dashboards were found.
+        """
         search_endpoint = os.path.join(self.endpoints["search"])
         headers = {"Content-Type": "application/json"}
         response = requests.get(
@@ -165,11 +229,33 @@ class Grafana:
         )
 
         dashboards = response.json()
+
+        deleted = True
         if len(dashboards) > 0:
             for dashboard in dashboards:
-                self.delete_dashboard(dashboard["uid"])
+                deleted = deleted and self.delete_dashboard(dashboard["uid"])
+            # Only return True if there were dashboards to delete and all were deleted
+            return deleted
+        else:
+            return False
 
     def create_postgres_datasource(self):
+        """
+        Creates a new postgres datasource with the provided credentials:
+        - Grafana name
+        - Hostname
+        - Database name
+        - Username
+        - Password
+        :return:
+
+        Returns an object with the datasource metadata if the datasource was created.
+
+        Raises a Value Error if the request returns an error message, e.g.:
+        - Access denied - check hostname and API token
+        - Datasource with the same name already exists
+
+        """
         db = {
             "id": None,
             "orgId": None,
@@ -199,7 +285,7 @@ class Grafana:
             elif "Access denied" in datasource["message"]:
                 raise ValueError("Access denied - check hostname and API token")
             elif "Data source with same name already exists" in datasource["message"]:
-                return None
+                raise ValueError("Datasource with the same name already exists")
             else:
                 raise ValueError(
                     "Create_postgres_datasource() failed: " + datasource["message"]
@@ -207,8 +293,12 @@ class Grafana:
         except KeyError:
             raise ValueError("Create_postgres_datasource() failed: " + datasource)
 
-    # Returns true if datasource was deleted, false otherwise
     def delete_datasource_by_name(self, name):
+        """
+
+        :param name: Name of the database to delete
+        :return: Returns true if datasource was deleted, false otherwise
+        """
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.endpoints["datasource_name"], name)
         response = requests.delete(
@@ -231,9 +321,6 @@ class Grafana:
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.
         """
-
-        if not sensor:
-            return
 
         # Retrieve id, title, and fields from AGSensor object
         sensor_id = sensor.id
@@ -334,7 +421,7 @@ class Grafana:
             auth=("api_key", self.api_token),
         )
 
-    # Helper methods for add_panel
+    # Helper method for add_panel
     def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
         """
         Creates a panel dict which can be added to an updated dashboard dict and
@@ -437,6 +524,7 @@ class Grafana:
         }
         return panel
 
+    # Helper method for add_panel
     def create_dashboard_update_dict(self, dashboard_info, panels, overwrite=True):
         """
         Creates dashboard update dict with the provided dashboard_info dict and

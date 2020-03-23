@@ -85,6 +85,11 @@ class TestGrafana(TestCase):
         dashboard = self.grafana.create_dashboard(self.title)
 
         self.assertTrue(dashboard)
+
+    def test_create_grafana_dashboard_verify_new_dashboard_contents(self):
+        dashboard = self.grafana.create_dashboard(self.title)
+
+        self.assertTrue(dashboard)
         self.assertEquals(dashboard["status"], "success")
         self.assertEquals(dashboard["slug"], self.title.lower())
         uid = dashboard["uid"]
@@ -116,11 +121,9 @@ class TestGrafana(TestCase):
 
     def test_delete_grafana_dashboard(self):
         dashboard = self.grafana.create_dashboard(self.title)
-
         self.assertTrue(dashboard)
 
         deleted_dashboard = self.grafana.delete_dashboard(dashboard["uid"])
-
         self.assertTrue(deleted_dashboard)
 
         # figure out whether the dashboard was actually deleted
