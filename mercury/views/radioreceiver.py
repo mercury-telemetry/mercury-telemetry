@@ -11,6 +11,35 @@ from mercury.models import AGEvent
 from mercury.serializers import AGMeasurementSerializer
 
 
+def serial_ports():
+    """ Lists serial port names
+
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A list of the serial ports available on the system
+    """
+    if sys.platform.startswith("win"):
+        ports = ["COM%s" % (i + 1) for i in range(256)]
+    elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob("/dev/tty[A-Za-z]*")
+    elif sys.platform.startswith("darwin"):
+        ports = glob.glob("/dev/tty.*")
+    else:
+        raise EnvironmentError("Unsupported platform")
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
+
+
 class RadioReceiverView(APIView):
     """
     This is a Django REST API supporting user to send GET request fetching the RADIO
@@ -50,7 +79,7 @@ class RadioReceiverView(APIView):
         enable = int(enable)
         ser = serial.Serial()
 
-        valid_ports = self.serial_ports()
+        valid_ports = serial_ports()
         if len(valid_ports) > 0:
             ser.port = valid_ports[0]
         else:
@@ -72,10 +101,13 @@ class RadioReceiverView(APIView):
             ser.timeout = timeout
 
         if enable:
-            ser.open()
-            if ser.is_open:
-                # Call Script
-                self.call_script(event_uuid)
+            try:
+                ser.open()
+                if ser.is_open:
+                    # Call Script
+                    self.call_script(event_uuid)
+            except serial.serialutil.SerialException:
+                pass
         else:
             if ser.is_open:
                 ser.close()
@@ -136,32 +168,3 @@ class RadioReceiverView(APIView):
         This script will call local server to store all data received
         """
         # subprocess.call()
-
-    @staticmethod
-    def serial_ports():
-        """ Lists serial port names
-
-            :raises EnvironmentError:
-                On unsupported or unknown platforms
-            :returns:
-                A list of the serial ports available on the system
-        """
-        if sys.platform.startswith("win"):
-            ports = ["COM%s" % (i + 1) for i in range(256)]
-        elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
-            # this excludes your current terminal "/dev/tty"
-            ports = glob.glob("/dev/tty[A-Za-z]*")
-        elif sys.platform.startswith("darwin"):
-            ports = glob.glob("/dev/tty.*")
-        else:
-            raise EnvironmentError("Unsupported platform")
-
-        result = []
-        for port in ports:
-            try:
-                s = serial.Serial(port)
-                s.close()
-                result.append(port)
-            except (OSError, serial.SerialException):
-                pass
-        return result
