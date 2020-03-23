@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from mercury.models import AGEvent
 from mercury.serializers import AGMeasurementSerializer
 
 
@@ -30,8 +31,16 @@ class RadioReceiverView(APIView):
             stop bits: Optional, default one stop bit
             timeout: Optional, default 1 second
             """
-        params = request.query_params
+        # First check event_uuid exists
+        try:
+            event = AGEvent.objects.get(event_uuid=event_uuid)
+        except AGEvent.DoesNotExist:
+            event = None
+        if event is None:
+            return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
+        # Check Serial port parameters
+        params = request.query_params
         enable = params.get("enable")
         if enable is None:
             return Response(
@@ -47,13 +56,15 @@ class RadioReceiverView(APIView):
         if params.get("baudrate"):
             ser.baudrate = params.get("baudrate")
         if params.get("bytesize"):
-            ser.bytesize = params.get("bytesize")
+            bytesize = int(params.get("bytesize"))
+            ser.bytesize = bytesize
         if params.get("parity"):
             ser.parity = params.get("parity")
         if params.get("stopbits"):
             ser.stopbits = params.get("stopbits")
         if params.get("timeout"):
-            ser.timeout = params.get("timeout")
+            timeout = int(params.get("timeout"))
+            ser.timeout = timeout
 
         if enable:
             ser.open()
@@ -64,6 +75,7 @@ class RadioReceiverView(APIView):
             if ser.is_open:
                 ser.close()
 
+        # Response data
         res["baudrate"] = ser.baudrate
         res["bytesize"] = ser.bytesize
         res["parity"] = ser.parity
@@ -87,13 +99,12 @@ class RadioReceiverView(APIView):
           "date" : 2020-03-11T20:20+01:00
         }
         """
+        # First check event_uuid exists
+        event = AGEvent.objects.get(event_uuid=event_uuid)
+        if event is False:
+            return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
+
         json_data = request.data
-
-        if len(json_data) != 3:
-            return Response(
-                "Missing required params", status=status.HTTP_400_BAD_REQUEST
-            )
-
         res = {"measurement_event": event_uuid}
         dic = {
             "measurement_timestamp": "date",
@@ -102,13 +113,17 @@ class RadioReceiverView(APIView):
         }
 
         for d in dic:
+            if json_data.get(dic[d]) is None:
+                return Response(
+                    "Missing required params", status=status.HTTP_400_BAD_REQUEST
+                )
             res[d] = json_data[dic[d]]
 
         serializer = AGMeasurementSerializer(data=res)
         if serializer.is_valid():
             serializer.save()
             return Response("Saved Successfully", status=status.HTTP_200_OK)
-        return Response("Bad Request", status=status.HTTP_400_BAD_REQUEST)
+        return Response("The model fails to save", status=status.HTTP_400_BAD_REQUEST)
 
     def call_script(self, para):
         """
