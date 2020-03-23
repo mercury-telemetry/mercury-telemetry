@@ -254,7 +254,7 @@ class Grafana:
 
         Returns an object with the datasource metadata if the datasource was created.
 
-        Raises a Value Error if the request returns an error message, e.g.:
+        Raises a ValueError if the request returns an error message, e.g.:
         - Access denied - check hostname and API token
         - Datasource with the same name already exists
 
@@ -270,6 +270,7 @@ class Grafana:
             "user": self.database_username,
             "database": self.database_name,
             "basicAuth": False,
+            "isDefault": True,
             "jsonData": {"postgresVersion": 903, "sslmode": "require"},
         }
 
@@ -281,26 +282,30 @@ class Grafana:
             auth=("api_key", self.api_token),
         )
 
+        if response.status_code != 200:
+            raise ValueError(f"Datasource creation failed: {response.reason}")
+
         datasource = response.json()
-        try:
-            if datasource["message"] == "Datasource added":
-                return datasource
-            elif "Access denied" in datasource["message"]:
-                raise ValueError("Access denied - check hostname and API token")
-            elif "Data source with same name already exists" in datasource["message"]:
-                raise ValueError("Datasource with the same name already exists")
-            else:
-                raise ValueError(
-                    "Create_postgres_datasource() failed: " + datasource["message"]
-                )
-        except KeyError:
-            raise ValueError("Create_postgres_datasource() failed: " + datasource)
+
+        message = datasource.get("message")
+        if message is None:
+            raise ValueError("Response contains no message")
+        if "Datasource added" in message:
+            return datasource
+        elif "Access denied" in message:
+            raise ValueError("Access denied - check hostname and API token")
+        elif "Data source with same name already exists" in message:
+            raise ValueError("Datasource with the same name already exists")
+        else:
+            raise ValueError(
+                f"Create_postgres_datasource() failed: {message}")
+
 
     def delete_datasource_by_name(self, name):
         """
 
         :param name: Name of the database to delete
-        :return: Returns true if datasource was deleted, false otherwise
+        :return: Returns True if datasource was deleted, False otherwise
         """
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.endpoints["datasource_name"], name)
@@ -318,8 +323,14 @@ class Grafana:
 
     def add_panel(self, sensor, uid):
         """
-        :param sensor: Sensor object's sensor type will be used to create the
+
+        Adds a new panel for the sensor based on its SensorType.
+        The database for the new panel will be whichever database is currently in
+        GFConfig. The panel will be placed in the next available slot on the dashboard.
+
+        :param sensor: AGSensor object's sensor type will be used to create the
         SQL query for the new panel.
+
         :param uid: UID of the target dashboard
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.

@@ -51,17 +51,20 @@ class GFConfigView(TemplateView):
                 # Create grafana panels for any existing sensors
                 for sensor in AGSensor.objects.all():
                     grafana.add_panel(sensor, dashboard["uid"])
+
+                # If dashboard was created, store its uid in gf_config object
+                # and set current attribute to True
+                config_data.gf_dashboard_uid = dashboard["uid"]
+                config_data.gf_current = True
+                config_data.save()
+
             except ValueError as error:
                 messages.error(request, f"Dashboard couldn't be created. {error}")
-
-            # If dashboard was created, store its uid in gf_config object
-            config_data.gf_dashboard_uid = dashboard["uid"]
-            config_data.save()
 
             try:
                 grafana.create_postgres_datasource()
             except ValueError as error:
-                messages.error(request, f"Dashboard couldn't be created. {error}")
+                messages.error(request, f"Datasource couldn't be created. {error}")
 
             configs = GFConfig.objects.all().order_by("id")
             config_form = GFConfigForm()
