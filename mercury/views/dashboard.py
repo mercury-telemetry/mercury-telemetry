@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-
+from mercury.models import AGEvent
 from mercury.models import (
-    AGEvent,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,

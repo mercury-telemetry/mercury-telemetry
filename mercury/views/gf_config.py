@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
+from mercury.grafanaAPI.grafana_api import Grafana
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -38,6 +39,18 @@ class GFConfigView(TemplateView):
                 gf_token=request.POST.get("gf_token"),
             )
             config_data.save()
+
+            grafana = Grafana(config_data.gf_host, config_data.gf_token)
+            dashboard = grafana.create_dashboard()
+            if dashboard:
+                config_data.gf_dashboard_uid = dashboard["uid"]
+                config_data.save()
+            else:
+                # log an error that dashboard couldn't be created using these
+                # credentials, check API token and hostname
+                pass
+
+            grafana.create_postgres_datasource()
 
             configs = GFConfig.objects.all().order_by("id")
             config_form = GFConfigForm()
