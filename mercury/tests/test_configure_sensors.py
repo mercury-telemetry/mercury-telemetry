@@ -18,9 +18,9 @@ class TestConfigureSensorView(TestCase):
         self.field_name_2 = "test-field-2"
         self.test_type_object_name = "live-feed"
         test_type_object = AGSensorType.objects.create(
-            name = self.test_type_object_name,
-            processing_formula = 0,
-            format = {
+            name=self.test_type_object_name,
+            processing_formula=0,
+            format={
                 self.field_name_1: {
                     "data_type": "test-data-type-1",
                     "unit": "test-unit-1",
@@ -30,7 +30,7 @@ class TestConfigureSensorView(TestCase):
                     "unit": "test-unit-2",
                 },
             },
-        )   
+        )
         test_type_object.save()
 
         self.test_sensor = {
@@ -41,7 +41,7 @@ class TestConfigureSensorView(TestCase):
         self.test_sensor_type = {
             "type-name": "fuel level",
             "processing formula": 0,
-            "field-names": ["test-field-1","test-field-2"],
+            "field-names": ["test-field-1", "test-field-2"],
             "data-types": ["test-data-type-1", "test-data-type-2"],
             "units": ["test-unit-1", "test-unit-2"],
         }
@@ -70,10 +70,10 @@ class TestConfigureSensorView(TestCase):
         response = self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": self.test_sensor["name"],
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -85,13 +85,13 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST good sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": self.test_sensor["name"],
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params
@@ -99,7 +99,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 1)
 
     # Valid POST creates new AGSensor object with expected parameters
-    def test_ConfigureSensorView_valid_POST_sensor_object_created_with_correct_params(self):
+    def test_ConfigureSensorView_valid_POST_sensor_object_created_with_correct_params(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -107,10 +109,10 @@ class TestConfigureSensorView(TestCase):
         self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": self.test_sensor["name"],
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected values
@@ -132,8 +134,8 @@ class TestConfigureSensorView(TestCase):
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -145,22 +147,26 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST good sensor type data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_type": "",
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params
         sensor_types = AGSensorType.objects.all()
-        self.assertEqual(sensor_types.count(), 2) #not 1 since we created a sensor_type in the setUp() function
+        self.assertEqual(
+            sensor_types.count(), 2
+        )  # not 1 since we created a sensor_type in the setUp() function
 
-    def test_ConfigureSensorView_valid_POST_sensor_type_object_created_with_correct_params(self):
+    def test_ConfigureSensorView_valid_POST_sensor_type_object_created_with_correct_params(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -172,8 +178,8 @@ class TestConfigureSensorView(TestCase):
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected values
@@ -199,7 +205,6 @@ class TestConfigureSensorView(TestCase):
             self.test_sensor_type["units"][1],
         )
 
-
     # # Invalid POST tests
 
     # Duplicate field names still returns status ok
@@ -211,10 +216,10 @@ class TestConfigureSensorView(TestCase):
         response = self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": "",
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -229,10 +234,10 @@ class TestConfigureSensorView(TestCase):
         self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": "",
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params
@@ -242,7 +247,8 @@ class TestConfigureSensorView(TestCase):
     # Sensor name already in use - still returns status OK
     def test_ConfigureSensorView_invalid_POST_sensor_name_taken_status_ok(self):
         AGSensor.objects.create(
-            name=self.test_sensor["name"], type_id=AGSensorType.objects.get(name=self.test_type_object_name)
+            name=self.test_sensor["name"],
+            type_id=AGSensorType.objects.get(name=self.test_type_object_name),
         )
 
         # Login
@@ -252,10 +258,10 @@ class TestConfigureSensorView(TestCase):
         response = self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": self.test_sensor["name"],
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -264,20 +270,21 @@ class TestConfigureSensorView(TestCase):
     # Sensor name already in use - new AGSensor object not created
     def test_ConfigureSensorView_invalid_POST_sensor_name_taken_no_object_created(self):
         AGSensor.objects.create(
-            name=self.test_sensor["name"], type_id=AGSensorType.objects.get(name=self.test_type_object_name)
+            name=self.test_sensor["name"],
+            type_id=AGSensorType.objects.get(name=self.test_type_object_name),
         )
 
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
-                "submit_new_sensor": "", 
+                "submit_new_sensor": "",
                 "sensor-name": self.test_sensor["name"],
-                "select-sensor-type": self.test_sensor["type_id"]
-            }
+                "select-sensor-type": self.test_sensor["type_id"],
+            },
         )
 
         # Check that additional AGSensor object is not created in db
@@ -297,15 +304,17 @@ class TestConfigureSensorView(TestCase):
                 "type-name": "",
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
     # Sensor type name missing - no AGSensorType object created
-    def test_ConfigureSensorView_bad_POST_sensor_type_name_missing_no_object_created(self):
+    def test_ConfigureSensorView_bad_POST_sensor_type_name_missing_no_object_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -317,8 +326,8 @@ class TestConfigureSensorView(TestCase):
                 "type-name": "",
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params
@@ -326,7 +335,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 0)
 
     # Field name missing still returns status OK
-    def test_ConfigureSensorView_invalid_POST_sensor_type_field_name_missing_status_ok(self):
+    def test_ConfigureSensorView_invalid_POST_sensor_type_field_name_missing_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -338,15 +349,17 @@ class TestConfigureSensorView(TestCase):
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": [self.field_name_1],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
     # Field name missing - no AGSensorType object created
-    def test_ConfigureSensorView_bad_POST_sensor_type_field_name_missing_no_object_created(self):
+    def test_ConfigureSensorView_bad_POST_sensor_type_field_name_missing_no_object_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -358,8 +371,8 @@ class TestConfigureSensorView(TestCase):
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": [self.field_name_1],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params
@@ -367,7 +380,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 0)
 
     # AGSensorType name taken returns status OK
-    def test_ConfigureSensorView_invalid_POST_sensor_type_field_name_missing_status_ok(self):
+    def test_ConfigureSensorView_invalid_POST_sensor_type_name_taken_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -376,18 +391,20 @@ class TestConfigureSensorView(TestCase):
             reverse(self.sensor_url),
             data={
                 "submit_new_type": "",
-                "type-name": self.test_type_object_name, #AGSensorType created in setUp()
+                "type-name": self.test_type_object_name,  # AGSensorType created in setUp()
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
     # AGSensorType name taken - no AGSensorType object created
-    def test_ConfigureSensorView_bad_POST_sensor_type_field_name_missing_no_object_created(self):
+    def test_ConfigureSensorView_invalid_POST_sensor_type_name_taken_no_object_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -396,11 +413,11 @@ class TestConfigureSensorView(TestCase):
             reverse(self.sensor_url),
             data={
                 "submit_new_type": "",
-                "type-name": self.test_type_object_name, #AGSensorType created in setUp()
+                "type-name": self.test_type_object_name,  # AGSensorType created in setUp()
                 "field-names": self.test_sensor_type["field-names"],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params
@@ -408,7 +425,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 0)
 
     # AGSensorType duplicated field name returns status OK
-    def test_ConfigureSensorView_invalid_POST_sensor_type_field_name_missing_status_ok(self):
+    def test_ConfigureSensorView_bad_POST_sensor_type_duplicate_field_name_missing_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -420,15 +439,17 @@ class TestConfigureSensorView(TestCase):
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": [self.field_name_1, self.field_name_1],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
     # AGSensorType duplicated field name - no AGSensorType object created
-    def test_ConfigureSensorView_bad_POST_sensor_type_field_name_missing_no_object_created(self):
+    def test_ConfigureSensorView_bad_POST_sensor_type_duplicate_field_name_no_object_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -440,8 +461,8 @@ class TestConfigureSensorView(TestCase):
                 "type-name": self.test_sensor_type["type-name"],
                 "field-names": [self.field_name_1, self.field_name_1],
                 "data-types": self.test_sensor_type["data-types"],
-                "units": self.test_sensor_type["units"]
-            }
+                "units": self.test_sensor_type["units"],
+            },
         )
 
         # Check that AGSensor object is created in db with expected params

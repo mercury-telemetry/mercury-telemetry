@@ -28,8 +28,10 @@ def validate_add_sensor_inputs(sensor_name, request):
 
     return form_valid, request
 
+
 def validate_add_sensor_type_inputs(type_name, field_name_list, request):
-    """This validates the form before a user submits a new sensor type to prevent bad inputs"""
+    """This validates the form before a user submits a new sensor type to
+       prevent bad inputs"""
 
     form_valid = True
 
@@ -56,6 +58,7 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
 
     return form_valid, request
 
+
 def delete_sensor(request, sensor_id):
     """This deletes a sensor from the database based on user button click"""
 
@@ -63,13 +66,19 @@ def delete_sensor(request, sensor_id):
     sensor_to_delete.delete()
     return redirect("/sensor")
 
+
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
-    for sensor in AGSensor.objects.all(): #delete sensors with this type first to avoid foreignkey error
+    for (
+        sensor
+    ) in (
+        AGSensor.objects.all()
+    ):  # delete sensors with this type first to avoid foreignkey error
         sensor.delete()
     type_to_delete = AGSensorType.objects.get(id=type_id)
     type_to_delete.delete()
     return redirect("/sensor")
+
 
 def update_sensor(request, sensor_id):
     """This updates a sensor in the database based on user input"""
@@ -81,7 +90,7 @@ def update_sensor(request, sensor_id):
     sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
     valid, request = validate_add_sensor_inputs(sensor_name, request)
 
-    sensor_types = AGSensorType.objects.all() #for when we return context later
+    sensor_types = AGSensorType.objects.all()  # for when we return context later
     if valid:
         sensor_to_update.name = sensor_name
         sensor_type = request.POST.get("edit-select-sensor-type")
@@ -91,7 +100,7 @@ def update_sensor(request, sensor_id):
         context = {
             "sensors": sensors,
             "sensor_types": sensor_types,
-            }
+        }
     else:
         sensors = AGSensor.objects.all()
         context = {
@@ -105,7 +114,7 @@ def update_sensor(request, sensor_id):
 
 def update_sensor_type(request, type_id):
     """This updates a sensor type in the database based on user input"""
-    #Currently causing a strange URL bug, need to debug
+    # Currently causing a strange URL bug, need to debug
 
     type_to_update = AGSensorType.objects.get(id=type_id)
     type_name = request.POST.get("edit-type-name")
@@ -124,17 +133,17 @@ def update_sensor_type(request, type_id):
     for field in fields:
         type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-    sensors = AGSensor.objects.all() #for when we return context later
+    sensors = AGSensor.objects.all()  # for when we return context later
     if valid:
-        type_to_update.name=type_name
-        type_to_update.processing_formula=0
-        type_to_update.format=type_format
+        type_to_update.name = type_name
+        type_to_update.processing_formula = 0
+        type_to_update.format = type_format
         type_to_update.save()
         sensor_types = AGSensorType.objects.all()
         context = {
             "sensor_types": sensor_types,
             "sensors": sensors,
-            }
+        }
     else:
         sensor_types = AGSensorType.objects.all()
         context = {
@@ -161,7 +170,7 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
-        if ("submit_new_type" in request.POST):
+        if "submit_new_type" in request.POST:
             type_name = request.POST.get("type-name")
             field_names = request.POST.getlist("field-names")
             field_types = request.POST.getlist("data-types")
@@ -170,7 +179,9 @@ class CreateSensorView(TemplateView):
             # reformat then validate inputs to avoid duplicated names or bad inputs like " "
             type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
             field_names = [string.strip().lower() for string in field_names]
-            valid, request = validate_add_sensor_type_inputs(type_name, field_names, request)
+            valid, request = validate_add_sensor_type_inputs(
+                type_name, field_names, request
+            )
 
             # create sensor format which is dictionary of dictionaries
             type_format = {}
@@ -178,16 +189,17 @@ class CreateSensorView(TemplateView):
             for field in fields:
                 type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-
-            sensors = AGSensor.objects.all() #for when we return context later
+            sensors = AGSensor.objects.all()  # for when we return context later
             if valid:
-                new_type = AGSensorType.objects.create(name=type_name, processing_formula=0, format=type_format)
+                new_type = AGSensorType.objects.create(
+                    name=type_name, processing_formula=0, format=type_format
+                )
                 new_type.save()
                 sensor_types = AGSensorType.objects.all()
                 context = {
                     "sensor_types": sensor_types,
                     "sensors": sensors,
-                    }
+                }
             else:
                 sensor_types = AGSensorType.objects.all()
                 context = {
@@ -198,19 +210,27 @@ class CreateSensorView(TemplateView):
                 }
 
             return render(request, self.template_name, context)
-            
-        elif ("submit_new_sensor" in request.POST):
+
+        elif "submit_new_sensor" in request.POST:
             sensor_name = request.POST.get("sensor-name")
             sensor_type = request.POST.get("select-sensor-type")
-            sensor_type = AGSensorType.objects.get(name=sensor_type) #str --> AGSensorType 
+            sensor_type = AGSensorType.objects.get(
+                name=sensor_type
+            )  # str --> AGSensorType
 
             # reformat then validate name to avoid duplicated names or bad inputs like " "
-            sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
+            sensor_name = (
+                sensor_name.strip().lower()
+            )  # remove excess whitespace and CAPS
             valid, request = validate_add_sensor_inputs(sensor_name, request)
 
-            sensor_types = AGSensorType.objects.all() #for when we return context later
+            sensor_types = (
+                AGSensorType.objects.all()
+            )  # for when we return context later
             if valid:
-                new_sensor = AGSensor.objects.create(name=sensor_name, type_id=sensor_type)
+                new_sensor = AGSensor.objects.create(
+                    name=sensor_name, type_id=sensor_type
+                )
                 new_sensor.save()
 
                 gf_configs = GFConfig.objects.all()
@@ -226,7 +246,7 @@ class CreateSensorView(TemplateView):
                 context = {
                     "sensors": sensors,
                     "sensor_types": sensor_types,
-                    }
+                }
             else:
                 sensors = AGSensor.objects.all()
                 context = {
