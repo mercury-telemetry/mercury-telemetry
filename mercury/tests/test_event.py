@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from mercury.models import EventCodeAccess
-from ag_data.models import AGEvent
+from mercury.models import EventCodeAccess, AGEvent
 import datetime
 
 
