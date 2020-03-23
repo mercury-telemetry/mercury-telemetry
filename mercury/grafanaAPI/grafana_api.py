@@ -53,10 +53,10 @@ class Grafana:
             "dashboard_post": "api/dashboards/db",
             "dashboard_get": "api/dashboards",
             "dashboard_home": "api/dashboards/home",
-            'dashboard_uid': "api/dashboards/uid",
+            "dashboard_uid": "api/dashboards/uid",
             "search": "api/search?",
             "datasources": "api/datasources",
-            "datasource_name": "api/datasources/name"
+            "datasource_name": "api/datasources/name",
         }
 
         # Grafana API endpoints constructed with hostname + url
@@ -67,7 +67,9 @@ class Grafana:
             "dashboard_uid": os.path.join(self.hostname, self.urls["dashboard_uid"]),
             "search": os.path.join(self.hostname, self.urls["search"]),
             "datasources": os.path.join(self.hostname, self.urls["datasources"]),
-            "datasource_name": os.path.join(self.hostname, self.urls["datasource_name"])
+            "datasource_name": os.path.join(
+                self.hostname, self.urls["datasource_name"]
+            ),
         }
 
         # Default panel sizes
@@ -188,12 +190,13 @@ class Grafana:
                     raise ValueError("Access denied - check API permissions")
                 elif "Invalid API key" in error_message:
                     raise ValueError("Invalid API key")
-                elif "A dashboard with the same name in the folder already exists" in \
-                        error_message:
+                elif (
+                    "A dashboard with the same name in the folder already exists"
+                    in error_message
+                ):
                     raise ValueError("Dashboard with the same name already exists")
                 else:
-                    raise ValueError(
-                        "Create_dashboard() failed: " + error_message)
+                    raise ValueError("Create_dashboard() failed: " + error_message)
 
     def delete_dashboard(self, uid):
         """

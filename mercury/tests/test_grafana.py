@@ -75,7 +75,7 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.title)
 
     def test_get_dashboard_fail(self):
-        uid = "abcde" # doesn't exist
+        uid = "abcde"  # doesn't exist
 
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
@@ -127,7 +127,9 @@ class TestGrafana(TestCase):
         self.assertTrue(deleted_dashboard)
 
         # figure out whether the dashboard was actually deleted
-        endpoint = os.path.join(self.grafana.endpoints["dashboard_uid"], dashboard["uid"])
+        endpoint = os.path.join(
+            self.grafana.endpoints["dashboard_uid"], dashboard["uid"]
+        )
         headers = {"Content-Type": "application/json"}
         response = requests.get(
             url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
@@ -181,7 +183,7 @@ class TestGrafana(TestCase):
         # confirm that the datasource exists
         endpoint = os.path.join(
             self.grafana.endpoints["datasource_name"],
-            self.grafana.database_grafana_name
+            self.grafana.database_grafana_name,
         )
         headers = {"Content-Type": "application/json"}
         response = requests.get(
@@ -203,7 +205,7 @@ class TestGrafana(TestCase):
         # figure out whether the datasource was actually deleted
         endpoint = os.path.join(
             self.grafana.endpoints["datasource_name"],
-            self.grafana.database_grafana_name
+            self.grafana.database_grafana_name,
         )
         headers = {"Content-Type": "application/json"}
         response = requests.get(
