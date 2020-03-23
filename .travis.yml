@@ -34,9 +34,11 @@ jobs:
         - python manage.py collectstatic --noinput
 
       script:
-        - black --check --exclude "migrations/" mysite mercury ag_data
-        - flake8 mysite/ mercury/ ag_data/
-        - coverage run --source=mysite,mercury,ag_data --omit="migrations/*" manage.py test
+        - black --check --diff .
+        # modify .flake8 env file to update flake8 configuration
+        - flake8 .
+        # modify .coveragerc env file to update test configuration
+        - coverage run manage.py test
 
       after_script:
         - coveralls
@@ -44,6 +46,8 @@ jobs:
 
     # run the hardware tests
     - language: bash
+      
+      # python: '3.6'
       
       services:
           - docker
@@ -57,5 +61,6 @@ jobs:
       script:
         # basic help world test to see if it's working
         - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
+        # - black --check --exclude "migrations/" hardware
 
             
