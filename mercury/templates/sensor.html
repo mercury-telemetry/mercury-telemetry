@@ -213,7 +213,7 @@
                              value="{{ sensor.name }}"></td>
                              <td><p>{{ sensor.type_id.name }}</p>
                             <td>
-                                <input type="submit" value="Update">
+                                <a href="update_sensor/{{ sensor.id }}">Update</a>
                             </td>
                             <td><a href="delete_sensor/{{ sensor.id }}">Delete</a></td>
                         </tr>
@@ -254,10 +254,10 @@
                             <tbody>
                                 {% for field_name, unit_and_format in sensor_type.format.items %}
                                 <tr>
-                                    <td> <input type="text" id="edit-field-name" name="edit-field-names" value="{{ field_name }}" required/> </td>
+                                    <td> <input type="text" id="edit-field-names" name="edit-field-names" value="{{ field_name }}" required/> </td>
 
                                     <td>
-                                        <select id="edit-data-type" name="edit-data-types"/>
+                                        <select id="edit-data-types" name="edit-data-types"/>
                                         {% if unit_and_format.data_type == "Numeric" %}
                                                 <option selected="selected"> Numeric </option>
                                                 <option> Character </option>
@@ -276,12 +276,12 @@
                                         </select>
                                     </td>
 
-                                    <td> <input type="text" id="edit-unit" name="edit-units" value="{{ unit_and_format.unit }}" /> </td>
+                                    <td> <input type="text" id="edit-units" name="edit-units" value="{{ unit_and_format.unit }}" /> </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table> <br>
-                        <input class="grafana-btn grafana-btn-green" type="submit" value="Update">
+                        <a href="update_type/{{ sensor_type.id }}">Update</a>
                         <a href="delete_type/{{ sensor_type.id }}">Delete</a>
                         <br> <hr> <br>
                     {% endfor %}

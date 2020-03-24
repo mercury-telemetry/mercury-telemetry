@@ -30,8 +30,9 @@ def validate_add_sensor_inputs(sensor_name, request):
 
 
 def validate_add_sensor_type_inputs(type_name, field_name_list, request):
-    """This validates the form before a user submits a new sensor type to
-       prevent bad inputs"""
+    """
+    This validates the form before a user submits a new sensor type to prevent bad inputs
+    """
 
     form_valid = True
 
@@ -69,6 +70,7 @@ def delete_sensor(request, sensor_id):
 
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
+
     for sensor in AGSensor.objects.all(): # delete sensors with this type first to avoid foreignkey error
         sensor.delete()
     type_to_delete = AGSensorType.objects.get(id=type_id)
@@ -101,6 +103,9 @@ def update_sensor_type(request, type_id):
     field_names = request.POST.getlist("edit-field-names")
     field_types = request.POST.getlist("edit-data-types")
     field_units = request.POST.getlist("edit-units")
+    print("\n\n" + str(field_names)) #DEBUG
+    print("\n\n" + str(field_types)) #DEBUG
+    print("\n\n" + str(field_units)) #DEBUG
 
     # reformat then validate inputs to avoid duplicated names or bad inputs like " "
     type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
@@ -222,9 +227,3 @@ class CreateSensorView(TemplateView):
                     "sensor_types": sensor_types,
                 }
             return render(request, self.template_name, context)
-
-"""
-Known bugs:
-- viewing sensor types and sensors in edit mode does not show full full names, just first word
-- weird strip() error I cannot replicate when adding new sensor type
-"""
