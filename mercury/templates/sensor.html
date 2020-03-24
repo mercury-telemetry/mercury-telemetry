@@ -213,7 +213,7 @@
                              value="{{ sensor.name }}"></td>
                              <td><p>{{ sensor.type_id.name }}</p>
                             <td>
-                                <a href="update_sensor/{{ sensor.id }}">Update</a>
+                                <input type="submit" value="Update">
                             </td>
                             <td><a href="delete_sensor/{{ sensor.id }}">Delete</a></td>
                         </tr>
@@ -281,7 +281,7 @@
                                 {% endfor %}
                             </tbody>
                         </table> <br>
-                        <a href="update_type/{{ sensor_type.id }}">Update</a>
+                        <input type="submit" value="Update">
                         <a href="delete_type/{{ sensor_type.id }}">Delete</a>
                         <br> <hr> <br>
                     {% endfor %}

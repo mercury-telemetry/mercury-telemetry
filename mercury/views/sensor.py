@@ -59,6 +59,37 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
 
     return form_valid, request
 
+def validate_update_sensor_type_inputs(type_name, field_name_list, type_to_update, request):
+    """
+    This validates the form before a user submits a new sensor type to prevent bad inputs
+    """
+
+    form_valid = True
+
+    # no type name
+    if not type_name:
+        messages.error(request, "Type name is missing or invalid.")
+        form_valid = False
+
+    # missing field names
+    for name in field_name_list:
+        if not name:
+            messages.error(request, "Type has missing field name(s).")
+            form_valid = False
+
+    # duplicated type name
+    for sensor_type in AGSensorType.objects.all():
+        if sensor_type.name == type_name and sensor_type != type_to_update:
+            messages.error(request, "Type name is already taken.")
+            form_valid = False
+
+    # duplicated field names
+    if len(field_name_list) > len(set(field_name_list)):
+        messages.error(request, "Field names must be unique.")
+        form_valid = False
+
+    return form_valid, request
+
 
 def delete_sensor(request, sensor_id):
     """This deletes a sensor from the database based on user button click"""
@@ -103,14 +134,11 @@ def update_sensor_type(request, type_id):
     field_names = request.POST.getlist("edit-field-names")
     field_types = request.POST.getlist("edit-data-types")
     field_units = request.POST.getlist("edit-units")
-    print("\n\n" + str(field_names)) #DEBUG
-    print("\n\n" + str(field_types)) #DEBUG
-    print("\n\n" + str(field_units)) #DEBUG
 
     # reformat then validate inputs to avoid duplicated names or bad inputs like " "
     type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
     field_names = [string.strip().lower() for string in field_names]
-    valid, request = validate_add_sensor_type_inputs(type_name, field_names, request)
+    valid, request = validate_update_sensor_type_inputs(type_name, field_names, type_to_update, request)
 
     # create sensor format which is dictionary of dictionaries
     type_format = {}
