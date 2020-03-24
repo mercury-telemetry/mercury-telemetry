@@ -8,7 +8,6 @@ from django.views.generic import TemplateView
 from ..event_check import require_event_code
 from mercury.forms import EventForm, VenueForm
 from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
-from mercury.resources import MeasurementResource
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -33,7 +32,6 @@ def update_event(request, event_uuid=None):
         post_event_location_id = request.POST.get("venue_uuid")
         venue_object = AGVenue.objects.get(uuid=post_event_location_id)
         event_to_update.venue_uuid = venue_object
-        event_to_update.date = request.POST.get("date")
         event_to_update.description = request.POST.get("description")
         event_to_update.save()
 
@@ -46,7 +44,7 @@ def delete_event(request, event_uuid=None):
     return redirect("/events")
 
 
-def export_event_two(request, event_uuid=None):
+def export_event(request, event_uuid=None):
     event_to_export = AGEvent.objects.get(uuid=event_uuid)
     if event_to_export:
         response = HttpResponse(content_type="text/csv")
@@ -90,26 +88,6 @@ def export_event_two(request, event_uuid=None):
         return response
     else:
         return redirect("/events")
-
-
-def export_event(request, event_uuid=None):
-    event_to_export = MeasurementResource()
-    file_format = "CSV"
-    dataset = event_to_export.export()
-    if file_format == "CSV":
-        response = HttpResponse(dataset.csv, content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="events.csv"'
-        return response
-    elif file_format == "JSON":
-        response = HttpResponse(dataset.json, content_type="application/json")
-        response["Content-Disposition"] = 'attachment; filename="exported_data.json"'
-        return response
-    elif file_format == "XLS (Excel)":
-        response = HttpResponse(dataset.xls, content_type="application/vnd.ms-excel")
-        response["Content-Disposition"] = 'attachment; filename="exported_data.xls"'
-        return response
-
-    return redirect("/events")
 
 
 class CreateEventsView(TemplateView):

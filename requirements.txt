@@ -9,7 +9,6 @@ pySerial
 djangorestframework
 markdown
 django-filter
-django-import-export
 drf-yasg
 selenium==3.141.0
 django-annoying
