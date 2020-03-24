@@ -69,11 +69,7 @@ def delete_sensor(request, sensor_id):
 
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
-    for (
-        sensor
-    ) in (
-        AGSensor.objects.all()
-    ):  # delete sensors with this type first to avoid foreignkey error
+    for sensor in AGSensor.objects.all(): # delete sensors with this type first to avoid foreignkey error
         sensor.delete()
     type_to_delete = AGSensorType.objects.get(id=type_id)
     type_to_delete.delete()
@@ -86,35 +82,19 @@ def update_sensor(request, sensor_id):
     sensor_to_update = AGSensor.objects.get(id=sensor_id)
 
     sensor_name = request.POST.get("edit-sensor-name")
+
     # reformat then validate name to avoid duplicated names or bad inputs like " "
     sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
     valid, request = validate_add_sensor_inputs(sensor_name, request)
 
-    sensor_types = AGSensorType.objects.all()  # for when we return context later
     if valid:
         sensor_to_update.name = sensor_name
-        sensor_type = request.POST.get("edit-select-sensor-type")
-        sensor_to_update.type_id = AGSensorType.objects.get(name=sensor_type)
         sensor_to_update.save()
-        sensors = AGSensor.objects.all()
-        context = {
-            "sensors": sensors,
-            "sensor_types": sensor_types,
-        }
-    else:
-        sensors = AGSensor.objects.all()
-        context = {
-            "sensors": sensors,
-            "sensor_name": sensor_name,
-            "sensor_type": sensor_type,
-            "sensor_types": sensor_types,
-        }
-    return render(request, "sensor.html", context)
+    return redirect("/sensor")
 
 
 def update_sensor_type(request, type_id):
     """This updates a sensor type in the database based on user input"""
-    # Currently causing a strange URL bug, need to debug
 
     type_to_update = AGSensorType.objects.get(id=type_id)
     type_name = request.POST.get("edit-type-name")
@@ -133,27 +113,13 @@ def update_sensor_type(request, type_id):
     for field in fields:
         type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-    sensors = AGSensor.objects.all()  # for when we return context later
     if valid:
         type_to_update.name = type_name
         type_to_update.processing_formula = 0
         type_to_update.format = type_format
         type_to_update.save()
-        sensor_types = AGSensorType.objects.all()
-        context = {
-            "sensor_types": sensor_types,
-            "sensors": sensors,
-        }
-    else:
-        sensor_types = AGSensorType.objects.all()
-        context = {
-            "sensor_types": sensor_types,
-            "type_name": type_name,
-            "type_format": type_format,
-            "sensors": sensors,
-        }
 
-    return render(request, "sensor.html", context)
+    return redirect("/sensor")
 
 
 class CreateSensorView(TemplateView):
@@ -256,3 +222,9 @@ class CreateSensorView(TemplateView):
                     "sensor_types": sensor_types,
                 }
             return render(request, self.template_name, context)
+
+"""
+Known bugs:
+- viewing sensor types and sensors in edit mode does not show full full names, just first word
+- weird strip() error I cannot replicate when adding new sensor type
+"""

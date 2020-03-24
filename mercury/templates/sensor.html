@@ -210,15 +210,8 @@
                         <tr>
                             <th>{{ sensor.id }}</th>
                             <td><input type="text" name="edit-sensor-name" id="edit-sensor-name"
-                             value={{ sensor.name }}></td>
-                            <td><select id="edit-select-sensor-type" name="edit-select-sensor-type"/> <!-- add default value later-->
-                                {% for sensor_type in sensor_types %}
-                                    {% if sensor_type == sensor.type_id %}
-                                        <option selected="selected">{{ sensor_type.name }}</option>
-                                    {% else %}
-                                        <option>{{ sensor_type.name }}</option>
-                                    {% endif %}
-                                {% endfor %}
+                             value="{{ sensor.name }}"></td>
+                             <td><p>{{ sensor.type_id.name }}</p>
                             <td>
                                 <input type="submit" value="Update">
                             </td>
@@ -246,7 +239,7 @@
                     <div id = "type-container"> <!-- single div for configuring entire sensor type -->
                         <div class="inline-box">
                             <label for="type-name"> <b>Type Name:</b> </label>
-                            <input type="text" id="edit-type-name" name="edit-type-name" value={{ sensor_type.name }} required/>
+                            <input type="text" id="edit-type-name" name="edit-type-name" value="{{ sensor_type.name }}" required/>
                         </div> <br>
 
                         <table id="edit-type-table">
@@ -261,7 +254,7 @@
                             <tbody>
                                 {% for field_name, unit_and_format in sensor_type.format.items %}
                                 <tr>
-                                    <td> <input type="text" id="edit-field-name" name="edit-field-names" value={{ field_name }} required/> </td>
+                                    <td> <input type="text" id="edit-field-name" name="edit-field-names" value="{{ field_name }}" required/> </td>
 
                                     <td>
                                         <select id="edit-data-type" name="edit-data-types"/>
@@ -283,7 +276,7 @@
                                         </select>
                                     </td>
 
-                                    <td> <input type="text" id="edit-unit" name="edit-units" value={{ unit_and_format.unit }} /> </td>
+                                    <td> <input type="text" id="edit-unit" name="edit-units" value="{{ unit_and_format.unit }}" /> </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
