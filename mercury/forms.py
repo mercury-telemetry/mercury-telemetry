@@ -40,9 +40,9 @@ class GFConfigForm(forms.ModelForm):
         model = GFConfig
         fields = ["gf_name", "gf_host", "gf_token"]
         labels = {
-            "gf_name": "Host Label",
-            "gf_host": "Host Address",
-            "gf_token": 'API Token (Without "Bearer" prefix)',
+            "gf_name": "Label (e.g. remote, local)",
+            "gf_host": "Hostname (e.g. https://abc123.grafana.net, localhost:3000)",
+            "gf_token": "API Token",
         }
 
 
