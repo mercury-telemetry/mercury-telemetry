@@ -29,6 +29,10 @@
             </ul>
         </nav>
 
+        {% for message in messages %}
+            <p class="error"> {{ message }} </p>
+        {% endfor %}
+
         <div id="existing-sensors">
             <h2>Existing Sensors</h2>
             <br>
@@ -145,10 +149,6 @@
             </form>
             <br>
 
-            {% for message in messages %}
-            <p class="error"> {{ message }} </p>
-            {% endfor %}
-
         </div> <!-- end add new type -->
 
         <div id="view-existing-types">
@@ -210,15 +210,8 @@
                         <tr>
                             <th>{{ sensor.id }}</th>
                             <td><input type="text" name="edit-sensor-name" id="edit-sensor-name"
-                             value={{ sensor.name }}></td>
-                            <td><select id="edit-select-sensor-type" name="edit-select-sensor-type"/> <!-- add default value later-->
-                                {% for sensor_type in sensor_types %}
-                                    {% if sensor_type == sensor.type_id %}
-                                        <option selected="selected">{{ sensor_type.name }}</option>
-                                    {% else %}
-                                        <option>{{ sensor_type.name }}</option>
-                                    {% endif %}
-                                {% endfor %}
+                             value="{{ sensor.name }}"></td>
+                             <td><p>{{ sensor.type_id.name }}</p>
                             <td>
                                 <input type="submit" value="Update">
                             </td>
@@ -246,7 +239,7 @@
                     <div id = "type-container"> <!-- single div for configuring entire sensor type -->
                         <div class="inline-box">
                             <label for="type-name"> <b>Type Name:</b> </label>
-                            <input type="text" id="edit-type-name" name="edit-type-name" value={{ sensor_type.name }} required/>
+                            <input type="text" id="edit-type-name" name="edit-type-name" value="{{ sensor_type.name }}" required/>
                         </div> <br>
 
                         <table id="edit-type-table">
@@ -261,10 +254,10 @@
                             <tbody>
                                 {% for field_name, unit_and_format in sensor_type.format.items %}
                                 <tr>
-                                    <td> <input type="text" id="edit-field-name" name="edit-field-names" value={{ field_name }} required/> </td>
+                                    <td> <input type="text" id="edit-field-names" name="edit-field-names" value="{{ field_name }}" required/> </td>
 
                                     <td>
-                                        <select id="edit-data-type" name="edit-data-types"/>
+                                        <select id="edit-data-types" name="edit-data-types"/>
                                         {% if unit_and_format.data_type == "Numeric" %}
                                                 <option selected="selected"> Numeric </option>
                                                 <option> Character </option>
@@ -283,17 +276,17 @@
                                         </select>
                                     </td>
 
-                                    <td> <input type="text" id="edit-unit" name="edit-units" value={{ unit_and_format.unit }} /> </td>
+                                    <td> <input type="text" id="edit-units" name="edit-units" value="{{ unit_and_format.unit }}" /> </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table> <br>
-                        <input class="grafana-btn grafana-btn-green" type="submit" value="Update">
+                        <input type="submit" value="Update">
                         <a href="delete_type/{{ sensor_type.id }}">Delete</a>
                         <br> <hr> <br>
-                    {% endfor %}
-                    </div> <br>
-                </form>
+                    </form>
+                {% endfor %}
+                </div> <br>
             {% else %}
                 <h3 style="color:red;"><b> There are no sensor types to edit </b></h3>
                 <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
