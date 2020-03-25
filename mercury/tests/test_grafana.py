@@ -8,8 +8,8 @@ import requests
 import os
 
 # default host and token, use this if user did not provide anything
-HOST = "https://dbc291.grafana.net"
-TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
+HOST = "https://mercurytests.grafana.net"
+TOKEN = "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdTdvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
