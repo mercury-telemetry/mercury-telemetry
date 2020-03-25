@@ -18,12 +18,12 @@ def validate_add_sensor_inputs(sensor_name, request):
 
     # no sensor name
     if not sensor_name:
-        messages.error(request, "Sensor name is missing or invalid.")
+        messages.error(request, "FAILED: Sensor name is missing or invalid.")
         form_valid = False
 
     # duplicated sensor name
     if AGSensor.objects.filter(name=sensor_name).count() > 0:
-        messages.error(request, "Sensor name is already taken.")
+        messages.error(request, "FAILED: Sensor name is already taken.")
         form_valid = False
 
     return form_valid, request
@@ -38,28 +38,31 @@ def validate_add_sensor_type_inputs(type_name, field_name_list, request):
 
     # no type name
     if not type_name:
-        messages.error(request, "Type name is missing or invalid.")
+        messages.error(request, "FAILED: Type name is missing or invalid.")
         form_valid = False
 
     # missing field names
     for name in field_name_list:
         if not name:
-            messages.error(request, "Type has missing field name(s).")
+            messages.error(request, "FAILED: Type has missing field name(s).")
             form_valid = False
 
     # duplicated type name
     if AGSensorType.objects.filter(name=type_name).count() > 0:
-        messages.error(request, "Type name is already taken.")
+        messages.error(request, "FAILED: Type name is already taken.")
         form_valid = False
 
     # duplicated field names
     if len(field_name_list) > len(set(field_name_list)):
-        messages.error(request, "Field names must be unique.")
+        messages.error(request, "FAILED: Field names must be unique.")
         form_valid = False
 
     return form_valid, request
 
-def validate_update_sensor_type_inputs(type_name, field_name_list, type_to_update, request):
+
+def validate_update_sensor_type_inputs(
+    type_name, field_name_list, type_to_update, request
+):
     """
     This validates the form before a user submits a new sensor type to prevent bad inputs
     """
@@ -68,24 +71,24 @@ def validate_update_sensor_type_inputs(type_name, field_name_list, type_to_updat
 
     # no type name
     if not type_name:
-        messages.error(request, "Type name is missing or invalid.")
+        messages.error(request, "FAILED: Type name is missing or invalid.")
         form_valid = False
 
     # missing field names
     for name in field_name_list:
         if not name:
-            messages.error(request, "Type has missing field name(s).")
+            messages.error(request, "FAILED: Type has missing field name(s).")
             form_valid = False
 
     # duplicated type name
     for sensor_type in AGSensorType.objects.all():
         if sensor_type.name == type_name and sensor_type != type_to_update:
-            messages.error(request, "Type name is already taken.")
+            messages.error(request, "FAILED: Type name is already taken.")
             form_valid = False
 
     # duplicated field names
     if len(field_name_list) > len(set(field_name_list)):
-        messages.error(request, "Field names must be unique.")
+        messages.error(request, "FAILED: Field names must be unique.")
         form_valid = False
 
     return form_valid, request
@@ -102,7 +105,11 @@ def delete_sensor(request, sensor_id):
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
 
-    for sensor in AGSensor.objects.all(): # delete sensors with this type first to avoid foreignkey error
+    for (
+        sensor
+    ) in (
+        AGSensor.objects.all()
+    ):  # delete sensors with this type first to avoid foreignkey error
         sensor.delete()
     type_to_delete = AGSensorType.objects.get(id=type_id)
     type_to_delete.delete()
@@ -138,7 +145,9 @@ def update_sensor_type(request, type_id):
     # reformat then validate inputs to avoid duplicated names or bad inputs like " "
     type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
     field_names = [string.strip().lower() for string in field_names]
-    valid, request = validate_update_sensor_type_inputs(type_name, field_names, type_to_update, request)
+    valid, request = validate_update_sensor_type_inputs(
+        type_name, field_names, type_to_update, request
+    )
 
     # create sensor format which is dictionary of dictionaries
     type_format = {}

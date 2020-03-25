@@ -29,6 +29,10 @@
             </ul>
         </nav>
 
+        {% for message in messages %}
+            <p class="error"> {{ message }} </p>
+        {% endfor %}
+
         <div id="existing-sensors">
             <h2>Existing Sensors</h2>
             <br>
@@ -144,10 +148,6 @@
                 <button type="submit" name="submit_new_type" class="grafana-btn grafana-btn-green"> Add New Sensor Type </button>
             </form>
             <br>
-
-            {% for message in messages %}
-            <p class="error"> {{ message }} </p>
-            {% endfor %}
 
         </div> <!-- end add new type -->
 
@@ -284,9 +284,9 @@
                         <input type="submit" value="Update">
                         <a href="delete_type/{{ sensor_type.id }}">Delete</a>
                         <br> <hr> <br>
-                    {% endfor %}
-                    </div> <br>
-                </form>
+                    </form>
+                {% endfor %}
+                </div> <br>
             {% else %}
                 <h3 style="color:red;"><b> There are no sensor types to edit </b></h3>
                 <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
