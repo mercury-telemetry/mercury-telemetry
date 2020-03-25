@@ -92,8 +92,10 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-DATABASES = {}
-DATABASES["default"] = dj_database_url.config(conn_max_age=600)
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)  # pragma: no cover
+    DEBUG = True
 
 if "TRAVIS" in os.environ:  # pragma: no cover
     DEBUG = True
@@ -107,11 +109,19 @@ if "TRAVIS" in os.environ:  # pragma: no cover
             "PORT": "5432",
         }
     }
-
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)  # pragma: no cover
-    DEBUG = True
+elif 'DB' in os.environ and os.environ['DB'] == 'postgres':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'mercury',
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', ''),
+        }
+    }
+else:
+    DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
 
 # Password validation
