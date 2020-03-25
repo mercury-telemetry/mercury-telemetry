@@ -9,8 +9,10 @@ import os
 
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
-TOKEN = "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdT" \
-        "dvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
+TOKEN = (
+    "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdT"
+    "dvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
+)
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
