@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import json
+import os
 
 import requests
 import serial
@@ -32,17 +33,14 @@ class RadioPort:
         data = json.dumps(data, cls=DjangoJSONEncoder)
         URL = "http://127.0.0.1:8000/radioreceiver/"
 
+        if "TRAVIS" in os.environ:
+            return
         r = requests.post(URL + str(self.event_id), json=data)
 
         print("Status: " + str(r.status_code))
         print("Body: " + str(r.content))
 
-    def listen_port(self, fake):
-        if fake:
-            print("Send fake data")
-            self.post_fake_request()
-            return
-
+    def listen_port(self):
         while self.serial_port.is_open:
             data = self.serial_port.readline()
             self.post_request(data=data)
@@ -65,10 +63,13 @@ if __name__ == "__main__":
 
     try:
         ser = serial.Serial(args.port)
-        if ser.is_open:
-            radio_port = RadioPort(args.uuid, ser)
+        radio_port = RadioPort(args.uuid, ser)
+        if args.fake:
+            print("Send fake data")
+            radio_port.post_fake_request()
+        elif ser.is_open:
             print("Start sending data")
-            radio_port.listen_port(args.fake)
+            radio_port.listen_port()
         else:
             print("Serial is invalid")
     except serial.serialutil.SerialException:

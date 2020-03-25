@@ -1,5 +1,6 @@
 import glob
 import json
+import os
 import subprocess
 import sys
 
@@ -38,6 +39,9 @@ def serial_ports():
             result.append(port)
         except (OSError, serial.SerialException):
             pass
+
+    if "TRAVIS" in os.environ:
+        return ["dev/tty.USB"]
     return result
 
 
@@ -116,6 +120,9 @@ class RadioReceiverView(APIView):
             ser.timeout = timeout
 
         fake = params.get("fake")
+        if fake:
+            call_script(event_uuid, ser.port, fake)
+
         if enable:
             try:
                 ser.open()

@@ -94,7 +94,6 @@ class TestRadioReceiverView(TestCase):
         self.assertEqual(200, response.status_code)
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
-    @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)
     def test_Radio_Receiver_Fake_GET_Success(self):
         response = self.client.get(
             reverse(self.get_url, args=[self.uuid]),
