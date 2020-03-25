@@ -32,7 +32,7 @@
                     {% for item in configs %}
                         <tr>
                             <th>{{ item.gf_name }}</th>
-                            <td>{{ item.gf_host }}</td>
+                            <td><a href="{{ item.gf_host }}">{{ item.gf_host }}</a></td>
                             <td>{{ item.gf_current }}</td>
                             <td><a href="update/{{ item.id }}">Set as current</a></td>
                             <td><a href="delete/{{ item.id }}">Delete</a></td>
