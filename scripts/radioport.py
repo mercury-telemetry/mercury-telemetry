@@ -24,12 +24,13 @@ class RadioPort:
         print("Status: " + str(r.status_code))
         print("Body: " + str(r.content))
 
-    def post_fake_request(self):
-        data = {
-            "sensor_id": 1,
-            "values": {"power": "2", "speed": 1},
-            "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
-        }
+    def post_fake_request(self, data):
+        if len(data) == 0:
+            data = {
+                "sensor_id": 1,
+                "values": {"power": "2", "speed": 1},
+                "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+            }
         data = json.dumps(data, cls=DjangoJSONEncoder)
         URL = "http://127.0.0.1:8000/radioreceiver/"
 
@@ -59,14 +60,18 @@ if __name__ == "__main__":
         nargs="?",
         help="send the fake post request",
     )
+    parser.add_argument(
+        "--data", type=json.loads, help="Data to send, must be json string"
+    )
     args = parser.parse_args()
 
+    print(args.data)
     try:
         ser = serial.Serial(args.port)
         radio_port = RadioPort(args.uuid, ser)
         if args.fake:
             print("Send fake data")
-            radio_port.post_fake_request()
+            radio_port.post_fake_request(args.data)
         elif ser.is_open:
             print("Start sending data")
             radio_port.listen_port()

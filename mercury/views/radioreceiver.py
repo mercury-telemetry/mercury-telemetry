@@ -1,3 +1,4 @@
+import datetime
 import glob
 import json
 import os
@@ -5,6 +6,7 @@ import subprocess
 import sys
 
 import serial
+from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -49,12 +51,25 @@ def call_script(uuid, port, fake):
     """
     Run a shell script to receive radio sensor data from the vehicle
     This script will call local server to store all data received
+    Command Example:
+    python3 ./scripts/radioport.py --uuid d81cac8d-26e1-4983-a942-1922e54a943d
+        --port /dev/tty.SOC --fake
+        --data '{"sensor_id": 1, "values": {"power": "2", "speed": 1},
+            "date": "2020-02-02T20:21:22"}'
     """
     command = "python3 ./scripts/radioport.py --uuid {} --port {} ".format(
         str(uuid), str(port)
     )
     if fake:
-        command = command + "--fake"
+        command = command + "--fake --data "
+        data = {
+            "sensor_id": 1,
+            "values": {"power": "2", "speed": 1},
+            "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        }
+        data = json.dumps(data, cls=DjangoJSONEncoder)
+        command = command + "'" + data + "'"
+        print(command)
     subprocess.call(command, shell=True)
 
 
@@ -122,8 +137,7 @@ class RadioReceiverView(APIView):
         fake = params.get("fake")
         if fake:
             call_script(event_uuid, ser.port, fake)
-
-        if enable:
+        elif enable:
             try:
                 ser.open()
                 if ser.is_open:
