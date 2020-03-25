@@ -11,16 +11,13 @@ def fake_event(event_uuid):
     """
         Mock a dummy AGEvent model
     """
-    if str(event_uuid) == "d81cac8d-26e1-4983-a942-1922e54a943d":
-        return AGEvent(
-            event_uuid=event_uuid,
-            event_name="fake event",
-            event_description="fake event",
-            event_date=datetime.datetime(2020, 2, 2, 20, 21, 22),
-            event_location="nyu",
-        )
-    else:
-        return None
+    return AGEvent(
+        event_uuid=event_uuid,
+        event_name="fake event",
+        event_description="fake event",
+        event_date=datetime.datetime(2020, 2, 2, 20, 21, 22),
+        event_location="nyu",
+    )
 
 
 def fake_valid(res):
@@ -54,10 +51,34 @@ class TestRadioReceiverView(TestCase):
         )
         return response
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    def post_defect_data(self):
+        response = self.client.post(
+            reverse(self.post_url, args=[self.uuid]),
+            data={
+                "values": {"power": "2", "speed": 1},
+                "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+            },
+        )
+        return response
+
     def test_Radio_Receiver_GET_No_Related_Event(self):
         response = self.client.get(reverse(self.get_url, args=[self.uuid2]))
         self.assertEqual(400, response.status_code)
+
+    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    def test_Radio_Receiver_GET_Missing_Enable(self):
+        response = self.client.get(
+            reverse(self.get_url, args=[self.uuid]),
+            data={
+                "baudrate": 9000,
+                "bytesize": 8,
+                "parity": "N",
+                "stopbits": 1,
+                "timeout": 1,
+            },
+        )
+        self.assertEqual(400, response.status_code)
+        self.assertEqual("Missing enable value in url", json.loads(response.content))
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_invalid_port)
@@ -69,13 +90,12 @@ class TestRadioReceiverView(TestCase):
                 "baudrate": 9000,
                 "bytesize": 8,
                 "parity": "N",
-                "stop bits": 1,
+                "stopbits": 1,
                 "timeout": 1,
             },
         )
         self.assertEqual(200, response.status_code)
         self.assertEqual("No valid ports on the backend", json.loads(response.content))
-        # self.assertEqual("", response.)
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)
@@ -87,7 +107,24 @@ class TestRadioReceiverView(TestCase):
                 "baudrate": 9000,
                 "bytesize": 8,
                 "parity": "N",
-                "stop bits": 1,
+                "stopbits": 1,
+                "timeout": 1,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)
+    @mock.patch("mercury.views.radioreceiver.check_port", fake_valid)
+    def test_Radio_Receiver_GET_Close_Port_Success(self):
+        response = self.client.get(
+            reverse(self.get_url, args=[self.uuid]),
+            data={
+                "enable": 0,
+                "baudrate": 9000,
+                "bytesize": 8,
+                "parity": "N",
+                "stopbits": 1,
                 "timeout": 1,
             },
         )
@@ -102,16 +139,27 @@ class TestRadioReceiverView(TestCase):
                 "baudrate": 9000,
                 "bytesize": 8,
                 "parity": "N",
-                "stop bits": 1,
+                "stopbits": 1,
                 "timeout": 1,
                 "fake": 1,
             },
         )
         self.assertEqual(200, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Event_Not_Exist(self):
         response = self.client.post(reverse(self.get_url, args=[self.uuid2]))
+        self.assertEqual(400, response.status_code)
+        self.assertEqual("Wrong uuid in url", json.loads(response.content))
+
+    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    def test_Radio_Receiver_POST_Missing_Params(self):
+        response = self.post_defect_data()
+        self.assertEqual(400, response.status_code)
+        self.assertTrue("Missing required params" in json.loads(response.content))
+
+    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    def test_Radio_Receiver_POST_Fail_to_Save(self):
+        response = self.post_radio_data()
         self.assertEqual(400, response.status_code)
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)

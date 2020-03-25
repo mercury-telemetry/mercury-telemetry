@@ -25,11 +25,11 @@ def serial_ports():
     """
     if sys.platform.startswith("win"):
         ports = ["COM%s" % (i + 1) for i in range(256)]
+    elif sys.platform.startswith("darwin"):
+        ports = glob.glob("/dev/tty.*")
     elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob("/dev/tty[A-Za-z]*")
-    elif sys.platform.startswith("darwin"):
-        ports = glob.glob("/dev/tty.*")
     else:
         raise EnvironmentError("Unsupported platform")
 
@@ -43,7 +43,7 @@ def serial_ports():
             pass
 
     if "TRAVIS" in os.environ:
-        return ["dev/tty.USB"]
+        result = ["dev/tty.USB"]
     return result
 
 
@@ -73,6 +73,14 @@ def call_script(uuid, port, fake):
     subprocess.call(command, shell=True)
 
 
+def check_port(ser):
+    """
+        Package ser.is_open for test purpose
+        TODO: Add other checks on Serial port
+    """
+    return ser.is_open
+
+
 class RadioReceiverView(APIView):
     """
     This is a Django REST API supporting user to send GET request fetching the RADIO
@@ -99,8 +107,8 @@ class RadioReceiverView(APIView):
         try:
             event = AGEvent.objects.get(event_uuid=event_uuid)
         except AGEvent.DoesNotExist:
-            event = None
-        if event is None:
+            event = False
+        if event is False:
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
         # Check Serial port parameters
@@ -129,7 +137,7 @@ class RadioReceiverView(APIView):
         if params.get("parity"):
             ser.parity = params.get("parity")
         if params.get("stopbits"):
-            ser.stopbits = params.get("stopbits")
+            ser.stopbits = int(params.get("stopbits"))
         if params.get("timeout"):
             timeout = int(params.get("timeout"))
             ser.timeout = timeout
@@ -140,13 +148,13 @@ class RadioReceiverView(APIView):
         elif enable:
             try:
                 ser.open()
-                if ser.is_open:
+                if check_port(ser):
                     # Call Script
                     call_script(event_uuid, ser.port, fake)
             except serial.serialutil.SerialException:
                 pass
         else:
-            if ser.is_open:
+            if check_port(ser):
                 ser.close()
 
         # Response data
@@ -174,7 +182,10 @@ class RadioReceiverView(APIView):
         }
         """
         # First check event_uuid exists
-        event = AGEvent.objects.get(event_uuid=event_uuid)
+        try:
+            event = AGEvent.objects.get(event_uuid=event_uuid)
+        except AGEvent.DoesNotExist:
+            event = False
         if event is False:
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
@@ -191,7 +202,8 @@ class RadioReceiverView(APIView):
         for d in dic:
             if json_data.get(dic[d]) is None:
                 return Response(
-                    "Missing required params", status=status.HTTP_400_BAD_REQUEST
+                    "Missing required params " + dic[d],
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             res[d] = json_data[dic[d]]
 
