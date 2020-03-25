@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGEvent
+from ag_data.models import AGEvent, AGVenue
 import datetime
 
 
@@ -14,6 +14,13 @@ class TestEventView(TestCase):
         "description": "A very progressive test run at \
                 Sunnyside Daycare's Butterfly Room.",
         "location": "New York, NY",
+    }
+
+    test_venue_data = {
+        "name": "Venue 1",
+        "description": "foo",
+        "latitude": 100,
+        "longitude": 200,
     }
 
     def setUp(self):
@@ -29,56 +36,106 @@ class TestEventView(TestCase):
         session = self.client.session
         return response, session
 
-    def post_event_data(self):
-        # POST sensor data to the sensor url
+    def post_event_data(self, venue_id):
         response = self.client.post(
             reverse(self.event_url),
             data={
-                "submit": "",
-                "event_name": self.test_event_data["name"],
-                "event_date": self.test_event_data["date"],
-                "event_description": self.test_event_data["description"],
-                "event_location": self.test_event_data["location"],
+                "submit-event": "",
+                "name": self.test_event_data["name"],
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue_id,
             },
         )
         return response
 
-    def test_EventView_GET_success(self):
+    def post_venue_data(self):
+        response = self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-venue": "",
+                "name": self.test_venue_data["name"],
+                "description": self.test_venue_data["description"],
+                "latitude": self.test_venue_data["latitude"],
+                "longitude": self.test_venue_data["longitude"],
+            },
+        )
+        return response
+
+    def test_event_view_get_success(self):
         response, session = self._get_with_event_code(self.event_url, self.TESTCODE)
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, session["event_code_active"])
         self.assertEqual(True, session["event_code_known"])
 
-    def test_ConfigureSensorView_POST_success(self):
+    def test_create_venue(self):
         # Login
         self._get_with_event_code(self.event_url, self.TESTCODE)
 
-        # POST sensor data
-        response = self.post_event_data()
+        response = self.post_venue_data()
 
         self.assertEqual(200, response.status_code)
+        venues = AGVenue.objects.all()
+        self.assertTrue(venues.count() > 0)
 
-    def test_ConfigureSensorView_POST_creates_event(self):
+    def test_create_venue_with_correct_parameters(self):
         # Login
         self._get_with_event_code(self.event_url, self.TESTCODE)
 
-        # POST sensor data
-        self.post_event_data()
+        response = self.post_venue_data()
 
+        self.assertEqual(200, response.status_code)
+        venues = AGVenue.objects.all()
+        self.assertTrue(venues.count() > 0)
+
+        venue = venues[0]
+
+        self.assertEqual(venue.name, self.test_venue_data["name"])
+        self.assertEqual(venue.description, self.test_venue_data["description"])
+        self.assertEqual(venue.latitude, self.test_venue_data["latitude"])
+        self.assertEqual(venue.longitude, self.test_venue_data["longitude"])
+
+    def test_create_event(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        # POST sensor data
+        response = self.post_event_data(venue.uuid)
+
+        self.assertEqual(200, response.status_code)
         events = AGEvent.objects.all()
         self.assertEqual(events.count(), 1)
 
-    def test_ConfigureSensorView_POST_creates_event_correct_object_created(self):
+    def test_create_event_with_correct_parameters(self):
         # Login
         self._get_with_event_code(self.event_url, self.TESTCODE)
 
-        # POST sensor data
-        self.post_event_data()
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
 
-        # Check that event object was created with correct values
+        # POST sensor data
+        response = self.post_event_data(venue.uuid)
+
+        self.assertEqual(200, response.status_code)
         events = AGEvent.objects.all()
+        self.assertEqual(events.count(), 1)
+
         event = events[0]
-        self.assertEqual(event.event_name, self.test_event_data["name"])
-        self.assertEqual(event.event_date, self.test_event_data["date"])
-        self.assertEqual(event.event_location, self.test_event_data["location"])
-        self.assertEqual(event.event_description, self.test_event_data["description"])
+
+        self.assertEqual(event.name, self.test_event_data["name"])
+        self.assertEqual(event.date, self.test_event_data["date"])
+        self.assertEqual(event.venue_uuid.uuid, venue.uuid)
+        self.assertEqual(event.description, self.test_event_data["description"])
