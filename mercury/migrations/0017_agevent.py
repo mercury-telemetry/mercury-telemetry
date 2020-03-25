@@ -8,18 +8,26 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0016_merge_20200323_1532'),
+        ("mercury", "0016_merge_20200323_1532"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AGEvent',
+            name="AGEvent",
             fields=[
-                ('event_uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('event_name', models.CharField(blank=True, max_length=40)),
-                ('event_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('event_description', models.CharField(blank=True, max_length=100)),
-                ('event_location', models.CharField(blank=True, max_length=100)),
+                (
+                    "event_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("event_name", models.CharField(blank=True, max_length=40)),
+                ("event_date", models.DateTimeField(default=django.utils.timezone.now)),
+                ("event_description", models.CharField(blank=True, max_length=100)),
+                ("event_location", models.CharField(blank=True, max_length=100)),
             ],
         ),
     ]

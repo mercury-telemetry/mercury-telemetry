@@ -244,11 +244,12 @@ class CreateSensorView(TemplateView):
                 gf_configs = GFConfig.objects.all()
                 if len(gf_configs) > 0:
                     gf_config = gf_configs[0]
-                    grafana = Grafana(gf_config.gf_host, gf_config.gf_token)
-                    grafana.add_panel(new_sensor, gf_config.gf_dashboard_uid)
-                    # error - no gf_config available, please do that first
-                    # or silently fail
-                    pass
+                    # make sure that a grafana dashboard already exists, and if one
+                    # doesn't, skip this process entirely - it will be handled when
+                    # the dashboard is created
+                    if gf_config.gf_dashboard_uid:
+                        grafana = Grafana(gf_config.gf_host, gf_config.gf_token)
+                        grafana.add_panel(new_sensor, gf_config.gf_dashboard_uid)
 
                 sensors = AGSensor.objects.all()
                 context = {

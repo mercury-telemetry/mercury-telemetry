@@ -5,6 +5,8 @@ from django.views.generic import TemplateView
 from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
 from mercury.grafanaAPI.grafana_api import Grafana
+from django.contrib import messages
+from ag_data.models import AGSensor
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -40,17 +42,29 @@ class GFConfigView(TemplateView):
             )
             config_data.save()
 
+            # Create Grafana instance with host and token
             grafana = Grafana(config_data.gf_host, config_data.gf_token)
-            dashboard = grafana.create_dashboard()
-            if dashboard:
-                config_data.gf_dashboard_uid = dashboard["uid"]
-                config_data.save()
-            else:
-                # log an error that dashboard couldn't be created using these
-                # credentials, check API token and hostname
-                pass
 
-            grafana.create_postgres_datasource()
+            try:
+                # Create dashboard
+                dashboard = grafana.create_dashboard()
+                # Create grafana panels for any existing sensors
+                for sensor in AGSensor.objects.all():
+                    grafana.add_panel(sensor, dashboard["uid"])
+
+                # If dashboard was created, store its uid in gf_config object
+                # and set current attribute to True
+                config_data.gf_dashboard_uid = dashboard["uid"]
+                config_data.gf_current = True
+                config_data.save()
+
+            except ValueError as error:
+                messages.error(request, f"Dashboard couldn't be created. {error}")
+
+            try:
+                grafana.create_postgres_datasource()
+            except ValueError as error:
+                messages.error(request, f"Datasource couldn't be created. {error}")
 
             configs = GFConfig.objects.all().order_by("id")
             config_form = GFConfigForm()

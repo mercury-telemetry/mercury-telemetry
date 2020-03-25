@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0014_auto_20200321_1103'),
+        ("mercury", "0014_auto_20200321_1103"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='gfconfig',
-            name='gf_db_grafana_name',
-            field=models.CharField(default='', max_length=64),
+            model_name="gfconfig",
+            name="gf_db_grafana_name",
+            field=models.CharField(default="", max_length=64),
             preserve_default=False,
         ),
     ]
