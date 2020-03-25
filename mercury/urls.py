@@ -9,6 +9,7 @@ from .views import (
     sensor,
     events,
     pitcrew,
+    radioreceiver,
 )
 
 app_name = "mercury"
@@ -27,4 +28,9 @@ urlpatterns = [
     path("events/delete/<uuid:event_uuid>", events.delete_event),
     path("events/update/<uuid:event_uuid>", events.update_event),
     path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
+    path(
+        "radioreceiver/<uuid:event_uuid>",
+        radioreceiver.RadioReceiverView.as_view(),
+        name="radioreceiver",
+    ),
 ]

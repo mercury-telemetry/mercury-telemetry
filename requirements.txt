@@ -12,4 +12,5 @@ django-filter
 drf-yasg
 selenium==3.141.0
 django-annoying
-djangorestframework
+mock
+requests
