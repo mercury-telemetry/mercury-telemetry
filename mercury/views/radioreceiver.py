@@ -43,7 +43,7 @@ def serial_ports():
             pass
 
     if "TRAVIS" in os.environ:
-        return ["dev/tty.USB"]
+        result = ["dev/tty.USB"]
     return result
 
 
@@ -73,6 +73,14 @@ def call_script(uuid, port, fake):
     subprocess.call(command, shell=True)
 
 
+def check_port(ser):
+    """
+        Package ser.is_open for test purpose
+        TODO: Add other checks on Serial port
+    """
+    return ser.is_open
+
+
 class RadioReceiverView(APIView):
     """
     This is a Django REST API supporting user to send GET request fetching the RADIO
@@ -96,11 +104,8 @@ class RadioReceiverView(APIView):
             fake: Optional, send fake data for test only
             """
         # First check event_uuid exists
-        try:
-            event = AGEvent.objects.get(event_uuid=event_uuid)
-        except AGEvent.DoesNotExist:
-            event = None
-        if event is None:
+        event = AGEvent.objects.get(event_uuid=event_uuid)
+        if event is False:
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
         # Check Serial port parameters
@@ -129,7 +134,7 @@ class RadioReceiverView(APIView):
         if params.get("parity"):
             ser.parity = params.get("parity")
         if params.get("stopbits"):
-            ser.stopbits = params.get("stopbits")
+            ser.stopbits = int(params.get("stopbits"))
         if params.get("timeout"):
             timeout = int(params.get("timeout"))
             ser.timeout = timeout
@@ -140,13 +145,13 @@ class RadioReceiverView(APIView):
         elif enable:
             try:
                 ser.open()
-                if ser.is_open:
+                if check_port(ser):
                     # Call Script
                     call_script(event_uuid, ser.port, fake)
             except serial.serialutil.SerialException:
                 pass
         else:
-            if ser.is_open:
+            if check_port(ser):
                 ser.close()
 
         # Response data
@@ -179,8 +184,6 @@ class RadioReceiverView(APIView):
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
         json_data = request.data
-        if isinstance(json_data, str):
-            json_data = json.loads(json_data)
         res = {"measurement_event": event_uuid}
         dic = {
             "measurement_timestamp": "date",
