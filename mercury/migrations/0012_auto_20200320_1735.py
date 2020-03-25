@@ -6,25 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0011_merge_20200314_0111'),
+        ("mercury", "0011_merge_20200314_0111"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='agmeasurement',
-            name='measurement_event',
-        ),
-        migrations.RemoveField(
-            model_name='agmeasurement',
-            name='measurement_sensor',
-        ),
-        migrations.DeleteModel(
-            name='AGEvent',
-        ),
-        migrations.DeleteModel(
-            name='AGMeasurement',
-        ),
-        migrations.DeleteModel(
-            name='AGSensor',
-        ),
+        migrations.RemoveField(model_name="agmeasurement", name="measurement_event",),
+        migrations.RemoveField(model_name="agmeasurement", name="measurement_sensor",),
+        migrations.DeleteModel(name="AGEvent",),
+        migrations.DeleteModel(name="AGMeasurement",),
+        migrations.DeleteModel(name="AGSensor",),
     ]
