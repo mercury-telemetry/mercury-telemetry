@@ -11,6 +11,20 @@ body {
 
 tr:nth-child(even) {background-color: #f2f2f2;}
 
+tr td:first-child:before
+{
+  counter-increment: Serial;      /* Increment the Serial counter */
+  content: counter(Serial); /* Display the counter */
+}
+
+.hide-display {
+  display: none;
+}
+
+.full-height {
+  height: 100%!important;
+}
+
 nav ul{
     display:flex;
     justify-content: space-around;
