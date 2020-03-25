@@ -1,5 +1,6 @@
 import glob
 import json
+import subprocess
 import sys
 
 import serial
@@ -40,6 +41,19 @@ def serial_ports():
     return result
 
 
+def call_script(uuid, port, fake):
+    """
+    Run a shell script to receive radio sensor data from the vehicle
+    This script will call local server to store all data received
+    """
+    command = "python3 ./scripts/radioport.py --uuid {} --port {} ".format(
+        str(uuid), str(port)
+    )
+    if fake:
+        command = command + "--fake"
+    subprocess.call(command, shell=True)
+
+
 class RadioReceiverView(APIView):
     """
     This is a Django REST API supporting user to send GET request fetching the RADIO
@@ -52,7 +66,7 @@ class RadioReceiverView(APIView):
         The get request sent from web to determine the parameters of the serial port
             Url Sample:
             https://localhost:8000/radioreceiver/d81cac8d-26e1-4983-a942-1922e54a943d?
-                eventid=1&enable=1&baudrate=8000&bytesize=8&parity=N&stopbits=1&timeout=None
+                eventid=1&enable=1&baudrate=8000&bytesize=8&parity=N&stopbits=1&timeout=None&fake=1
             uuid: event_uuid
             enable: must define, set the port on if 1, off if 0
             baudrate: Optional, default 9600
@@ -60,6 +74,7 @@ class RadioReceiverView(APIView):
             parity: Optional, default no parity
             stop bits: Optional, default one stop bit
             timeout: Optional, default 1 second
+            fake: Optional, send fake data for test only
             """
         # First check event_uuid exists
         try:
@@ -100,12 +115,13 @@ class RadioReceiverView(APIView):
             timeout = int(params.get("timeout"))
             ser.timeout = timeout
 
+        fake = params.get("fake")
         if enable:
             try:
                 ser.open()
                 if ser.is_open:
                     # Call Script
-                    self.call_script(event_uuid)
+                    call_script(event_uuid, ser.port, fake)
             except serial.serialutil.SerialException:
                 pass
         else:
@@ -142,6 +158,8 @@ class RadioReceiverView(APIView):
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
         json_data = request.data
+        if isinstance(json_data, str):
+            json_data = json.loads(json_data)
         res = {"measurement_event": event_uuid}
         dic = {
             "measurement_timestamp": "date",
@@ -161,10 +179,3 @@ class RadioReceiverView(APIView):
             serializer.save()
             return Response("Saved Successfully", status=status.HTTP_200_OK)
         return Response("The model fails to save", status=status.HTTP_400_BAD_REQUEST)
-
-    def call_script(self, para):
-        """
-        Run a shell script to receive radio sensor data from the vehicle
-        This script will call local server to store all data received
-        """
-        # subprocess.call()
