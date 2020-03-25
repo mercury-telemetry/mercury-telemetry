@@ -42,6 +42,7 @@ class RadioPort:
         print("Body: " + str(r.content))
 
     def listen_port(self):
+        print("Start listening port")
         while self.serial_port.is_open:
             data = self.serial_port.readline()
             self.post_request(data=data)
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     print("Call radioport.py script")
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument("--uuid", required=True, help="Event_uuid for AGEvent")
-    parser.add_argument("--port", required=True, help="Port name for serial")
+    parser.add_argument("--port", help="Port name for serial")
     parser.add_argument(
         "--fake",
         default=False,
@@ -65,17 +66,19 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    print(args.data)
-    try:
-        ser = serial.Serial(args.port)
-        radio_port = RadioPort(args.uuid, ser)
-        if args.fake:
-            print("Send fake data")
-            radio_port.post_fake_request(args.data)
-        elif ser.is_open:
-            print("Start sending data")
-            radio_port.listen_port()
-        else:
+    if args.fake:
+        radio_port = RadioPort(args.uuid, None)
+        print("Send fake data")
+        print(args.data)
+        radio_port.post_fake_request(args.data)
+    else:
+        try:
+            ser = serial.Serial(args.port)
+            radio_port = RadioPort(args.uuid, ser)
+            if ser.is_open:
+                print("Start sending data")
+                radio_port.listen_port()
+            else:
+                print("Serial is invalid")
+        except serial.serialutil.SerialException:
             print("Serial is invalid")
-    except serial.serialutil.SerialException:
-        print("Serial is invalid")

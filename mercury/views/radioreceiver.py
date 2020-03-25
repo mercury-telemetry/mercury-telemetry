@@ -25,11 +25,11 @@ def serial_ports():
     """
     if sys.platform.startswith("win"):
         ports = ["COM%s" % (i + 1) for i in range(256)]
+    elif sys.platform.startswith("darwin"):
+        ports = glob.glob("/dev/tty.*")
     elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob("/dev/tty[A-Za-z]*")
-    elif sys.platform.startswith("darwin"):
-        ports = glob.glob("/dev/tty.*")
     else:
         raise EnvironmentError("Unsupported platform")
 
@@ -104,7 +104,10 @@ class RadioReceiverView(APIView):
             fake: Optional, send fake data for test only
             """
         # First check event_uuid exists
-        event = AGEvent.objects.get(event_uuid=event_uuid)
+        try:
+            event = AGEvent.objects.get(event_uuid=event_uuid)
+        except AGEvent.DoesNotExist:
+            event = False
         if event is False:
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
@@ -179,11 +182,16 @@ class RadioReceiverView(APIView):
         }
         """
         # First check event_uuid exists
-        event = AGEvent.objects.get(event_uuid=event_uuid)
+        try:
+            event = AGEvent.objects.get(event_uuid=event_uuid)
+        except AGEvent.DoesNotExist:
+            event = False
         if event is False:
             return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
 
         json_data = request.data
+        if isinstance(json_data, str):
+            json_data = json.loads(json_data)
         res = {"measurement_event": event_uuid}
         dic = {
             "measurement_timestamp": "date",
@@ -194,7 +202,8 @@ class RadioReceiverView(APIView):
         for d in dic:
             if json_data.get(dic[d]) is None:
                 return Response(
-                    "Missing required params", status=status.HTTP_400_BAD_REQUEST
+                    "Missing required params " + dic[d],
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             res[d] = json_data[dic[d]]
 
