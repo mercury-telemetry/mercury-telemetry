@@ -1,10 +1,13 @@
-# Run on macbook receiving messagage via USB serial input
-
+import os
 import json
 import serial
+from utils import get_logger
 
+logging = get_logger("RECEIVER_LOG_FILE")
+
+logging.info("Opening serial")
 ser = serial.Serial(
-    port="/dev/tty.usbserial-DN05UVK1",
+    port=os.environ["RADIO_RECEIVER_PORT"],
     baudrate=9600,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
@@ -12,12 +15,13 @@ ser = serial.Serial(
     timeout=1,
 )
 
+logging.info("listening")
 while 1:
     x = ser.readline().decode("utf-8")
-    if x is not "":
+    if x != "":
         try:
             message = json.loads(x)
-            print(message)  # full JSON message
+            logging.info(message)
             print(message["value"]["value_c_name"])  # indexes into JSON message
         except json.JSONDecodeError:
-            print(x)
+            logging.error(message)
