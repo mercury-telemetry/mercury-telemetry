@@ -191,8 +191,8 @@ class Grafana:
                 elif "Invalid API key" in error_message:
                     raise ValueError("Invalid API key")
                 elif (
-                    "A dashboard with the same name in the folder already exists"
-                    in error_message
+                        "A dashboard with the same name in the folder already exists"
+                        in error_message
                 ):
                     raise ValueError("Dashboard with the same name already exists")
                 else:
@@ -319,17 +319,19 @@ class Grafana:
         except KeyError:
             return False
 
-    def add_panel(self, sensor, uid):
+    def add_panel(self, sensor, event, dashboard_uid):
         """
 
         Adds a new panel for the sensor based on its SensorType.
         The database for the new panel will be whichever database is currently in
         GFConfig. The panel will be placed in the next available slot on the dashboard.
 
-        :param sensor: AGSensor object's sensor type will be used to create the
-        SQL query for the new panel.
+        :param sensor: AGSensor object for this panel (panel will only display sensor
+         data for this sensor type.
+        :param event: Event object for this panel (panel will only display sensor
+        data for this event)
+        :param dashboard_uid: UID of the target dashboard
 
-        :param uid: UID of the target dashboard
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.
         """
@@ -343,7 +345,7 @@ class Grafana:
             field_array.append(field)
 
         # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(uid)
+        dashboard_info = self.get_dashboard_with_uid(dashboard_uid)
 
         if dashboard_info is None:
             raise ValueError("Dashboard uid not found.")
@@ -385,7 +387,8 @@ class Grafana:
         SELECT \"timestamp\" AS \"time\",
         {fields_query}
         FROM ag_data_agmeasurement
-        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id}\n
+        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id} AND  
+"event_uuid_id"='{event.uuid}' \n
         """
 
         # Build a panel dict for the new panel

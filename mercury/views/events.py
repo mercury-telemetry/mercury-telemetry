@@ -163,7 +163,7 @@ class CreateEventsView(TemplateView):
                     sensors = AGSensor.objects.all()
                     for sensor in sensors:
                         try:
-                            grafana.add_panel(sensor, dashboard_uid)
+                            grafana.add_panel(sensor, event_data, dashboard_uid)
                         except ValueError as error:
                             # pass any error messages from the API to the UI
                             messages.error(request, error)
