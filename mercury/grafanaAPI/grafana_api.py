@@ -230,30 +230,6 @@ class Grafana:
         else:
             return False
 
-    def delete_all_dashboards(self):
-        """
-        Deletes all dashboards associated with the current hostname of the class.
-
-        :return: Returns true if all dashboards were found and deleted. Returns
-        false if no dashboards were found.
-        """
-        search_endpoint = os.path.join(self.endpoints["search"])
-        headers = {"Content-Type": "application/json"}
-        response = requests.get(
-            url=search_endpoint, auth=("api_key", self.api_token), headers=headers
-        )
-
-        dashboards = response.json()
-
-        deleted = True
-        if len(dashboards) > 0:
-            for dashboard in dashboards:
-                deleted = deleted and self.delete_dashboard(dashboard["uid"])
-            # Only return True if there were dashboards to delete and all were deleted
-            return deleted
-        else:
-            return False
-
     def create_postgres_datasource(self, title="Datasource"):
         """
         Creates a new postgres datasource with the provided credentials:
