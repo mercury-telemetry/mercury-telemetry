@@ -218,6 +218,18 @@ class Grafana:
             return True
         return False
 
+    def delete_dashboard_by_name(self, name):
+        endpoint = os.path.join(self.hostname, "api/dashboards/db",
+                                name.lower().replace(" ", "-"))
+        response = requests.get(
+            url=endpoint, auth=("api_key", self.api_token))
+
+        dashboard = response.json().get("dashboard")
+        if dashboard:
+            return self.delete_dashboard(dashboard["uid"])
+        else:
+            return False
+
     def delete_all_dashboards(self):
         """
         Deletes all dashboards associated with the current hostname of the class.
@@ -242,7 +254,7 @@ class Grafana:
         else:
             return False
 
-    def create_postgres_datasource(self):
+    def create_postgres_datasource(self, title="Datasource"):
         """
         Creates a new postgres datasource with the provided credentials:
         - Grafana name
@@ -262,7 +274,7 @@ class Grafana:
         db = {
             "id": None,
             "orgId": None,
-            "name": self.database_grafana_name,
+            "name": title,
             "type": "postgres",
             "access": "proxy",
             "url": self.database_hostname,
