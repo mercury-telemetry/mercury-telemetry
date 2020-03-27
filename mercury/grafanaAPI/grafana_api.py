@@ -401,12 +401,18 @@ class Grafana:
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
-        requests.post(
+        response = requests.post(
             self.endpoints["dashboard_post"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
         )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Sensor panel not added: {sensor.name}")
+        except KeyError as error:
+            raise ValueError(f"Sensor panel not added: {error}")
 
     def delete_all_panels(self, uid):
         """

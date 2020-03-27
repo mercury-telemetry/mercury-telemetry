@@ -1,11 +1,13 @@
 from django.test import TestCase
 from django.urls import reverse
-from mercury.models import EventCodeAccess
-from ag_data.models import AGSensor, AGSensorType
+from mercury.models import EventCodeAccess, GFConfig
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
+import datetime
+
 
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
@@ -31,9 +33,54 @@ class TestGrafana(TestCase):
         "right_gust": {"unit": "km/h", "format": "float"},
     }
 
+    test_event_data = {
+        "name": "Sunny Day Test Drive",
+        "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        "description": "A very progressive test run at \
+                    Sunnyside Daycare's Butterfly Room.",
+        "location": "New York, NY",
+    }
+
+    test_venue_data = {
+        "name": "Venue 1",
+        "description": "foo",
+        "latitude": 100,
+        "longitude": 200,
+    }
+
+    def create_gfconfig(self):
+        config = GFConfig.objects.create(
+            gf_host=HOST,
+            gf_token=TOKEN,
+            gf_current=True,
+        )
+        config.save()
+        return config
+
+    def create_event(self):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"]
+        )
+        venue.save()
+
+        event = AGEvent.objects.create(
+            name=self.test_event_data["name"],
+            date=self.test_event_data["date"],
+            description=self.test_event_data["description"],
+            venue_uuid=venue.uuid
+        )
+        event.save()
+
+        return event
+
+
     def setUp(self):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
+        self.event_url = "mercury:events"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -43,16 +90,16 @@ class TestGrafana(TestCase):
         self.grafana = Grafana(HOST, TOKEN)
 
         # Clear all of existing dashboards
-        self.grafana.delete_all_dashboards()
-        self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
+        #self.grafana.delete_all_dashboards()
+        #self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
         self.grafana = Grafana(HOST, TOKEN)
 
         # Clear all of the created dashboards
-        self.grafana.delete_all_dashboards()
-        self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
+        #self.grafana.delete_all_dashboards()
+        #self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
 
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
@@ -217,3 +264,44 @@ class TestGrafana(TestCase):
 
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Data source not found")
+
+    def test_create_event_creates_dashboard_no_panels(self):
+        # create a GFConfig object (if one doesn't exist no dashboard would be created)
+        self.create_gfconfig()
+
+        # create a venue
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"]
+        )
+        venue.save()
+
+        # send a post request to create an event (should trigger the creation of a
+        # grafana dashboard of the same namee
+        response = self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.test_event_data["name"],
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+
+        # if there are spaces in the name, Grafana will replace them with dashes
+        # for the slug, which is what you use to query the grafana api by dashboard name
+        endpoint = os.path.join(self.grafana.hostname, "api/dashboards/db", \
+                                               self.test_event_data[
+            "name"].lower().replace(" ", "-"))
+
+        response = requests.get(
+            url=endpoint, auth=("api_key", self.grafana.api_token)
+        )
+
+        # confirm that a dashboard was created with the expected name
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.json()["dashboard"]["title"], self.test_event_data[
+            "name"])
