@@ -51,11 +51,7 @@ class TestGrafana(TestCase):
     }
 
     def create_gfconfig(self):
-        config = GFConfig.objects.create(
-            gf_host=HOST,
-            gf_token=TOKEN,
-            gf_current=True,
-        )
+        config = GFConfig.objects.create(gf_host=HOST, gf_token=TOKEN, gf_current=True,)
         config.save()
         return config
 
@@ -64,7 +60,7 @@ class TestGrafana(TestCase):
             name=self.test_venue_data["name"],
             description=self.test_venue_data["description"],
             latitude=self.test_venue_data["latitude"],
-            longitude=self.test_venue_data["longitude"]
+            longitude=self.test_venue_data["longitude"],
         )
         venue.save()
 
@@ -72,7 +68,7 @@ class TestGrafana(TestCase):
             name=self.test_event_data["name"],
             date=self.test_event_data["date"],
             description=self.test_event_data["description"],
-            venue_uuid=venue.uuid
+            venue_uuid=venue.uuid,
         )
         event.save()
 
@@ -92,8 +88,8 @@ class TestGrafana(TestCase):
 
         # Create random name to be used for event and datasource
         letters = string.ascii_lowercase
-        self.event_name = ''.join(random.choice(letters) for i in range(10))
-        self.datasource_name = ''.join(random.choice(letters) for i in range(10))
+        self.event_name = "".join(random.choice(letters) for i in range(10))
+        self.datasource_name = "".join(random.choice(letters) for i in range(10))
 
         # Clear existing dashboard and datasource
         self.grafana.delete_dashboard_by_name(self.event_name)
@@ -132,7 +128,7 @@ class TestGrafana(TestCase):
 
     def test_get_dashboard_fail(self):
         letters = string.ascii_lowercase
-        uid = ''.join(random.choice(letters) for i in range(10))
+        uid = "".join(random.choice(letters) for i in range(10))
 
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
@@ -243,8 +239,7 @@ class TestGrafana(TestCase):
 
         # confirm that the datasource exists
         endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"],
-            self.datasource_name,
+            self.grafana.endpoints["datasource_name"], self.datasource_name,
         )
         headers = {"Content-Type": "application/json"}
         response = requests.get(
@@ -258,15 +253,12 @@ class TestGrafana(TestCase):
         self.grafana.create_postgres_datasource(self.datasource_name)
 
         # deleted should be true if delete_datasource_by_name returns true
-        deleted = self.grafana.delete_datasource_by_name(
-            self.datasource_name
-        )
+        deleted = self.grafana.delete_datasource_by_name(self.datasource_name)
         self.assertTrue(deleted)
 
         # figure out whether the datasource was actually deleted
         endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"],
-            self.datasource_name,
+            self.grafana.endpoints["datasource_name"], self.datasource_name,
         )
         headers = {"Content-Type": "application/json"}
         response = requests.get(
@@ -287,7 +279,7 @@ class TestGrafana(TestCase):
             name=self.event_name,
             description=self.test_venue_data["description"],
             latitude=self.test_venue_data["latitude"],
-            longitude=self.test_venue_data["longitude"]
+            longitude=self.test_venue_data["longitude"],
         )
         venue.save()
 
@@ -306,12 +298,13 @@ class TestGrafana(TestCase):
 
         # if there are spaces in the name, Grafana will replace them with dashes
         # for the slug, which is what you use to query the grafana api by dashboard name
-        endpoint = os.path.join(self.grafana.hostname, "api/dashboards/db",
-                                self.event_name.lower().replace(" ", "-"))
-
-        response = requests.get(
-            url=endpoint, auth=("api_key", self.grafana.api_token)
+        endpoint = os.path.join(
+            self.grafana.hostname,
+            "api/dashboards/db",
+            self.event_name.lower().replace(" ", "-"),
         )
+
+        response = requests.get(url=endpoint, auth=("api_key", self.grafana.api_token))
 
         # confirm that a dashboard was created with the expected name
         self.assertEquals(response.status_code, 200)
@@ -328,7 +321,7 @@ class TestGrafana(TestCase):
             name=self.test_venue_data["name"],
             description=self.test_venue_data["description"],
             latitude=self.test_venue_data["latitude"],
-            longitude=self.test_venue_data["longitude"]
+            longitude=self.test_venue_data["longitude"],
         )
         venue.save()
 
@@ -358,20 +351,22 @@ class TestGrafana(TestCase):
 
         # if there are spaces in the name, Grafana will replace them with dashes
         # for the slug, which is what you use to query the grafana api by dashboard name
-        endpoint = os.path.join(self.grafana.hostname, "api/dashboards/db", \
-                                self.event_name.lower().replace(" ", "-"))
-
-        response = requests.get(
-            url=endpoint, auth=("api_key", self.grafana.api_token)
+        endpoint = os.path.join(
+            self.grafana.hostname,
+            "api/dashboards/db",
+            self.event_name.lower().replace(" ", "-"),
         )
+
+        response = requests.get(url=endpoint, auth=("api_key", self.grafana.api_token))
 
         # confirm that a dashboard was created with the expected name
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.json()["dashboard"]["title"], self.event_name)
 
         # confirm that the sql query for the created panel contains the event UUID
-        dashboard_info = self.grafana.get_dashboard_with_uid(response.json()[
-                                                                 "dashboard"]["uid"])
+        dashboard_info = self.grafana.get_dashboard_with_uid(
+            response.json()["dashboard"]["uid"]
+        )
 
         # confirm that a the new dashboard can be queried and has panel with correct
         # title

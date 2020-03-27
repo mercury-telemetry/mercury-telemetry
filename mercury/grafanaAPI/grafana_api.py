@@ -191,8 +191,8 @@ class Grafana:
                 elif "Invalid API key" in error_message:
                     raise ValueError("Invalid API key")
                 elif (
-                        "A dashboard with the same name in the folder already exists"
-                        in error_message
+                    "A dashboard with the same name in the folder already exists"
+                    in error_message
                 ):
                     raise ValueError("Dashboard with the same name already exists")
                 else:
@@ -219,10 +219,10 @@ class Grafana:
         return False
 
     def delete_dashboard_by_name(self, name):
-        endpoint = os.path.join(self.hostname, "api/dashboards/db",
-                                name.lower().replace(" ", "-"))
-        response = requests.get(
-            url=endpoint, auth=("api_key", self.api_token))
+        endpoint = os.path.join(
+            self.hostname, "api/dashboards/db", name.lower().replace(" ", "-")
+        )
+        response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
         dashboard = response.json().get("dashboard")
         if dashboard:
@@ -375,8 +375,8 @@ class Grafana:
         SELECT \"timestamp\" AS \"time\",
         {fields_query}
         FROM ag_data_agmeasurement
-        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id} AND  
-"event_uuid_id"='{event.uuid}' \n
+        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id} AND
+        "event_uuid_id"='{event.uuid}' \n
         """
 
         # Build a panel dict for the new panel

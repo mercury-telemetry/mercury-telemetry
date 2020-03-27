@@ -152,8 +152,11 @@ class CreateEventsView(TemplateView):
                     dashboard = grafana.create_dashboard(post_event_name)
                 except ValueError as error:
                     # pass any failure message from the API to the UI
-                    messages.error(request, f"Grafana dashboard for this event was not "
-                                            f"created: {error}")
+                    messages.error(
+                        request,
+                        f"Grafana dashboard for this event was not "
+                        f"created: {error}",
+                    )
 
                 # if a dashboard was created successfully, add panels to it
                 if dashboard:
