@@ -13,9 +13,15 @@ import string
 
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
+# this token has Admin level permissions
 TOKEN = (
     "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdT"
     "dvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
+)
+# this token has Editor level permissions
+EDITOR_TOKEN = (
+    "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
+    "ZUdZa3JBeWZIT3QiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
 )
 
 
@@ -164,6 +170,13 @@ class TestGrafana(TestCase):
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_dashboard(self.event_name)
 
+    def test_create_grafana_dashboard_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = "Access denied - check API permissions"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_dashboard(self.event_name)
+
     def test_create_grafana_dashboard_fail_duplicate_title(self):
         dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
@@ -190,6 +203,14 @@ class TestGrafana(TestCase):
 
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Dashboard not found")
+
+    def test_delete_grafana_dashboard_fail(self):
+        letters = string.ascii_lowercase
+        uid = "".join(random.choice(letters) for i in range(10))
+
+        # should return false if dashboard doesn't exist
+        deleted_dashboard = self.grafana.delete_dashboard(uid)
+        self.assertFalse(deleted_dashboard)
 
     def test_add_panel(self):
         dashboard = self.grafana.create_dashboard(self.event_name)
@@ -233,6 +254,76 @@ class TestGrafana(TestCase):
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
 
+    def test_add_multiple_panels(self):
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+        uid = dashboard["uid"]
+
+        self.sim.createAVenueFromPresets(0)
+        self.sim.createAnEventFromPresets(0)
+        events = AGEvent.objects.all()
+        event = events[0]
+
+        dashboard_info = self.grafana.get_dashboard_with_uid(uid)
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+        self.assertTrue(len(panels) == 0)
+
+        sensor_type1 = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type1.save()
+
+        # create and add panels for multiple sensors with the same type
+        for i in range(10):
+            sensor = AGSensor.objects.create(
+                name="".join([self.test_sensor_name, str(i)]), type_id=sensor_type1
+            )
+            sensor.save()
+
+            self.grafana.add_panel(sensor, event, uid)
+
+        dashboard_info = self.grafana.get_dashboard_with_uid(uid)
+
+        self.assertTrue(dashboard_info)
+        self.assertTrue(dashboard_info["dashboard"])
+        self.assertTrue(dashboard_info["dashboard"]["panels"])
+        self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 10)
+
+        for i in range(10):
+            name = "".join([self.test_sensor_name, str(i)])
+            self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
+
+    def test_add_panel_fail_invalid_uid(self):
+        letters = string.ascii_lowercase
+        uid = "".join(random.choice(letters) for i in range(10))
+
+        self.sim.createOrResetASensorTypeFromPresets(0)
+        self.sim.createASensorFromPresets(0)
+        self.sim.createAVenueFromPresets(0)
+        self.sim.createAnEventFromPresets(0)
+        events = AGEvent.objects.all()
+        event = events[0]
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        expected_message = "Dashboard uid not found."
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.add_panel(sensor, event, uid)
+
     def test_create_postgres_datasource(self):
         # create datasource
         self.grafana.create_postgres_datasource(self.datasource_name)
@@ -247,6 +338,20 @@ class TestGrafana(TestCase):
         )
 
         self.assertEquals(response.json()["name"], self.datasource_name)
+
+    def test_create_datasource_fail_authorization(self):
+        self.grafana.api_token = "abcde"  # invalidate API token
+
+        expected_message = "Invalid API key"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_postgres_datasource(self.datasource_name)
+
+    def test_create_datasource_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = "Access denied - check API permissions"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_postgres_datasource(self.datasource_name)
 
     def test_delete_postgres_datasource(self):
         # create the datasource
