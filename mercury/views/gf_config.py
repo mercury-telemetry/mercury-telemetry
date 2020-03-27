@@ -6,7 +6,6 @@ from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
-from ag_data.models import AGSensor
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
