@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Configure Grafana</title>
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+    </head>
+    <body>
+    {% include 'sidebar.html' %}
+    <div class="topbar-container">
+        <!--Configs Table -->
+        <div class="mt-50">
+
+        {% if configs %}
+            <h2>Existing Grafana Hosts</h2>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                    <tr bgcolor="#e0efdf">
+                        <th>Name</th>
+                        <th>Host</th>
+                        <th>Current</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in configs %}
+                        <tr>
+                            <th>{{ item.gf_name }}</th>
+                            <td><a href="{{ item.gf_host }}">{{ item.gf_host }}</a></td>
+                            <td>{{ item.gf_current }}</td>
+                            <td><a href="update/{{ item.id }}">Set as current</a></td>
+                            <td><a href="delete/{{ item.id }}">Delete</a></td>
+                        </tr>
+                    {%  endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-50">
+            <h2>Add Grafana Host</h2>
+            {% if config_form %}
+                <form method="POST" action="" id="GFConfigForm">
+                    {% csrf_token %} {% load crispy_forms_tags %} {{ config_form|crispy }}
+                    <br>
+                    <div>
+                        <input class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
+                    </div>
+                    <br> <br>
+                </form>
+            {% endif %}
+        </div>
+
+        {% for message in messages %}
+        <p class="error"> {{ message }} </p>
+        {% endfor %}
+
+    </div>
+    </body>
+</html>
