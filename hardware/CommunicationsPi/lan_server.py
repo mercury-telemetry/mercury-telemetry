@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""
-Very simple HTTP server in python for logging requests
-Usage::
-    ./server.py [<port>]
-"""
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging
+from utils import get_logger
+
+# Logs status in a file
+log = get_logger("LAN_SERVER_LOG_FILE")
 
 
 class S(BaseHTTPRequestHandler):
@@ -32,6 +32,7 @@ class S(BaseHTTPRequestHandler):
             str(self.headers),
             post_data.decode("utf-8"),
         )
+        log.info("data: " + str(post_data))
 
         self._set_response()
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
