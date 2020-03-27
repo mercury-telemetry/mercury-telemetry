@@ -40,26 +40,16 @@ class GFConfigView(TemplateView):
                 gf_host=request.POST.get("gf_host"),
                 gf_token=request.POST.get("gf_token"),
             )
-            config_data.save()
-
-            # Create Grafana instance with host and token
-            grafana = Grafana(config_data.gf_host, config_data.gf_token)
 
             try:
-                # Create dashboard
-                dashboard = grafana.create_dashboard()
-                # Create grafana panels for any existing sensors
-                for sensor in AGSensor.objects.all():
-                    grafana.add_panel(sensor, dashboard["uid"])
-
-                # If dashboard was created, store its uid in gf_config object
-                # and set current attribute to True
-                config_data.gf_dashboard_uid = dashboard["uid"]
+                # Create Grafana instance with host and token
+                grafana = Grafana(config_data.gf_host, config_data.gf_token)
                 config_data.gf_current = True
+                # Only save the config if credentials were validated
                 config_data.save()
 
             except ValueError as error:
-                messages.error(request, f"Dashboard couldn't be created. {error}")
+                messages.error(request, f"Grafana initial set up failed: {error}")
 
             try:
                 grafana.create_postgres_datasource()

@@ -270,9 +270,6 @@ class Grafana:
             auth=("api_key", self.api_token),
         )
 
-        if response.status_code != 200:
-            raise ValueError(f"Datasource creation failed: {response.reason}")
-
         datasource = response.json()
 
         message = datasource.get("message")
@@ -280,10 +277,12 @@ class Grafana:
             raise ValueError("Response contains no message")
         if "Datasource added" in message:
             return datasource
-        elif "Access denied" in message:
-            raise ValueError("Access denied - check hostname and API token")
         elif "Data source with same name already exists" in message:
             raise ValueError("Datasource with the same name already exists")
+        elif "Permission denied" in message:
+            raise ValueError("Access denied - check API permissions")
+        elif "Invalid API key" in message:
+            raise ValueError("Invalid API key")
         else:
             raise ValueError(f"Create_postgres_datasource() failed: {message}")
 
