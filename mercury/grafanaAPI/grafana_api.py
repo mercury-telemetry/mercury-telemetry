@@ -218,31 +218,19 @@ class Grafana:
             return True
         return False
 
-    def delete_all_dashboards(self):
-        """
-        Deletes all dashboards associated with the current hostname of the class.
-
-        :return: Returns true if all dashboards were found and deleted. Returns
-        false if no dashboards were found.
-        """
-        search_endpoint = os.path.join(self.endpoints["search"])
-        headers = {"Content-Type": "application/json"}
-        response = requests.get(
-            url=search_endpoint, auth=("api_key", self.api_token), headers=headers
+    def delete_dashboard_by_name(self, name):
+        endpoint = os.path.join(
+            self.hostname, "api/dashboards/db", name.lower().replace(" ", "-")
         )
+        response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
-        dashboards = response.json()
-
-        deleted = True
-        if len(dashboards) > 0:
-            for dashboard in dashboards:
-                deleted = deleted and self.delete_dashboard(dashboard["uid"])
-            # Only return True if there were dashboards to delete and all were deleted
-            return deleted
+        dashboard = response.json().get("dashboard")
+        if dashboard:
+            return self.delete_dashboard(dashboard["uid"])
         else:
             return False
 
-    def create_postgres_datasource(self):
+    def create_postgres_datasource(self, title="Datasource"):
         """
         Creates a new postgres datasource with the provided credentials:
         - Grafana name
@@ -262,7 +250,7 @@ class Grafana:
         db = {
             "id": None,
             "orgId": None,
-            "name": self.database_grafana_name,
+            "name": title,
             "type": "postgres",
             "access": "proxy",
             "url": self.database_hostname,
@@ -319,17 +307,19 @@ class Grafana:
         except KeyError:
             return False
 
-    def add_panel(self, sensor, uid):
+    def add_panel(self, sensor, event, dashboard_uid):
         """
 
         Adds a new panel for the sensor based on its SensorType.
         The database for the new panel will be whichever database is currently in
         GFConfig. The panel will be placed in the next available slot on the dashboard.
 
-        :param sensor: AGSensor object's sensor type will be used to create the
-        SQL query for the new panel.
+        :param sensor: AGSensor object for this panel (panel will only display sensor
+         data for this sensor type.
+        :param event: Event object for this panel (panel will only display sensor
+        data for this event)
+        :param dashboard_uid: UID of the target dashboard
 
-        :param uid: UID of the target dashboard
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.
         """
@@ -343,7 +333,7 @@ class Grafana:
             field_array.append(field)
 
         # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(uid)
+        dashboard_info = self.get_dashboard_with_uid(dashboard_uid)
 
         if dashboard_info is None:
             raise ValueError("Dashboard uid not found.")
@@ -385,7 +375,8 @@ class Grafana:
         SELECT \"timestamp\" AS \"time\",
         {fields_query}
         FROM ag_data_agmeasurement
-        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id}\n
+        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id} AND
+        "event_uuid_id"='{event.uuid}' \n
         """
 
         # Build a panel dict for the new panel
@@ -401,12 +392,18 @@ class Grafana:
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
-        requests.post(
+        response = requests.post(
             self.endpoints["dashboard_post"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
         )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Sensor panel not added: {sensor.name}")
+        except KeyError as error:
+            raise ValueError(f"Sensor panel not added: {error}")
 
     def delete_all_panels(self, uid):
         """
