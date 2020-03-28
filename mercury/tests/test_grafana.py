@@ -190,8 +190,9 @@ class TestGrafana(TestCase):
     def test_validate_credentials_fail_permissions(self):
         self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
 
-        expected_message = "Grafana API validation failed: Access denied - " \
-                           "check API permissions"
+        expected_message = (
+            "Grafana API validation failed: Access denied - " "check API permissions"
+        )
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.validate_credentials()
 
@@ -500,5 +501,3 @@ class TestGrafana(TestCase):
         self.assertTrue(
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
-
-
