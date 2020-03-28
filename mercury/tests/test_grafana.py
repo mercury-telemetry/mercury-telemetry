@@ -177,6 +177,24 @@ class TestGrafana(TestCase):
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_dashboard(self.event_name)
 
+    def test_validate_credentials_success(self):
+        self.assertTrue(self.grafana.validate_credentials())
+
+    def test_validate_credentials_fail_authorization(self):
+        self.grafana.api_token = "abcde"  # invalidate API token
+
+        expected_message = "Grafana API validation failed: Invalid API key"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.validate_credentials()
+
+    def test_validate_credentials_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = "Grafana API validation failed: Access denied - " \
+                           "check API permissions"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.validate_credentials()
+
     def test_create_grafana_dashboard_fail_duplicate_title(self):
         dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
@@ -482,3 +500,5 @@ class TestGrafana(TestCase):
         self.assertTrue(
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
+
+

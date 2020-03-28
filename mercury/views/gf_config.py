@@ -40,13 +40,13 @@ class GFConfigView(TemplateView):
                 gf_token=request.POST.get("gf_token"),
             )
 
+            # Create Grafana instance with host and token
+            grafana = Grafana(config_data.gf_host, config_data.gf_token)
             try:
-                # Create Grafana instance with host and token
-                grafana = Grafana(config_data.gf_host, config_data.gf_token)
+                grafana.validate_credentials()
                 config_data.gf_current = True
                 # Only save the config if credentials were validated
                 config_data.save()
-
             except ValueError as error:
                 messages.error(request, f"Grafana initial set up failed: {error}")
 
