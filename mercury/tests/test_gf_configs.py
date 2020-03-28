@@ -1,12 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
-from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
-import requests
-import os
-import datetime
 
 
 # default host and token, use this if user did not provide anything
@@ -67,12 +62,15 @@ class TestGrafana(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_config_post_success(self):
-        response = self.client.post(reverse(self.config_url), data={
-            "submit": "",
-            "gf_name": "Test Grafana Instance",
-            "gf_host": HOST,
-            "gf_token": TOKEN,
-        })
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
         self.assertEqual(200, response.status_code)
 
         gfconfig = GFConfig.objects.all()
@@ -82,12 +80,15 @@ class TestGrafana(TestCase):
         self.assertTrue(gfconfig[0].gf_token == TOKEN)
 
     def test_config_post_fail_invalid_API_key(self):
-        response = self.client.post(reverse(self.config_url), data={
-            "submit": "",
-            "gf_name": "Test Grafana Instance",
-            "gf_host": HOST,
-            "gf_token": "abcde",
-        })
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": "abcde",
+            },
+        )
         self.assertEqual(200, response.status_code)
         self.assertContains(response, "Grafana API validation failed: Invalid API key")
 
@@ -95,19 +96,20 @@ class TestGrafana(TestCase):
         self.assertTrue(gfconfig.count() == 0)
 
     def test_config_post_fail_insufficient_permissions(self):
-        response = self.client.post(reverse(self.config_url), data={
-            "submit": "",
-            "gf_name": "Test Grafana Instance",
-            "gf_host": HOST,
-            "gf_token": EDITOR_TOKEN,
-        })
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": EDITOR_TOKEN,
+            },
+        )
         self.assertEqual(200, response.status_code)
-        self.assertContains(response, "Grafana API validation failed: Access denied - check API permissions")
+        self.assertContains(
+            response,
+            "Grafana API validation failed: Access denied - check API permissions",
+        )
 
         gfconfig = GFConfig.objects.all()
         self.assertTrue(gfconfig.count() == 0)
-
-
-
-
-
