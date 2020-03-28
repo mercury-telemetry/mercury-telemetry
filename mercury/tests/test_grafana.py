@@ -7,8 +7,6 @@ from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
 import datetime
-import random
-import string
 
 
 # default host and token, use this if user did not provide anything
@@ -94,7 +92,7 @@ class TestGrafana(TestCase):
 
         # Create random name to be used for event and datasource
         self.event_name = self.grafana.generate_random_string(10)
-        self.datasource_name = "".join(random.choice(letters) for i in range(10))
+        self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
         self.grafana.delete_dashboard_by_name(self.event_name)
@@ -132,7 +130,7 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
 
     def test_get_dashboard_fail(self):
-        uid = self.grafana.generate_random_string(10);
+        uid = self.grafana.generate_random_string(10)
 
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
@@ -222,7 +220,7 @@ class TestGrafana(TestCase):
         self.assertEquals(response.json()["message"], "Dashboard not found")
 
     def test_delete_grafana_dashboard_fail(self):
-        uid = self.grafana.generate_random_string(10);
+        uid = self.grafana.generate_random_string(10)
 
         # should return false if dashboard doesn't exist
         deleted_dashboard = self.grafana.delete_dashboard(uid)

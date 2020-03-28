@@ -78,7 +78,7 @@ class Grafana:
         self.base_panel_width = 15
         self.base_panel_height = 12
 
-    def generate_random_string(length):
+    def generate_random_string(self, length):
         """
         Generates a random string of letters of length=length
         :param length: Target length for the random string
