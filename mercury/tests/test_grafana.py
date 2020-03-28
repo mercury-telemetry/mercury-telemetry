@@ -93,8 +93,7 @@ class TestGrafana(TestCase):
         self.grafana = Grafana(HOST, TOKEN)
 
         # Create random name to be used for event and datasource
-        letters = string.ascii_lowercase
-        self.event_name = "".join(random.choice(letters) for i in range(10))
+        self.event_name = self.grafana.generate_random_string(10)
         self.datasource_name = "".join(random.choice(letters) for i in range(10))
 
         # Clear existing dashboard and datasource
@@ -133,8 +132,7 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
 
     def test_get_dashboard_fail(self):
-        letters = string.ascii_lowercase
-        uid = "".join(random.choice(letters) for i in range(10))
+        uid = self.grafana.generate_random_string(10);
 
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
@@ -224,8 +222,7 @@ class TestGrafana(TestCase):
         self.assertEquals(response.json()["message"], "Dashboard not found")
 
     def test_delete_grafana_dashboard_fail(self):
-        letters = string.ascii_lowercase
-        uid = "".join(random.choice(letters) for i in range(10))
+        uid = self.grafana.generate_random_string(10);
 
         # should return false if dashboard doesn't exist
         deleted_dashboard = self.grafana.delete_dashboard(uid)
@@ -318,8 +315,7 @@ class TestGrafana(TestCase):
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
 
     def test_add_panel_fail_invalid_uid(self):
-        letters = string.ascii_lowercase
-        uid = "".join(random.choice(letters) for i in range(10))
+        uid = self.grafana.generate_random_string(10)
 
         self.sim.createOrResetASensorTypeFromPresets(0)
         self.sim.createASensorFromPresets(0)

@@ -78,6 +78,15 @@ class Grafana:
         self.base_panel_width = 15
         self.base_panel_height = 12
 
+    def generate_random_string(length):
+        """
+        Generates a random string of letters of length=length
+        :param length: Target length for the random string
+        :return: Random string
+        """
+        letters = string.ascii_lowercase
+        return "".join(random.choice(letters) for i in range(length))
+
     def validate_credentials(self):
         """
         Validates current set of grafana API credentials (hostname and API token).
@@ -87,8 +96,7 @@ class Grafana:
         :return: True if a dashboard could be created using these API credentials,
         False otherwise.
         """
-        letters = string.ascii_lowercase
-        dashboard_name = "".join(random.choice(letters) for i in range(10))
+        dashboard_name = self.generate_random_string(10)
 
         try:
             self.create_dashboard(dashboard_name)
