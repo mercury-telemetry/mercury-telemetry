@@ -2,6 +2,8 @@ import os
 import json
 import requests
 from mercury.models import GFConfig
+import string
+import random
 
 TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
 HOST = "https://dbc291.grafana.net"
@@ -75,6 +77,35 @@ class Grafana:
         # Default panel sizes
         self.base_panel_width = 15
         self.base_panel_height = 12
+
+    def generate_random_string(self, length):
+        """
+        Generates a random string of letters of length=length
+        :param length: Target length for the random string
+        :return: Random string
+        """
+        letters = string.ascii_lowercase
+        return "".join(random.choice(letters) for i in range(length))
+
+    def validate_credentials(self):
+        """
+        Validates current set of grafana API credentials (hostname and API token).
+        Attempts to create and delete a dashboard. If there is any failure,
+        a ValueError will be raised which can be caught by the caller. If the
+        dashboard is created successfully, True is returned.
+        :return: True if a dashboard could be created using these API credentials,
+        False otherwise.
+        """
+        dashboard_name = self.generate_random_string(10)
+
+        try:
+            self.create_dashboard(dashboard_name)
+        except ValueError as error:
+            raise ValueError(f"Grafana API validation failed: {error}")
+
+        self.delete_dashboard_by_name(dashboard_name)
+
+        return True
 
     def get_dashboard_with_uid(self, uid):
         """
