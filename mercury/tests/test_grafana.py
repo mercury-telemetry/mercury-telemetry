@@ -7,8 +7,6 @@ from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
 import datetime
-import random
-import string
 
 
 # default host and token, use this if user did not provide anything
@@ -93,9 +91,8 @@ class TestGrafana(TestCase):
         self.grafana = Grafana(HOST, TOKEN)
 
         # Create random name to be used for event and datasource
-        letters = string.ascii_lowercase
-        self.event_name = "".join(random.choice(letters) for i in range(10))
-        self.datasource_name = "".join(random.choice(letters) for i in range(10))
+        self.event_name = self.grafana.generate_random_string(10)
+        self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
         self.grafana.delete_dashboard_by_name(self.event_name)
@@ -133,8 +130,7 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
 
     def test_get_dashboard_fail(self):
-        letters = string.ascii_lowercase
-        uid = "".join(random.choice(letters) for i in range(10))
+        uid = self.grafana.generate_random_string(10)
 
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
@@ -177,6 +173,25 @@ class TestGrafana(TestCase):
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_dashboard(self.event_name)
 
+    def test_validate_credentials_success(self):
+        self.assertTrue(self.grafana.validate_credentials())
+
+    def test_validate_credentials_fail_authorization(self):
+        self.grafana.api_token = "abcde"  # invalidate API token
+
+        expected_message = "Grafana API validation failed: Invalid API key"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.validate_credentials()
+
+    def test_validate_credentials_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = (
+            "Grafana API validation failed: Access denied - " "check API permissions"
+        )
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.validate_credentials()
+
     def test_create_grafana_dashboard_fail_duplicate_title(self):
         dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
@@ -205,8 +220,7 @@ class TestGrafana(TestCase):
         self.assertEquals(response.json()["message"], "Dashboard not found")
 
     def test_delete_grafana_dashboard_fail(self):
-        letters = string.ascii_lowercase
-        uid = "".join(random.choice(letters) for i in range(10))
+        uid = self.grafana.generate_random_string(10)
 
         # should return false if dashboard doesn't exist
         deleted_dashboard = self.grafana.delete_dashboard(uid)
@@ -299,8 +313,7 @@ class TestGrafana(TestCase):
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
 
     def test_add_panel_fail_invalid_uid(self):
-        letters = string.ascii_lowercase
-        uid = "".join(random.choice(letters) for i in range(10))
+        uid = self.grafana.generate_random_string(10)
 
         self.sim.createOrResetASensorTypeFromPresets(0)
         self.sim.createASensorFromPresets(0)
