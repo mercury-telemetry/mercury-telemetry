@@ -147,8 +147,9 @@ class CreateEventsView(TemplateView):
             if gfconfig.count() > 0:
                 dashboard = None
                 # create a dashboard with the same name as the event
+                config = gfconfig[0]
                 try:
-                    grafana = Grafana()
+                    grafana = Grafana(config)
                     dashboard = grafana.create_dashboard(post_event_name)
                 except ValueError as error:
                     # pass any failure message from the API to the UI
