@@ -85,6 +85,23 @@ class Grafana:
 
         return True
 
+    def get_dashboard_by_event_name(self, event_name):
+        """
+        :param event_name: Event name used for the target dashboard.
+        :return: Returns True if a dashboard was found with this name, False otherwise.
+        """
+        # If there are spaces in the name, the GF API will replace them with dashes
+        # to generate the "slug". A slug can be used to query the API.
+        endpoint = os.path.join(
+            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-"),
+        )
+        response = requests.get(url=endpoint, auth=("api_key", self.api_token))
+
+        if "dashboard" in response.json():
+            return response.json()
+        else:
+            return None
+
     def get_dashboard_with_uid(self, uid):
         """
         :param uid: uid of the target dashboard
@@ -313,18 +330,19 @@ class Grafana:
         except KeyError:
             return False
 
-    def add_panel(self, sensor, event, dashboard_uid):
+    def add_panel(self, sensor, event):
         """
 
         Adds a new panel for the sensor based on its SensorType.
         The database for the new panel will be whichever database is currently in
-        GFConfig. The panel will be placed in the next available slot on the dashboard.
+        GFConfig. The dashboard for the new panel will be the dashboard with the
+        same name as the event.
+        The panel will be placed in the next available slot on the dashboard.
 
         :param sensor: AGSensor object for this panel (panel will only display sensor
          data for this sensor type.
         :param event: Event object for this panel (panel will only display sensor
         data for this event)
-        :param dashboard_uid: UID of the target dashboard
 
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.
@@ -338,11 +356,11 @@ class Grafana:
         for field in field_dict:
             field_array.append(field)
 
-        # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(dashboard_uid)
+        # Find dashboard uid for event
+        dashboard_info = self.get_dashboard_by_event_name(event.name)
 
         if dashboard_info is None:
-            raise ValueError("Dashboard uid not found.")
+            raise ValueError("Dashboard not found for this event.")
 
         # Retrieve current panels
         try:

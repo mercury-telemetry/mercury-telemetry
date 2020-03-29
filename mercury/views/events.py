@@ -161,13 +161,11 @@ class CreateEventsView(TemplateView):
 
                 # if a dashboard was created successfully, add panels to it
                 if dashboard:
-                    # retrieve dashboard uid
-                    dashboard_uid = dashboard["uid"]
                     # create a panel for each sensor
                     sensors = AGSensor.objects.all()
                     for sensor in sensors:
                         try:
-                            grafana.add_panel(sensor, event_data, dashboard_uid)
+                            grafana.add_panel(sensor, event_data)
                         except ValueError as error:
                             # pass any error messages from the API to the UI
                             messages.error(request, error)

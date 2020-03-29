@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from ag_data.models import AGSensor, AGSensorType
+from ag_data.models import AGSensor, AGSensorType, AGEvent
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -12,7 +12,8 @@ log.setLevel(logging.ERROR)
 
 
 def validate_add_sensor_inputs(sensor_name, request):
-    """This validates the form before a user submits a new sensor to prevent bad inputs"""
+    """This validates the form before a user submits a new sensor to prevent bad
+    inputs"""
 
     form_valid = True
 
@@ -31,7 +32,8 @@ def validate_add_sensor_inputs(sensor_name, request):
 
 def validate_add_sensor_type_inputs(type_name, field_name_list, request):
     """
-    This validates the form before a user submits a new sensor type to prevent bad inputs
+    This validates the form before a user submits a new sensor type to prevent bad
+    inputs
     """
 
     form_valid = True
@@ -184,7 +186,8 @@ class CreateSensorView(TemplateView):
             field_types = request.POST.getlist("data-types")
             field_units = request.POST.getlist("units")
 
-            # reformat then validate inputs to avoid duplicated names or bad inputs like " "
+            # reformat then validate inputs to avoid duplicated names or bad inputs
+            # like " "
             type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
             field_names = [string.strip().lower() for string in field_names]
             valid, request = validate_add_sensor_type_inputs(
@@ -226,7 +229,8 @@ class CreateSensorView(TemplateView):
                 name=sensor_type
             )  # str --> AGSensorType
 
-            # reformat then validate name to avoid duplicated names or bad inputs like " "
+            # reformat then validate name to avoid duplicated names or bad inputs
+            # like " "
             sensor_name = (
                 sensor_name.strip().lower()
             )  # remove excess whitespace and CAPS
@@ -241,15 +245,33 @@ class CreateSensorView(TemplateView):
                 )
                 new_sensor.save()
 
-                gf_configs = GFConfig.objects.all()
-                if len(gf_configs) > 0:
-                    gf_config = gf_configs[0]
-                    # make sure that a grafana dashboard already exists, and if one
-                    # doesn't, skip this process entirely - it will be handled when
-                    # the dashboard is created
-                    if gf_config.gf_dashboard_uid:
-                        grafana = Grafana(gf_config.gf_host, gf_config.gf_token)
-                        grafana.add_panel(new_sensor, gf_config.gf_dashboard_uid)
+                # Add a Sensor panel to the Active Event
+
+                # Check that Grafana is already configured
+                # and that an Active Event exists
+
+                # Note: THIS IS A PLACEHOLDER - waiting to decide
+                # how to implement Current GFConfig
+                gf_configs = GFConfig.objects.filter(gf_current=True)
+
+                # Note: THIS IS A PLACEHOLDER - waiting to decide
+                # how to implement Active Event
+                active_events = AGEvent.objects.all()
+
+                if len(gf_configs) > 0 and len(active_events) > 0:
+                    gf_config = gf_configs.first()
+                    active_event = active_events.first()
+
+                    # Grafana instance using current GFConfig
+                    grafana = Grafana(gf_config)
+
+                    # Add the Sensor Panel to the Active Event's dashboard
+                    try:
+                        grafana.add_panel(new_sensor, active_event)
+                    except ValueError as error:
+                        messages.error(
+                            request, f"Failed to add panel to active dashboard: {error}"
+                        )
 
                 sensors = AGSensor.objects.all()
                 context = {
