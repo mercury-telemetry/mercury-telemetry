@@ -127,14 +127,15 @@ class TestGrafana(TestCase):
         return response, session
 
     def test_get_dashboard_exists(self):
+        # Should return True if create_dashboard was successful
         dashboard = self.grafana.create_dashboard(self.event_name)
-
         self.assertTrue(dashboard)
 
+        # Query new dashboard
         uid = dashboard["uid"]
-
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
+        # Confirm params of new dashboard (slug, uid, title)
         self.assertTrue(fetched_dashboard)
         self.assertTrue(fetched_dashboard["meta"])
         self.assertTrue(fetched_dashboard["meta"]["slug"], self.event_name.lower())
