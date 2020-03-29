@@ -31,9 +31,9 @@ class TestGFConfig(TestCase):
         self.gfconfig = GFConfig.objects.create(
             gf_name="Test", gf_host=HOST, gf_token=TOKEN, gf_current=True
         )
-        self.gf_config.save()
+        self.gfconfig.save()
         # Create fresh grafana object
-        self.grafana = Grafana(self.gf_config)
+        self.grafana = Grafana(self.gfconfig)
 
         # Create random name to be used for event and datasource
         self.event_name = self.grafana.generate_random_string(10)
@@ -45,7 +45,7 @@ class TestGFConfig(TestCase):
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
-        self.grafana = Grafana(self.gf_config)
+        self.grafana = Grafana(self.gfconfig)
 
         # Clear all of the created dashboards
         self.grafana.delete_dashboard_by_name(self.event_name)
@@ -74,7 +74,7 @@ class TestGFConfig(TestCase):
         )
         self.assertEqual(200, response.status_code)
 
-        gfconfig = GFConfig.objects.all()
+        gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() > 0)
         self.assertTrue(gfconfig[0].gf_name == "Test Grafana Instance")
         self.assertTrue(gfconfig[0].gf_host == HOST)

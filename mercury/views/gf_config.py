@@ -41,7 +41,7 @@ class GFConfigView(TemplateView):
             )
 
             # Create Grafana instance with host and token
-            grafana = Grafana(config_data.gf_host, config_data.gf_token)
+            grafana = Grafana(config_data)
             try:
                 grafana.validate_credentials()
                 config_data.gf_current = True
