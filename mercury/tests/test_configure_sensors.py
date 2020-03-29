@@ -252,9 +252,8 @@ class TestConfigureSensorView(TestCase):
             self.test_sensor_type["units"][1],
         )
 
-    # # Invalid POST tests
+    # Invalid POST tests
 
-    # Duplicate field names still returns status ok
     def test_configure_sensor_invalid_post_sensor_no_name_returns_status_ok(self):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
@@ -272,7 +271,6 @@ class TestConfigureSensorView(TestCase):
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
-    # Duplicate field names - no AGSensor object created
     def test_configure_sensor_invalid_POST_sensor_no_name_no_object_created(self):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
@@ -389,7 +387,7 @@ class TestConfigureSensorView(TestCase):
             data={
                 "submit_new_type": "",
                 "type-name": self.test_sensor_type["type-name"],
-                "field-names": [self.field_name_1],
+                "field-names": ["", self.field_name_2],
                 "data-types": self.test_sensor_type["data-types"],
                 "units": self.test_sensor_type["units"],
             },
@@ -411,7 +409,7 @@ class TestConfigureSensorView(TestCase):
             data={
                 "submit_new_type": "",
                 "type-name": self.test_sensor_type["type-name"],
-                "field-names": [self.field_name_1],
+                "field-names": ["", self.field_name_2],
                 "data-types": self.test_sensor_type["data-types"],
                 "units": self.test_sensor_type["units"],
             },
