@@ -105,7 +105,9 @@ def delete_sensor(request, sensor_id):
         sensor_to_delete = AGSensor.objects.get(id=sensor_id)
         sensor_to_delete.delete()
     else:
-        messages.error(request, "FAILED: Cannot find sensor with ID " + str(sensor_id) +".")
+        messages.error(
+            request, "FAILED: Cannot find sensor with ID " + str(sensor_id) + "."
+        )
     return redirect("/sensor")
 
 
@@ -117,12 +119,18 @@ def delete_sensor_type(request, type_id):
         if sensor_type.id == type_id:
             valid_id = True
     if valid_id:
-        for sensor in AGSensor.objects.all():  # delete sensors with this type first to avoid foreignkey error
+        for (
+            sensor
+        ) in (
+            AGSensor.objects.all()
+        ):  # delete sensors with this type first to avoid foreignkey error
             sensor.delete()
         type_to_delete = AGSensorType.objects.get(id=type_id)
         type_to_delete.delete()
     else:
-        messages.error(request, "FAILED: Cannot find sensor type with ID " + str(type_id) +".")
+        messages.error(
+            request, "FAILED: Cannot find sensor type with ID " + str(type_id) + "."
+        )
     return redirect("/sensor")
 
 
