@@ -326,9 +326,7 @@ class TestGrafana(TestCase):
             name = "".join([self.test_sensor_name, str(i)])
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
 
-    def test_add_panel_fail_invalid_uid(self):
-        # Generate a random uid
-        uid = self.grafana.generate_random_string(10)
+    def test_add_panel_fail_no_dashboard_exists_for_event(self):
 
         # Create an event
         event = self.create_venue_and_event(self.event_name)
