@@ -274,7 +274,7 @@ class TestGrafana(TestCase):
         sensor.save()
 
         # Add a panel to the dashboard
-        self.grafana.add_panel(sensor, event, uid)
+        self.grafana.add_panel(sensor, event)
 
         # Retrieve the current dashboard
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
@@ -312,7 +312,7 @@ class TestGrafana(TestCase):
             )
             sensor.save()
 
-            self.grafana.add_panel(sensor, event, uid)
+            self.grafana.add_panel(sensor, event)
 
         # Query dashboard to confirm 10 panels were added
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
@@ -348,7 +348,7 @@ class TestGrafana(TestCase):
         # Check for expected ValueError and message
         expected_message = "Dashboard not found for this event."
         with self.assertRaisesMessage(ValueError, expected_message):
-            self.grafana.add_panel(sensor, event, uid)
+            self.grafana.add_panel(sensor, event)
 
     def test_create_postgres_datasource(self):
         # Create datasource
