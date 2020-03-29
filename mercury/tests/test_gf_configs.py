@@ -7,10 +7,7 @@ from mercury.grafanaAPI.grafana_api import Grafana
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
 # this token has Admin level permissions
-TOKEN = (
-    "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdT"
-    "dvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
-)
+TOKEN = "eyJrIjoiQzFMemVOQ0RDUExIcTdhbEluS0hPMDJTZXdKMWQyYTEiLCJuIjoiYXBpX2tleTIiLCJpZCI6MX0="
 # this token has Editor level permissions
 EDITOR_TOKEN = (
     "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
@@ -18,7 +15,7 @@ EDITOR_TOKEN = (
 )
 
 
-class TestGrafana(TestCase):
+class TestGFConfig(TestCase):
     TESTCODE = "testcode"
 
     def setUp(self):
@@ -31,8 +28,12 @@ class TestGrafana(TestCase):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=TOKEN, gf_current=True
+        )
+        self.gf_config.save()
         # Create fresh grafana object
-        self.grafana = Grafana(HOST, TOKEN)
+        self.grafana = Grafana(self.gf_config)
 
         # Create random name to be used for event and datasource
         self.event_name = self.grafana.generate_random_string(10)
@@ -44,7 +45,7 @@ class TestGrafana(TestCase):
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
-        self.grafana = Grafana(HOST, TOKEN)
+        self.grafana = Grafana(self.gf_config)
 
         # Clear all of the created dashboards
         self.grafana.delete_dashboard_by_name(self.event_name)
@@ -92,7 +93,7 @@ class TestGrafana(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertContains(response, "Grafana API validation failed: Invalid API key")
 
-        gfconfig = GFConfig.objects.all()
+        gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
 
     def test_config_post_fail_insufficient_permissions(self):
@@ -111,5 +112,5 @@ class TestGrafana(TestCase):
             "Grafana API validation failed: Access denied - check API permissions",
         )
 
-        gfconfig = GFConfig.objects.all()
+        gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)

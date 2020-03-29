@@ -12,15 +12,19 @@ import datetime
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
 # this token has Admin level permissions
-TOKEN = (
-    "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdT"
-    "dvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
-)
+
+# tokens for mercurytests
+TOKEN = "eyJrIjoiQzFMemVOQ0RDUExIcTdhbEluS0hPMDJTZXdKMWQyYTEiLCJuIjoiYXBpX2tleTIiLCJpZCI6MX0="
+
 # this token has Editor level permissions
 EDITOR_TOKEN = (
     "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
     "ZUdZa3JBeWZIT3QiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
 )
+DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
+DB_NAME = "d76k4515q6qv"
+DB_USERNAME = "qvqhuplbiufdyq"
+DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
@@ -55,7 +59,15 @@ class TestGrafana(TestCase):
     }
 
     def create_gfconfig(self):
-        config = GFConfig.objects.create(gf_host=HOST, gf_token=TOKEN, gf_current=True,)
+        config = GFConfig.objects.create(
+            gf_host=HOST,
+            gf_token=TOKEN,
+            gf_db_host=DB_HOSTNAME,
+            gf_db_name=DB_NAME,
+            gf_db_username=DB_USERNAME,
+            gf_db_pw=DB_PASSWORD,
+            gf_current=True,
+        )
         config.save()
         return config
 
@@ -88,7 +100,8 @@ class TestGrafana(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create fresh grafana object
-        self.grafana = Grafana(HOST, TOKEN)
+        self.config = self.create_gfconfig()
+        self.grafana = Grafana(self.config)
 
         # Create random name to be used for event and datasource
         self.event_name = self.grafana.generate_random_string(10)
@@ -100,7 +113,7 @@ class TestGrafana(TestCase):
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
-        self.grafana = Grafana(HOST, TOKEN)
+        self.grafana = Grafana(self.config)
 
         # Clear all of the created dashboards
         self.grafana.delete_dashboard_by_name(self.event_name)

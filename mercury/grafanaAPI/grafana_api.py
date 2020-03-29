@@ -1,14 +1,11 @@
 import os
 import json
 import requests
-from mercury.models import GFConfig
 import string
 import random
 
 TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
 HOST = "https://dbc291.grafana.net"
-DASHBOARD_UID = "9UF7VluWz"
-DB_GRAFANA_NAME = "Heroku PostgreSQL (sextants-telemetry)"
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
 DB_NAME = "d76k4515q6qv"
 DB_USERNAME = "qvqhuplbiufdyq"
@@ -16,7 +13,7 @@ DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 
 class Grafana:
-    def __init__(self, host=None, token=None):
+    def __init__(self, gf_config=None):
         """
 
         Initialize parameters needed to use the API: hostname, admin-level API token,
@@ -31,7 +28,6 @@ class Grafana:
         :param host: Grafana hostname, e.g. https://dbc291.grafana.net
         :param token: API key with admin-level permissions
         """
-        gf_config = GFConfig.objects.filter(gf_current=True).first()
         if gf_config:
             self.hostname = gf_config.gf_host
             self.api_token = gf_config.gf_token
@@ -39,39 +35,21 @@ class Grafana:
             self.database_name = gf_config.gf_db_name
             self.database_username = gf_config.gf_db_username
             self.database_password = gf_config.gf_db_pw
-            self.database_grafana_name = gf_config.gf_db_grafana_name
         else:
-            # for test purposes, a test case should init this class with credentials
-            self.hostname = host
-            self.api_token = token
+            # for test purposes
+            self.hostname = HOST
+            self.api_token = TOKEN
             self.database_hostname = DB_HOSTNAME
             self.database_name = DB_NAME
             self.database_username = DB_USERNAME
             self.database_password = DB_PASSWORD
-            self.database_grafana_name = DB_GRAFANA_NAME
-
-        # URLs for all Grafana API endpoints
-        self.urls = {
-            "dashboard_post": "api/dashboards/db",
-            "dashboard_get": "api/dashboards",
-            "dashboard_home": "api/dashboards/home",
-            "dashboard_uid": "api/dashboards/uid",
-            "search": "api/search?",
-            "datasources": "api/datasources",
-            "datasource_name": "api/datasources/name",
-        }
 
         # Grafana API endpoints constructed with hostname + url
         self.endpoints = {
-            "dashboard_post": os.path.join(self.hostname, self.urls["dashboard_post"]),
-            "dashboard_get": os.path.join(self.hostname, self.urls["dashboard_get"]),
-            "dashboard_home": os.path.join(self.hostname, self.urls["dashboard_home"]),
-            "dashboard_uid": os.path.join(self.hostname, self.urls["dashboard_uid"]),
-            "search": os.path.join(self.hostname, self.urls["search"]),
-            "datasources": os.path.join(self.hostname, self.urls["datasources"]),
-            "datasource_name": os.path.join(
-                self.hostname, self.urls["datasource_name"]
-            ),
+            "dashboards": os.path.join(self.hostname, "api/dashboards/db"),
+            "dashboard_uid": os.path.join(self.hostname, "api/dashboards/uid"),
+            "datasources": os.path.join(self.hostname, "api/datasources"),
+            "datasource_name": os.path.join(self.hostname, "api/datasources/name"),
         }
 
         # Default panel sizes
@@ -80,7 +58,7 @@ class Grafana:
 
     def generate_random_string(self, length):
         """
-        Generates a random string of letters of length=length
+        Generates a random string of letters of given length.
         :param length: Target length for the random string
         :return: Random string
         """
@@ -182,7 +160,7 @@ class Grafana:
 
         # Prepare post request
         response = requests.post(
-            url=self.endpoints["dashboard_post"],
+            url=self.endpoints["dashboards"],
             auth=("api_key", self.api_token),
             json=dashboard_base,
         )
@@ -423,7 +401,7 @@ class Grafana:
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
         response = requests.post(
-            self.endpoints["dashboard_post"],
+            self.endpoints["dashboards"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
@@ -483,7 +461,7 @@ class Grafana:
             "bars": False,
             "dashLength": 10,
             "dashes": False,
-            "datasource": self.database_grafana_name,
+            "datasource": self.database_name,
             "fill": 1,
             "fillGradient": 0,
             "gridPos": {"h": 9, "w": 12, "x": x, "y": y},
