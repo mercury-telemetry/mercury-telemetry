@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+# Sets the GFConfig's current status to True
 def update_config(request, gf_id=None):
     GFConfig.objects.all().update(gf_current=False)
     GFConfig.objects.filter(id=gf_id).update(gf_current=True)
@@ -56,6 +57,6 @@ class GFConfigView(TemplateView):
                 messages.error(request, f"Datasource couldn't be created. {error}")
 
             configs = GFConfig.objects.all().order_by("id")
-            config_form = GFConfigForm()
+            config_form = GFConfigForm(request.POST)
             context = {"config_form": config_form, "configs": configs}
             return render(request, self.template_name, context)
