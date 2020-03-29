@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+# Sets the GFConfig's current status to True
 def update_config(request, gf_id=None):
     GFConfig.objects.all().update(gf_current=False)
     GFConfig.objects.filter(id=gf_id).update(gf_current=True)

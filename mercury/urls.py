@@ -33,6 +33,10 @@ urlpatterns = [
     path("events/export/<uuid:event_uuid>", events.export_event),
     path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
     path("gfconfig/", gf_config.GFConfigView.as_view(), name="gfconfig"),
-    path("gfconfig/delete/<int:gf_id>", gf_config.delete_config),
-    path("gfconfig/update/<int:gf_id>", gf_config.update_config),
+    path(
+        "gfconfig/delete/<int:gf_id>", gf_config.delete_config, name="gfconfig_delete"
+    ),
+    path(
+        "gfconfig/update/<int:gf_id>", gf_config.update_config, name="gfconfig_update"
+    ),
 ]
