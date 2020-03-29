@@ -89,7 +89,7 @@ class Grafana:
         """
         :param uid: uid of the target dashboard
         :return:
-        Returns dashboard dictionary for given uid:
+        Returns dashboard dictionary for given uid or None if no dashboard was found.
         e.g. {
             'meta':
                 {
@@ -110,8 +110,6 @@ class Grafana:
                 'version': 1
             }
         }
-
-        Returns None if no dashboard is found.
         """
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.endpoints["dashboard_uid"], uid)
