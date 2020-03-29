@@ -97,22 +97,32 @@ def validate_update_sensor_type_inputs(
 def delete_sensor(request, sensor_id):
     """This deletes a sensor from the database based on user button click"""
 
-    sensor_to_delete = AGSensor.objects.get(id=sensor_id)
-    sensor_to_delete.delete()
+    valid_id = False
+    for sensor in AGSensor.objects.all():
+        if sensor.id == sensor_id:
+            valid_id = True
+    if valid_id:
+        sensor_to_delete = AGSensor.objects.get(id=sensor_id)
+        sensor_to_delete.delete()
+    else:
+        messages.error(request, "FAILED: Cannot find sensor with ID " + str(sensor_id) +".")
     return redirect("/sensor")
 
 
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
 
-    for (
-        sensor
-    ) in (
-        AGSensor.objects.all()
-    ):  # delete sensors with this type first to avoid foreignkey error
-        sensor.delete()
-    type_to_delete = AGSensorType.objects.get(id=type_id)
-    type_to_delete.delete()
+    valid_id = False
+    for sensor_type in AGSensorType.objects.all():
+        if sensor_type.id == type_id:
+            valid_id = True
+    if valid_id:
+        for sensor in AGSensor.objects.all():  # delete sensors with this type first to avoid foreignkey error
+            sensor.delete()
+        type_to_delete = AGSensorType.objects.get(id=type_id)
+        type_to_delete.delete()
+    else:
+        messages.error(request, "FAILED: Cannot find sensor type with ID " + str(type_id) +".")
     return redirect("/sensor")
 
 
@@ -120,7 +130,6 @@ def update_sensor(request, sensor_id):
     """This updates a sensor in the database based on user input"""
 
     sensor_to_update = AGSensor.objects.get(id=sensor_id)
-
     sensor_name = request.POST.get("edit-sensor-name")
 
     # reformat then validate name to avoid duplicated names or bad inputs like " "
