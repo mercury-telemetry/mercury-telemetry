@@ -1180,7 +1180,7 @@ class TestConfigureSensorView(TestCase):
         # Check that UPDATE redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
-    def test_configure_sensor_valid_UPDATE_sensor_type_field_name_failure_name_empty_not_updated(
+    def test_configure_sensor_valid_UPDATE_sensor_type_fail_field_name_empty_not_updated(
         self,
     ):
         # Login
