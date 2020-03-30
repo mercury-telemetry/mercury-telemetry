@@ -51,7 +51,7 @@ class GFConfigForm(forms.ModelForm):
         fields = ["gf_name", "gf_host", "gf_token"]
         labels = {
             "gf_name": "Label (e.g. remote, local)",
-            "gf_host": "Hostname (e.g. https://abc123.grafana.net, localhost:3000)",
+            "gf_host": "Hostname (e.g. https://abc123.grafana.net, http://localhost:3000)",
             "gf_token": "API Token",
         }
 
