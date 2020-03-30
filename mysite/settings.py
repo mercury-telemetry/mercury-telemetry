@@ -93,7 +93,7 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file): # pragma: no cover
+if os.path.isfile(dotenv_file):  # pragma: no cover
     dotenv.load_dotenv(dotenv_file)
     DEBUG = True
 
@@ -109,7 +109,7 @@ if "TRAVIS" in os.environ:  # pragma: no cover
             "PORT": "5432",
         }
     }
-elif "DB" in os.environ and os.environ["DB"] == "postgres": # pragma: nocover
+elif "DB" in os.environ and os.environ["DB"] == "postgres":  # pragma: nocover
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -120,7 +120,7 @@ elif "DB" in os.environ and os.environ["DB"] == "postgres": # pragma: nocover
             "PORT": os.environ.get("DB_PORT", ""),
         }
     }
-else: # pragma: no cover
+else:  # pragma: no cover
     DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
 
