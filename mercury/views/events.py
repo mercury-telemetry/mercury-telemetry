@@ -8,6 +8,9 @@ from django.views.generic import TemplateView
 from ..event_check import require_event_code
 from mercury.forms import EventForm, VenueForm
 from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
+from django.contrib import messages
+from mercury.grafanaAPI.grafana_api import Grafana
+from mercury.models import GFConfig
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -135,7 +138,37 @@ class CreateEventsView(TemplateView):
                 date=post_event_date,
                 description=post_event_description,
             )
+
             event_data.save()
+
+            gfconfig = GFConfig.objects.filter(gf_current=True)
+
+            # only create an event dashboard if a current gfconfig exists
+            if gfconfig.count() > 0:
+                dashboard = None
+                # create a dashboard with the same name as the event
+                config = gfconfig[0]
+                try:
+                    grafana = Grafana(config)
+                    dashboard = grafana.create_dashboard(post_event_name)
+                except ValueError as error:
+                    # pass any failure message from the API to the UI
+                    messages.error(
+                        request,
+                        f"Grafana dashboard for this event was not "
+                        f"created: {error}",
+                    )
+
+                # if a dashboard was created successfully, add panels to it
+                if dashboard:
+                    # create a panel for each sensor
+                    sensors = AGSensor.objects.all()
+                    for sensor in sensors:
+                        try:
+                            grafana.add_panel(sensor, event_data)
+                        except ValueError as error:
+                            # pass any error messages from the API to the UI
+                            messages.error(request, error)
 
         events = AGEvent.objects.all().order_by("uuid")
         venues = AGVenue.objects.all().order_by("uuid")

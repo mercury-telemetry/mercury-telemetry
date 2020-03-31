@@ -1,18 +1,30 @@
 from django.test import TestCase
 from django.urls import reverse
-from mercury.models import EventCodeAccess
-from ag_data.models import AGSensor, AGSensorType
+from mercury.models import EventCodeAccess, GFConfig
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
+import datetime
+
 
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
-TOKEN = (
-    "eyJrIjoiUm81MzlOUlRhalhGUFJ5OVVMNTZGTTZIdT"
-    "dvVURDSzIiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
+# this token has Admin level permissions
+
+# tokens for mercurytests
+TOKEN = "eyJrIjoiQzFMemVOQ0RDUExIcTdhbEluS0hPMDJTZXdKMWQyYTEiLCJuIjoiYXBpX2tleTIiLCJpZCI6MX0="
+
+# this token has Editor level permissions
+EDITOR_TOKEN = (
+    "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
+    "ZUdZa3JBeWZIT3QiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
 )
+DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
+DB_NAME = "d76k4515q6qv"
+DB_USERNAME = "qvqhuplbiufdyq"
+DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
@@ -31,28 +43,81 @@ class TestGrafana(TestCase):
         "right_gust": {"unit": "km/h", "format": "float"},
     }
 
+    test_event_data = {
+        "name": "Sunny Day Test Drive",
+        "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        "description": "A very progressive test run at \
+                    Sunnyside Daycare's Butterfly Room.",
+        "location": "New York, NY",
+    }
+
+    test_venue_data = {
+        "name": "Venue 1",
+        "description": "foo",
+        "latitude": 100,
+        "longitude": 200,
+    }
+
+    def create_gfconfig(self):
+        config = GFConfig.objects.create(
+            gf_host=HOST,
+            gf_token=TOKEN,
+            gf_db_host=DB_HOSTNAME,
+            gf_db_name=DB_NAME,
+            gf_db_username=DB_USERNAME,
+            gf_db_pw=DB_PASSWORD,
+            gf_current=True,
+        )
+        config.save()
+        return config
+
+    def create_venue_and_event(self, event_name):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        event = AGEvent.objects.create(
+            name=event_name,
+            date=self.test_event_data["date"],
+            description=self.test_event_data["description"],
+            venue_uuid=venue,
+        )
+        event.save()
+
+        return event
+
     def setUp(self):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
+        self.event_url = "mercury:events"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
-        # Create fresh grafana instance
-        self.grafana = Grafana(HOST, TOKEN)
+        # Create fresh grafana object
+        self.config = self.create_gfconfig()
+        self.grafana = Grafana(self.config)
 
-        # Clear all of existing dashboards
-        self.grafana.delete_all_dashboards()
-        self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
+        # Create random name to be used for event and datasource
+        self.event_name = self.grafana.generate_random_string(10)
+        self.datasource_name = self.grafana.generate_random_string(10)
+
+        # Clear existing dashboard and datasource
+        self.grafana.delete_dashboard_by_name(self.event_name)
+        self.grafana.delete_datasource_by_name(self.datasource_name)
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
-        self.grafana = Grafana(HOST, TOKEN)
+        self.grafana = Grafana(self.config)
 
         # Clear all of the created dashboards
-        self.grafana.delete_all_dashboards()
-        self.grafana.delete_datasource_by_name(self.grafana.database_grafana_name)
+        self.grafana.delete_dashboard_by_name(self.event_name)
+        self.grafana.delete_datasource_by_name(self.datasource_name)
 
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
@@ -61,75 +126,114 @@ class TestGrafana(TestCase):
         session = self.client.session
         return response, session
 
-    def not_test_get_dashboard_exists(self):
-        dashboard = self.grafana.create_dashboard(self.title)
-
+    def test_get_dashboard_with_uid_success(self):
+        # Should return True if create_dashboard was successful
+        dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
 
+        # Query new dashboard
         uid = dashboard["uid"]
-
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
 
+        # Confirm params of new dashboard (slug, uid, title)
         self.assertTrue(fetched_dashboard)
         self.assertTrue(fetched_dashboard["meta"])
-        self.assertTrue(fetched_dashboard["meta"]["slug"], self.title.lower())
+        self.assertTrue(fetched_dashboard["meta"]["slug"], self.event_name.lower())
         self.assertTrue(fetched_dashboard["dashboard"])
         self.assertTrue(fetched_dashboard["dashboard"]["uid"], uid)
-        self.assertTrue(fetched_dashboard["dashboard"]["title"], self.title)
+        self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
 
-    def not_test_get_dashboard_fail(self):
-        uid = "abcde"  # doesn't exist
+    def test_get_dashboard_with_uid_fail(self):
+        # Create a random UID to search for
+        uid = self.grafana.generate_random_string(10)
 
+        # Try and fetch random UID (should return None)
         fetched_dashboard = self.grafana.get_dashboard_with_uid(uid)
-
         self.assertFalse(fetched_dashboard)
 
-    def not_test_create_grafana_dashboard_success(self):
-        dashboard = self.grafana.create_dashboard(self.title)
-
+    def test_create_grafana_dashboard_success(self):
+        # Should return an object with dashboard credentials
+        dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
 
-    def not_test_create_grafana_dashboard_verify_new_dashboard_contents(self):
-        dashboard = self.grafana.create_dashboard(self.title)
+    def test_create_grafana_dashboard_verify_new_dashboard_contents(self):
+        # Should return an object with dashboard credentials
+        dashboard = self.grafana.create_dashboard(self.event_name)
 
+        # Confirm that an object was returned
         self.assertTrue(dashboard)
+        # Check for success status message
         self.assertEquals(dashboard["status"], "success")
-        self.assertEquals(dashboard["slug"], self.title.lower())
+        # Check that dashboard has correct name
+        self.assertEquals(dashboard["slug"], self.event_name.lower())
+
+        # Retrieve UID for new dashboard, use to query new dashboard
         uid = dashboard["uid"]
 
-        # confirm new dashboard can be queried from the API
+        # Confirm new dashboard can be queried from the API
         endpoint = os.path.join(self.grafana.endpoints["dashboard_uid"], uid)
         headers = {"Content-Type": "application/json"}
         response = requests.get(
             url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
         )
 
+        # Confirm uid and title are as expected
         self.assertEquals(response.json()["dashboard"]["uid"], uid)
-        self.assertEquals(response.json()["dashboard"]["title"], self.title)
+        self.assertEquals(response.json()["dashboard"]["title"], self.event_name)
 
-    def not_test_create_grafana_dashboard_fail_authorization(self):
-        self.grafana.api_token = "abcde"  # invalidate API token
+    def test_create_grafana_dashboard_fail_authorization(self):
+        self.grafana.api_token = "abcde"  # invalid API token
 
         expected_message = "Invalid API key"
         with self.assertRaisesMessage(ValueError, expected_message):
-            self.grafana.create_dashboard(self.title)
+            self.grafana.create_dashboard(self.event_name)
 
-    def not_test_create_grafana_dashboard_fail_duplicate_title(self):
-        dashboard = self.grafana.create_dashboard(self.title)
+    def test_create_grafana_dashboard_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = "Access denied - check API permissions"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_dashboard(self.event_name)
+
+    def test_validate_credentials_success(self):
+        # should return True if credentials are valid
+        self.assertTrue(self.grafana.validate_credentials())
+
+    def test_validate_credentials_fail_authorization(self):
+        self.grafana.api_token = "abcde"  # invalid API token
+
+        expected_message = "Grafana API validation failed: Invalid API key"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.validate_credentials()
+
+    def test_validate_credentials_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = (
+            "Grafana API validation failed: Access denied - " "check API permissions"
+        )
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.validate_credentials()
+
+    def test_create_grafana_dashboard_fail_duplicate_title(self):
+        # Should return a JSON object with a message that the dashboard already exists
+        dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
 
         expected_message = "Dashboard with the same name already exists"
         with self.assertRaisesMessage(ValueError, expected_message):
-            self.grafana.create_dashboard(self.title)
+            self.grafana.create_dashboard(self.event_name)
 
-    def not_test_delete_grafana_dashboard(self):
-        dashboard = self.grafana.create_dashboard(self.title)
+    def test_delete_grafana_dashboard(self):
+        # Create a dashboard
+        dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
 
+        # Delete the dashboard, should return True if deleted
         deleted_dashboard = self.grafana.delete_dashboard(dashboard["uid"])
         self.assertTrue(deleted_dashboard)
 
-        # figure out whether the dashboard was actually deleted
+        # Confirm that dashboard was deleted by querying it
         endpoint = os.path.join(
             self.grafana.endpoints["dashboard_uid"], dashboard["uid"]
         )
@@ -137,24 +241,213 @@ class TestGrafana(TestCase):
         response = requests.get(
             url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
         )
-
         self.assertTrue(response.json()["message"])
         self.assertEquals(response.json()["message"], "Dashboard not found")
 
-    def not_test_add_panel(self):
-        dashboard = self.grafana.create_dashboard(self.title)
+    def test_delete_grafana_dashboard_fail(self):
+        # Generate a random uid
+        uid = self.grafana.generate_random_string(10)
+
+        # Attempt to delete dashboard that doesn't exist, should return False
+        deleted_dashboard = self.grafana.delete_dashboard(uid)
+        self.assertFalse(deleted_dashboard)
+
+    def test_add_panel(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
 
-        self.sim.createOrResetASensorTypeFromPresets(0)
-        self.sim.createASensorFromPresets(0)
+        # Create an event and venue
+        event = self.create_venue_and_event(self.event_name)
 
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        # Add a panel to the dashboard
+        self.grafana.add_panel(sensor, event)
+
+        # Retrieve the current dashboard
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
-        try:
-            panels = dashboard_info["dashboard"]["panels"]
-        except KeyError:
-            panels = []
-        self.assertTrue(len(panels) == 0)
+
+        # Confirm that a panel was added to the dashboard with the expected title
+        self.assertTrue(dashboard_info)
+        self.assertTrue(dashboard_info["dashboard"])
+        self.assertTrue(dashboard_info["dashboard"]["panels"])
+        self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 1)
+        self.assertTrue(
+            dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
+        )
+
+    def test_add_multiple_panels(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+        uid = dashboard["uid"]
+
+        # Create an event and venue
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create a sensor type
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        # Create 10 sensors, invoking add_panel for each new sensor
+        for i in range(10):
+            sensor = AGSensor.objects.create(
+                name="".join([self.test_sensor_name, str(i)]), type_id=sensor_type
+            )
+            sensor.save()
+
+            self.grafana.add_panel(sensor, event)
+
+        # Query dashboard to confirm 10 panels were added
+        dashboard_info = self.grafana.get_dashboard_with_uid(uid)
+        self.assertTrue(dashboard_info)
+        self.assertTrue(dashboard_info["dashboard"])
+        self.assertTrue(dashboard_info["dashboard"]["panels"])
+        self.assertTrue(len(dashboard_info["dashboard"]["panels"]) == 10)
+
+        # Confirm correct title for each panel
+        for i in range(10):
+            name = "".join([self.test_sensor_name, str(i)])
+            self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
+
+    def test_add_panel_fail_no_dashboard_exists_for_event(self):
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        # Check for expected ValueError and message
+        expected_message = "Dashboard not found for this event."
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.add_panel(sensor, event)
+
+    def test_create_postgres_datasource(self):
+        # Create datasource
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        # Query new datasource
+        endpoint = os.path.join(
+            self.grafana.endpoints["datasource_name"], self.datasource_name,
+        )
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
+        )
+
+        # Confirm datasource exists with expected name
+        self.assertEquals(response.json()["name"], self.datasource_name)
+
+    def test_create_datasource_fail_authorization(self):
+        self.grafana.api_token = "abcde"  # invalid API token
+
+        expected_message = "Invalid API key"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_postgres_datasource(self.datasource_name)
+
+    def test_create_datasource_fail_permissions(self):
+        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+
+        expected_message = "Access denied - check API permissions"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_postgres_datasource(self.datasource_name)
+
+    def test_delete_postgres_datasource(self):
+        # create the datasource
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        # deleted should be True if delete_datasource_by_name returns true
+        deleted = self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.assertTrue(deleted)
+
+        # confirm that the datasource was actually deleted by querying it
+        endpoint = os.path.join(
+            self.grafana.endpoints["datasource_name"], self.datasource_name,
+        )
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
+        )
+
+        self.assertTrue(response.json()["message"])
+        self.assertEquals(response.json()["message"], "Data source not found")
+
+    def test_create_event_creates_dashboard_no_panels(self):
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        # Create a venue
+        venue = AGVenue.objects.create(
+            name=self.event_name,
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+
+        # If there are spaces in the name, the GF API will replace them with dashes
+        # to generate the "slug". A slug can be used to query the API.
+        endpoint = os.path.join(
+            self.grafana.hostname,
+            "api/dashboards/db",
+            self.event_name.lower().replace(" ", "-"),
+        )
+
+        response = requests.get(url=endpoint, auth=("api_key", self.grafana.api_token))
+
+        # Confirm that a dashboard was created with the expected name
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.json()["dashboard"]["title"], self.event_name)
+
+    def test_create_event_creates_dashboard_with_panel(self):
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        # Create a venue
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
 
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
@@ -167,10 +460,38 @@ class TestGrafana(TestCase):
         )
         sensor.save()
 
-        self.grafana.add_panel(sensor, uid)
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
 
-        dashboard_info = self.grafana.get_dashboard_with_uid(uid)
+        # If there are spaces in the name, the GF API will replace them with dashes
+        # to generate the "slug". A slug can be used to query the API.
+        endpoint = os.path.join(
+            self.grafana.hostname,
+            "api/dashboards/db",
+            self.event_name.lower().replace(" ", "-"),
+        )
 
+        response = requests.get(url=endpoint, auth=("api_key", self.grafana.api_token))
+
+        # Confirm that a dashboard was created with the expected name
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.json()["dashboard"]["title"], self.event_name)
+
+        # Confirm that a the new dashboard can be queried and has panel with expected
+        # title
+        dashboard_info = self.grafana.get_dashboard_with_uid(
+            response.json()["dashboard"]["uid"]
+        )
         self.assertTrue(dashboard_info)
         self.assertTrue(dashboard_info["dashboard"])
         self.assertTrue(dashboard_info["dashboard"]["panels"])
@@ -178,42 +499,3 @@ class TestGrafana(TestCase):
         self.assertTrue(
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
-
-    def not_test_create_postgres_datasource(self):
-        # create datasource
-        self.grafana.create_postgres_datasource()
-
-        # confirm that the datasource exists
-        endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"],
-            self.grafana.database_grafana_name,
-        )
-        headers = {"Content-Type": "application/json"}
-        response = requests.get(
-            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
-        )
-
-        self.assertEquals(response.json()["name"], self.grafana.database_grafana_name)
-
-    def not_test_delete_postgres_datasource(self):
-        # create the datasource
-        self.grafana.create_postgres_datasource()
-
-        # deleted should be true if delete_datasource_by_name returns true
-        deleted = self.grafana.delete_datasource_by_name(
-            self.grafana.database_grafana_name
-        )
-        self.assertTrue(deleted)
-
-        # figure out whether the datasource was actually deleted
-        endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"],
-            self.grafana.database_grafana_name,
-        )
-        headers = {"Content-Type": "application/json"}
-        response = requests.get(
-            url=endpoint, headers=headers, auth=("api_key", self.grafana.api_token)
-        )
-
-        self.assertTrue(response.json()["message"])
-        self.assertEquals(response.json()["message"], "Data source not found")

@@ -1,12 +1,11 @@
 import os
 import json
 import requests
-from mercury.models import GFConfig
+import string
+import random
 
 TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
 HOST = "https://dbc291.grafana.net"
-DASHBOARD_UID = "9UF7VluWz"
-DB_GRAFANA_NAME = "Heroku PostgreSQL (sextants-telemetry)"
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
 DB_NAME = "d76k4515q6qv"
 DB_USERNAME = "qvqhuplbiufdyq"
@@ -14,7 +13,7 @@ DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 
 class Grafana:
-    def __init__(self, host=None, token=None):
+    def __init__(self, gf_config=None):
         """
 
         Initialize parameters needed to use the API: hostname, admin-level API token,
@@ -29,7 +28,6 @@ class Grafana:
         :param host: Grafana hostname, e.g. https://dbc291.grafana.net
         :param token: API key with admin-level permissions
         """
-        gf_config = GFConfig.objects.filter(gf_current=True).first()
         if gf_config:
             self.hostname = gf_config.gf_host
             self.api_token = gf_config.gf_token
@@ -37,50 +35,78 @@ class Grafana:
             self.database_name = gf_config.gf_db_name
             self.database_username = gf_config.gf_db_username
             self.database_password = gf_config.gf_db_pw
-            self.database_grafana_name = gf_config.gf_db_grafana_name
         else:
-            # for test purposes, a test case should init this class with credentials
-            self.hostname = host
-            self.api_token = token
+            # for test purposes
+            self.hostname = HOST
+            self.api_token = TOKEN
             self.database_hostname = DB_HOSTNAME
             self.database_name = DB_NAME
             self.database_username = DB_USERNAME
             self.database_password = DB_PASSWORD
-            self.database_grafana_name = DB_GRAFANA_NAME
-
-        # URLs for all Grafana API endpoints
-        self.urls = {
-            "dashboard_post": "api/dashboards/db",
-            "dashboard_get": "api/dashboards",
-            "dashboard_home": "api/dashboards/home",
-            "dashboard_uid": "api/dashboards/uid",
-            "search": "api/search?",
-            "datasources": "api/datasources",
-            "datasource_name": "api/datasources/name",
-        }
 
         # Grafana API endpoints constructed with hostname + url
         self.endpoints = {
-            "dashboard_post": os.path.join(self.hostname, self.urls["dashboard_post"]),
-            "dashboard_get": os.path.join(self.hostname, self.urls["dashboard_get"]),
-            "dashboard_home": os.path.join(self.hostname, self.urls["dashboard_home"]),
-            "dashboard_uid": os.path.join(self.hostname, self.urls["dashboard_uid"]),
-            "search": os.path.join(self.hostname, self.urls["search"]),
-            "datasources": os.path.join(self.hostname, self.urls["datasources"]),
-            "datasource_name": os.path.join(
-                self.hostname, self.urls["datasource_name"]
-            ),
+            "dashboards": os.path.join(self.hostname, "api/dashboards/db"),
+            "dashboard_uid": os.path.join(self.hostname, "api/dashboards/uid"),
+            "datasources": os.path.join(self.hostname, "api/datasources"),
+            "datasource_name": os.path.join(self.hostname, "api/datasources/name"),
         }
 
         # Default panel sizes
         self.base_panel_width = 15
         self.base_panel_height = 12
 
+    def generate_random_string(self, length):
+        """
+        Generates a random string of letters of given length.
+        :param length: Target length for the random string
+        :return: Random string
+        """
+        letters = string.ascii_lowercase
+        return "".join(random.choice(letters) for i in range(length))
+
+    def validate_credentials(self):
+        """
+        Validates current set of grafana API credentials (hostname and API token).
+        Attempts to create and delete a dashboard. If there is any failure,
+        a ValueError will be raised which can be caught by the caller. If the
+        dashboard is created successfully, True is returned.
+        :return: True if a dashboard could be created using these API credentials,
+        False otherwise.
+        """
+        dashboard_name = self.generate_random_string(10)
+
+        try:
+            self.create_dashboard(dashboard_name)
+        except ValueError as error:
+            raise ValueError(f"Grafana API validation failed: {error}")
+
+        self.delete_dashboard_by_name(dashboard_name)
+
+        return True
+
+    def get_dashboard_by_event_name(self, event_name):
+        """
+        :param event_name: Event name used for the target dashboard.
+        :return: Returns True if a dashboard was found with this name, False otherwise.
+        """
+        # If there are spaces in the name, the GF API will replace them with dashes
+        # to generate the "slug". A slug can be used to query the API.
+        endpoint = os.path.join(
+            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-"),
+        )
+        response = requests.get(url=endpoint, auth=("api_key", self.api_token))
+
+        if "dashboard" in response.json():
+            return response.json()
+        else:
+            return None
+
     def get_dashboard_with_uid(self, uid):
         """
         :param uid: uid of the target dashboard
         :return:
-        Returns dashboard dictionary for given uid:
+        Returns dashboard dictionary for given uid or None if no dashboard was found.
         e.g. {
             'meta':
                 {
@@ -101,8 +127,6 @@ class Grafana:
                 'version': 1
             }
         }
-
-        Returns None if no dashboard is found.
         """
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.endpoints["dashboard_uid"], uid)
@@ -151,7 +175,7 @@ class Grafana:
 
         # Prepare post request
         response = requests.post(
-            url=self.endpoints["dashboard_post"],
+            url=self.endpoints["dashboards"],
             auth=("api_key", self.api_token),
             json=dashboard_base,
         )
@@ -218,31 +242,19 @@ class Grafana:
             return True
         return False
 
-    def delete_all_dashboards(self):
-        """
-        Deletes all dashboards associated with the current hostname of the class.
-
-        :return: Returns true if all dashboards were found and deleted. Returns
-        false if no dashboards were found.
-        """
-        search_endpoint = os.path.join(self.endpoints["search"])
-        headers = {"Content-Type": "application/json"}
-        response = requests.get(
-            url=search_endpoint, auth=("api_key", self.api_token), headers=headers
+    def delete_dashboard_by_name(self, name):
+        endpoint = os.path.join(
+            self.hostname, "api/dashboards/db", name.lower().replace(" ", "-")
         )
+        response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
-        dashboards = response.json()
-
-        deleted = True
-        if len(dashboards) > 0:
-            for dashboard in dashboards:
-                deleted = deleted and self.delete_dashboard(dashboard["uid"])
-            # Only return True if there were dashboards to delete and all were deleted
-            return deleted
+        dashboard = response.json().get("dashboard")
+        if dashboard:
+            return self.delete_dashboard(dashboard["uid"])
         else:
             return False
 
-    def create_postgres_datasource(self):
+    def create_postgres_datasource(self, title="Datasource"):
         """
         Creates a new postgres datasource with the provided credentials:
         - Grafana name
@@ -262,7 +274,7 @@ class Grafana:
         db = {
             "id": None,
             "orgId": None,
-            "name": self.database_grafana_name,
+            "name": title,
             "type": "postgres",
             "access": "proxy",
             "url": self.database_hostname,
@@ -282,9 +294,6 @@ class Grafana:
             auth=("api_key", self.api_token),
         )
 
-        if response.status_code != 200:
-            raise ValueError(f"Datasource creation failed: {response.reason}")
-
         datasource = response.json()
 
         message = datasource.get("message")
@@ -292,10 +301,12 @@ class Grafana:
             raise ValueError("Response contains no message")
         if "Datasource added" in message:
             return datasource
-        elif "Access denied" in message:
-            raise ValueError("Access denied - check hostname and API token")
         elif "Data source with same name already exists" in message:
             raise ValueError("Datasource with the same name already exists")
+        elif "Permission denied" in message:
+            raise ValueError("Access denied - check API permissions")
+        elif "Invalid API key" in message:
+            raise ValueError("Invalid API key")
         else:
             raise ValueError(f"Create_postgres_datasource() failed: {message}")
 
@@ -319,17 +330,20 @@ class Grafana:
         except KeyError:
             return False
 
-    def add_panel(self, sensor, uid):
+    def add_panel(self, sensor, event):
         """
 
         Adds a new panel for the sensor based on its SensorType.
         The database for the new panel will be whichever database is currently in
-        GFConfig. The panel will be placed in the next available slot on the dashboard.
+        GFConfig. The dashboard for the new panel will be the dashboard with the
+        same name as the event.
+        The panel will be placed in the next available slot on the dashboard.
 
-        :param sensor: AGSensor object's sensor type will be used to create the
-        SQL query for the new panel.
+        :param sensor: AGSensor object for this panel (panel will only display sensor
+         data for this sensor type.
+        :param event: Event object for this panel (panel will only display sensor
+        data for this event)
 
-        :param uid: UID of the target dashboard
         :return: New panel with SQL query based on sensor type
         will be added to dashboard.
         """
@@ -342,11 +356,11 @@ class Grafana:
         for field in field_dict:
             field_array.append(field)
 
-        # Retrieve current dashboard structure
-        dashboard_info = self.get_dashboard_with_uid(uid)
+        # Find dashboard uid for event
+        dashboard_info = self.get_dashboard_by_event_name(event.name)
 
         if dashboard_info is None:
-            raise ValueError("Dashboard uid not found.")
+            raise ValueError("Dashboard not found for this event.")
 
         # Retrieve current panels
         try:
@@ -385,7 +399,8 @@ class Grafana:
         SELECT \"timestamp\" AS \"time\",
         {fields_query}
         FROM ag_data_agmeasurement
-        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id}\n
+        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id} AND
+        "event_uuid_id"='{event.uuid}' \n
         """
 
         # Build a panel dict for the new panel
@@ -401,12 +416,18 @@ class Grafana:
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
-        requests.post(
-            self.endpoints["dashboard_post"],
+        response = requests.post(
+            self.endpoints["dashboards"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
         )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Sensor panel not added: {sensor.name}")
+        except KeyError as error:
+            raise ValueError(f"Sensor panel not added: {error}")
 
     def delete_all_panels(self, uid):
         """
@@ -456,7 +477,7 @@ class Grafana:
             "bars": False,
             "dashLength": 10,
             "dashes": False,
-            "datasource": self.database_grafana_name,
+            "datasource": self.database_name,
             "fill": 1,
             "fillGradient": 0,
             "gridPos": {"h": 9, "w": 12, "x": x, "y": y},

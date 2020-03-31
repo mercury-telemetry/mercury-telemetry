@@ -6,12 +6,12 @@ from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
-from ag_data.models import AGSensor
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+# Sets the GFConfig's current status to True
 def update_config(request, gf_id=None):
     GFConfig.objects.all().update(gf_current=False)
     GFConfig.objects.filter(id=gf_id).update(gf_current=True)
@@ -40,26 +40,16 @@ class GFConfigView(TemplateView):
                 gf_host=request.POST.get("gf_host"),
                 gf_token=request.POST.get("gf_token"),
             )
-            config_data.save()
 
             # Create Grafana instance with host and token
-            grafana = Grafana(config_data.gf_host, config_data.gf_token)
-
+            grafana = Grafana(config_data)
             try:
-                # Create dashboard
-                dashboard = grafana.create_dashboard()
-                # Create grafana panels for any existing sensors
-                for sensor in AGSensor.objects.all():
-                    grafana.add_panel(sensor, dashboard["uid"])
-
-                # If dashboard was created, store its uid in gf_config object
-                # and set current attribute to True
-                config_data.gf_dashboard_uid = dashboard["uid"]
+                grafana.validate_credentials()
                 config_data.gf_current = True
+                # Only save the config if credentials were validated
                 config_data.save()
-
             except ValueError as error:
-                messages.error(request, f"Dashboard couldn't be created. {error}")
+                messages.error(request, f"Grafana initial set up failed: {error}")
 
             try:
                 grafana.create_postgres_datasource()
@@ -67,6 +57,6 @@ class GFConfigView(TemplateView):
                 messages.error(request, f"Datasource couldn't be created. {error}")
 
             configs = GFConfig.objects.all().order_by("id")
-            config_form = GFConfigForm()
+            config_form = GFConfigForm(request.POST)
             context = {"config_form": config_form, "configs": configs}
             return render(request, self.template_name, context)
