@@ -46,16 +46,6 @@ class GFConfigView(TemplateView):
                 gf_db_username=DB['default']['USER'],
                 gf_db_pw=DB['default']['PASSWORD'],
             )
-            payload=dict(
-                gf_name=request.POST.get("gf_name"),
-                gf_host=request.POST.get("gf_host"),
-                gf_token=request.POST.get("gf_token"),
-                gf_db_host=DB['default']['HOST'] + ':' + str(DB['default']['PORT']),
-                gf_db_name=DB['default']['NAME'],
-                gf_db_username=DB['default']['USER'],
-                gf_db_pw=DB['default']['PASSWORD'],
-            )
-            print(payload)
 
             # Create Grafana instance with host and token
             grafana = Grafana(config_data)
