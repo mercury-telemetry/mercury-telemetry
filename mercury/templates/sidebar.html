@@ -31,7 +31,7 @@
             <br>Pit Crew Display
         </div>
     {% else %}
-        <a class="grafana-btn grafana-btn-green sidebar-btn" href="{% url 'mercury:pitcrew' %}">
+        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:pitcrew' %}">
             <i class="material-icons">insert_chart_outlined</i>
             <br>Pit Crew Display
         </a>
@@ -48,20 +48,6 @@
         <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:events' %}">
             <i class="material-icons">folder_open</i>
             <br> Manage Events
-        </a>
-    {% endif %}
-    <br><br>
-
-    <!-- View Data Tables -->
-    {% if request.path == "/dashboard/" %}
-        <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons-outlined">table_chart</i>
-            <br>View Data Tables
-        </div>
-    {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:dashboard' %}"> <!-- should dashboard be name of URL??? -->
-            <i class="material-icons-outlined">table_chart</i>
-            <br>View Data Tables
         </a>
     {% endif %}
     <br><br>
@@ -90,48 +76,6 @@
         <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:gfconfig' %}">
             <i class="material-icons">tune</i>
             <br>Configure Grafana
-        </a>
-    {% endif %}
-    <br><br>
-
-    <!-- Simulator -->
-    {% if request.path == "/simulator/" %}
-        <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons">tune</i>
-            <br>Simulator
-        </div>
-    {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:simulator' %}">
-            <i class="material-icons">tune</i>
-            <br>Simulator
-        </a>
-    {% endif %}
-    <br><br>
-
-    <!-- CAN Decoder -->
-    {% if request.path == "/can/" %}
-        <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons">lock_open</i>
-            <br>CAN Decoder
-        </div>
-    {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:can-ui' %}">
-            <i class="material-icons">lock_open</i>
-            <br>CAN Decoder
-        </a>
-    {% endif %}
-    <br><br>
-
-    <!-- Stopwatch -->
-    {% if request.path == "/stopwatch/" %}
-        <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons">bathtub</i>
-            <br>Stopwatch
-        </div>
-    {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:stopwatch' %}">
-            <i class="material-icons">bathtub</i>
-            <br>Stopwatch
         </a>
     {% endif %}
     <br><br>
