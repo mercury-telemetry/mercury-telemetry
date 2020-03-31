@@ -6,12 +6,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0017_agevent'),
+        ("mercury", "0017_agevent"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='gfconfig',
-            name='gf_db_grafana_name',
-        ),
+        migrations.RemoveField(model_name="gfconfig", name="gf_db_grafana_name",),
     ]
