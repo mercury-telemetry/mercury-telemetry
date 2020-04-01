@@ -21,7 +21,6 @@
             <ul>
                 <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
                 <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> View Sensors </button></li>
-                <li><button onclick="displaySensorTypes()" type= "button" id="view-sensor-types-btn" class="grafana-btn"> View Sensor Types </button></li>
                 <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
                 <li><button onclick="displayAddNewSensorType()" type= "button" id="add-sensor-type-btn" class="grafana-btn"> Add New Sensor Type </button></li>
                 <li><button onclick="displayEditSensors()" type= "button" id="edit-sensors-btn" class="grafana-btn"> Edit Existing Sensors </button></li>
@@ -40,7 +39,7 @@
                 {% for sensor in sensors %}
                 <div class="panel">
                     <h2 contenteditable="false" id="{{ sensor.name }}">
-                    {{ sensor.name }}</h2>
+                    Sensor name: {{ sensor.name }}</h2>
 
                     <h5 contenteditable="false" id="{{ sensor_type.id }}">
                         ID: {{ sensor.id }}
@@ -151,42 +150,7 @@
 
         </div> <!-- end add new type -->
 
-        <div id="view-existing-types">
-            <h2>Existing Types</h2>
-            <br>
-            {% if sensor_types %}
-                {% for sensor_type in sensor_types %}
-                <div class="panel">
-                    <h2 contenteditable="false" id="{{ sensor_type.type_name }}">
-                    {{ sensor_type.name }}</h2>
 
-                    <h5 contenteditable="false" id="{{ sensor_type.id }}">
-                        ID: {{ sensor_type.id }}
-                    </h5>
-                    <br>
-
-                    <h4 class="inline-block-child"><u>Field Name</u></h4>
-                    <h4 class="inline-block-child"><u>Field Type</u></h4>
-                    <h4 class="inline-block-child"><u>Field Unit</u></h4>
-
-                    {% for field_name, unit_and_format in sensor_type.format.items %}
-                    <div>
-                        <p class="inline-block-child"
-                        contenteditable="false">{{field_name}}</p>
-                        <p class="inline-block-child"
-                        contenteditable="false">{{unit_and_format.data_type}}</p>
-                        <p class="inline-block-child"
-                        contenteditable="false">{{unit_and_format.unit}}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            {% else %}
-                <h3 style="color:red;"><b> There are no types to display </b></h3>
-                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
-            {% endif%}
-
-        </div> <!-- end view existing types -->
 
         <div id="edit-sensors">
             <h2>Edit Existing Sensors</h2>
