@@ -1,10 +1,9 @@
 import os
-import time
 import serial
 import json
 import serial.tools.list_ports
 
-from utils import get_logger, get_serial_stream
+from .utils import get_logger, get_serial_stream
 
 
 class Transceiver:
@@ -80,10 +79,10 @@ class Transceiver:
     def listen(self):
         payload = self.serial.readline().decode("utf-8")
         message = "Error: Check logs"
-        if payload is not "":
+        if payload != "":
             try:
                 message = json.loads(payload)
                 self.logging.info(message)
             except json.JSONDecodeError:
-                logging.error(json.JSONDecodeError)
+                self.logging.error(json.JSONDecodeError)
         return message
