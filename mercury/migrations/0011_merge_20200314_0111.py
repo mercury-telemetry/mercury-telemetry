@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0010_auto_20200309_1634'),
-        ('mercury', '0009_events_field_general_data_sensor'),
+        ("mercury", "0010_auto_20200309_1634"),
+        ("mercury", "0009_events_field_general_data_sensor"),
     ]
 
-    operations = [
-    ]
+    operations = []
