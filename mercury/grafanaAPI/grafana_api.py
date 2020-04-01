@@ -31,7 +31,7 @@ class Grafana:
         if gf_config:
             self.hostname = gf_config.gf_host
             self.api_token = gf_config.gf_token
-            self.database_hostname = gf_config.gf_host
+            self.database_hostname = gf_config.gf_db_host
             self.database_name = gf_config.gf_db_name
             self.database_username = gf_config.gf_db_username
             self.database_password = gf_config.gf_db_pw

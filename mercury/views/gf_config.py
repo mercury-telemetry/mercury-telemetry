@@ -6,6 +6,7 @@ from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -35,10 +36,15 @@ class GFConfigView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         if "submit" in request.POST:
+            DB = settings.DATABASES
             config_data = GFConfig(
                 gf_name=request.POST.get("gf_name"),
                 gf_host=request.POST.get("gf_host"),
                 gf_token=request.POST.get("gf_token"),
+                gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
+                gf_db_name=DB["default"]["NAME"],
+                gf_db_username=DB["default"]["USER"],
+                gf_db_pw=DB["default"]["PASSWORD"],
             )
 
             # Create Grafana instance with host and token
