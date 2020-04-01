@@ -27,7 +27,7 @@ class Transceiver:
             parity=parity,
             stopbits=stopbits,
             bytesize=bytesize,
-            timeout=1,
+            timeout=timeout,
         )
 
     def send(self, payload):
