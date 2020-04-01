@@ -10,7 +10,7 @@ class LANClient:
         if log_file_name is None:
             self.logging = get_logger("LAN_CLIENT_LOG_FILE")
         else:
-            self.logging = log_file_name
+            self.logging = get_logger(log_file_name, log_file_name)
 
         if lan_server_url is None:
             self.url = self.get_server_url_from_env()
