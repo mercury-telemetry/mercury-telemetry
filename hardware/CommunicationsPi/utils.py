@@ -1,6 +1,6 @@
 import os
 import json
-from .logger import Logger
+from logger import Logger
 
 
 def get_serial_stream(s):
