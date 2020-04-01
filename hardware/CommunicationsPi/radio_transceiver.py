@@ -2,7 +2,7 @@ import os
 import serial
 import json
 
-from utils import get_logger, get_serial_stream
+from .utils import get_logger, get_serial_stream
 
 
 class Transceiver:
