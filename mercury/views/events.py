@@ -1,16 +1,17 @@
 import csv
 import logging
 
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.views.generic import TemplateView
-from ..event_check import require_event_code
-from mercury.forms import EventForm, VenueForm
-from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
 from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
+from mercury.forms import EventForm, VenueForm
 from mercury.grafanaAPI.grafana_api import Grafana
 from mercury.models import GFConfig
+from ..event_check import require_event_code
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -47,48 +48,84 @@ def delete_event(request, event_uuid=None):
     return redirect("/events")
 
 
-def export_event(request, event_uuid=None):
+def export_event(request, event_uuid=None, file_format="CSV"):
     event_to_export = AGEvent.objects.get(uuid=event_uuid)
     if event_to_export:
-        response = HttpResponse(content_type="text/csv")
         filename = event_to_export.name.replace(" ", "").lower()
-        response["Content-Disposition"] = 'attachment; filename="' + filename + '".csv'
         measurement_data = AGMeasurement.objects.filter(event_uuid=event_uuid)
-        if len(measurement_data) == 0:
-            return redirect("/events")
-        writer = csv.writer(response)
-        writer.writerow(
-            [
-                "S.No",
-                "Event Name",
-                "Event Date",
-                "Event Description",
-                "Venue Name",
-                "Sensor Name",
-                "Sensor Data TimeStamp",
-                "Sensor Value",
-            ]
-        )
-        i = 0
         venue = AGVenue.objects.get(uuid=event_to_export.venue_uuid.uuid)
-        sensor = AGSensor.objects.get(id=measurement_data[0].sensor_id.id)
-        for measurement in measurement_data:
-            i += 1
-            if sensor.id != measurement.sensor_id:
-                sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+        if request.path.__contains__("json"):
+            event_info = {
+                "name": event_to_export.name,
+                "event date": str(event_to_export.date),
+                "event description": event_to_export.description,
+            }
+            if venue:
+                event_info["venue name"] = venue.name
+                event_info["venue description"] = venue.description
+
+            measurement_info = []
+            if measurement_data:
+                sensor = AGSensor.objects.get(id=measurement_data[0].sensor_id.id)
+                for measurement in measurement_data:
+                    if sensor.id != measurement.sensor_id:
+                        sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+                    temp = {
+                        "sensor name": sensor.name,
+                        "timestamp": str(measurement.timestamp),
+                        "reading": measurement.value["reading"],
+                    }
+                    measurement_info.append(temp)
+
+            data = {
+                "event_info": event_info,
+                "measurement_info": measurement_info,
+            }
+
+            response = HttpResponse(str(data), content_type="application/json")
+            response["Content-Disposition"] = (
+                'attachment; filename="' + filename + '".json'
+            )
+            return response
+        else:
+            response = HttpResponse(content_type="text/csv")
+            response["Content-Disposition"] = (
+                'attachment; filename="' + filename + '".csv'
+            )
+            if len(measurement_data) == 0:
+                return redirect("/events")
+            writer = csv.writer(response)
             writer.writerow(
                 [
-                    str(i),
-                    event_to_export.name,
-                    event_to_export.date,
-                    event_to_export.description,
-                    venue.name,
-                    sensor.name,
-                    measurement.timestamp,
-                    measurement.value["reading"],
+                    "S.No",
+                    "Event Name",
+                    "Event Date",
+                    "Event Description",
+                    "Venue Name",
+                    "Sensor Name",
+                    "Sensor Data TimeStamp",
+                    "Sensor Value",
                 ]
             )
-        return response
+            i = 0
+            sensor = AGSensor.objects.get(id=measurement_data[0].sensor_id.id)
+            for measurement in measurement_data:
+                i += 1
+                if sensor.id != measurement.sensor_id:
+                    sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+                writer.writerow(
+                    [
+                        str(i),
+                        event_to_export.name,
+                        event_to_export.date,
+                        event_to_export.description,
+                        venue.name,
+                        sensor.name,
+                        measurement.timestamp,
+                        measurement.value["reading"],
+                    ]
+                )
+            return response
     else:
         return redirect("/events")
 
