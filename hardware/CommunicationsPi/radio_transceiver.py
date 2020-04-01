@@ -4,6 +4,7 @@ import serial
 import json
 
 from utils import get_logger, get_serial_stream
+
 class Transceiver:
     def __init__(self, log_file_name=None, port=None):
         if log_file_name is None:
@@ -12,11 +13,11 @@ class Transceiver:
             self.logging = get_logger(log_file_name)
 
         port = os.environ["RADIO_TRANSMITTER_PORT"] if port is None else port
-        baudrate=9600,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        bytesize=serial.EIGHTBITS,
-        timeout=1,
+        baudrate=9600
+        parity=serial.PARITY_NONE
+        stopbits=serial.STOPBITS_ONE
+        bytesize=serial.EIGHTBITS
+        timeout=1
 
         self.logging.info("Opening serial")
         self.serial = serial.Serial(
