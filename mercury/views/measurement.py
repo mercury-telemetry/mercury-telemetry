@@ -4,8 +4,8 @@ from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from mercury.models import AGEvent
-from mercury.serializers import AGMeasurementSerializer
+from ag_data.models import AGEvent
+from ag_data.serializers import AGMeasurementSerializer
 
 
 def build_error(str):
@@ -30,7 +30,7 @@ class MeasurementView(APIView):
         """
         # First check event_uuid exists
         try:
-            event = AGEvent.objects.get(event_uuid=event_uuid)
+            event = AGEvent.objects.get(uuid=event_uuid)
         except AGEvent.DoesNotExist:
             event = False
         if event is False:
@@ -42,11 +42,11 @@ class MeasurementView(APIView):
         if isinstance(json_data, str):
             json_data = json.loads(json_data)
 
-        res = {"measurement_event": event_uuid}
+        res = {"event_uuid": event_uuid}
         dic = {
-            "measurement_timestamp": "date",
-            "measurement_sensor": "sensor_id",
-            "measurement_value": "values",
+            "timestamp": "date",
+            "sensor_id": "sensor_id",
+            "value": "values",
         }
 
         for d in dic:

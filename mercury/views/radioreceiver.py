@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from subprocess import Popen
 
-from mercury.models import AGEvent
+from ag_data.models import AGEvent
 
 
 def serial_ports():
@@ -108,7 +108,7 @@ class RadioReceiverView(APIView):
             """
         # First check event_uuid exists
         try:
-            event = AGEvent.objects.get(event_uuid=event_uuid)
+            event = AGEvent.objects.get(uuid=event_uuid)
         except AGEvent.DoesNotExist:
             event = False
         if event is False:

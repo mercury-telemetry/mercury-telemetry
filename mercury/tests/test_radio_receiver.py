@@ -1,20 +1,31 @@
 from django.test import TestCase
 from django.urls import reverse
-from mercury.models import AGEvent
 import datetime
 import mock
 
+from ag_data.models import AGEvent, AGVenue
 
-def fake_event(event_uuid):
+
+def fake_venue():
+    return AGVenue(
+        uuid="d81cac8d-26e1-4983-a942-1922e54a943a",
+        name="fake venue",
+        description="fake venue",
+        latitude=111.11,
+        longitude=111.11,
+    )
+
+
+def fake_event(uuid):
     """
         Mock a dummy AGEvent model
     """
     return AGEvent(
-        event_uuid=event_uuid,
-        event_name="fake event",
-        event_description="fake event",
-        event_date=datetime.datetime(2020, 2, 2, 20, 21, 22),
-        event_location="nyu",
+        uuid=uuid,
+        name="fake event",
+        description="fake event",
+        date=datetime.datetime(2020, 2, 2, 20, 21, 22),
+        venue_uuid=fake_venue(),
     )
 
 
@@ -41,7 +52,7 @@ class TestRadioReceiverView(TestCase):
         response = self.client.get(reverse(self.get_url, args=[self.uuid2]))
         self.assertEqual(404, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_GET_Missing_Enable(self):
         response = self.client.get(
             reverse(self.get_url, args=[self.uuid]),
@@ -55,7 +66,7 @@ class TestRadioReceiverView(TestCase):
         )
         self.assertEqual(400, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_invalid_port)
     def test_Radio_Receiver_GET_No_Valid_Port(self):
         response = self.client.get(
@@ -71,7 +82,7 @@ class TestRadioReceiverView(TestCase):
         )
         self.assertEqual(503, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)
     def test_Radio_Receiver_GET_Success(self):
         response = self.client.get(
@@ -87,7 +98,7 @@ class TestRadioReceiverView(TestCase):
         )
         self.assertEqual(200, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)
     @mock.patch("mercury.views.radioreceiver.check_port", fake_valid)
     def test_Radio_Receiver_GET_Close_Port_Success(self):
@@ -104,7 +115,7 @@ class TestRadioReceiverView(TestCase):
         )
         self.assertEqual(200, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_Fake_GET_Success(self):
         response = self.client.get(
             reverse(self.get_url, args=[self.uuid]),

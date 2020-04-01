@@ -4,19 +4,29 @@ import mock
 from django.test import TestCase
 from rest_framework.reverse import reverse
 
-from mercury.models import AGEvent
+from ag_data.models import AGEvent, AGVenue
 
 
-def fake_event(event_uuid):
+def fake_venue():
+    return AGVenue(
+        uuid="d81cac8d-26e1-4983-a942-1922e54a943a",
+        name="fake venue",
+        description="fake venue",
+        latitude=111.11,
+        longitude=111.11,
+    )
+
+
+def fake_event(uuid):
     """
         Mock a dummy AGEvent model
     """
     return AGEvent(
-        event_uuid=event_uuid,
-        event_name="fake event",
-        event_description="fake event",
-        event_date=datetime.datetime(2020, 2, 2, 20, 21, 22),
-        event_location="nyu",
+        uuid=uuid,
+        name="fake event",
+        description="fake event",
+        date=datetime.datetime(2020, 2, 2, 20, 21, 22),
+        venue_uuid=fake_venue(),
     )
 
 
@@ -56,20 +66,20 @@ class TestMeasurement(TestCase):
         response = self.client.post(reverse(self.post_url, args=[self.uuid2]))
         self.assertEqual(404, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Missing_Params(self):
         response = self.post_defect_data()
         self.assertEqual(400, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Fail_to_Save(self):
         response = self.post_radio_data()
         self.assertEqual(400, response.status_code)
 
-    @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
-    @mock.patch("mercury.serializers.AGMeasurementSerializer.is_valid", fake_valid)
-    @mock.patch("mercury.serializers.AGMeasurementSerializer.save", fake_valid)
-    @mock.patch("mercury.serializers.AGMeasurementSerializer.data", "")
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
+    @mock.patch("ag_data.serializers.AGMeasurementSerializer.is_valid", fake_valid)
+    @mock.patch("ag_data.serializers.AGMeasurementSerializer.save", fake_valid)
+    @mock.patch("ag_data.serializers.AGMeasurementSerializer.data", "")
     def test_Radio_Receiver_POST_Event_Success(self):
         response = self.post_radio_data()
         self.assertEqual(201, response.status_code)
