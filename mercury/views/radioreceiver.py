@@ -80,6 +80,10 @@ def check_port(ser):
     return ser.is_open
 
 
+def build_error(str):
+    return json.dumps({"error": str})
+
+
 class RadioReceiverView(APIView):
     """
     This is a Django REST API supporting user to send GET request fetching the RADIO
@@ -92,7 +96,7 @@ class RadioReceiverView(APIView):
         The get request sent from web to determine the parameters of the serial port
             Url Sample:
             https://localhost:8000/radioreceiver/d81cac8d-26e1-4983-a942-1922e54a943d?
-                eventid=1&enable=1&baudrate=8000&bytesize=8&parity=N&stopbits=1&timeout=None&fake=1
+                &enable=1&baudrate=8000&bytesize=8&parity=N&stopbits=1&timeout=None&fake=1
             uuid: event_uuid
             enable: must define, set the port on if 1, off if 0
             baudrate: Optional, default 9600
@@ -108,14 +112,17 @@ class RadioReceiverView(APIView):
         except AGEvent.DoesNotExist:
             event = False
         if event is False:
-            return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                build_error("Event uuid not found"), status=status.HTTP_404_NOT_FOUND
+            )
 
         # Check Serial port parameters
         params = request.query_params
         enable = params.get("enable")
         if enable is None:
             return Response(
-                "Missing enable value in url", status=status.HTTP_400_BAD_REQUEST
+                build_error("Missing enable value in url"),
+                status=status.HTTP_400_BAD_REQUEST,
             )
         enable = int(enable)
         ser = serial.Serial()
@@ -124,7 +131,10 @@ class RadioReceiverView(APIView):
         if len(valid_ports) > 0:
             ser.port = valid_ports[0]
         else:
-            return Response("No valid ports on the backend", status=status.HTTP_200_OK)
+            return Response(
+                build_error("No valid ports on the backend"),
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         res = {"enable": enable}
 
@@ -155,6 +165,7 @@ class RadioReceiverView(APIView):
         else:
             if check_port(ser):
                 ser.close()
+            print("listening port closed")
 
         # Response data
         res["baudrate"] = ser.baudrate

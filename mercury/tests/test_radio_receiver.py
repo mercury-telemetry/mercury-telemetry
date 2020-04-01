@@ -1,5 +1,3 @@
-import json
-
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import AGEvent
@@ -41,7 +39,7 @@ class TestRadioReceiverView(TestCase):
 
     def test_Radio_Receiver_GET_No_Related_Event(self):
         response = self.client.get(reverse(self.get_url, args=[self.uuid2]))
-        self.assertEqual(400, response.status_code)
+        self.assertEqual(404, response.status_code)
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_GET_Missing_Enable(self):
@@ -56,7 +54,6 @@ class TestRadioReceiverView(TestCase):
             },
         )
         self.assertEqual(400, response.status_code)
-        self.assertEqual("Missing enable value in url", json.loads(response.content))
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_invalid_port)
@@ -72,8 +69,7 @@ class TestRadioReceiverView(TestCase):
                 "timeout": 1,
             },
         )
-        self.assertEqual(200, response.status_code)
-        self.assertEqual("No valid ports on the backend", json.loads(response.content))
+        self.assertEqual(503, response.status_code)
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)

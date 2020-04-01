@@ -1,5 +1,4 @@
 import datetime
-import json
 
 import mock
 from django.test import TestCase
@@ -21,7 +20,7 @@ def fake_event(event_uuid):
     )
 
 
-def fake_valid(res):
+def fake_valid(res, raise_exception=True):
     return True
 
 
@@ -55,14 +54,12 @@ class TestMeasurement(TestCase):
 
     def test_Radio_Receiver_POST_Event_Not_Exist(self):
         response = self.client.post(reverse(self.post_url, args=[self.uuid2]))
-        self.assertEqual(400, response.status_code)
-        self.assertEqual("Wrong uuid in url", json.loads(response.content))
+        self.assertEqual(404, response.status_code)
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Missing_Params(self):
         response = self.post_defect_data()
         self.assertEqual(400, response.status_code)
-        self.assertTrue("Missing required params" in json.loads(response.content))
 
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Fail_to_Save(self):
@@ -72,6 +69,7 @@ class TestMeasurement(TestCase):
     @mock.patch("mercury.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.serializers.AGMeasurementSerializer.is_valid", fake_valid)
     @mock.patch("mercury.serializers.AGMeasurementSerializer.save", fake_valid)
+    @mock.patch("mercury.serializers.AGMeasurementSerializer.data", "")
     def test_Radio_Receiver_POST_Event_Success(self):
         response = self.post_radio_data()
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(201, response.status_code)

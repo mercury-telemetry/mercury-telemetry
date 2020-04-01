@@ -1,11 +1,15 @@
 import json
 
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from mercury.models import AGEvent
 from mercury.serializers import AGMeasurementSerializer
+
+
+def build_error(str):
+    return json.dumps({"error": str})
 
 
 class MeasurementView(APIView):
@@ -30,11 +34,14 @@ class MeasurementView(APIView):
         except AGEvent.DoesNotExist:
             event = False
         if event is False:
-            return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                build_error("Event uuid not found"), status=status.HTTP_404_NOT_FOUND
+            )
 
         json_data = request.data
         if isinstance(json_data, str):
             json_data = json.loads(json_data)
+
         res = {"measurement_event": event_uuid}
         dic = {
             "measurement_timestamp": "date",
@@ -45,13 +52,16 @@ class MeasurementView(APIView):
         for d in dic:
             if json_data.get(dic[d]) is None:
                 return Response(
-                    "Missing required params " + dic[d],
+                    build_error("Missing required params " + dic[d]),
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             res[d] = json_data[dic[d]]
 
         serializer = AGMeasurementSerializer(data=res)
-        if serializer.is_valid():
+        try:
+            serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response("Saved Successfully", status=status.HTTP_200_OK)
-        return Response("The model fails to save", status=status.HTTP_400_BAD_REQUEST)
+        except serializers.ValidationError:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
