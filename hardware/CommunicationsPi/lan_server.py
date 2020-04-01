@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-
+import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from utils import get_logger
+from .utils import get_logger
 
 log = get_logger("LAN_SERVER_LOG_FILE")
 
@@ -42,20 +42,23 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
 
-def run(server_class=HTTPServer, handler_class=Server, log_file_name=None, port=8080):
-
+def run(server_class=HTTPServer, handler_class=Server, log_file_name=None, port=None):
     global log
+    log = (
+        get_logger("LAN_SERVER_LOG_FILE")
+        if log_file_name is None
+        else get_logger(log_file_name, log_file_name)
+    )
 
-    if log_file_name is not None:
-        log = get_logger(log_file_name)
+    port = int(os.environ["LAN_PORT"]) if port is None else port
 
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
-    log.info("Starting httpd...\n")
+    log.info("Starting server on port: " + str(port))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
 
     httpd.server_close()
-    log.info("Stopping httpd...\n")
+    log.info("Stopping\n")
