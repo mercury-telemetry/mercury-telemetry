@@ -130,6 +130,9 @@ function selectView() {
         editSensorsButton.style.backgroundColor = 'var(--light-accent)';
         editSensorTypesButton.style.backgroundColor = 'var(--green)';
     }
+    else {
+        displayCurrentSensors()
+    }
 }
 
 function displayCurrentSensors() {
