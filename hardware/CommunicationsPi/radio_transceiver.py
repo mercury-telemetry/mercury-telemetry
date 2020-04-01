@@ -39,35 +39,32 @@ class Transceiver:
             timeout=timeout,
         )
 
-
     def find_port(self):
         for port in serial.tools.list_ports.comports():
             if self.is_usb_serial(port):
-                print(port)
-                print('D', port.device)
+                self.logging.info("Port device found: " + str(port.device))
                 self.port = port.device
                 return
 
         return
 
-
     def is_usb_serial(self, port):
         if port.vid is None:
             return False
-        if not self.port_vid is None:
+        if self.port_vid is not None:
             if port.vid != self.port_vid:
                 return False
-        if not self.port_pid is None:
+        if self.port_pid is not None:
             if port.pid != self.port_pid:
                 return False
-        if not self.port_vendor is None:
+        if self.port_vendor is not None:
             if not port.manufacturer.startswith(self.port_vendor):
                 return False
-        if not self.port_serial_number is None:
+        if self.port_serial_number is not None:
             if not port.serial_number.startswith(self.port_serial_number):
                 return False
-        if not self.port_intf is None:
-            if port.interface is None or not self.port_intf in port.interface:
+        if self.port_intf is not None:
+            if port.interface is None or self.port_intf not in port.interface:
                 return False
         return True
 
