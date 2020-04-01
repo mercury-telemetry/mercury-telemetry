@@ -41,7 +41,7 @@ function selectView() {
     if (sessionStorage.getItem('viewing') == 'addingNew'){
         newSensorDiv.style.display = "block";
         existingSensorDiv.style.display = 'none';
-        newTypeDiv.style.display = "none";
+        newTypeDiv.style.display = "block";
         editSensorsDiv.style.display = "none";
         editSensorTypesDiv.style.display = "none";
 
@@ -65,7 +65,7 @@ function selectView() {
         editSensorTypesButton.style.backgroundColor = 'var(--light-accent)';
     }
     else if (sessionStorage.getItem('viewing') == 'addingNewType'){
-        newSensorDiv.style.display = "none";
+        newSensorDiv.style.display = "block";
         existingSensorDiv.style.display = 'none';
         newTypeDiv.style.display = "block";
         editSensorsDiv.style.display = "none";

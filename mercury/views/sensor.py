@@ -206,6 +206,7 @@ class CreateSensorView(TemplateView):
             # reformat then validate inputs to avoid duplicated names or bad inputs
             # like " "
             type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
+            sensor_name = type_name  # need this due to structure of models (Sensor and Sensor Type)
             field_names = [string.strip().lower() for string in field_names]
             valid, request = validate_add_sensor_type_inputs(
                 type_name, field_names, request
@@ -217,25 +218,52 @@ class CreateSensorView(TemplateView):
             for field in fields:
                 type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
 
-            sensors = AGSensor.objects.all()  # for when we return context later
             if valid:
+                # Create new type and new sensor as required by models
+                # Hide this confusing detail from users
                 new_type = AGSensorType.objects.create(
                     name=type_name, processing_formula=0, format=type_format
                 )
                 new_type.save()
-                sensor_types = AGSensorType.objects.all()
-                context = {
-                    "sensor_types": sensor_types,
-                    "sensors": sensors,
-                }
-            else:
-                sensor_types = AGSensorType.objects.all()
-                context = {
-                    "sensor_types": sensor_types,
-                    "type_name": type_name,
-                    "type_format": type_format,
-                    "sensors": sensors,
-                }
+
+                sensor_type = AGSensorType.objects.get(name=type_name)
+
+                new_sensor = AGSensor.objects.create(
+                    name=sensor_name, type_id=sensor_type
+                )
+                new_sensor.save()
+
+                # Add a Sensor panel to the Active Event
+                # Check that Grafana is already configured
+                # and that an Active Event exists
+                # Note: THIS IS A PLACEHOLDER - waiting to decide
+                # how to implement Current GFConfig
+                gf_configs = GFConfig.objects.filter(gf_current=True)
+                # Note: THIS IS A PLACEHOLDER - waiting to decide
+                # how to implement Active Event
+                active_events = AGEvent.objects.all()
+                if len(gf_configs) > 0 and len(active_events) > 0:
+                    gf_config = gf_configs.first()
+                    active_event = active_events.first()
+                    # Grafana instance using current GFConfig
+                    grafana = Grafana(gf_config)
+
+                    # Add the Sensor Panel to the Active Event's dashboard
+                    try:
+                        grafana.add_panel(new_sensor, active_event)
+                    except ValueError as error:
+                        messages.error(
+                            request, f"Failed to add panel to active dashboard: {error}"
+                        )
+
+            types = AGSensorType.objects.all()
+            sensors = AGSensor.objects.all()
+            context = {
+                "sensor_types": types,
+                "type_name": type_name,
+                "type_format": type_format,
+                "sensors": sensors,
+            }
 
             return render(request, self.template_name, context)
 
@@ -253,7 +281,7 @@ class CreateSensorView(TemplateView):
             )  # remove excess whitespace and CAPS
             valid, request = validate_add_sensor_inputs(sensor_name, request)
 
-            sensor_types = (
+            types = (
                 AGSensorType.objects.all()
             )  # for when we return context later
             if valid:
@@ -293,7 +321,7 @@ class CreateSensorView(TemplateView):
                 sensors = AGSensor.objects.all()
                 context = {
                     "sensors": sensors,
-                    "sensor_types": sensor_types,
+                    "sensor_types": types,
                 }
             else:
                 sensors = AGSensor.objects.all()
@@ -301,6 +329,6 @@ class CreateSensorView(TemplateView):
                     "sensors": sensors,
                     "sensor_name": sensor_name,
                     "sensor_type": sensor_type,
-                    "sensor_types": sensor_types,
+                    "sensor_types": types,
                 }
             return render(request, self.template_name, context)
