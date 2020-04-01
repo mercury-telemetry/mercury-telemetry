@@ -6,11 +6,13 @@ from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+# Sets the GFConfig's current status to True
 def update_config(request, gf_id=None):
     GFConfig.objects.all().update(gf_current=False)
     GFConfig.objects.filter(id=gf_id).update(gf_current=True)
@@ -34,10 +36,15 @@ class GFConfigView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         if "submit" in request.POST:
+            DB = settings.DATABASES
             config_data = GFConfig(
                 gf_name=request.POST.get("gf_name"),
                 gf_host=request.POST.get("gf_host"),
                 gf_token=request.POST.get("gf_token"),
+                gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
+                gf_db_name=DB["default"]["NAME"],
+                gf_db_username=DB["default"]["USER"],
+                gf_db_pw=DB["default"]["PASSWORD"],
             )
 
             # Create Grafana instance with host and token
@@ -56,6 +63,6 @@ class GFConfigView(TemplateView):
                 messages.error(request, f"Datasource couldn't be created. {error}")
 
             configs = GFConfig.objects.all().order_by("id")
-            config_form = GFConfigForm()
+            config_form = GFConfigForm(request.POST)
             context = {"config_form": config_form, "configs": configs}
             return render(request, self.template_name, context)

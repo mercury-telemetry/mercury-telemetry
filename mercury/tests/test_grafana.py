@@ -71,7 +71,7 @@ class TestGrafana(TestCase):
         config.save()
         return config
 
-    def create_venue_and_event(self):
+    def create_venue_and_event(self, event_name):
         venue = AGVenue.objects.create(
             name=self.test_venue_data["name"],
             description=self.test_venue_data["description"],
@@ -81,7 +81,7 @@ class TestGrafana(TestCase):
         venue.save()
 
         event = AGEvent.objects.create(
-            name=self.test_event_data["name"],
+            name=event_name,
             date=self.test_event_data["date"],
             description=self.test_event_data["description"],
             venue_uuid=venue,
@@ -258,8 +258,8 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
 
-        # Create an event
-        event = self.create_venue_and_event()
+        # Create an event and venue
+        event = self.create_venue_and_event(self.event_name)
 
         # Create a sensor type and sensor
         sensor_type = AGSensorType.objects.create(
@@ -274,7 +274,7 @@ class TestGrafana(TestCase):
         sensor.save()
 
         # Add a panel to the dashboard
-        self.grafana.add_panel(sensor, event, uid)
+        self.grafana.add_panel(sensor, event)
 
         # Retrieve the current dashboard
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
@@ -294,8 +294,8 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
         uid = dashboard["uid"]
 
-        # Create an event
-        event = self.create_venue_and_event()
+        # Create an event and venue
+        event = self.create_venue_and_event(self.event_name)
 
         # Create a sensor type
         sensor_type = AGSensorType.objects.create(
@@ -312,7 +312,7 @@ class TestGrafana(TestCase):
             )
             sensor.save()
 
-            self.grafana.add_panel(sensor, event, uid)
+            self.grafana.add_panel(sensor, event)
 
         # Query dashboard to confirm 10 panels were added
         dashboard_info = self.grafana.get_dashboard_with_uid(uid)
@@ -326,12 +326,10 @@ class TestGrafana(TestCase):
             name = "".join([self.test_sensor_name, str(i)])
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
 
-    def test_add_panel_fail_invalid_uid(self):
-        # Generate a random uid
-        uid = self.grafana.generate_random_string(10)
+    def test_add_panel_fail_no_dashboard_exists_for_event(self):
 
         # Create an event
-        event = self.create_venue_and_event()
+        event = self.create_venue_and_event(self.event_name)
 
         # Create a sensor type and sensor
         sensor_type = AGSensorType.objects.create(
@@ -346,9 +344,9 @@ class TestGrafana(TestCase):
         sensor.save()
 
         # Check for expected ValueError and message
-        expected_message = "Dashboard uid not found."
+        expected_message = "Dashboard not found for this event."
         with self.assertRaisesMessage(ValueError, expected_message):
-            self.grafana.add_panel(sensor, event, uid)
+            self.grafana.add_panel(sensor, event)
 
     def test_create_postgres_datasource(self):
         # Create datasource
