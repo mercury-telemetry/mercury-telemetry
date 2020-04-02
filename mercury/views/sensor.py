@@ -197,7 +197,7 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
-        if "submit_new_type" in request.POST:
+        if "submit_new_sensor" in request.POST:
             type_name = request.POST.get("type-name")
             field_names = request.POST.getlist("field-names")
             field_types = request.POST.getlist("data-types")
@@ -264,71 +264,4 @@ class CreateSensorView(TemplateView):
                 "type_format": type_format,
                 "sensors": sensors,
             }
-
-            return render(request, self.template_name, context)
-
-        elif "submit_new_sensor" in request.POST:
-            sensor_name = request.POST.get("sensor-name")
-            sensor_type = request.POST.get("select-sensor-type")
-            sensor_type = AGSensorType.objects.get(
-                name=sensor_type
-            )  # str --> AGSensorType
-
-            # reformat then validate name to avoid duplicated names or bad inputs
-            # like " "
-            sensor_name = (
-                sensor_name.strip().lower()
-            )  # remove excess whitespace and CAPS
-            valid, request = validate_add_sensor_inputs(sensor_name, request)
-
-            types = (
-                AGSensorType.objects.all()
-            )  # for when we return context later
-            if valid:
-                new_sensor = AGSensor.objects.create(
-                    name=sensor_name, type_id=sensor_type
-                )
-                new_sensor.save()
-
-                # Add a Sensor panel to the Active Event
-
-                # Check that Grafana is already configured
-                # and that an Active Event exists
-
-                # Note: THIS IS A PLACEHOLDER - waiting to decide
-                # how to implement Current GFConfig
-                gf_configs = GFConfig.objects.filter(gf_current=True)
-
-                # Note: THIS IS A PLACEHOLDER - waiting to decide
-                # how to implement Active Event
-                active_events = AGEvent.objects.all()
-
-                if len(gf_configs) > 0 and len(active_events) > 0:
-                    gf_config = gf_configs.first()
-                    active_event = active_events.first()
-
-                    # Grafana instance using current GFConfig
-                    grafana = Grafana(gf_config)
-
-                    # Add the Sensor Panel to the Active Event's dashboard
-                    try:
-                        grafana.add_panel(new_sensor, active_event)
-                    except ValueError as error:
-                        messages.error(
-                            request, f"Failed to add panel to active dashboard: {error}"
-                        )
-
-                sensors = AGSensor.objects.all()
-                context = {
-                    "sensors": sensors,
-                    "sensor_types": types,
-                }
-            else:
-                sensors = AGSensor.objects.all()
-                context = {
-                    "sensors": sensors,
-                    "sensor_name": sensor_name,
-                    "sensor_type": sensor_type,
-                    "sensor_types": types,
-                }
             return render(request, self.template_name, context)

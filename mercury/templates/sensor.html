@@ -22,7 +22,6 @@
                 <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
                 <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> View Sensors </button></li>
                 <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
-                <li><button onclick="displayAddNewSensorType()" type= "button" id="add-sensor-type-btn" class="grafana-btn"> Add New Sensor Type </button></li>
                 <li><button onclick="displayEditSensors()" type= "button" id="edit-sensors-btn" class="grafana-btn"> Edit Existing Sensors </button></li>
                 <li><button onclick="displayEditSensorTypes()" type= "button" id="edit-sensor-types-btn" class="grafana-btn"> Edit Existing Sensor Types </button></li>
             </ul>
@@ -68,37 +67,8 @@
             {% endif%}
         </div> <!-- end existing sensors -->
 
-        <div id="add-new-sensor">
-            <h2>Add a New Sensor</h2>
-            <br>
-            {% if sensor_types %}
-                <form method="POST">
-                    {% csrf_token %}
-                    <div id = "sensor-container"> <!-- single div for configuring entire sensor -->
-                        <div class="inline-box">
-                            <label for="sensor-name"> <b>Sensor Name:</b> </label>
-                            <input type="text" id="sensor-name" name="sensor-name" required/>
-                                <label for="select-sensor-type"> <b>Sensor Type:</b> </label>
-                                <select id="select-sensor-type" name="select-sensor-type"/>
-                                {% for sensor_type in sensor_types %}
-                                    <option>{{ sensor_type.name }}</option>
-                                {% endfor %}
-                        </select>
 
-                    </div> <br>
-                </div> <br> <!-- end new sensor container -->
-                <h4>Preview</h4> <!-- TODO: need to add preview feature ---> 
-
-                <button type="submit" name="submit_new_sensor" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
-            </form>
-            {% else %}
-                <h3 style="color:red"><b>Add a sensor type in "Add New Sensor Type" to proceed</b></h3>
-                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
-            {% endif%}
-            <br>
-        </div>
-
-        <div id = "add-new-type">
+        <div id = "add-new-sensor">
             <h2>Add a New Sensor</h2>
             <form method="POST">
                 {% csrf_token %}
@@ -120,7 +90,7 @@
 
                         <tbody>
                             <tr>
-                                <td> 1 </td>
+                                <td>1</td>
 
                                 <td> <input type="text" id="field-name" name="field-names" required/> </td>
 
@@ -144,7 +114,7 @@
 
                 </div> <br> <!-- end new sensor type container -->
 
-                <button type="submit" name="submit_new_type" class="grafana-btn grafana-btn-green"> Add New Sensor Type </button>
+                <button type="submit" name="submit_new_sensor" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
             </form>
             <br>
 
