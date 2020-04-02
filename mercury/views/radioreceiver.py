@@ -2,7 +2,6 @@ import datetime
 import glob
 import json
 import os
-import subprocess
 import sys
 
 import serial
@@ -10,9 +9,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from subprocess import Popen
 
-from mercury.models import AGEvent
-from mercury.serializers import AGMeasurementSerializer
+from ag_data.models import AGEvent
 
 
 def serial_ports():
@@ -70,7 +69,7 @@ def call_script(uuid, port, fake):
         data = json.dumps(data, cls=DjangoJSONEncoder)
         command = command + "'" + data + "'"
         print(command)
-    subprocess.call(command, shell=True)
+    Popen(command, shell=True)
 
 
 def check_port(ser):
@@ -79,6 +78,10 @@ def check_port(ser):
         TODO: Add other checks on Serial port
     """
     return ser.is_open
+
+
+def build_error(str):
+    return json.dumps({"error": str})
 
 
 class RadioReceiverView(APIView):
@@ -93,7 +96,7 @@ class RadioReceiverView(APIView):
         The get request sent from web to determine the parameters of the serial port
             Url Sample:
             https://localhost:8000/radioreceiver/d81cac8d-26e1-4983-a942-1922e54a943d?
-                eventid=1&enable=1&baudrate=8000&bytesize=8&parity=N&stopbits=1&timeout=None&fake=1
+                &enable=1&baudrate=8000&bytesize=8&parity=N&stopbits=1&timeout=None&fake=1
             uuid: event_uuid
             enable: must define, set the port on if 1, off if 0
             baudrate: Optional, default 9600
@@ -105,18 +108,21 @@ class RadioReceiverView(APIView):
             """
         # First check event_uuid exists
         try:
-            event = AGEvent.objects.get(event_uuid=event_uuid)
+            event = AGEvent.objects.get(uuid=event_uuid)
         except AGEvent.DoesNotExist:
             event = False
         if event is False:
-            return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                build_error("Event uuid not found"), status=status.HTTP_404_NOT_FOUND
+            )
 
         # Check Serial port parameters
         params = request.query_params
         enable = params.get("enable")
         if enable is None:
             return Response(
-                "Missing enable value in url", status=status.HTTP_400_BAD_REQUEST
+                build_error("Missing enable value in url"),
+                status=status.HTTP_400_BAD_REQUEST,
             )
         enable = int(enable)
         ser = serial.Serial()
@@ -125,7 +131,10 @@ class RadioReceiverView(APIView):
         if len(valid_ports) > 0:
             ser.port = valid_ports[0]
         else:
-            return Response("No valid ports on the backend", status=status.HTTP_200_OK)
+            return Response(
+                build_error("No valid ports on the backend"),
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         res = {"enable": enable}
 
@@ -156,6 +165,7 @@ class RadioReceiverView(APIView):
         else:
             if check_port(ser):
                 ser.close()
+            print("listening port closed")
 
         # Response data
         res["baudrate"] = ser.baudrate
@@ -165,50 +175,3 @@ class RadioReceiverView(APIView):
         res["timeout"] = ser.timeout
 
         return Response(json.dumps(res), status=status.HTTP_200_OK)
-
-    def post(self, request, event_uuid=None):
-        """
-        The post receives sensor data through internet
-        Url example:
-        http://localhost:8000/radioreceiver/d81cac8d-26e1-4983-a942-1922e54a943d
-        Post Json Data Example
-        {
-          "sensor_id": 1,
-          "values": {
-            "power" : "1",
-            "speed" : "2",
-          }
-          "date" : 2020-03-11T20:20+01:00
-        }
-        """
-        # First check event_uuid exists
-        try:
-            event = AGEvent.objects.get(event_uuid=event_uuid)
-        except AGEvent.DoesNotExist:
-            event = False
-        if event is False:
-            return Response("Wrong uuid in url", status=status.HTTP_400_BAD_REQUEST)
-
-        json_data = request.data
-        if isinstance(json_data, str):
-            json_data = json.loads(json_data)
-        res = {"measurement_event": event_uuid}
-        dic = {
-            "measurement_timestamp": "date",
-            "measurement_sensor": "sensor_id",
-            "measurement_value": "values",
-        }
-
-        for d in dic:
-            if json_data.get(dic[d]) is None:
-                return Response(
-                    "Missing required params " + dic[d],
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            res[d] = json_data[dic[d]]
-
-        serializer = AGMeasurementSerializer(data=res)
-        if serializer.is_valid():
-            serializer.save()
-            return Response("Saved Successfully", status=status.HTTP_200_OK)
-        return Response("The model fails to save", status=status.HTTP_400_BAD_REQUEST)
