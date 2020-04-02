@@ -56,6 +56,17 @@ def createOrResetBuiltInSensorType(index):
     return sensorType
 
 
+def createCustomSensorType(name, processing_formula, format):
+    sensorType = models.AGSensorType.objects.create(
+        id=getNextAvailableSensorTypeID(),
+        name=name,
+        processing_formula=processing_formula,
+        format=format,
+    )
+
+    return sensorType
+
+
 def assertVenue(venue):
     assert isinstance(venue, models.AGVenue), "Not an instance of AGVenue."
 
@@ -72,3 +83,14 @@ def assertSensorType(sensorType):
 
 def assertSensor(sensor):
     assert isinstance(sensor, models.AGSensor), "Not an instance of AGSensor."
+
+
+def getNextAvailableSensorTypeID():
+    sensorTypeWithMaxID = models.AGSensorType.objects.latest("id")
+    maxID = sensorTypeWithMaxID.id
+    if maxID % 2 == 0:
+        maxID = maxID + 1
+    else:
+        maxID = maxID + 2
+
+    return maxID
