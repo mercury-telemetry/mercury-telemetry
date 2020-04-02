@@ -79,6 +79,8 @@ function selectView() {
         editSensorsButton.style.backgroundColor = 'var(--light-accent)';
         editSensorTypesButton.style.backgroundColor = 'var(--green)';
     }
+    /*Added to prevent undesired behavior when opening sensors in new browser tab*/
+    else {displayCurrentSensors()}
 }
 
 function displayCurrentSensors() {
