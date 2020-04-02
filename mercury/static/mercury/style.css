@@ -11,11 +11,16 @@ body {
 
 tr:nth-child(even) {background-color: #f2f2f2;}
 
-tr td:first-child:before
+
+/*Commenting this out because it breaks appearance of several tables
+If desiring to use this styling, create a class (.counter) or id (#counter)
+and apply as needed. Do not apply universally */
+
+/*tr td:first-child:before  TODO
 {
-  counter-increment: Serial;      /* Increment the Serial counter */
-  content: counter(Serial); /* Display the counter */
-}
+  counter-increment: Serial;      Increment the Serial counter
+  content: counter(Serial); Display the counter
+}  */
 
 .hide-display {
   display: none;
@@ -32,12 +37,6 @@ nav ul{
 
 nav li {
   display: inline-block;
-}
-
-tr td:first-child:before
-{
-  counter-increment: Serial;      /* Increment the Serial counter */
-  content: counter(Serial); /* Display the counter */
 }
 
 .hide-display {
