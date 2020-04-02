@@ -1,5 +1,5 @@
 from ag_data import models
-from ag_data.formulas.library import mercury_formulas as hgFormulas
+from ag_data.formulas.library.system import mercury_formulas as hgFormulas
 
 
 class MeasurementIngestionEngine:
