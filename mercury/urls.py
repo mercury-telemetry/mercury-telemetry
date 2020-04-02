@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import views, sensor, events, pitcrew, radioreceiver, gf_config
+from .views import (
+    views,
+    sensor,
+    events,
+    pitcrew,
+    radioreceiver,
+    gf_config,
+    measurement,
+)
 
 app_name = "mercury"
 urlpatterns = [
@@ -45,5 +53,10 @@ urlpatterns = [
     ),
     path(
         "gfconfig/update/<int:gf_id>", gf_config.update_config, name="gfconfig_update"
+    ),
+    path(
+        "measurement/<uuid:event_uuid>",
+        measurement.MeasurementView.as_view(),
+        name="measurement",
     ),
 ]
