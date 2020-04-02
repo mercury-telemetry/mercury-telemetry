@@ -43,11 +43,7 @@ class MeasurementView(APIView):
             json_data = json.loads(json_data)
 
         res = {"event_uuid": event_uuid}
-        dic = {
-            "timestamp": "date",
-            "sensor_id": "sensor_id",
-            "value": "values",
-        }
+        dic = {"timestamp": "date", "sensor_id": "sensor_id", "value": "values"}
 
         for d in dic:
             if json_data.get(dic[d]) is None:

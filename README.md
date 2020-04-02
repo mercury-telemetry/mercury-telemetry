@@ -47,3 +47,9 @@ Run `python manage.py runserver` from the root of this Git repo
 
 # HOWTO Run tests locally
 Run `python manage.py test`
+
+# HOWTO Install SymmetricDS
+```
+cd symmetricds
+make install
+```
