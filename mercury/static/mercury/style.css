@@ -383,6 +383,7 @@ input#id_can_msg{
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    text-align: center!important;
 }
 
 /* Base Bootstrap Style Elements */
