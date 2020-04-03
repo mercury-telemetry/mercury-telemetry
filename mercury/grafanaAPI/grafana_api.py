@@ -85,6 +85,18 @@ class Grafana:
 
         return True
 
+    def get_all_dashboards(self):
+        """
+        :return: A list of all existing dashboards (excluding the home dashboard).
+        If an empty list is returned, there are no dashboards except for the home
+        dashboard.
+        """
+
+        endpoint = os.path.join(self.hostname, "api/search/")
+        response = requests.get(url=endpoint, auth=("api_key", self.api_token))
+        json = response.json()
+        return json
+
     def get_dashboard_by_event_name(self, event_name):
         """
         :param event_name: Event name used for the target dashboard.
