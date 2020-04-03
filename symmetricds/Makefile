@@ -1,4 +1,9 @@
+SHELL=/bin/bash
 SYMD_DOWNLOAD_URL=https://sourceforge.net/projects/symmetricds/files/symmetricds/symmetricds-3.8/symmetric-server-3.8.43.zip/download
+
+PROPERTIES=\
+	symmetricds/engines/engine0.properties \
+	symmetricds/engines/engine1.properties \
 
 symmetricds.zip:
 	$(if $(shell command -v wget 2> /dev/null),\
@@ -13,8 +18,20 @@ symmetricds: symmetricds.zip
 	touch $@
 
 # https://stackoverflow.com/a/37197276/1556838
-install: symmetricds
+install: symmetricds ${PROPERTIES}
 	$(if $(shell command -v java 2> /dev/null),$(info Found `java`),$(error Please install `java`))
 
+symmetricds/engines/engine%.properties: symmetricds
+	cp template/$(@F) $(@D)/$(@F)
+
+check-properties: ${PROPERTIES}
+	@for prop in $+ ; do \
+		./check-properties.py $$prop || exit 1 ; \
+	done
+
+configure: check-properties
+
 clean:
-	rm -rf symmetricds.zip symmetricds
+	-rm -rf symmetricds.zip symmetricds
+
+.PHONY: clean configure install check-properties
