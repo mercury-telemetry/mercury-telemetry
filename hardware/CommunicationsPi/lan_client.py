@@ -1,9 +1,8 @@
 import os
-import time
 import json
 import requests
 from requests.exceptions import HTTPError
-from utils import get_logger
+from .utils import get_logger
 
 
 class LANClient:
@@ -11,16 +10,21 @@ class LANClient:
         if log_file_name is None:
             self.logging = get_logger("LAN_CLIENT_LOG_FILE")
         else:
-            self.logging = log_file_name
+            self.logging = get_logger(log_file_name, log_file_name)
+
         if lan_server_url is None:
-            self.url = os.environ["LAN_SERVER"]
+            self.url = self.get_server_url_from_env()
         else:
             self.url = lan_server_url
+
+    def get_server_url_from_env(self):
+        ip = os.environ["LAN_SERVER_IP"]
+        port = os.environ["LAN_PORT"]
+        return "http://{}:{}".format(ip, port)
 
     # Function to ping the LAN server
     # Accepts payload as a python dictionary
     def ping_lan_server(self, payload):
-
         self.logging.info("Pinging")
 
         try:
