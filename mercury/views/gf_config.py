@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from mercury.forms import GFConfigForm
 from mercury.models import GFConfig
+from ag_data.models import AGEvent, AGSensor
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
 from django.conf import settings
@@ -54,6 +55,16 @@ class GFConfigView(TemplateView):
                 config_data.gf_current = True
                 # Only save the config if credentials were validated
                 config_data.save()
+
+                # If any events exist, add a dashboard for each event
+                # If any sensors exist, add them to each event dashboard
+                events = AGEvent.objects.all()
+                sensors = AGSensor.objects.all()
+                for event in events:
+                    grafana.create_dashboard(event.name)
+                    for sensor in sensors:
+                        grafana.add_panel(sensor, event)
+
             except ValueError as error:
                 messages.error(request, f"Grafana initial set up failed: {error}")
 
