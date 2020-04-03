@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
+from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType
 from mercury.grafanaAPI.grafana_api import Grafana
 import os
+import datetime
 
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
@@ -17,6 +19,47 @@ EDITOR_TOKEN = (
 
 class TestGFConfig(TestCase):
     TESTCODE = "testcode"
+
+    test_sensor_name = "Wind Sensor"
+    test_sensor_type = "Dual wind"
+    test_sensor_format = {
+        "left_gust": {"unit": "km/h", "format": "float"},
+        "right_gust": {"unit": "km/h", "format": "float"},
+    }
+
+    test_event_data = {
+        "name": "Sunny Day Test Drive",
+        "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        "description": "A very progressive test run at \
+                        Sunnyside Daycare's Butterfly Room.",
+        "location": "New York, NY",
+    }
+
+    test_venue_data = {
+        "name": "Venue 1",
+        "description": "foo",
+        "latitude": 100,
+        "longitude": 200,
+    }
+
+    def create_venue_and_event(self, event_name):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        event = AGEvent.objects.create(
+            name=event_name,
+            date=self.test_event_data["date"],
+            description=self.test_event_data["description"],
+            venue_uuid=venue,
+        )
+        event.save()
+
+        return event
 
     def setUp(self):
         self.login_url = "mercury:EventAccess"
@@ -140,6 +183,7 @@ class TestGFConfig(TestCase):
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
 
+    # test that GFConfig.gf_current can be set to True using the update view
     def test_update_config(self):
         GFConfig.objects.all().delete()
 
@@ -157,3 +201,78 @@ class TestGFConfig(TestCase):
 
         gfconfig = GFConfig.objects.all().first()
         self.assertEquals(gfconfig.gf_current, True)
+
+    def test_config_post_no_event_exists_no_dashboard_created(self):
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+        # check if any dashboards exist
+        dashboards = self.grafana.get_all_dashboards()
+        self.assertEquals(dashboards, [])
+
+    def test_config_post_event_exists_dashboard_created(self):
+        self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+        # check that dashboard was created with same name as event
+        dashboards = self.grafana.get_all_dashboards()
+        self.assertNotEquals(dashboards, [])
+        dashboard = dashboards[0]
+        self.assertEquals(dashboard["title"], self.event_name)
+
+    def test_config_post_event_exists_dashboard_created_with_sensor(self):
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+        # check that dashboard was created with expected panel
+        dashboard = self.grafana.get_dashboard_by_event_name(self.event_name)
+        self.assertTrue(dashboard)
+        self.assertEquals(dashboard["dashboard"]["title"], self.event_name)
+        # panels should have been created
+        # querying like this because the returned dashboard object may have no panels
+        # attribute, so trying to retrieve dashboard["panels"] could throw a key error
+        panels = dashboard["dashboard"].get("panels", None)
+        self.assertTrue(panels)
+        self.assertTrue(len(panels) == 1)
+        panel = panels[0]
+        self.assertEquals(panel["title"], self.test_sensor_name)
