@@ -6,45 +6,45 @@ import serial.tools.list_ports
 
 
 def is_usb_serial(port, args):
-    if port.vid is None:
+    if port["vid"] is None:
         return False
-    if not args.vid is None:
-        if port.vid != args.vid:
+    if not args.get("vid") is None:
+        if port["vid"] != args.get("vid"):
             return False
-    if not args.pid is None:
-        if port.pid != args.pid:
+    if not args.get("pid") is None:
+        if port.get("pid") != args.get("pid"):
             return False
-    if not args.vendor is None:
-        if not port.manufacturer.startswith(args.vendor):
+    if not args.get("vendor") is None:
+        if not port["manufacturer"].startswith(args.get("vendor")):
             return False
-    if not args.serial is None:
-        if not port.serial_number.startswith(args.serial):
+    if not args.get("serial") is None:
+        if not port["serial_number"].startswith(args.get("serial")):
             return False
-    if not args.intf is None:
-        if port.interface is None or not args.intf in port.interface:
+    if not args.get("intf") is None:
+        if port["interface"] is None or not args.get("intf") in port.get("interface"):
             return False
     return True
 
 
 def extra_info(port):
     extra_items = []
-    if port.manufacturer:
-        extra_items.append("vendor '{}'".format(port.manufacturer))
-    if port.serial_number:
-        extra_items.append("serial '{}'".format(port.serial_number))
-    if port.interface:
-        extra_items.append("intf '{}'".format(port.interface))
+    if port.get("manufacturer"):
+        extra_items.append("vendor '{}'".format(port["manufacturer"]))
+    if port.get("serial_number"):
+        extra_items.append("serial '{}'".format(port["serial_number"]))
+    if port.get("interface"):
+        extra_items.append("intf '{}'".format(port["interface"]))
     if extra_items:
         return " with " + " ".join(extra_items)
     return ""
 
 
-def getPort():
+def get_port():
     for port in serial.tools.list_ports.comports():
-        if is_usb_serial(port, None):
+        if is_usb_serial(port, {}):
             print(port)
-            print(port.device)
-            return
+            print(port["device"])
+            return "port found"
     return
 
 
