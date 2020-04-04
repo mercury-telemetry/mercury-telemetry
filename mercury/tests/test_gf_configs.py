@@ -107,6 +107,43 @@ class TestGFConfig(TestCase):
         response = self.client.get(reverse(self.config_url))
         self.assertEqual(200, response.status_code)
 
+    def test_config_view_get_existing_dashboard_displayed(self):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+        response = self.client.get(reverse(self.config_url))
+
+        self.assertContains(response, self.event_name)
+        self.assertContains(response, sensor.name)
+
     def test_config_post_success(self):
         response = self.client.post(
             reverse(self.config_url),

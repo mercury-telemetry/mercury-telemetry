@@ -492,7 +492,9 @@ class Grafana:
             for sensor in sensors:
                 self.add_panel(sensor, event)
         else:
-            raise ValueError("Unable to locate event with dashboard name: " + dashboard_name)
+            raise ValueError(
+                "Unable to locate event with dashboard name: " + dashboard_name
+            )
 
     def get_all_sensors(self, dashboard_name):
         """

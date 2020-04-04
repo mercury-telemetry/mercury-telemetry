@@ -41,7 +41,6 @@ class GFConfigView(TemplateView):
         for dashboard in current_dashboards:
             dashboard_dict = dict()
             existing_sensors = grafana.get_all_sensors(dashboard["title"])
-            print(existing_sensors)
             # Set initial form data so that only existing sensors are checked
             sensor_form = DashboardSensorPanelsForm(
                 initial={"sensors": existing_sensors}
