@@ -17,7 +17,7 @@ class MeasurementView(APIView):
         """
         The post receives sensor data through internet
         Url example:
-        http://localhost:8000/radioreceiver/d81cac8d-26e1-4983-a942-1922e54a943d
+        http://localhost:8000/measurement/d81cac8d-26e1-4983-a942-1922e54a943d
         Post Json Data Example
         {
           "sensor_id": 1,
@@ -43,6 +43,40 @@ class MeasurementView(APIView):
             json_data = json.loads(json_data)
 
         res = {"event_uuid": event_uuid}
+        dic = {
+            "timestamp": "date",
+            "sensor_id": "sensor_id",
+            "value": "values",
+        }
+
+        for d in dic:
+            if json_data.get(dic[d]) is None:
+                return Response(
+                    build_error("Missing required params " + dic[d]),
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            res[d] = json_data[dic[d]]
+
+        serializer = AGMeasurementSerializer(data=res)
+        try:
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        except serializers.ValidationError:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class MeasurementWithoutEvent(APIView):
+    def post(self, request):
+        event = ""
+        # TODO: fetch event
+
+        json_data = request.data
+        if isinstance(json_data, str):
+            json_data = json.loads(json_data)
+
+        res = {"event_uuid": event.uuid}
         dic = {
             "timestamp": "date",
             "sensor_id": "sensor_id",
