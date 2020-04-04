@@ -224,10 +224,7 @@ class CreateSensorView(TemplateView):
                 )
                 new_type.save()
                 sensor_types = AGSensorType.objects.all()
-                context = {
-                    "sensor_types": sensor_types,
-                    "sensors": sensors,
-                }
+                context = {"sensor_types": sensor_types, "sensors": sensors}
             else:
                 sensor_types = AGSensorType.objects.all()
                 context = {
@@ -291,10 +288,7 @@ class CreateSensorView(TemplateView):
                         )
 
                 sensors = AGSensor.objects.all()
-                context = {
-                    "sensors": sensors,
-                    "sensor_types": sensor_types,
-                }
+                context = {"sensors": sensors, "sensor_types": sensor_types}
             else:
                 sensors = AGSensor.objects.all()
                 context = {
