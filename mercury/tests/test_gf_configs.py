@@ -3,6 +3,7 @@ from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
 from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType
 from mercury.grafanaAPI.grafana_api import Grafana
+from mercury.forms import DashboardSensorPanelsForm
 import os
 import datetime
 
@@ -143,6 +144,10 @@ class TestGFConfig(TestCase):
 
         self.assertContains(response, self.event_name)
         self.assertContains(response, sensor.name)
+        self.assertEquals(response.context["dashboards"][0]["name"], self.event_name)
+        self.assertIsInstance(
+            response.context["dashboards"][0]["sensor_form"], DashboardSensorPanelsForm
+        )
 
     def test_config_post_success(self):
         response = self.client.post(
