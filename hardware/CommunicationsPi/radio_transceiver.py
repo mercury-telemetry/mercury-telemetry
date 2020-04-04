@@ -42,29 +42,31 @@ class Transceiver:
     def find_port(self):
         for port in serial.tools.list_ports.comports():
             if self.is_usb_serial(port):
-                self.logging.info("Port device found: " + str(port.device))
-                self.port = port.device
+                self.logging.info("Port device found: " + str(port.get("device")))
+                self.port = port.get("device")
                 return
 
         return
 
     def is_usb_serial(self, port):
-        if port.vid is None:
+        if port.get("vid") is None:
             return False
         if self.port_vid is not None:
-            if port.vid != self.port_vid:
+            if port.get("vid") != self.port_vid:
                 return False
         if self.port_pid is not None:
-            if port.pid != self.port_pid:
+            if port.get("pid") != self.port_pid:
                 return False
         if self.port_vendor is not None:
-            if not port.manufacturer.startswith(self.port_vendor):
+            if not port.get("manufacturer").startswith(self.port_vendor):
                 return False
         if self.port_serial_number is not None:
-            if not port.serial_number.startswith(self.port_serial_number):
+            if not port.get("serial_number").startswith(self.port_serial_number):
                 return False
         if self.port_intf is not None:
-            if port.interface is None or self.port_intf not in port.interface:
+            if port.get("interface") is None or self.port_intf not in port.get(
+                "interface"
+            ):
                 return False
         return True
 
