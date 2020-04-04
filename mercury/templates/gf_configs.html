@@ -12,8 +12,72 @@
     <body>
     {% include 'sidebar.html' %}
     <div class="topbar-container">
+
+        <!--Grafana Dashboards View-->
+        <div>
+            <h2>Existing Grafana Dashboards</h2>
+
+            {% if dashboards %}
+                {% for dashboard in dashboards %}
+                <div class="panel" name="{{ dashboard.name }}">
+                    <h3> Event: {{ dashboard.name }} </h3>
+
+
+                    <form method="POST" action="" id="DashboardSensorPanelsForm">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+                        {{ dashboard.sensor_form|crispy }}
+                        <br>
+                        <div>
+                            <input class="submitbutton simulator-btn grafana-btn
+                            grafana-btn-blue" type="submit"
+                            name="submit-reset-dashboard"
+                            value="Reset Sensor Panels">
+                            <input class="submitbutton simulator-btn grafana-btn
+                            grafana-btn-red" type="submit"
+                            name="submit-delete-dashboard"
+                            value="Delete Dashboard">
+                            <input class="submitbutton simulator-btn grafana-btn
+                            grafana-btn-green" type="submit"
+                            name="submit-update-sensors"
+                            value="Update Sensor Panels">
+                        </div>
+                        <br> <br>
+                    </form>
+
+
+
+                    <!--
+                    <h4> Included: </h4>
+                    {% for sensor in dashboard.sensors %}
+                        <ul>
+                        {% if sensor.panel_exists %}
+                            <li>{{ sensor.name }}</li>
+                        {% endif %}
+                        </ul>
+                    {% endfor %}
+
+                    <h4> Missing: </h4>
+                    {% for sensor in dashboard.sensors %}
+                        {% if not sensor.panel_exists %}
+                        <input type="checkbox"> {{ sensor.name }} </input>
+                        {% endif %}
+                    {% endfor %}
+
+                    -->
+                </div>
+                {% endfor %}
+
+            {% else %}
+
+                <p> No dashboards yet. Add one? </p>
+
+            {% endif %}
+
+        </div> <!--Grafana Dashboards View -->
+
+
         <!--Configs Table -->
-        <div class="mt-50">
+        <div>
 
         {% if configs %}
             <h2>Existing Grafana Hosts</h2>

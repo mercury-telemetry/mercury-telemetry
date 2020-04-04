@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
-from mercury.forms import GFConfigForm
+from mercury.forms import GFConfigForm, DashboardSensorPanelsForm
 from mercury.models import GFConfig
 from ag_data.models import AGEvent, AGSensor
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -32,7 +32,49 @@ class GFConfigView(TemplateView):
     def get(self, request, *args, **kwargs):
         configs = GFConfig.objects.all().order_by("id")
         config_form = GFConfigForm()
-        context = {"config_form": config_form, "configs": configs}
+
+        dashboards = []
+
+        config = configs[0]
+        grafana = Grafana(config)
+        current_dashboards = grafana.get_all_dashboards()
+        for dashboard in current_dashboards:
+            dashboard_dict = dict()
+            existing_sensors = grafana.get_all_sensors(dashboard["title"])
+            print(existing_sensors)
+            # Set initial form data so that only existing sensors are checked
+            sensor_form = DashboardSensorPanelsForm(
+                initial={"sensors": existing_sensors}
+            )
+            dashboard_dict["sensor_form"] = sensor_form
+
+            """
+            all_sensors = AGSensor.objects.all()
+            sensors = []
+            for sensor in all_sensors:
+                if sensor in existing_sensors:
+                    sensor_info = {
+                        "name": sensor.name,
+                        "sensor": sensor,
+                        "panel_exists": True,
+                    }
+                else:
+                    sensor_info = {
+                        "name": sensor.name,
+                        "sensor": sensor,
+                        "panel_exists": False,
+                    }
+                sensors.append(sensor_info)
+            """
+            # dashboard_dict["sensors"] = sensors
+            dashboard_dict["name"] = dashboard["title"]
+            dashboards.append(dashboard_dict)
+
+        context = {
+            "config_form": config_form,
+            "configs": configs,
+            "dashboards": dashboards,
+        }
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):

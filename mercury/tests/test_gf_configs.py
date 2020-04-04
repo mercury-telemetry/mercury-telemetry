@@ -265,7 +265,7 @@ class TestGFConfig(TestCase):
         self.assertEqual(200, response.status_code)
 
         # check that dashboard was created with expected panel
-        dashboard = self.grafana.get_dashboard_by_event_name(self.event_name)
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertTrue(dashboard)
         self.assertEquals(dashboard["dashboard"]["title"], self.event_name)
         # panels should have been created

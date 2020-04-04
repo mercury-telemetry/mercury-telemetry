@@ -3,6 +3,7 @@ import json
 import requests
 import string
 import random
+from ag_data.models import AGSensor, AGEvent
 
 TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
 HOST = "https://dbc291.grafana.net"
@@ -97,7 +98,7 @@ class Grafana:
         json = response.json()
         return json
 
-    def get_dashboard_by_event_name(self, event_name):
+    def get_dashboard_by_name(self, event_name):
         """
         :param event_name: Event name used for the target dashboard.
         :return: Returns True if a dashboard was found with this name, False otherwise.
@@ -369,7 +370,7 @@ class Grafana:
             field_array.append(field)
 
         # Find dashboard uid for event
-        dashboard_info = self.get_dashboard_by_event_name(event.name)
+        dashboard_info = self.get_dashboard_by_name(event.name)
 
         if dashboard_info is None:
             raise ValueError("Dashboard not found for this event.")
@@ -441,17 +442,17 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Sensor panel not added: {error}")
 
-    def delete_all_panels(self, uid):
+    def delete_all_panels_by_dashboard_name(self, name):
         """
 
-        Deletes all panels from dashboard with given uid.
+        Deletes all panels from dashboard with given name.
 
-        :param uid: uid of dashboard to delete
+        :param name: name of dashboard to delete
         :return: None.
         """
 
         # Retrieve current dashboard dict
-        dashboard_info = self.get_dashboard_with_uid(uid)
+        dashboard_info = self.get_dashboard_by_name(name)
 
         # Create updated dashboard dict with empty list of panels
         panels = []
@@ -465,6 +466,60 @@ class Grafana:
             headers=headers,
             auth=("api_key", self.api_token),
         )
+
+    # TODO For each sensor in sensors, check if the sensor is already found in the
+    #  dashboard. If it isn't, add a new panel. If it already exists, check what is
+    #  different - avoid overwriting style changes
+    def update_dashboard_panels(self, dashboard_name, sensors=[]):
+        """
+        Updates the dashboard with title=`dashboard_name` so that it displays sensor
+        panels based on the ones in `sensors`. If `sensors` is empty, panels will be
+        cleared from the dashboard.
+
+        :param dashboard_name: Name of dashboard to reset.
+        :param sensors: Optional list of sensors, if provided sensor panels will be
+        added.
+        :return: N/a.
+        """
+        # remove all panels
+        self.delete_all_panels_by_name(dashboard_name)
+
+        # retrieve event object
+        event = AGEvent.objects.filter(name=dashboard_name).first()
+
+        if event:
+            # add new set of panels if provided
+            for sensor in sensors:
+                self.add_panel(sensor, event)
+        else:
+            raise ValueError("Unable to locate event with dashboard name: " + dashboard_name)
+
+    def get_all_sensors(self, dashboard_name):
+        """
+
+        :param dashboard_name: Name of the target dashboard
+        :return: Returns a list of all sensor objects which currently exist as panels
+        in the dashboard.
+
+        """
+        # Retrieve the current dashboard
+        dashboard = self.get_dashboard_by_name(dashboard_name)
+        try:
+            dashboard = dashboard["dashboard"]
+            panels = dashboard["panels"]
+        except KeyError:
+            panels = []
+
+        sensor_names = []
+        for panel in panels:
+            sensor_names.append(panel["title"])
+
+        sensors = []
+        for name in sensor_names:
+            sensor = AGSensor.objects.filter(name=name).first()
+            sensors.append(sensor)
+
+        return sensors
 
     # Helper method for add_panel
     def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
