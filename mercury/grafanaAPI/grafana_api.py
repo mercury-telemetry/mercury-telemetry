@@ -472,10 +472,10 @@ class Grafana:
         panels = []
         updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
 
-        # POST updated dashboard with empty list of panels
+        # POST updated dashboard
         headers = {"Content-Type": "application/json"}
-        requests.post(
-            self.urls["dashboard_post"],
+        response = requests.post(
+            self.endpoints["dashboards"],
             data=json.dumps(updated_dashboard),
             headers=headers,
             auth=("api_key", self.api_token),
@@ -496,7 +496,7 @@ class Grafana:
         :return: N/a.
         """
         # remove all panels
-        self.delete_all_panels_by_name(dashboard_name)
+        self.delete_all_panels_by_dashboard_name(dashboard_name)
 
         # retrieve event object
         event = AGEvent.objects.filter(name=dashboard_name).first()

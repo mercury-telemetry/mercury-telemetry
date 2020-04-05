@@ -17,59 +17,73 @@
         <div>
             <h2>Existing Grafana Dashboards</h2>
 
-            {% if dashboards %}
-                {% for dashboard in dashboards %}
-                <div class="panel" name="{{ dashboard.name }}">
-                    <h3 class="gfconfig-text-align"> Event: <a href="{{ dashboard.url }} ">{{ dashboard.name}}</a>
-                    </h3>
+            {% for config in configs %}
+                {% if dashboards %}
+                    {% for dashboard in dashboards %}
+                    <div class="panel" name="{{ dashboard.name }}">
+                        <h3 class="gfconfig-text-align"> Event:
+                        <a href="{{ dashboard.url }}">{{ dashboard.name }}</a>
+                        </h3>
 
-                    <form class="gfconfig-text-align" method="POST" action=""
-                    id="DashboardSensorPanelsForm">
-                        {% csrf_token %} {% load crispy_forms_tags %}
-                        {{ dashboard.sensor_form|crispy }}
-                        <br>
-                        <div>
-                            <input class="submitbutton simulator-btn grafana-btn
-                            grafana-btn-blue" type="submit"
-                            name="submit-reset-dashboard"
-                            value="Reset Sensor Panels">
-                            <input class="submitbutton simulator-btn grafana-btn
-                            grafana-btn-red" type="submit"
-                            name="submit-delete-dashboard"
-                            value="Delete Dashboard">
-                            <input class="submitbutton simulator-btn grafana-btn
-                            grafana-btn-green" type="submit"
-                            name="submit-update-sensors"
-                            value="Update Sensor Panels">
-                        </div>
-                        <br> <br>
-                    </form>
-                    <!--
-                    <h4> Included: </h4>
-                    {% for sensor in dashboard.sensors %}
-                        <ul>
-                        {% if sensor.panel_exists %}
-                            <li>{{ sensor.name }}</li>
-                        {% endif %}
-                        </ul>
+                        <form class="gfconfig-text-align" method="POST"
+                        action="update_dashboard/{{ config.id }}"
+                        id="{{ dashboard.name }}">
+                            {% csrf_token %} {% load crispy_forms_tags %}
+                            {{ dashboard.sensor_form|crispy }}
+                            <br>
+                            <div>
+                                <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+
+                                <input class="submitbutton simulator-btn grafana-btn
+                                grafana-btn-blue" type="submit"
+                                name="submit-reset-dashboard"
+                                value="Reset Sensor Panels">
+
+                                <input class="submitbutton simulator-btn grafana-btn
+                                grafana-btn-red" type="submit"
+                                name="submit-delete-dashboard"
+                                value="Delete Dashboard">
+
+                                <input class="submitbutton
+                                simulator-btn
+                                grafana-btn
+                                grafana-btn-green" type="submit"
+                                name="submit-update-sensors"
+                                value="Update Sensor Panels"
+                                <!--href="update_dashboard/{{ config.gf_id }}"-->
+
+
+                            </div>
+                            <br> <br>
+                        </form>
+                        <!--
+                        <h4> Included: </h4>
+                        {% for sensor in dashboard.sensors %}
+                            <ul>
+                            {% if sensor.panel_exists %}
+                                <li>{{ sensor.name }}</li>
+                            {% endif %}
+                            </ul>
+                        {% endfor %}
+
+                        <h4> Missing: </h4>
+                        {% for sensor in dashboard.sensors %}
+                            {% if not sensor.panel_exists %}
+                            <input type="checkbox"> {{ sensor.name }} </input>
+                            {% endif %}
+                        {% endfor %}
+
+                        -->
+                    </div>
                     {% endfor %}
 
-                    <h4> Missing: </h4>
-                    {% for sensor in dashboard.sensors %}
-                        {% if not sensor.panel_exists %}
-                        <input type="checkbox"> {{ sensor.name }} </input>
-                        {% endif %}
-                    {% endfor %}
+                {% else %}
 
-                    -->
-                </div>
-                {% endfor %}
+                    <p> No dashboards yet. Add one? </p>
 
-            {% else %}
-
-                <p> No dashboards yet. Add one? </p>
-
-            {% endif %}
+                {% endif %}
+            {% endfor %}
 
         </div> <!--Grafana Dashboards View -->
 
@@ -113,7 +127,8 @@
                     {% csrf_token %} {% load crispy_forms_tags %} {{ config_form|crispy }}
                     <br>
                     <div>
-                        <input class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
+                        <input
+                        class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
                     </div>
                     <br> <br>
                 </form>
