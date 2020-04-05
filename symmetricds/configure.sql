@@ -45,7 +45,7 @@ insert into sym_node_group_link (source_node_group_id, target_node_group_id, dat
 
 insert into sym_trigger
 (trigger_id,source_table_name,channel_id,last_update_time,create_time)
-values('all_mercury_table_trigger','mercury_*','main_channel',current_timestamp,current_timestamp);
+values('all_mercury_table_trigger','ag_*','main_channel',current_timestamp,current_timestamp);
 
 ------------------------------------------------------------------------------
 -- Routers
