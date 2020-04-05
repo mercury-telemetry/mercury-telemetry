@@ -56,12 +56,17 @@ class GFConfigForm(forms.ModelForm):
         }
 
 
+class CustomModelChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return "%s" % (obj.name)
+
+
 class DashboardSensorPanelsForm(forms.ModelForm):
     class Meta:
         model = AGSensor
         exclude = ["id", "name", "type_id"]
 
-    sensors = forms.ModelMultipleChoiceField(
+    sensors = CustomModelChoiceField(
         widget=forms.CheckboxSelectMultiple, queryset=AGSensor.objects.all(), label=""
     )
 

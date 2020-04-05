@@ -36,8 +36,6 @@ def update_dashboard(request, gf_id=None):
         for sensor in sensors:
             sensor = AGSensor.objects.filter(id=sensor).first()
             sensor_objects.append(sensor)
-        print(dashboard_name)
-        print(sensors)
         grafana.update_dashboard_panels(dashboard_name, sensor_objects)
     else:
         messages.error(
