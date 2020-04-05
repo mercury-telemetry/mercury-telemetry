@@ -275,10 +275,9 @@ class TestGFConfig(TestCase):
         self.assertEqual(200, response.status_code)
 
         # check that dashboard was created with same name as event
-        dashboards = self.grafana.get_all_dashboards()
-        self.assertNotEquals(dashboards, [])
-        dashboard = dashboards[0]
-        self.assertEquals(dashboard["title"], self.event_name)
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+        self.assertEquals(dashboard["dashboard"]["title"], self.event_name)
 
     def test_config_post_event_exists_dashboard_created_with_sensor(self):
         # Create a sensor type and sensor
