@@ -12,7 +12,7 @@ from ..CommunicationsPi.logger import Logger
 from ..CommunicationsPi.utils import get_serial_stream
 
 
-class TranscieverTests(SimpleTestCase):
+class TransceiverTests(SimpleTestCase):
     def setUp(self):
         self.temp_dir = TempDirectory()
 
@@ -567,6 +567,7 @@ class TranscieverTests(SimpleTestCase):
         ):
             with LogCapture() as capture:
                 transciever = Transceiver(log_file_name="LOG_FILE")
+
                 mock_serial_sender = MagicMock()
                 transciever.serial = mock_serial_sender
 
@@ -577,4 +578,83 @@ class TranscieverTests(SimpleTestCase):
                     ("LOG_FILE", "INFO", "Opening serial on: usb"),
                     ("LOG_FILE", "INFO", "sending"),
                     ("LOG_FILE", "INFO", "{'value': 'value'}"),
+                )
+
+    @patch("serial.Serial")
+    @patch("serial.tools.list_ports.comports")
+    def test_listen_valid(self, mock_port_list, mock_serial):
+        """
+        tests the listen method
+        """
+        port = ListPortInfo()
+        port.vid = "vid"
+        port.pid = "pid"
+        port.manufacturer = "Microsoft"
+        port.serial_number = "456"
+        port.interface = "usb"
+        port.device = "usb"
+
+        mock_port_list.return_value = [port]
+
+        test_input = '{"value": "value"}'
+
+        with patch.dict(
+            os.environ,
+            {
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "RADIO_TRANSMITTER_PORT": "usb",
+                "LOG_FILE": "logger.txt",
+            },
+        ):
+            with LogCapture() as capture:
+                transceiver = Transceiver(log_file_name="LOG_FILE")
+
+                mock_receiver = MagicMock()
+                mock_receiver.readline.return_value.decode.return_value = test_input
+                transceiver.serial = mock_receiver
+
+                transceiver.listen()
+                capture.check(
+                    ("LOG_FILE", "INFO", "Port device found: usb"),
+                    ("LOG_FILE", "INFO", "Opening serial on: usb"),
+                    ("LOG_FILE", "INFO", "{'value': 'value'}"),
+                )
+
+    @patch("serial.Serial")
+    @patch("serial.tools.list_ports.comports")
+    def test_listen_invalid(self, mock_port_list, mock_serial):
+        """
+        tests the listen method with invalid input
+        """
+        port = ListPortInfo()
+        port.vid = "vid"
+        port.pid = "pid"
+        port.manufacturer = "Microsoft"
+        port.serial_number = "456"
+        port.interface = "usb"
+        port.device = "usb"
+
+        mock_port_list.return_value = [port]
+
+        test_input = "{'value': 'value'}"
+        with patch.dict(
+            os.environ,
+            {
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "RADIO_TRANSMITTER_PORT": "usb",
+                "LOG_FILE": "logger.txt",
+            },
+        ):
+            with LogCapture() as capture:
+                transceiver = Transceiver(log_file_name="LOG_FILE")
+
+                mock_receiver = MagicMock()
+                mock_receiver.readline.return_value.decode.return_value = test_input
+                transceiver.serial = mock_receiver
+
+                transceiver.listen()
+                capture.check(
+                    ("LOG_FILE", "INFO", "Port device found: usb"),
+                    ("LOG_FILE", "INFO", "Opening serial on: usb"),
+                    ("LOG_FILE", "ERROR", "<class 'json.decoder.JSONDecodeError'>"),
                 )
