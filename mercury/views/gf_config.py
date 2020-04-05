@@ -24,6 +24,7 @@ def delete_config(request, gf_id=None):
     GFConfig.objects.get(id=gf_id).delete()
     return redirect("/gfconfig")
 
+
 def update_dashboard(request, gf_id=None):
     gfconfig = GFConfig.objects.filter(id=gf_id).first()
 
@@ -39,9 +40,11 @@ def update_dashboard(request, gf_id=None):
         print(sensors)
         grafana.update_dashboard_panels(dashboard_name, sensor_objects)
     else:
-        messages.error(request, "Unable to update dashboard, Grafana instance not "
-                                "found")
+        messages.error(
+            request, "Unable to update dashboard, Grafana instance not " "found"
+        )
     return redirect("/gfconfig")
+
 
 class GFConfigView(TemplateView):
 

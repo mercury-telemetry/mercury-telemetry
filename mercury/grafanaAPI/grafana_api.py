@@ -474,7 +474,7 @@ class Grafana:
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
-        response = requests.post(
+        requests.post(
             self.endpoints["dashboards"],
             data=json.dumps(updated_dashboard),
             headers=headers,
