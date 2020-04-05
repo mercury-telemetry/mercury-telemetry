@@ -1,8 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
+from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType
 from mercury.grafanaAPI.grafana_api import Grafana
+from mercury.forms import DashboardSensorPanelsForm
 import os
+import datetime
 
 # default host and token, use this if user did not provide anything
 HOST = "https://mercurytests.grafana.net"
@@ -18,6 +21,47 @@ EDITOR_TOKEN = (
 class TestGFConfig(TestCase):
     TESTCODE = "testcode"
 
+    test_sensor_name = "Wind Sensor"
+    test_sensor_type = "Dual wind"
+    test_sensor_format = {
+        "left_gust": {"unit": "km/h", "format": "float"},
+        "right_gust": {"unit": "km/h", "format": "float"},
+    }
+
+    test_event_data = {
+        "name": "Sunny Day Test Drive",
+        "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        "description": "A very progressive test run at \
+                        Sunnyside Daycare's Butterfly Room.",
+        "location": "New York, NY",
+    }
+
+    test_venue_data = {
+        "name": "Venue 1",
+        "description": "foo",
+        "latitude": 100,
+        "longitude": 200,
+    }
+
+    def create_venue_and_event(self, event_name):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        event = AGEvent.objects.create(
+            name=event_name,
+            date=self.test_event_data["date"],
+            description=self.test_event_data["description"],
+            venue_uuid=venue,
+        )
+        event.save()
+
+        return event
+
     def setUp(self):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
@@ -25,6 +69,9 @@ class TestGFConfig(TestCase):
         self.config_url = "mercury:gfconfig"
         self.config_update_url = "mercury:gfconfig_update"
         self.config_delete_url = "mercury:gfconfig_delete"
+        self.config_update_dashboard_url = "mercury:gfconfig_update_dashboard"
+        self.config_reset_dashboard_url = "mercury:gfconfig_reset_dashboard"
+        self.config_delete_dashboard_url = "mercury:gfconfig_delete_dashboard"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -63,6 +110,47 @@ class TestGFConfig(TestCase):
     def test_config_view_get_success(self):
         response = self.client.get(reverse(self.config_url))
         self.assertEqual(200, response.status_code)
+
+    def test_config_view_get_existing_dashboard_displayed(self):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+        response = self.client.get(reverse(self.config_url))
+
+        self.assertContains(response, self.event_name)
+        self.assertContains(response, sensor.name)
+        self.assertEquals(response.context["dashboards"][0]["name"], self.event_name)
+        self.assertIsInstance(
+            response.context["dashboards"][0]["sensor_form"], DashboardSensorPanelsForm
+        )
 
     def test_config_post_success(self):
         response = self.client.post(
@@ -140,6 +228,7 @@ class TestGFConfig(TestCase):
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
 
+    # test that GFConfig.gf_current can be set to True using the update view
     def test_update_config(self):
         GFConfig.objects.all().delete()
 
@@ -157,3 +246,310 @@ class TestGFConfig(TestCase):
 
         gfconfig = GFConfig.objects.all().first()
         self.assertEquals(gfconfig.gf_current, True)
+
+    def test_config_post_no_event_exists_no_dashboard_created(self):
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+        # check if any dashboards exist
+        dashboards = self.grafana.get_all_dashboards()
+        self.assertEquals(dashboards, [])
+
+    def test_config_post_event_exists_dashboard_created(self):
+        self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+        # check that dashboard was created with same name as event
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+        self.assertEquals(dashboard["dashboard"]["title"], self.event_name)
+
+    def test_config_post_event_exists_dashboard_created_with_sensor(self):
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.config_url),
+            data={
+                "submit": "",
+                "gf_name": "Test Grafana Instance",
+                "gf_host": HOST,
+                "gf_token": TOKEN,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+
+        # check that dashboard was created with expected panel
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+        self.assertEquals(dashboard["dashboard"]["title"], self.event_name)
+        # panels should have been created
+        # querying like this because the returned dashboard object may have no panels
+        # attribute, so trying to retrieve dashboard["panels"] could throw a key error
+        panels = dashboard["dashboard"].get("panels", None)
+        self.assertTrue(panels)
+        self.assertTrue(len(panels) == 1)
+        panel = panels[0]
+        self.assertEquals(panel["title"], self.test_sensor_name)
+
+    # @TODO modify to work with various gfconfigs, more than one
+    def test_update_dashboard_panels_remove_all(self):
+        self.create_venue_and_event(self.event_name)
+
+        # create a dashboard
+        self.grafana.create_dashboard(self.event_name)
+
+        # add a panel to the dashboard
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        self.client.post(
+            reverse(
+                self.config_update_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name, "sensors": []},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        self.assertEquals(panels, [])
+
+    # @TODO modify to work with various gfconfigs, more than one
+    def test_update_dashboard_panels_keep_all_panels(self):
+        self.create_venue_and_event(self.event_name)
+
+        # create a dashboard
+        self.grafana.create_dashboard(self.event_name)
+
+        # add a panel to the dashboard
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        sensors = AGSensor.objects.all()
+        sensor_ids = []
+        for sensor in sensors:
+            sensor_ids.append(sensor.id)
+
+        self.client.post(
+            reverse(
+                self.config_update_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name, "sensors": sensor_ids},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        self.assertEquals(len(panels), 1)
+
+    # @TODO modify to work with various gfconfigs, more than one
+    def test_update_dashboard_panels_keep_subset_of_panels(self):
+        self.create_venue_and_event(self.event_name)
+
+        # create a dashboard
+        self.grafana.create_dashboard(self.event_name)
+
+        # add a panel to the dashboard
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        # Create 5 sensors
+        for i in range(5):
+            sensor = AGSensor.objects.create(
+                name=self.test_sensor_name + "i", type_id=sensor_type
+            )
+            sensor.save()
+
+        # Retrieve sensor ids for the first 2 sensors
+        sensor_ids = []
+        sensors = AGSensor.objects.all()
+        for i in range(2):
+            sensor_ids.append(sensors[i].id)
+
+        # Post to update the dashboard with 2 sensor panels
+        self.client.post(
+            reverse(
+                self.config_update_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name, "sensors": sensor_ids},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        self.assertEquals(len(panels), 2)
+        for i in range(2):
+            self.assertEquals(panels[i]["title"], sensors[i].name)
+
+    # @TODO modify to work with various gfconfigs, more than one
+    def test_reset_dashboard_panels(self):
+        # update dashboard with a subset of panels, then restore all panels by using
+        # reset
+        self.create_venue_and_event(self.event_name)
+
+        # create a dashboard
+        self.grafana.create_dashboard(self.event_name)
+
+        # add a panel to the dashboard
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        # Create 5 sensors
+        for i in range(5):
+            sensor = AGSensor.objects.create(
+                name=self.test_sensor_name + "i", type_id=sensor_type
+            )
+            sensor.save()
+
+        # Retrieve sensor ids for the first 2 sensors
+        sensor_ids_partial = []
+        sensors = AGSensor.objects.all()
+        for i in range(2):
+            sensor_ids_partial.append(sensors[i].id)
+
+        # Post to update the dashboard with 2 sensor panels
+        self.client.post(
+            reverse(
+                self.config_update_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name, "sensors": sensor_ids_partial},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        self.assertEquals(len(panels), 2)
+
+        sensor_ids = []
+        sensors = AGSensor.objects.all()
+        for sensor in sensors:
+            sensor_ids.append(sensor.id)
+
+        # Post to reset the dashboard with all sensor panels
+        self.client.post(
+            reverse(
+                self.config_reset_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        self.assertEquals(len(panels), 5)
+        for sensor in sensors:
+            self.assertEquals(panels[i]["title"], sensor.name)
+
+    def test_delete_dashboard(self):
+        # update dashboard with a subset of panels, then restore all panels by using
+        # reset
+        self.create_venue_and_event(self.event_name)
+
+        # create a dashboard
+        self.grafana.create_dashboard(self.event_name)
+
+        # Post to update the dashboard with 2 sensor panels
+        self.client.post(
+            reverse(
+                self.config_delete_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        # No dashboard should exist with this name
+        self.assertFalse(dashboard)
