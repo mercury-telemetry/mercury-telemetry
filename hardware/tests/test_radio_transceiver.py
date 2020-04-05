@@ -158,3 +158,83 @@ class TranscieverTests(SimpleTestCase):
                 bytesize=self.bytesize,
                 timeout=self.timeout,
             )
+
+    @patch("serial.Serial")
+    @patch("serial.tools.list_ports.comports")
+    def test_is_serial_usb_no_vid(self, mock_port_list, mock_serial):
+        """
+        Tests the __init__ function where the port vid
+        is empty
+        """
+
+        mock_port_list.return_value = [{"port": None}]
+
+        with patch.dict(
+            os.environ,
+            {
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "RADIO_TRANSMITTER_PORT": "",
+                "LOG_FILE": "logger.txt",
+            },
+        ):
+            transciever = Transceiver(log_file_name="LOG_FILE")
+
+            self.assertTrue(transciever.logging is not None)
+            self.assertTrue(transciever.logging.name == "LOG_FILE")
+            self.assertIsInstance(transciever.logging, Logger)
+
+            self.assertTrue(transciever.port == "")
+            self.assertIsNone(transciever.port_vid)
+            self.assertIsNone(transciever.port_pid)
+            self.assertIsNone(transciever.port_vendor)
+            self.assertIsNone(transciever.port_intf)
+            self.assertIsNone(transciever.port_serial_number)
+
+            mock_serial.assert_called_with(
+                port="",
+                baudrate=self.baudrate,
+                parity=self.parity,
+                stopbits=self.stopbits,
+                bytesize=self.bytesize,
+                timeout=self.timeout,
+            )
+
+    @patch("serial.Serial")
+    @patch("serial.tools.list_ports.comports")
+    def test_is_serial_usb_vid_no_match(self, mock_port_list, mock_serial):
+        """
+        Tests the __init__ function where the port vid
+        is not empty but does not match
+        """
+
+        mock_port_list.return_value = [{"port": None}]
+
+        with patch.dict(
+            os.environ,
+            {
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "RADIO_TRANSMITTER_PORT": "usb",
+                "LOG_FILE": "logger.txt",
+            },
+        ):
+            transciever = Transceiver(log_file_name="LOG_FILE")
+
+            self.assertTrue(transciever.logging is not None)
+            self.assertTrue(transciever.logging.name == "LOG_FILE")
+            self.assertIsInstance(transciever.logging, Logger)
+
+            self.assertTrue(transciever.port == "usb")
+            self.assertIsNone(transciever.port_vid)
+            self.assertIsNone(transciever.port_pid)
+            self.assertIsNone(transciever.port_vendor)
+            self.assertIsNone(transciever.port_intf)
+            self.assertIsNone(transciever.port_serial_number)
+
+            mock_serial.assert_called_with(
+                port="usb",
+                baudrate=self.baudrate,
+                parity=self.parity,
+                stopbits=self.stopbits,
+                bytesize=self.bytesize,
+                timeout=self.timeout,
+            )

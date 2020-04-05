@@ -22,6 +22,20 @@ class Transceiver:
             self.port_intf = None
             self.port_serial_number = None
             self.find_port()
+        else:
+            port_info = next(
+                (
+                    p
+                    for p in serial.tools.list_ports.comports()
+                    if p.get("device") == self.port
+                ),
+                {},
+            )
+            self.port_vid = port_info.get("vid")
+            self.port_pid = port_info.get("pid")
+            self.port_vendor = port_info.get("manufacturer")
+            self.port_intf = port_info.get("interface")
+            self.port_serial_number = port_info.get("serial_number")
 
         baudrate = 9600
         parity = serial.PARITY_NONE
