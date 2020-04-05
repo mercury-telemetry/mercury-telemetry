@@ -36,7 +36,11 @@ configure: check-properties
 	${SYMD_BIN}/dbimport -e engine0 configure.sql
 
 
-clean:
+clean-symd-table:
+	-${SYMD_BIN}/symadmin -e engine0 uninstall
+	-${SYMD_BIN}/symadmin -e engine1 uninstall
+
+clean: clean-symd-table
 	-rm -rf symmetricds.zip symmetricds
 
-.PHONY: clean configure install check-properties
+.PHONY: clean clean-symd-table configure install check-properties
