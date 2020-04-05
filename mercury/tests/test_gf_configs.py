@@ -71,6 +71,7 @@ class TestGFConfig(TestCase):
         self.config_delete_url = "mercury:gfconfig_delete"
         self.config_update_dashboard_url = "mercury:gfconfig_update_dashboard"
         self.config_reset_dashboard_url = "mercury:gfconfig_reset_dashboard"
+        self.config_delete_dashboard_url = "mercury:gfconfig_delete_dashboard"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -531,3 +532,24 @@ class TestGFConfig(TestCase):
         self.assertEquals(len(panels), 5)
         for sensor in sensors:
             self.assertEquals(panels[i]["title"], sensor.name)
+
+    def test_delete_dashboard(self):
+        # update dashboard with a subset of panels, then restore all panels by using
+        # reset
+        self.create_venue_and_event(self.event_name)
+
+        # create a dashboard
+        self.grafana.create_dashboard(self.event_name)
+
+        # Post to update the dashboard with 2 sensor panels
+        self.client.post(
+            reverse(
+                self.config_delete_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
+            ),
+            data={"dashboard_name": self.event_name},
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        # No dashboard should exist with this name
+        self.assertFalse(dashboard)

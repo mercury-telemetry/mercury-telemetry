@@ -39,7 +39,7 @@ def update_dashboard(request, gf_id=None):
         grafana.update_dashboard_panels(dashboard_name, sensor_objects)
     else:
         messages.error(
-            request, "Unable to update dashboard, Grafana instance not " "found"
+            request, "Unable to update dashboard, Grafana instance not found"
         )
     return redirect("/gfconfig")
 
@@ -53,8 +53,22 @@ def reset_dashboard(request, gf_id=None):
         sensors = AGSensor.objects.all()
         grafana.update_dashboard_panels(dashboard_name, sensors)
     else:
+        messages.error(request, "Unable to reset dashboard, Grafana instance not found")
+    return redirect("/gfconfig")
+
+
+def delete_dashboard(request, gf_id=None):
+    gfconfig = GFConfig.objects.filter(id=gf_id).first()
+
+    if gfconfig:
+        grafana = Grafana(gfconfig)
+        dashboard_name = request.POST.get("dashboard_name")
+        # try to delete the dashboard
+        if grafana.delete_dashboard_by_name(dashboard_name) is False:
+            messages.error(request, "Unable to delete dashboard")
+    else:
         messages.error(
-            request, "Unable to reset dashboard, Grafana instance not " "found"
+            request, "Unable to delete dashboard, Grafana instance not found"
         )
     return redirect("/gfconfig")
 

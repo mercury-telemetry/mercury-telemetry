@@ -57,4 +57,9 @@ urlpatterns = [
         gf_config.reset_dashboard,
         name="gfconfig_reset_dashboard",
     ),
+    path(
+        "gfconfig/delete_dashboard/<int:gf_id>",
+        gf_config.delete_dashboard,
+        name="gfconfig_delete_dashboard",
+    ),
 ]
