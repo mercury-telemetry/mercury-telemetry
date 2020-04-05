@@ -27,6 +27,55 @@
 
                         <form class="gfconfig-text-align" method="POST"
                         action="update_dashboard/{{ config.id }}"
+                        id="update_{{ dashboard.name }}">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+                        {{ dashboard.sensor_form|crispy }}
+                            <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+                        </form>
+
+                        <form class="gfconfig-text-align" method="POST"
+                        action="reset_dashboard/{{ config.id }}"
+                        id="reset_{{ dashboard.name }}">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+                            <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+                        </form>
+
+                        <form class="gfconfig-text-align" method="POST"
+                        action="delete_dashboard/{{ config.id }}"
+                        id="delete_{{ dashboard.name }}">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+                            <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+                        </form>
+
+                        <br>
+                            <div>
+                                <input form="reset_{{ dashboard.name }}" class="submitbutton simulator-btn
+                                grafana-btn
+                                grafana-btn-blue gfconfig-text-align" type="submit"
+                                name="submit-reset-dashboard"
+                                value="Reset Sensor Panels">
+
+                                <input form="delete_{{ dashboard.name }}"
+                                class="submitbutton simulator-btn
+                                grafana-btn
+                                grafana-btn-red gfconfig-text-align" type="submit"
+                                name="submit-delete-dashboard"
+                                value="Delete Dashboard">
+
+                                <input form="update_{{ dashboard.name }}"
+                                class="submitbutton simulator-btn grafana-btn
+                                grafana-btn-green gfconfig-text-align" type="submit"
+                                name="submit-update-sensors"
+                                value="Update Sensor Panels"
+
+                            </div>
+                            <br> <br>
+                        <!--
+                        <form class="gfconfig-text-align" method="POST"
+                        action="update_dashboard/{{ config.id }}"
                         id="{{ dashboard.name }}">
                             {% csrf_token %} {% load crispy_forms_tags %}
                             {{ dashboard.sensor_form|crispy }}
@@ -51,12 +100,10 @@
                                 grafana-btn-green" type="submit"
                                 name="submit-update-sensors"
                                 value="Update Sensor Panels"
-                                <!--href="update_dashboard/{{ config.gf_id }}"-->
-
-
                             </div>
                             <br> <br>
                         </form>
+                        -->
                         <!--
                         <h4> Included: </h4>
                         {% for sensor in dashboard.sensors %}

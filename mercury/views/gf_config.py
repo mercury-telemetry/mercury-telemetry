@@ -44,6 +44,21 @@ def update_dashboard(request, gf_id=None):
     return redirect("/gfconfig")
 
 
+def reset_dashboard(request, gf_id=None):
+    gfconfig = GFConfig.objects.filter(id=gf_id).first()
+
+    if gfconfig:
+        grafana = Grafana(gfconfig)
+        dashboard_name = request.POST.get("dashboard_name")
+        sensors = AGSensor.objects.all()
+        grafana.update_dashboard_panels(dashboard_name, sensors)
+    else:
+        messages.error(
+            request, "Unable to reset dashboard, Grafana instance not " "found"
+        )
+    return redirect("/gfconfig")
+
+
 class GFConfigView(TemplateView):
 
     template_name = "gf_configs.html"

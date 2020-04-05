@@ -52,4 +52,9 @@ urlpatterns = [
         gf_config.update_dashboard,
         name="gfconfig_update_dashboard",
     ),
+    path(
+        "gfconfig/reset_dashboard/<int:gf_id>",
+        gf_config.reset_dashboard,
+        name="gfconfig_reset_dashboard",
+    ),
 ]
