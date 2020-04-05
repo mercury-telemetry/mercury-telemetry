@@ -20,10 +20,11 @@
             {% if dashboards %}
                 {% for dashboard in dashboards %}
                 <div class="panel" name="{{ dashboard.name }}">
-                    <h3> Event: <a href="{{ dashboard.url }} ">{{ dashboard.name }}</a>
+                    <h3 class="gfconfig-text-align"> Event: <a href="{{ dashboard.url }} ">{{ dashboard.name}}</a>
                     </h3>
 
-                    <form method="POST" action="" id="DashboardSensorPanelsForm">
+                    <form class="gfconfig-text-align" method="POST" action=""
+                    id="DashboardSensorPanelsForm">
                         {% csrf_token %} {% load crispy_forms_tags %}
                         {{ dashboard.sensor_form|crispy }}
                         <br>

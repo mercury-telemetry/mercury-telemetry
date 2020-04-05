@@ -4445,3 +4445,8 @@ a {
   width: 50%;
 }
 
+.gfconfig-text-align {
+    text-align:left;
+    float: left;
+    width: 50%
+}
