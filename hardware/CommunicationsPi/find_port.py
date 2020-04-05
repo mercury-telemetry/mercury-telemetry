@@ -6,34 +6,34 @@ import serial.tools.list_ports
 
 
 def is_usb_serial(port, args):
-    if port["vid"] is None:
+    if port.vid is None:
         return False
-    if not args.get("vid") is None:
-        if port["vid"] != args.get("vid"):
+    if args.vid is not None:
+        if port.vid is not args.vid:
             return False
-    if not args.get("pid") is None:
-        if port.get("pid") != args.get("pid"):
+    if args.pid is not None:
+        if port.pid is not args.pid:
             return False
-    if not args.get("vendor") is None:
-        if not port["manufacturer"].startswith(args.get("vendor")):
+    if args.vendor is not None:
+        if not port.manufacturer.startswith(args.vendor):
             return False
-    if not args.get("serial") is None:
-        if not port["serial_number"].startswith(args.get("serial")):
+    if args.serial is not None:
+        if not port.serial_number.startswith(args.serial):
             return False
-    if not args.get("intf") is None:
-        if port["interface"] is None or not args.get("intf") in port.get("interface"):
+    if args.intf is not None:
+        if port.interface is None or args.intf not in port.interface:
             return False
     return True
 
 
 def extra_info(port):
     extra_items = []
-    if port.get("manufacturer"):
-        extra_items.append("vendor '{}'".format(port["manufacturer"]))
-    if port.get("serial_number"):
-        extra_items.append("serial '{}'".format(port["serial_number"]))
-    if port.get("interface"):
-        extra_items.append("intf '{}'".format(port["interface"]))
+    if port.manufacturer:
+        extra_items.append("vendor '{}'".format(port.manufacturer))
+    if port.serial_number:
+        extra_items.append("serial '{}'".format(port.serial_number))
+    if port.interface:
+        extra_items.append("intf '{}'".format(port.interface))
     if extra_items:
         return " with " + " ".join(extra_items)
     return ""
