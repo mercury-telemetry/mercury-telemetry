@@ -79,7 +79,6 @@ class Transceiver:
             if not port.serial_number.startswith(self.port_serial_number):
                 return False
         if self.port_intf is not None:
-            print(f"port_intf: {self.port_intf}, interface: {port.interface}")
             if port.interface is None or self.port_intf not in port.interface:
                 return False
         return True
