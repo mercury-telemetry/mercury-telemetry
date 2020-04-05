@@ -29,7 +29,12 @@ check-properties: ${PROPERTIES}
 		./check-properties.py $$prop || exit 1 ; \
 	done
 
+SYMD_BIN=symmetricds/bin
 configure: check-properties
+	${SYMD_BIN}/dbsql -e engine0 --sql "" || (echo "Failed to connect to engine0."; exit 1)
+	${SYMD_BIN}/dbsql -e engine1 --sql "" || (echo "Failed to connect to engine1."; exit 1)
+	${SYMD_BIN}/dbimport -e engine0 configure.sql
+
 
 clean:
 	-rm -rf symmetricds.zip symmetricds
