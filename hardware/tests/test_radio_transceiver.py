@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
-from testfixtures import TempDirectory
+from testfixtures import TempDirectory, LogCapture
 
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from serial.tools.list_ports_common import ListPortInfo
 
 import os
@@ -9,6 +9,7 @@ import serial
 
 from ..CommunicationsPi.radio_transceiver import Transceiver
 from ..CommunicationsPi.logger import Logger
+from ..CommunicationsPi.utils import get_serial_stream
 
 
 class TranscieverTests(SimpleTestCase):
@@ -535,3 +536,45 @@ class TranscieverTests(SimpleTestCase):
                 bytesize=self.bytesize,
                 timeout=self.timeout,
             )
+
+    @patch("serial.Serial")
+    @patch("serial.tools.list_ports.comports")
+    def test_send(self, mock_port_list, mock_serial):
+        """
+        tests the send method
+        """
+        port = ListPortInfo()
+        port.vid = "vid"
+        port.pid = "pid"
+        port.manufacturer = "Microsoft"
+        port.serial_number = "456"
+        port.interface = "usb"
+        port.device = "usb"
+
+        mock_port_list.return_value = [port]
+
+        test_payload = {"value": "value"}
+
+        output = get_serial_stream(test_payload)
+
+        with patch.dict(
+            os.environ,
+            {
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "RADIO_TRANSMITTER_PORT": "usb",
+                "LOG_FILE": "logger.txt",
+            },
+        ):
+            with LogCapture() as capture:
+                transciever = Transceiver(log_file_name="LOG_FILE")
+                mock_serial_sender = MagicMock()
+                transciever.serial = mock_serial_sender
+
+                transciever.send(test_payload)
+                mock_serial_sender.write.assert_called_with(output)
+                capture.check(
+                    ("LOG_FILE", "INFO", "Port device found: usb"),
+                    ("LOG_FILE", "INFO", "Opening serial on: usb"),
+                    ("LOG_FILE", "INFO", "sending"),
+                    ("LOG_FILE", "INFO", "{'value': 'value'}"),
+                )
