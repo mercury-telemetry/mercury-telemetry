@@ -101,7 +101,9 @@ class Grafana:
     def get_dashboard_by_name(self, event_name):
         """
         :param event_name: Event name used for the target dashboard.
-        :return: Returns True if a dashboard was found with this name, False otherwise.
+        :return: Returns a JSON response from the API with basic details if a
+        dashboard was found with this name, including a JSON representation of the
+        dashboard and its panels, False otherwise.
         """
         # If there are spaces in the name, the GF API will replace them with dashes
         # to generate the "slug". A slug can be used to query the API.
@@ -114,6 +116,18 @@ class Grafana:
             return response.json()
         else:
             return None
+
+    def get_dashboard_url_by_name(self, name):
+        name = name.lower().replace(" ", "-")
+
+        dashboard = self.get_dashboard_by_name(name)
+        if dashboard:
+            endpoint = dashboard["meta"]["url"].strip("/")
+            url = os.path.join(self.hostname, endpoint)
+        else:
+            url = None
+
+        return url
 
     def get_dashboard_with_uid(self, uid):
         """

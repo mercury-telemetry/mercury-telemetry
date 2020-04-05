@@ -20,8 +20,8 @@
             {% if dashboards %}
                 {% for dashboard in dashboards %}
                 <div class="panel" name="{{ dashboard.name }}">
-                    <h3> Event: {{ dashboard.name }} </h3>
-
+                    <h3> Event: <a href="{{ dashboard.url }} ">{{ dashboard.name }}</a>
+                    </h3>
 
                     <form method="POST" action="" id="DashboardSensorPanelsForm">
                         {% csrf_token %} {% load crispy_forms_tags %}
@@ -43,9 +43,6 @@
                         </div>
                         <br> <br>
                     </form>
-
-
-
                     <!--
                     <h4> Included: </h4>
                     {% for sensor in dashboard.sensors %}
