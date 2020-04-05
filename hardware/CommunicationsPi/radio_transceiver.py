@@ -27,15 +27,16 @@ class Transceiver:
                 (
                     p
                     for p in serial.tools.list_ports.comports()
-                    if p.get("device") == self.port
+                    if p.device == self.port
                 ),
                 {},
             )
-            self.port_vid = port_info.get("vid")
-            self.port_pid = port_info.get("pid")
-            self.port_vendor = port_info.get("manufacturer")
-            self.port_intf = port_info.get("interface")
-            self.port_serial_number = port_info.get("serial_number")
+            self.port_vid = port_info.vid
+            self.port_pid = port_info.pid
+            self.port_vendor = port_info.manufacturer
+            self.port_intf = port_info.interface
+            self.port_serial_number = port_info.serial_number
+            self.find_port()
 
         baudrate = 9600
         parity = serial.PARITY_NONE
@@ -56,31 +57,30 @@ class Transceiver:
     def find_port(self):
         for port in serial.tools.list_ports.comports():
             if self.is_usb_serial(port):
-                self.logging.info("Port device found: " + str(port.get("device")))
-                self.port = port.get("device")
+                self.logging.info("Port device found: " + str(port.device))
+                self.port = port.device
                 return
 
         return
 
     def is_usb_serial(self, port):
-        if port.get("vid") is None:
+        if port.vid is None:
             return False
         if self.port_vid is not None:
-            if port.get("vid") != self.port_vid:
+            if port.vid != self.port_vid:
                 return False
         if self.port_pid is not None:
-            if port.get("pid") != self.port_pid:
+            if port.pid != self.port_pid:
                 return False
         if self.port_vendor is not None:
-            if not port.get("manufacturer").startswith(self.port_vendor):
+            if not port.manufacturer.startswith(self.port_vendor):
                 return False
         if self.port_serial_number is not None:
-            if not port.get("serial_number").startswith(self.port_serial_number):
+            if not port.serial_number.startswith(self.port_serial_number):
                 return False
         if self.port_intf is not None:
-            if port.get("interface") is None or self.port_intf not in port.get(
-                "interface"
-            ):
+            print(f"port_intf: {self.port_intf}, interface: {port.interface}")
+            if port.interface is None or self.port_intf not in port.interface:
                 return False
         return True
 
