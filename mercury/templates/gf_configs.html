@@ -9,130 +9,94 @@
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
         <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
     </head>
+
     <body>
     {% include 'sidebar.html' %}
     <div class="topbar-container">
 
-        <!--Grafana Dashboards View-->
+
+
+        <!-- View Existing Dashboards -->
         <div>
             <h2>Existing Grafana Dashboards</h2>
-
             {% for config in configs %}
-                {% if dashboards %}
-                    {% for dashboard in dashboards %}
-                    <div class="panel" name="{{ dashboard.name }}">
-                        <h3 class="gfconfig-text-align"> Event:
-                        <a href="{{ dashboard.url }}">{{ dashboard.name }}</a>
-                        </h3>
 
-                        <form class="gfconfig-text-align" method="POST"
-                        action="update_dashboard/{{ config.id }}"
-                        id="update_{{ dashboard.name }}">
-                        {% csrf_token %} {% load crispy_forms_tags %}
-                        {{ dashboard.sensor_form|crispy }}
-                            <input type="hidden" name="dashboard_name"
-                                value="{{ dashboard.name }}">
-                        </form>
+                <div>
+                <h3> <a target="_blank" href="{{ config.config.gf_host }}"/>
+                {{ config.config.gf_name }}</a></h3>
+                {% if config.dashboards %}
+                    {% for dashboard in config.dashboards %}
 
-                        <form class="gfconfig-text-align" method="POST"
-                        action="reset_dashboard/{{ config.id }}"
-                        id="reset_{{ dashboard.name }}">
-                        {% csrf_token %} {% load crispy_forms_tags %}
-                            <input type="hidden" name="dashboard_name"
-                                value="{{ dashboard.name }}">
-                        </form>
+                        <div class="panel" name="{{ dashboard.name }}">
 
-                        <form class="gfconfig-text-align" method="POST"
-                        action="delete_dashboard/{{ config.id }}"
-                        id="delete_{{ dashboard.name }}">
-                        {% csrf_token %} {% load crispy_forms_tags %}
-                            <input type="hidden" name="dashboard_name"
-                                value="{{ dashboard.name }}">
-                        </form>
+                            <h4 class="gfconfig-text-align"> Event:
+                            <a target="_blank" href="{{ dashboard.url }}">
+                            {{ dashboard.name }}</a>
+                            </h4>
 
-                        <br>
-                            <div>
-                                <input form="reset_{{ dashboard.name }}" class="submitbutton simulator-btn
-                                grafana-btn
-                                grafana-btn-blue gfconfig-text-align" type="submit"
-                                name="submit-reset-dashboard"
-                                value="Reset Sensor Panels">
+                            <br>
 
-                                <input form="delete_{{ dashboard.name }}"
-                                class="submitbutton simulator-btn
-                                grafana-btn
-                                grafana-btn-red gfconfig-text-align" type="submit"
-                                name="submit-delete-dashboard"
-                                value="Delete Dashboard">
-
-                                <input form="update_{{ dashboard.name }}"
-                                class="submitbutton simulator-btn grafana-btn
-                                grafana-btn-green gfconfig-text-align" type="submit"
-                                name="submit-update-sensors"
-                                value="Update Sensor Panels"
-
-                            </div>
-                            <br> <br>
-                        <!--
-                        <form class="gfconfig-text-align" method="POST"
-                        action="update_dashboard/{{ config.id }}"
-                        id="{{ dashboard.name }}">
+                            <form class="gfconfig-text-align" method="POST"
+                            action="update_dashboard/{{ config.config.id }}"
+                            id="update_{{ dashboard.name }}">
                             {% csrf_token %} {% load crispy_forms_tags %}
                             {{ dashboard.sensor_form|crispy }}
-                            <br>
-                            <div>
+
                                 <input type="hidden" name="dashboard_name"
-                                value="{{ dashboard.name }}">
+                                    value="{{ dashboard.name }}">
+                            </form>
 
-                                <input class="submitbutton simulator-btn grafana-btn
-                                grafana-btn-blue" type="submit"
-                                name="submit-reset-dashboard"
-                                value="Reset Sensor Panels">
+                            <form class="gfconfig-text-align" method="POST"
+                            action="reset_dashboard/{{ config.config.id }}"
+                            id="reset_{{ dashboard.name }}">
+                            {% csrf_token %} {% load crispy_forms_tags %}
 
-                                <input class="submitbutton simulator-btn grafana-btn
-                                grafana-btn-red" type="submit"
-                                name="submit-delete-dashboard"
-                                value="Delete Dashboard">
+                                <input type="hidden" name="dashboard_name"
+                                    value="{{ dashboard.name }}">
+                            </form>
 
-                                <input class="submitbutton
-                                simulator-btn
-                                grafana-btn
-                                grafana-btn-green" type="submit"
-                                name="submit-update-sensors"
-                                value="Update Sensor Panels"
-                            </div>
-                            <br> <br>
-                        </form>
-                        -->
-                        <!--
-                        <h4> Included: </h4>
-                        {% for sensor in dashboard.sensors %}
-                            <ul>
-                            {% if sensor.panel_exists %}
-                                <li>{{ sensor.name }}</li>
-                            {% endif %}
-                            </ul>
-                        {% endfor %}
+                            <form class="gfconfig-text-align" method="POST"
+                            action="delete_dashboard/{{ config.config.id }}"
+                            id="delete_{{ dashboard.name }}">
+                            {% csrf_token %} {% load crispy_forms_tags %}
+                                <input type="hidden" name="dashboard_name"
+                                    value="{{ dashboard.name }}">
+                            </form>
 
-                        <h4> Missing: </h4>
-                        {% for sensor in dashboard.sensors %}
-                            {% if not sensor.panel_exists %}
-                            <input type="checkbox"> {{ sensor.name }} </input>
-                            {% endif %}
-                        {% endfor %}
+                            <br>
+                                <div>
+                                    <input form="reset_{{ dashboard.name }}" class="submitbutton simulator-btn
+                                    grafana-btn
+                                    grafana-btn-blue gfconfig-text-align" type="submit"
+                                    name="submit-reset-dashboard"
+                                    value="Reset Sensor Panels">
 
-                        -->
-                    </div>
+                                    <input form="delete_{{ dashboard.name }}"
+                                    class="submitbutton simulator-btn
+                                    grafana-btn
+                                    grafana-btn-red gfconfig-text-align" type="submit"
+                                    name="submit-delete-dashboard"
+                                    value="Delete Dashboard">
+
+                                    <input form="update_{{ dashboard.name }}"
+                                    class="submitbutton simulator-btn grafana-btn
+                                    grafana-btn-green gfconfig-text-align" type="submit"
+                                    name="submit-update-sensors"
+                                    value="Update Sensor Panels">
+
+                                </div>
+                                <br> <br>
+                        </div>
                     {% endfor %}
 
                 {% else %}
 
-                    <p> No dashboards yet. Add one? </p>
+                <p> No dashboards yet. Add one? </p>
 
                 {% endif %}
+            </div>
             {% endfor %}
-
-        </div> <!--Grafana Dashboards View -->
+        </div>
 
 
         <!--Configs Table -->
@@ -154,11 +118,13 @@
                     <tbody>
                     {% for item in configs %}
                         <tr>
-                            <th>{{ item.gf_name }}</th>
-                            <td><a href="{{ item.gf_host }}">{{ item.gf_host }}</a></td>
-                            <td>{{ item.gf_current }}</td>
-                            <td><a href="update/{{ item.id }}">Set as current</a></td>
-                            <td><a href="delete/{{ item.id }}">Delete</a></td>
+                            <th>{{ item.config.gf_name }}</th>
+                            <td><a target="_blank" href="{{ item.config.gf_host }}">
+                            {{ item.config.gf_host }}</a></td>
+                            <td>{{ item.config.gf_current }}</td>
+                            <td><a href="update/{{ item.config.id }}">Set as
+                            current</a></td>
+                            <td><a href="delete/{{ item.config.id }}">Delete</a></td>
                         </tr>
                     {%  endfor %}
                     </tbody>
