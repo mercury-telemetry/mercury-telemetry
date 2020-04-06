@@ -3,16 +3,17 @@ import json
 import logging
 from io import BytesIO
 from zipfile import ZipFile
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.views.generic import TemplateView
-from ..event_check import require_event_code
-from mercury.forms import EventForm, VenueForm
-from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
 from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
+from mercury.forms import EventForm, VenueForm
 from mercury.grafanaAPI.grafana_api import Grafana
 from mercury.models import GFConfig
+from ..event_check import require_event_code
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)

@@ -87,7 +87,10 @@
                                 <td>{{ item.date }}</td>
                                 <td>{{ item.description }}</td>
                                 <td>
-                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}">Export</a>
+                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/csv">Export CSV</a>
+                                    <br><br>
+                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/json">Export JSON</a>
+                                    <br><br>
                                     <a class="grafana-btn grafana-btn-red" href="delete/{{ item.uuid }}">Delete</a>
                                 </td>
                             </tr>
