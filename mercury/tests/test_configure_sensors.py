@@ -34,10 +34,7 @@ class TestConfigureSensorView(TestCase):
     test_sensor_update_object_name = "update_sensor"
     test_type_update_object_name = "update_type"
 
-    test_sensor = {
-        "name": "wind speed sensor",
-        "type_id": test_type_object_name,
-    }
+    test_sensor = {"name": "wind speed sensor", "type_id": test_type_object_name}
 
     test_sensor_type = {
         "type-name": "fuel level",
@@ -57,14 +54,8 @@ class TestConfigureSensorView(TestCase):
             name=self.test_type_object_name,
             processing_formula=0,
             format={
-                self.field_name_1: {
-                    "data_type": self.data_type_1,
-                    "unit": self.unit_1,
-                },
-                self.field_name_2: {
-                    "data_type": self.data_type_1,
-                    "unit": self.unit_1,
-                },
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_1, "unit": self.unit_1},
             },
         )
         test_type_object.save()
@@ -78,14 +69,8 @@ class TestConfigureSensorView(TestCase):
             name=self.test_type_update_object_name,
             processing_formula=0,
             format={
-                self.field_name_1: {
-                    "data_type": self.data_type_1,
-                    "unit": self.unit_1,
-                },
-                self.field_name_2: {
-                    "data_type": self.data_type_1,
-                    "unit": self.unit_1,
-                },
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_1, "unit": self.unit_1},
             },
         )
 

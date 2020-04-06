@@ -77,10 +77,7 @@ def export_event(request, event_uuid=None, file_format="CSV"):
                     }
                     measurement_info.append(temp)
 
-            data = {
-                "event_info": event_info,
-                "measurement_info": measurement_info,
-            }
+            data = {"event_info": event_info, "measurement_info": measurement_info}
 
             response = HttpResponse(str(data), content_type="application/json")
             response["Content-Disposition"] = (
