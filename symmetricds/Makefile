@@ -33,6 +33,7 @@ SYMD_BIN=symmetricds/bin
 configure: check-properties
 	${SYMD_BIN}/dbsql -e engine0 --sql "" || (echo "Failed to connect to engine0."; exit 1)
 	${SYMD_BIN}/dbsql -e engine1 --sql "" || (echo "Failed to connect to engine1."; exit 1)
+	${SYMD_BIN}/symadmin -e engine0 create-sym-tables || exit 1
 	${SYMD_BIN}/dbimport -e engine0 configure.sql
 
 
