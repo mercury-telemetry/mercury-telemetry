@@ -14,7 +14,7 @@ def check(file):
         comp = line.split("=")
         dic[comp[0]] = comp[1]
 
-    for key in ["registration.url", "db.user", "db.password", "db.url"]:
+    for key in ["registration.url", "db.user", "db.url"]:
         if not assert_key(dic, key):
             print(f"{key} is not set in {file.name}", file=sys.stderr)
             exit(1)
