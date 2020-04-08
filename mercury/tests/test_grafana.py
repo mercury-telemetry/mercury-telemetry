@@ -354,7 +354,7 @@ class TestGrafana(TestCase):
 
         # Query new datasource
         endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"], self.datasource_name,
+            self.grafana.endpoints["datasource_name"], self.datasource_name
         )
         headers = {"Content-Type": "application/json"}
         response = requests.get(
@@ -388,7 +388,7 @@ class TestGrafana(TestCase):
 
         # confirm that the datasource was actually deleted by querying it
         endpoint = os.path.join(
-            self.grafana.endpoints["datasource_name"], self.datasource_name,
+            self.grafana.endpoints["datasource_name"], self.datasource_name
         )
         headers = {"Content-Type": "application/json"}
         response = requests.get(

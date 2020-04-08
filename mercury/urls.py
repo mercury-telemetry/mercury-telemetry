@@ -4,7 +4,9 @@ from .views import (
     sensor,
     events,
     pitcrew,
+    radioreceiver,
     gf_config,
+    measurement,
 )
 
 app_name = "mercury"
@@ -40,11 +42,21 @@ urlpatterns = [
     path("events/export/<uuid:event_uuid>/csv", events.export_event),
     path("events/export/<uuid:event_uuid>/json", events.export_event),
     path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
+    path(
+        "radioreceiver/<uuid:event_uuid>",
+        radioreceiver.RadioReceiverView.as_view(),
+        name="radioreceiver",
+    ),
     path("gfconfig/", gf_config.GFConfigView.as_view(), name="gfconfig"),
     path(
         "gfconfig/delete/<int:gf_id>", gf_config.delete_config, name="gfconfig_delete"
     ),
     path(
         "gfconfig/update/<int:gf_id>", gf_config.update_config, name="gfconfig_update"
+    ),
+    path(
+        "measurement/<uuid:event_uuid>",
+        measurement.MeasurementView.as_view(),
+        name="measurement",
     ),
 ]
