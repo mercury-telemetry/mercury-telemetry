@@ -4,7 +4,8 @@ import requests
 from datetime import datetime
 from sensehat_reader import *
 
-API_ENDPOINT = "http://pastebin.com/api/api_post.php"
+TEST_ENDPOINT = "http://pastebin.com/api/api_post.php"
+API_ENDPOINT = "https://nyu-mercury.herokuapp.com/measurement"
 
 sense = SenseHat()
 nyu_purple = (87, 46, 140)
@@ -30,6 +31,8 @@ while(1):
     response_humidity     = requests.post(url=API_ENDPOINT, data=json_humidity)
     response_acceleration = requests.post(url=API_ENDPOINT, data=json_acceleration)
     response_orientation  = requests.post(url=API_ENDPOINT, data=json_orientation)
+    
+    print(response_temperature)
     
     #print(json_temperature)
     #print(json_pressure)

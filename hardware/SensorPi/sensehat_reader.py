@@ -7,7 +7,7 @@ PRESSURE_ID     = 2
 HUMIDITY_ID     = 3
 ACCELERATION_ID = 4
 ORIENTATION_ID  = 5
-
+ 
 def temperature(sense):
     temperature = sense.get_temperature()
     date = str(datetime.now())
