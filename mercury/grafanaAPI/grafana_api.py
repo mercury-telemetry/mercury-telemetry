@@ -354,7 +354,7 @@ class Grafana:
                 return True
             else:
                 return False
-        except KeyError or TypeError:
+        except (KeyError, TypeError):
             return False
 
     def add_panel(self, sensor, event):
@@ -392,7 +392,7 @@ class Grafana:
         # Retrieve current panels
         try:
             panels = dashboard_info["dashboard"]["panels"]
-        except KeyError or TypeError:
+        except (KeyError, TypeError):
             panels = []
 
         # If first panel
@@ -520,10 +520,11 @@ class Grafana:
         """
         # Retrieve the current dashboard
         dashboard = self.get_dashboard_by_name(dashboard_name)
+
         try:
             dashboard = dashboard["dashboard"]
             panels = dashboard["panels"]
-        except KeyError or TypeError:
+        except (KeyError, TypeError):
             panels = []
 
         sensor_names = []
@@ -664,7 +665,7 @@ class Grafana:
             # templating = dashboard_info["dashboard"]["templating"]
             version = dashboard_info["meta"]["version"]
             folder_id = dashboard_info["meta"]["folderId"]
-        except KeyError or TypeError:
+        except (KeyError, TypeError):
             raise ValueError(f"dashboard_info object is invalid: {dashboard_info}")
 
         # Prepare updated_dashboard object
