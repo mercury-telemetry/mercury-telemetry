@@ -250,21 +250,6 @@ class TestGFConfig(TestCase):
         gfconfig = GFConfig.objects.all().first()
         self.assertEquals(gfconfig.gf_current, True)
 
-    def test_config_post_no_event_exists_no_dashboard_created(self):
-        response = self.client.post(
-            reverse(self.config_url),
-            data={
-                "submit": "",
-                "gf_name": "Test Grafana Instance",
-                "gf_host": HOST,
-                "gf_token": TOKEN,
-            },
-        )
-        self.assertEqual(200, response.status_code)
-
-        # check if any dashboards exist
-        dashboards = self.grafana.get_all_dashboards()
-        self.assertEquals(dashboards, [])
 
     def test_config_post_event_exists_dashboard_created(self):
         self.create_venue_and_event(self.event_name)
