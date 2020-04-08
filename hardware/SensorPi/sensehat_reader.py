@@ -2,12 +2,17 @@ from sense_hat import SenseHat
 import json
 from datetime import datetime
 
+TEMPERATURE_ID  = 1
+PRESSURE_ID     = 2
+HUMIDITY_ID     = 3
+ACCELERATION_ID = 4
+ORIENTATION_ID  = 5
 
 def temperature(sense):
     temperature = sense.get_temperature()
     date = str(datetime.now())
     data = {}
-    data['id'] = 1
+    data['id'] = TEMPERATURE_ID
     data['values'] = {
         'temperature': temperature
         }
@@ -18,7 +23,7 @@ def pressure(sense):
     pressure = sense.get_pressure()
     date = str(datetime.now())
     data = {}
-    data['id'] = 2
+    data['id'] = PRESSURE_ID
     data['values'] = {
         'pressure': pressure
         }
@@ -29,7 +34,7 @@ def humidity(sense):
     humidity = sense.get_humidity()
     date = str(datetime.now())
     data = {}
-    data['id'] = 3
+    data['id'] = HUMIDITY_ID
     data['values'] = {
         'humidity': humidity
         }
@@ -40,7 +45,7 @@ def acceleration(sense):
     acceleration = sense.get_accelerometer_raw()
     date = str(datetime.now())
     data = {}
-    data['id'] = 4
+    data['id'] = ACCELERATION_ID
     data['values'] = {
         'x': acceleration['x'],
         'y': acceleration['y'],
@@ -53,7 +58,7 @@ def orientation(sense):
     orientation = sense.get_orientation()
     date = str(datetime.now())
     data = {}
-    data['id'] = 5
+    data['id'] = ORIENTATION_ID
     data['values'] = {
         'roll': orientation['roll'],
         'pitch': orientation['pitch'],
