@@ -8,20 +8,20 @@ import serial.tools.list_ports
 def is_usb_serial(port, args):
     if port.vid is None:
         return False
-    if not args.vid is None:
-        if port.vid != args.vid:
+    if hasattr(args, "vid") and args.vid is not None:
+        if port.vid is not args.vid:
             return False
-    if not args.pid is None:
-        if port.pid != args.pid:
+    if hasattr(args, "pid") and args.pid is not None:
+        if port.pid is not args.pid:
             return False
-    if not args.vendor is None:
+    if hasattr(args, "vendor") and args.vendor is not None:
         if not port.manufacturer.startswith(args.vendor):
             return False
-    if not args.serial is None:
+    if hasattr(args, "serial") and args.serial is not None:
         if not port.serial_number.startswith(args.serial):
             return False
-    if not args.intf is None:
-        if port.interface is None or not args.intf in port.interface:
+    if hasattr(args, "intf") and args.intf is not None:
+        if port.interface is None or args.intf not in port.interface:
             return False
     return True
 
@@ -39,12 +39,12 @@ def extra_info(port):
     return ""
 
 
-def getPort():
+def get_port():
     for port in serial.tools.list_ports.comports():
         if is_usb_serial(port, None):
             print(port)
             print(port.device)
-            return
+            return "port found"
     return
 
 

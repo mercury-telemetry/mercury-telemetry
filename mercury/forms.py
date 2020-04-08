@@ -1,8 +1,9 @@
 """This module defines the ModelForms (or Forms) that are used by the rendering
 engine to accept input for various features of the site"""
 from django import forms
+from ag_data.models import AGEvent, AGVenue
 from mercury.models import (
-    AGEvent,
+    GFConfig,
     TemperatureSensor,
     AccelerationSensor,
     WheelSpeedSensor,
@@ -11,26 +12,47 @@ from mercury.models import (
 )
 
 
+class VenueForm(forms.ModelForm):
+    class Meta:
+        model = AGVenue
+        fields = "__all__"
+        widgets = {
+            "name": forms.TextInput(attrs={"id": "post-event-name", "required": True}),
+            "description": forms.TextInput(
+                attrs={"id": "post-event-description", "required": True}
+            ),
+            "latitude": forms.TextInput(
+                attrs={"id": "post-event-latitude", "required": True}
+            ),
+            "longitude": forms.TextInput(
+                attrs={"id": "post-event-longitude", "required": True}
+            ),
+        }
+
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = AGEvent
         fields = "__all__"
         widgets = {
-            "event_name": forms.TextInput(
-                attrs={"id": "post-event-name", "required": True}
+            "name": forms.TextInput(attrs={"id": "name", "required": True}),
+            "date": forms.DateTimeInput(
+                attrs={"id": "date", "required": True, "type": "datetime-local"}
             ),
-            "event_date": forms.DateInput(
-                attrs={"id": "post-event-date", "required": True, "type": "date"}
+            "description": forms.Textarea(
+                attrs={"id": "description", "required": False}
             ),
-            "comments": forms.Textarea(
-                attrs={"id": "post-event-comments", "required": False}
-            ),
-            "event_description": forms.Textarea(
-                attrs={"id": "post-event-description", "required": False}
-            ),
-            "event_location": forms.TextInput(
-                attrs={"id": "post-event-location", "required": True}
-            ),
+        }
+
+
+class GFConfigForm(forms.ModelForm):
+    class Meta:
+        model = GFConfig
+        fields = ["gf_name", "gf_host", "gf_token"]
+        labels = {
+            "gf_name": "Label (e.g. remote, local)",
+            "gf_host": "Hostname (e.g. https://abc123.grafana.net, http://localhost:3000)",
+            "gf_token": "API Token",
         }
 
 

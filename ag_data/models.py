@@ -19,6 +19,9 @@ class AGVenue(models.Model):
         max_digits=9, decimal_places=6, blank=True, null=True
     )
 
+    def __str__(self):
+        return self.name
+
 
 class AGEvent(models.Model):
     """Stores the information about events including name, date and description.
