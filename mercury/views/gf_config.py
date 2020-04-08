@@ -122,7 +122,7 @@ class GFConfigView(TemplateView):
 
                 # Store everything in a list of dicts
                 dashboard_dict["sensor_form"] = sensor_form
-                dashboard_dict["dashboard_url"] = dashboard_url # dashboard url
+                dashboard_dict["dashboard_url"] = dashboard_url
                 dashboard_dict["sensors"] = AGSensor.objects.all()
                 dashboard_dict["name"] = dashboard["title"]
 
@@ -133,8 +133,7 @@ class GFConfigView(TemplateView):
 
         # Pass dashboard data for each GFConfig and a GFConfig form to the template
         """
-        The context contains: 
-        
+        The context contains:
         config_form: GFConfigForm object
         configs : [
             {
@@ -145,7 +144,7 @@ class GFConfigView(TemplateView):
                     "name": "blah"
                 }]
                 "config": GFConfig object
-            },  
+            },
             {...}
         ]
         """

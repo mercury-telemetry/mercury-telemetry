@@ -147,11 +147,12 @@ class TestGFConfig(TestCase):
 
         self.assertContains(response, self.event_name)
         self.assertContains(response, sensor.name)
-        self.assertEquals(response.context["configs"][0]["dashboards"][0]["name"],
-                          self.event_name)
+        self.assertEquals(
+            response.context["configs"][0]["dashboards"][0]["name"], self.event_name
+        )
         self.assertIsInstance(
             response.context["configs"][0]["dashboards"][0]["sensor_form"],
-                                        DashboardSensorPanelsForm
+            DashboardSensorPanelsForm,
         )
 
     def test_config_post_success(self):
