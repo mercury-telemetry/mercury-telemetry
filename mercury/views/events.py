@@ -228,11 +228,15 @@ class CreateEventsView(TemplateView):
         venues = AGVenue.objects.all().order_by("uuid")
         event_form = EventForm()
         venue_form = VenueForm()
+        active_event = {}
+        if len(events) > 0:
+            active_event = events[0]
         context = {
             "event_form": event_form,
             "venue_form": venue_form,
             "events": events,
             "venues": venues,
+            "active_event": active_event,
         }
         return render(request, self.template_name, context)
 
