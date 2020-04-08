@@ -26,7 +26,7 @@ class EventForm(forms.ModelForm):
                 attrs={"id": "post-event-comments", "required": False}
             ),
             "event_description": forms.Textarea(
-                attrs={"id": "post-event-description", "required": False},
+                attrs={"id": "post-event-description", "required": False}
             ),
             "event_location": forms.TextInput(
                 attrs={"id": "post-event-location", "required": True}

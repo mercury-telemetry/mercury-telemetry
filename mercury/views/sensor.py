@@ -49,28 +49,20 @@ class CreateSensorView(TemplateView):
         form_valid = True
 
         if not post_sensor_name:
-            messages.error(
-                request, ("Sensor name is missing."),
-            )
+            messages.error(request, ("Sensor name is missing."))
             form_valid = False
 
         sensor = AGSensor.objects.filter(sensor_name=post_sensor_name)
         if sensor.count() > 0:
-            messages.error(
-                request, ("Sensor name already taken."),
-            )
+            messages.error(request, ("Sensor name already taken."))
             form_valid = False
 
         if len(field_names) == 0:
-            messages.error(
-                request, ("Sensor must have at least 1 field."),
-            )
+            messages.error(request, ("Sensor must have at least 1 field."))
             form_valid = False
 
         if check_if_duplicates(field_names):
-            messages.error(
-                request, ("Field names must be unique."),
-            )
+            messages.error(request, ("Field names must be unique."))
             form_valid = False
 
         sensor_format = {}
