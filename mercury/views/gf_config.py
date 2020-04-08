@@ -116,13 +116,13 @@ class GFConfigView(TemplateView):
                 )
 
                 # Retrieve the URL for this dashboard or ""
-                url = grafana.get_dashboard_url_by_name(dashboard["title"])
-                if url is None:
-                    url = ""
+                dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
+                if dashboard_url is None:
+                    dashboard_url = ""
 
                 # Store everything in a list of dicts
                 dashboard_dict["sensor_form"] = sensor_form
-                dashboard_dict["url"] = url
+                dashboard_dict["dashboard_url"] = dashboard_url # dashboard url
                 dashboard_dict["sensors"] = AGSensor.objects.all()
                 dashboard_dict["name"] = dashboard["title"]
 
@@ -136,18 +136,18 @@ class GFConfigView(TemplateView):
         The context contains: 
         
         config_form: GFConfigForm object
-        configs : [{
-            "dashboards": [{
-                "sensor_form": DashboardSensorPanelsForm object
-                "url": ...
-                "sensors": QuerySet(Sensor object)
-                "name": "blah"
-            },
-            {...},
-            etc.
-        }, 
-        ...,
-        {...}]
+        configs : [
+            {
+                "dashboards": [{
+                    "sensor_form": DashboardSensorPanelsForm object
+                    "url": ...
+                    "sensors": QuerySet(Sensor object)
+                    "name": "blah"
+                }]
+                "config": GFConfig object
+            },  
+            {...}
+        ]
         """
         context = {
             "config_form": config_form,

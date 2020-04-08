@@ -20,17 +20,17 @@
         <div>
             <h2>Existing Grafana Dashboards</h2>
             {% for config in configs %}
-
                 <div>
-                <h3> <a target="_blank" href="{{ config.config.gf_host }}"/>
-                {{ config.config.gf_name }}</a></h3>
                 {% if config.dashboards %}
+                    <h3> <a target="_blank" href="{{ config.config.gf_host }}/dashboards"/>
+                    {{ config.config.gf_name }} - {{ config.config.gf_host }}</a></h3>
                     {% for dashboard in config.dashboards %}
+
 
                         <div class="panel" name="{{ dashboard.name }}">
 
                             <h4 class="gfconfig-text-align"> Event:
-                            <a target="_blank" href="{{ dashboard.url }}">
+                            <a target="_blank" href="{{ dashboard.dashboard_url }}">
                             {{ dashboard.name }}</a>
                             </h4>
 
@@ -38,7 +38,7 @@
 
                             <form class="gfconfig-text-align" method="POST"
                             action="update_dashboard/{{ config.config.id }}"
-                            id="update_{{ dashboard.name }}">
+                            id="update_{{ dashboard.name }}_{{ config.config.id }}">
                             {% csrf_token %} {% load crispy_forms_tags %}
                             {{ dashboard.sensor_form|crispy }}
 
@@ -48,16 +48,18 @@
 
                             <form class="gfconfig-text-align" method="POST"
                             action="reset_dashboard/{{ config.config.id }}"
-                            id="reset_{{ dashboard.name }}">
+                            id="reset_{{ dashboard.name }}_{{ config.config.id }}">
                             {% csrf_token %} {% load crispy_forms_tags %}
 
                                 <input type="hidden" name="dashboard_name"
                                     value="{{ dashboard.name }}">
                             </form>
 
+                            <h4>{{ config.config.id }}</h4>
+
                             <form class="gfconfig-text-align" method="POST"
                             action="delete_dashboard/{{ config.config.id }}"
-                            id="delete_{{ dashboard.name }}">
+                            id="delete_{{ dashboard.name }}_{{ config.config.id }}">
                             {% csrf_token %} {% load crispy_forms_tags %}
                                 <input type="hidden" name="dashboard_name"
                                     value="{{ dashboard.name }}">
@@ -65,20 +67,20 @@
 
                             <br>
                                 <div>
-                                    <input form="reset_{{ dashboard.name }}" class="submitbutton simulator-btn
+                                    <input form="reset_{{ dashboard.name }}_{{ config.config.id }}" class="submitbutton simulator-btn
                                     grafana-btn
                                     grafana-btn-blue gfconfig-text-align" type="submit"
                                     name="submit-reset-dashboard"
                                     value="Reset Sensor Panels">
 
-                                    <input form="delete_{{ dashboard.name }}"
+                                    <input form="delete_{{ dashboard.name }}_{{ config.config.id }}"
                                     class="submitbutton simulator-btn
                                     grafana-btn
                                     grafana-btn-red gfconfig-text-align" type="submit"
                                     name="submit-delete-dashboard"
                                     value="Delete Dashboard">
 
-                                    <input form="update_{{ dashboard.name }}"
+                                    <input form="update_{{ dashboard.name }}_{{ config.config.id }}"
                                     class="submitbutton simulator-btn grafana-btn
                                     grafana-btn-green gfconfig-text-align" type="submit"
                                     name="submit-update-sensors"
