@@ -203,12 +203,6 @@ class CreateSensorView(TemplateView):
             field_types = request.POST.getlist("data-types")
             field_units = request.POST.getlist("units")
 
-        sensor_format = {}
-        for i in range(len(field_names)):
-            if post_field_names[i]:
-                sensor_format[field_names[i]] = {
-                    "unit": field_units[i],
-                    "format": field_types[i],
             # reformat then validate inputs to avoid duplicated names or bad inputs
             # like " "
             type_name = type_name.strip().lower()  # remove excess whitespace and CAPS

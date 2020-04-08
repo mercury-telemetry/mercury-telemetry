@@ -1,13 +1,5 @@
 from django.urls import path
-from .views import (
-    views,
-    sensor,
-    events,
-    pitcrew,
-    radioreceiver,
-    gf_config,
-    measurement,
-)
+from .views import views, sensor, events, pitcrew, radioreceiver, gf_config, measurement
 
 app_name = "mercury"
 urlpatterns = [
