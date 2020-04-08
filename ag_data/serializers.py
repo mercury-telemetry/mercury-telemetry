@@ -17,9 +17,4 @@ class AGMeasurementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AGMeasurement
-        fields = (
-            "timestamp",
-            "sensor_id",
-            "event_uuid",
-            "value",
-        )
+        fields = ("timestamp", "sensor_id", "event_uuid", "value")

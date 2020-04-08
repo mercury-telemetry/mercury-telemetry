@@ -12,6 +12,36 @@ def build_error(str):
     return json.dumps({"error": str})
 
 
+def add_measurement(request, event):
+    json_data = request.data
+    if isinstance(json_data, str):
+        json_data = json.loads(json_data)
+
+    res = {"event_uuid": event.uuid}
+    dic = {
+        "timestamp": "date",
+        "sensor_id": "sensor_id",
+        "value": "values",
+    }
+
+    for d in dic:
+        if json_data.get(dic[d]) is None:
+            return Response(
+                build_error("Missing required params " + dic[d]),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        res[d] = json_data[dic[d]]
+
+    serializer = AGMeasurementSerializer(data=res)
+    try:
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+    except serializers.ValidationError:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class MeasurementView(APIView):
     def post(self, request, event_uuid=None):
         """
@@ -38,64 +68,19 @@ class MeasurementView(APIView):
                 build_error("Event uuid not found"), status=status.HTTP_404_NOT_FOUND
             )
 
-        json_data = request.data
-        if isinstance(json_data, str):
-            json_data = json.loads(json_data)
-
-        res = {"event_uuid": event_uuid}
-        dic = {
-            "timestamp": "date",
-            "sensor_id": "sensor_id",
-            "value": "values",
-        }
-
-        for d in dic:
-            if json_data.get(dic[d]) is None:
-                return Response(
-                    build_error("Missing required params " + dic[d]),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            res[d] = json_data[dic[d]]
-
-        serializer = AGMeasurementSerializer(data=res)
-        try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        except serializers.ValidationError:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return add_measurement(request, event)
 
 
 class MeasurementWithoutEvent(APIView):
     def post(self, request):
-        event = ""
-        # TODO: fetch event
-
-        json_data = request.data
-        if isinstance(json_data, str):
-            json_data = json.loads(json_data)
-
-        res = {"event_uuid": event.uuid}
-        dic = {
-            "timestamp": "date",
-            "sensor_id": "sensor_id",
-            "value": "values",
-        }
-
-        for d in dic:
-            if json_data.get(dic[d]) is None:
-                return Response(
-                    build_error("Missing required params " + dic[d]),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            res[d] = json_data[dic[d]]
-
-        serializer = AGMeasurementSerializer(data=res)
+        """
+        TODO: fetch the active event
+        Now we use the first event in the db
+        """
         try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        except serializers.ValidationError:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            events = AGEvent.objects.all()
+            event = events.first()
+        except AGEvent.DoesNotExist:
+            event = False
+
+        return add_measurement(request, event)
