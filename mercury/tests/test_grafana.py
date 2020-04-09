@@ -10,16 +10,17 @@ import datetime
 
 
 # default host and token, use this if user did not provide anything
-HOST = "https://mercurytests.grafana.net"
+HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
+
 # this token has Admin level permissions
-
 # tokens for mercurytests
-TOKEN = "eyJrIjoiQzFMemVOQ0RDUExIcTdhbEluS0hPMDJTZXdKMWQyYTEiLCJuIjoiYXBpX2tleTIiLCJpZCI6MX0="
+TOKEN = (
+    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+)
 
-# this token has Editor level permissions
-EDITOR_TOKEN = (
-    "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
-    "ZUdZa3JBeWZIT3QiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
+# this token has viewer level permissions
+VIEWER_TOKEN = (
+    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 )
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
 DB_NAME = "d76k4515q6qv"
@@ -189,7 +190,7 @@ class TestGrafana(TestCase):
             self.grafana.create_dashboard(self.event_name)
 
     def test_create_grafana_dashboard_fail_permissions(self):
-        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
 
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
@@ -207,7 +208,7 @@ class TestGrafana(TestCase):
             self.grafana.validate_credentials()
 
     def test_validate_credentials_fail_permissions(self):
-        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
 
         expected_message = (
             "Grafana API validation failed: Access denied - " "check API permissions"
@@ -372,7 +373,7 @@ class TestGrafana(TestCase):
             self.grafana.create_postgres_datasource(self.datasource_name)
 
     def test_create_datasource_fail_permissions(self):
-        self.grafana.api_token = EDITOR_TOKEN  # API token with Editor permissions
+        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
 
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
