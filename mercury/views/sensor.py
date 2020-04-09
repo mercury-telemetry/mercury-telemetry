@@ -86,7 +86,7 @@ class CreateSensorView(TemplateView):
     def post(self, request, *args, **kwargs):
         sensor_name = request.POST.get("sensor-name")  # name = type name
         field_names = request.POST.getlist("field-names")
-        field_types = request.POST.getlist("data-type")
+        field_types = request.POST.getlist("data-types")
         field_units = request.POST.getlist("units")
         sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
 
