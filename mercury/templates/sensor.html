@@ -22,8 +22,6 @@
                 <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
                 <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> View Sensors </button></li>
                 <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
-                <li><button onclick="displayEditSensors()" type= "button" id="edit-sensors-btn" class="grafana-btn"> Edit Existing Sensors </button></li>
-                <li><button onclick="displayEditSensorTypes()" type= "button" id="edit-sensor-types-btn" class="grafana-btn"> Edit Existing Sensor Types </button></li>
             </ul>
         </nav>
 
@@ -143,115 +141,8 @@
             </form>
             <br>
 
-        </div> <!-- end add new type -->
+        </div> <!-- end add new sensor -->
 
-
-
-        <div id="edit-sensors">
-            <h2>Edit Existing Sensors</h2>
-            <br>
-            {% if sensors %}
-                <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                    <table class="table table-bordered table-striped mb-0">
-                        <thead>
-                        <tr bgcolor="#e0efdf">
-                            <th>SENSOR ID</th>
-                            <th>SENSOR NAME</th>
-                            <th>SENSOR TYPE</th>
-                            <th>UPDATE</th>
-                            <th>DELETE</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                {% for sensor in sensors %}
-                    <form method="POST" action="update_sensor/{{ sensor.id }}">
-                        {% csrf_token %}
-                        <tr>
-                            <th>{{ sensor.id }}</th>
-                            <td><input type="text" name="edit-sensor-name" id="edit-sensor-name"
-                             value="{{ sensor.name }}"></td>
-                             <td><p>{{ sensor.type_id.name }}</p>
-                            <td>
-                                <input type="submit" value="Update">
-                            </td>
-                            <td><a href="delete_sensor/{{ sensor.id }}">Delete</a></td>
-                        </tr>
-                    </form>
-                    {% endfor %}
-                    </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <h3 style="color:red;"><b> There are no sensors to edit </b></h3>
-                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
-            {% endif%}
-        </div> <!-- end view edit sensors-->
-
-        <div id="edit-sensor-types">
-            <h2>Edit Existing Sensor Types</h2> <br>
-            {% if sensor_types %}
-                <h5>Warning: deleting sensor types will delete all sensors of that type.</h5>
-                <hr> <br>
-                {% for sensor_type in sensor_types %}
-                <form method="POST" action="update_type/{{ sensor_type.id }}">
-                    {% csrf_token %}
-                    <div id = "type-container"> <!-- single div for configuring entire sensor type -->
-                        <div class="inline-box">
-                            <label for="type-name"> <b>Type Name:</b> </label>
-                            <input type="text" id="edit-type-name" name="edit-type-name" value="{{ sensor_type.name }}" required/>
-                        </div> <br>
-
-                        <table id="edit-type-table">
-                            <thead>
-                                <tr>
-                                    <th><b> Field Name </b></th>
-                                    <th><b> Field Data Type </b></th>
-                                    <th><b> Unit </b> </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for field_name, unit_and_format in sensor_type.format.items %}
-                                <tr>
-                                    <td> <input type="text" id="edit-field-names" name="edit-field-names" value="{{ field_name }}" required/> </td>
-
-                                    <td>
-                                        <select id="edit-data-types" name="edit-data-types"/>
-                                        {% if unit_and_format.data_type == "Numeric" %}
-                                                <option selected="selected"> Numeric </option>
-                                                <option> Character </option>
-                                                <option> Boolean </option>
-                                        {% else %}
-                                            {% if unit_and_format.data_type == "Character" %}
-                                                <option> Numeric </option>
-                                                <option selected="selected"> Character </option>
-                                                <option> Boolean </option>
-                                            {% else %}
-                                                <option> Numeric </option>
-                                                <option> Character </option>
-                                                <option selected="selected"> Boolean </option>
-                                            {% endif %}
-                                        {% endif %}
-                                        </select>
-                                    </td>
-
-                                    <td> <input type="text" id="edit-units" name="edit-units" value="{{ unit_and_format.unit }}" /> </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table> <br>
-                        <input type="submit" value="Update">
-                        <a href="delete_type/{{ sensor_type.id }}">Delete</a>
-                        <br> <hr> <br>
-                    </form>
-                {% endfor %}
-                </div> <br>
-            {% else %}
-                <h3 style="color:red;"><b> There are no sensor types to edit </b></h3>
-                <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
-            {% endif%}
-        </div> <!-- end view edit sensor types-->
-        
-    </div> <!-- end grafana-base -->
+    </div>
 </body>
 </html>
