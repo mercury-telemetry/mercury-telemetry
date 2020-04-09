@@ -76,4 +76,9 @@ urlpatterns = [
         measurement.MeasurementView.as_view(),
         name="measurement",
     ),
+    path(
+        "measurement/",
+        measurement.MeasurementWithoutEvent.as_view(),
+        name="measurementWO",
+    ),
 ]
