@@ -193,7 +193,54 @@ class GFConfigView(TemplateView):
             except ValueError as error:
                 messages.error(request, f"Grafana initial set up failed: {error}")
 
-            configs = GFConfig.objects.all().order_by("id")
+            # Prepare an array of dicts with details for each GFConfig (GFConfig object,
+            # list of dashboards/forms
+            # Retrieve all available GFConfigs
+            current_configs = GFConfig.objects.all().order_by("id")
+            configs = []
+            for config in current_configs:
+                config_info = dict()
+                config_info["config"] = config
+                # Create Grafana class to handle this GF instance
+                grafana = Grafana(config)
+                # Get an array of all dashboards
+                current_dashboards = grafana.get_all_dashboards()
+                # Assemble a list of dicts w/: url, sensors, initialized sensor form,
+                # and dashboard name
+
+                # Prepare an array of dashboards & their sensors to send to the template
+                dashboards = []
+
+                for dashboard in current_dashboards:
+
+                    dashboard_dict = dict()
+
+                    # Get all currently used panels to initialize the form
+                    existing_sensors = grafana.get_all_sensors(dashboard["title"])
+
+                    # Set initial form data so that only existing sensors are checked
+                    sensor_form = DashboardSensorPanelsForm(
+                        initial={"sensors": existing_sensors}
+                    )
+
+                    # Retrieve the URL for this dashboard or ""
+                    dashboard_url = grafana.get_dashboard_url_by_name(
+                        dashboard["title"]
+                    )
+                    if dashboard_url is None:
+                        dashboard_url = ""
+
+                    # Store everything in a list of dicts
+                    dashboard_dict["sensor_form"] = sensor_form
+                    dashboard_dict["dashboard_url"] = dashboard_url
+                    dashboard_dict["sensors"] = AGSensor.objects.all()
+                    dashboard_dict["name"] = dashboard["title"]
+
+                    dashboards.append(dashboard_dict)
+
+                config_info["dashboards"] = dashboards
+                configs.append(config_info)
+
             config_form = GFConfigForm(request.POST)
             context = {"config_form": config_form, "configs": configs}
             return render(request, self.template_name, context)
