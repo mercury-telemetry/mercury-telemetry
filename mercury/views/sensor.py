@@ -183,6 +183,20 @@ def update_sensor_type(request, type_id):
     return redirect("/sensor")
 
 
+def remove_whitespace_caps(name, field_list):
+    name = name.strip().lower()  # remove excess whitespace and CAPS
+    return_list = [string.strip().lower() for string in field_list]
+    return name, return_list
+
+def generate_sensor_format(field_names, field_data_types, units):
+    """ Return proper JSON format for sensor based on form submission.
+        Format structure is a dictionary of dictionaries """
+    sensor_format = {}
+    fields = zip(field_names, field_data_types, units)
+    for field in fields:
+        sensor_format[field[0]] = {"data_type": field[1], "unit": field[2]}
+    return sensor_format
+
 class CreateSensorView(TemplateView):
     """This is the view for creating a new ...."""
 
@@ -197,8 +211,20 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
-        if "submit_form" in request.POST:
-            print("so happy!!!")
+        if "edit_sensor" in request.POST:
+            sensor_name = request.POST.get("edit-sensor-name")  # name = type name
+            field_names = request.POST.getlist("edit-field-names")
+            field_types = request.POST.getlist("edit-data-type")
+            field_units = request.POST.getlist("edit-units")
+
+            sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
+            new_format = generate_sensor_format(field_names, field_types, field_units)
+            # add additional validation of inputs here
+            valid = True
+            if valid:
+                sensor_to_update = AGSensorType.objects.get(name=sensor_name)
+                sensor_to_update.format = new_format
+                sensor_to_update.save()
 
         if "submit_new_sensor" in request.POST:
             type_name = request.POST.get("type-name")
@@ -208,18 +234,12 @@ class CreateSensorView(TemplateView):
 
             # reformat then validate inputs to avoid duplicated names or bad inputs
             # like " "
-            type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
+            type_name, field_names = remove_whitespace_caps(type_name, field_names)
             sensor_name = type_name  # need this due to structure of models (Sensor and Sensor Type)
-            field_names = [string.strip().lower() for string in field_names]
             valid, request = validate_add_sensor_type_inputs(
                 type_name, field_names, request
             )
-
-            # create sensor format which is dictionary of dictionaries
-            type_format = {}
-            fields = zip(field_names, field_types, field_units)
-            for field in fields:
-                type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
+            type_format = generate_sensor_format(field_names, field_types, field_units)
 
             if valid:
                 # Create new type and new sensor as required by models
@@ -259,6 +279,7 @@ class CreateSensorView(TemplateView):
                             request, f"Failed to add panel to active dashboard: {error}"
                         )
 
+        # gather sensors and sensor types (which should be the same) and render them
         types = AGSensorType.objects.all()
         sensors = AGSensor.objects.all()
         context = {
