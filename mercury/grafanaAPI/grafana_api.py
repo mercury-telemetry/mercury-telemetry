@@ -315,7 +315,7 @@ class Grafana:
             "database": self.database_name,
             "basicAuth": False,
             "isDefault": True,
-            "jsonData": {"postgresVersion": 903, "sslmode": "require"},
+            "jsonData": {"postgresVersion": 903, "sslmode": require_ssl},
         }
 
         headers = {"Content-Type": "application/json"}
