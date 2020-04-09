@@ -310,11 +310,12 @@ class Grafana:
             "type": "postgres",
             "access": "proxy",
             "url": self.database_hostname,
-            "password": self.database_password,
+            "password": "",
             "user": self.database_username,
             "database": self.database_name,
             "basicAuth": False,
             "isDefault": True,
+            "secureJsonFields": { "password": self.database_password},
             "jsonData": {"postgresVersion": 903, "sslmode": require_ssl},
         }
 
