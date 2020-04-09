@@ -32,7 +32,8 @@ def add_measurement(request, event):
             )
         res[key] = json_data[json_key]
 
-    res["value"] = json.loads(res["value"])
+    if isinstance(res["value"], str):
+        res["value"] = json.loads(res["value"])
 
     serializer = AGMeasurementSerializer(data=res)
     try:
