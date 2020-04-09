@@ -11,13 +11,13 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
-def validate_inputs(sensor_name, field_names, request, adding_new=False):
+def validate_inputs(sensor_name, field_names, request, new=False):
     """This validates the form before a user submits a new or updated sensor to
     prevent bad inputs"""
 
     form_valid = True
 
-    if adding_new:
+    if new:
         # duplicated sensor name
         if AGSensorType.objects.filter(name=sensor_name).count() > 0:
             messages.error(request, "FAILED: Sensor name is already taken.")
@@ -99,14 +99,18 @@ class CreateSensorView(TemplateView):
                 sensor_to_update.save()
 
         if "submit_new_sensor" in request.POST:
-            valid, request = validate_inputs(sensor_name, field_names, request, adding_new=True)
-            sensor_format = generate_sensor_format(field_names, field_types, field_units)
+            valid, request = validate_inputs(
+                sensor_name, field_names, request, new=True
+            )
+            sensor_format = generate_sensor_format(
+                field_names, field_types, field_units
+            )
             if valid:
                 """1) The structure of the models (database API) is confusing and we hide
                  the confusing details from the user. 2) Note that we have to first
-                 create a sensor type, save it then create a sensor which takes 
-                 type as an input 3) Sensor types and sensors have the same name. 
-                 They are the same concept and should not be separated. Separating 
+                 create a sensor type, save it then create a sensor which takes
+                 type as an input 3) Sensor types and sensors have the same name.
+                 They are the same concept and should not be separated. Separating
                  sensors from sensor types will likely cause bad things to happen...
                  """
                 new_type = AGSensorType.objects.create(
