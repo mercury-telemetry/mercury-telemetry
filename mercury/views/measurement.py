@@ -18,19 +18,19 @@ def add_measurement(request, event):
         json_data = json.loads(json_data)
 
     res = {"event_uuid": event.uuid}
-    dic = {
+    key_map = {
         "timestamp": "date",
         "sensor_id": "sensor_id",
         "value": "values",
     }
 
-    for d in dic:
-        if json_data.get(dic[d]) is None:
+    for key, json_key in key_map.items():
+        if json_key not in json_data:
             return Response(
-                build_error("Missing required params " + dic[d]),
+                build_error("Missing required params " + json_key),
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        res[d] = json_data[dic[d]]
+        res[key] = json_data[json_key]
 
     serializer = AGMeasurementSerializer(data=res)
     try:
