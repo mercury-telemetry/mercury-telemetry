@@ -108,7 +108,7 @@ class Grafana:
         # If there are spaces in the name, the GF API will replace them with dashes
         # to generate the "slug". A slug can be used to query the API.
         endpoint = os.path.join(
-            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-"),
+            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-")
         )
         response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
