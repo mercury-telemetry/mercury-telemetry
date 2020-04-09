@@ -108,7 +108,7 @@ class Grafana:
         # If there are spaces in the name, the GF API will replace them with dashes
         # to generate the "slug". A slug can be used to query the API.
         endpoint = os.path.join(
-            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-"),
+            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-")
         )
         response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
@@ -298,6 +298,11 @@ class Grafana:
         - Datasource with the same name already exists
 
         """
+        if self.database_password == "":
+            require_ssl = "disable"
+        else:
+            require_ssl = "require"
+
         db = {
             "id": None,
             "orgId": None,
@@ -310,7 +315,7 @@ class Grafana:
             "database": self.database_name,
             "basicAuth": False,
             "isDefault": True,
-            "jsonData": {"postgresVersion": 903, "sslmode": "require"},
+            "jsonData": {"postgresVersion": 903, "sslmode": require_ssl},
         }
 
         headers = {"Content-Type": "application/json"}
@@ -354,7 +359,7 @@ class Grafana:
                 return True
             else:
                 return False
-        except KeyError:
+        except (KeyError, TypeError):
             return False
 
     def add_panel(self, sensor, event):
@@ -392,7 +397,7 @@ class Grafana:
         # Retrieve current panels
         try:
             panels = dashboard_info["dashboard"]["panels"]
-        except KeyError:
+        except (KeyError, TypeError):
             panels = []
 
         # If first panel
@@ -520,10 +525,11 @@ class Grafana:
         """
         # Retrieve the current dashboard
         dashboard = self.get_dashboard_by_name(dashboard_name)
+
         try:
             dashboard = dashboard["dashboard"]
             panels = dashboard["panels"]
-        except KeyError:
+        except (KeyError, TypeError):
             panels = []
 
         sensor_names = []
@@ -664,7 +670,7 @@ class Grafana:
             # templating = dashboard_info["dashboard"]["templating"]
             version = dashboard_info["meta"]["version"]
             folder_id = dashboard_info["meta"]["folderId"]
-        except KeyError:
+        except (KeyError, TypeError):
             raise ValueError(f"dashboard_info object is invalid: {dashboard_info}")
 
         # Prepare updated_dashboard object

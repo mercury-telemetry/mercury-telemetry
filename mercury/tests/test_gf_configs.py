@@ -8,13 +8,14 @@ import os
 import datetime
 
 # default host and token, use this if user did not provide anything
-HOST = "https://mercurytests.grafana.net"
+HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 # this token has Admin level permissions
-TOKEN = "eyJrIjoiQzFMemVOQ0RDUExIcTdhbEluS0hPMDJTZXdKMWQyYTEiLCJuIjoiYXBpX2tleTIiLCJpZCI6MX0="
-# this token has Editor level permissions
-EDITOR_TOKEN = (
-    "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
-    "ZUdZa3JBeWZIT3QiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
+TOKEN = (
+    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+)
+# this token has viewer level permissions
+VIEWER_TOKEN = (
+    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 )
 
 
@@ -147,9 +148,9 @@ class TestGFConfig(TestCase):
 
         self.assertContains(response, self.event_name)
         self.assertContains(response, sensor.name)
-        self.assertEquals(response.context["dashboards"][0]["name"], self.event_name)
         self.assertIsInstance(
-            response.context["dashboards"][0]["sensor_form"], DashboardSensorPanelsForm
+            response.context["configs"][0]["dashboards"][0]["sensor_form"],
+            DashboardSensorPanelsForm,
         )
 
     def test_config_post_success(self):
@@ -193,7 +194,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": EDITOR_TOKEN,
+                "gf_token": VIEWER_TOKEN,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -246,22 +247,6 @@ class TestGFConfig(TestCase):
 
         gfconfig = GFConfig.objects.all().first()
         self.assertEquals(gfconfig.gf_current, True)
-
-    def test_config_post_no_event_exists_no_dashboard_created(self):
-        response = self.client.post(
-            reverse(self.config_url),
-            data={
-                "submit": "",
-                "gf_name": "Test Grafana Instance",
-                "gf_host": HOST,
-                "gf_token": TOKEN,
-            },
-        )
-        self.assertEqual(200, response.status_code)
-
-        # check if any dashboards exist
-        dashboards = self.grafana.get_all_dashboards()
-        self.assertEquals(dashboards, [])
 
     def test_config_post_event_exists_dashboard_created(self):
         self.create_venue_and_event(self.event_name)
@@ -321,15 +306,15 @@ class TestGFConfig(TestCase):
         panel = panels[0]
         self.assertEquals(panel["title"], self.test_sensor_name)
 
-    # @TODO modify to work with various gfconfigs, more than one
-    def test_update_dashboard_panels_remove_all(self):
-        self.create_venue_and_event(self.event_name)
+    def test_update_dashboard_panels_remove_all_single_gfconfig(self):
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
 
-        # create a dashboard
+        # Create a dashboard
         self.grafana.create_dashboard(self.event_name)
 
-        # add a panel to the dashboard
-        # Create a sensor type and sensor
+        # Add a panel to the dashboard
+        #   Create a sensor type and sensor
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
             processing_formula=0,
@@ -340,7 +325,10 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_name, type_id=sensor_type
         )
         sensor.save()
+        #   Add a sensor panel
+        self.grafana.add_panel(sensor, event)
 
+        # Update dashboard with empty list of sensors
         self.client.post(
             reverse(
                 self.config_update_dashboard_url, kwargs={"gf_id": self.gfconfig.id}
@@ -348,8 +336,8 @@ class TestGFConfig(TestCase):
             data={"dashboard_name": self.event_name, "sensors": []},
         )
 
+        # Query dashboard
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
-
         self.assertTrue(dashboard)
 
         # Retrieve current panels
@@ -358,10 +346,10 @@ class TestGFConfig(TestCase):
         except KeyError:
             panels = []
 
+        # Confirm panels were deleted
         self.assertEquals(panels, [])
 
-    # @TODO modify to work with various gfconfigs, more than one
-    def test_update_dashboard_panels_keep_all_panels(self):
+    def test_update_dashboard_panels_keep_all_panels_single_gfconfig(self):
         self.create_venue_and_event(self.event_name)
 
         # create a dashboard
@@ -404,8 +392,7 @@ class TestGFConfig(TestCase):
 
         self.assertEquals(len(panels), 1)
 
-    # @TODO modify to work with various gfconfigs, more than one
-    def test_update_dashboard_panels_keep_subset_of_panels(self):
+    def test_update_dashboard_panels_keep_subset_of_panels_single_gfconfig(self):
         self.create_venue_and_event(self.event_name)
 
         # create a dashboard
@@ -455,8 +442,7 @@ class TestGFConfig(TestCase):
         for i in range(2):
             self.assertEquals(panels[i]["title"], sensors[i].name)
 
-    # @TODO modify to work with various gfconfigs, more than one
-    def test_reset_dashboard_panels(self):
+    def test_reset_dashboard_panels_single_gfconfig(self):
         # update dashboard with a subset of panels, then restore all panels by using
         # reset
         self.create_venue_and_event(self.event_name)
@@ -533,7 +519,7 @@ class TestGFConfig(TestCase):
         for sensor in sensors:
             self.assertEquals(panels[i]["title"], sensor.name)
 
-    def test_delete_dashboard(self):
+    def test_delete_dashboard_single_gfconfig(self):
         # update dashboard with a subset of panels, then restore all panels by using
         # reset
         self.create_venue_and_event(self.event_name)
@@ -553,3 +539,5 @@ class TestGFConfig(TestCase):
 
         # No dashboard should exist with this name
         self.assertFalse(dashboard)
+
+    # @TODO Add tests to handle multiple GFConfigs
