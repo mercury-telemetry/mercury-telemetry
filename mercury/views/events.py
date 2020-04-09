@@ -196,6 +196,30 @@ def export_event(request, event_uuid=None, file_format="CSV"):
         venue = AGVenue.objects.get(uuid=event_to_export.venue_uuid.uuid)
         if request.path.__contains__("json"):
             data = create_event_json(event_to_export, venue, measurement_data)
+            event_info = {
+                "name": event_to_export.name,
+                "event date": str(event_to_export.date),
+                "event description": event_to_export.description,
+            }
+            if venue:
+                event_info["venue name"] = venue.name
+                event_info["venue description"] = venue.description
+
+            measurement_info = []
+            if measurement_data:
+                sensor = AGSensor.objects.get(id=measurement_data[0].sensor_id.id)
+                for measurement in measurement_data:
+                    if sensor.id != measurement.sensor_id:
+                        sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+                    temp = {
+                        "sensor name": sensor.name,
+                        "timestamp": str(measurement.timestamp),
+                        "reading": measurement.value["reading"],
+                    }
+                    measurement_info.append(temp)
+
+            data = {"event_info": event_info, "measurement_info": measurement_info}
+
             response = HttpResponse(str(data), content_type="application/json")
             response["Content-Disposition"] = (
                 'attachment; filename="' + filename + '".json'
