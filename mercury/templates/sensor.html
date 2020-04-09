@@ -70,16 +70,16 @@
                         {% csrf_token %}
                         {% for field_name, unit_and_format in sensor.type_id.format.items %}
                         <div>
-                            <input type="text" name="edit-field-names" value={{field_name}}   ></input>
-                            <select name="edit-data-type"/>
+                            <input type="text" name="field-names" value={{field_name}}   ></input>
+                            <select name="data-type"/>
                                 <option> Numeric </option>
                                 <option> Character </option>
                                 <option> Boolean </option>
                             </select>
-                            <input type="text" name="edit-units" value={{unit_and_format.unit}}  ></input>
+                            <input type="text" name="units" value={{unit_and_format.unit}}  ></input>
                         </div>
                         {% endfor %}
-                        <input type="hidden" name="edit-sensor-name" value={{sensor.name}} ></input>
+                        <input type="hidden" name="sensor-name" value={{sensor.name}} ></input>
                         <input type="hidden" name="edit_sensor" value="true"></input> <!--used to trigger edit sensor in sensors.py -->
                     </form>
                 </div>
@@ -97,8 +97,8 @@
                 {% csrf_token %}
                 <div id = "type-container"> <!-- single div for configuring entire sensor type -->
                     <div class="inline-box">
-                        <label for="type-name"> <b>Sensor Name:</b> </label>
-                        <input type="text" id="type-name" name="type-name" required/>
+                        <label for="sensor-name"> <b>Sensor Name:</b> </label>
+                        <input type="text" id="sensor-name" name="sensor-name" required/>
                     </div> <br>
 
                     <table id="new-type-table">

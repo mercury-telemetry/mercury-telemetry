@@ -11,20 +11,21 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
-def validate_inputs(sensor_name, field_names, request):
+def validate_inputs(sensor_name, field_names, request, adding_new=False):
     """This validates the form before a user submits a new or updated sensor to
     prevent bad inputs"""
 
     form_valid = True
 
+    if adding_new:
+        # duplicated sensor name
+        if AGSensorType.objects.filter(name=sensor_name).count() > 0:
+            messages.error(request, "FAILED: Sensor name is already taken.")
+            form_valid = False
+
     # no sensor name
     if not sensor_name:
         messages.error(request, "FAILED: Sensor name is missing or invalid.")
-        form_valid = False
-
-    # duplicated sensor name
-    if AGSensorType.objects.filter(name=sensor_name).count() > 0:
-        messages.error(request, "FAILED: Sensor name is already taken.")
         form_valid = False
 
     # missing field names
@@ -83,43 +84,37 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
-        if "edit_sensor" in request.POST:
-            sensor_name = request.POST.get("edit-sensor-name")  # name = type name
-            field_names = request.POST.getlist("edit-field-names")
-            field_types = request.POST.getlist("edit-data-type")
-            field_units = request.POST.getlist("edit-units")
+        sensor_name = request.POST.get("sensor-name")  # name = type name
+        field_names = request.POST.getlist("field-names")
+        field_types = request.POST.getlist("data-type")
+        field_units = request.POST.getlist("units")
+        sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
 
-            sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
-            new_format = generate_sensor_format(field_names, field_types, field_units)
+        if "edit_sensor" in request.POST:
             valid, request = validate_inputs(sensor_name, field_names, request)
+            new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
                 sensor_to_update = AGSensorType.objects.get(name=sensor_name)
                 sensor_to_update.format = new_format
                 sensor_to_update.save()
 
         if "submit_new_sensor" in request.POST:
-            type_name = request.POST.get("type-name")
-            field_names = request.POST.getlist("field-names")
-            field_types = request.POST.getlist("data-types")
-            field_units = request.POST.getlist("units")
-
-            # reformat then validate inputs to avoid duplicated names or bad inputs
-            # like " "
-            type_name, field_names = remove_whitespace_caps(type_name, field_names)
-            sensor_name = type_name  # need this due to structure of models (Sensor and Sensor Type)
-            valid, request = validate_inputs(type_name, field_names, request)
-            type_format = generate_sensor_format(field_names, field_types, field_units)
-
+            valid, request = validate_inputs(sensor_name, field_names, request, adding_new=True)
+            sensor_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
-                # Create new type and new sensor as required by models
-                # Hide this confusing detail from users
+                """1) The structure of the models (database API) is confusing and we hide
+                 the confusing details from the user. 2) Note that we have to first
+                 create a sensor type, save it then create a sensor which takes 
+                 type as an input 3) Sensor types and sensors have the same name. 
+                 They are the same concept and should not be separated. Separating 
+                 sensors from sensor types will likely cause bad things to happen...
+                 """
                 new_type = AGSensorType.objects.create(
-                    name=type_name, processing_formula=0, format=type_format
+                    name=sensor_name, processing_formula=0, format=sensor_format
                 )
                 new_type.save()
 
-                sensor_type = AGSensorType.objects.get(name=type_name)
-
+                sensor_type = AGSensorType.objects.get(name=sensor_name)
                 new_sensor = AGSensor.objects.create(
                     name=sensor_name, type_id=sensor_type
                 )
