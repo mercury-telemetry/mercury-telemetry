@@ -318,6 +318,18 @@ class Grafana:
             "jsonData": {"postgresVersion": 903, "sslmode": require_ssl},
         }
 
+        db = {
+            "name": self.database_name,
+            "type": "postgres",
+            "url": self.database_hostname,
+            "access": "proxy",
+            "basicAuth": true,
+            "basicAuthUser": self.database_username,
+            "secureJsonData": {
+                "basicAuthPassword": self.database_password
+            }
+        }
+
         print("CREATING A POSTGRES DB WITH THE FOLLOWING CREDS:")
         print(self.database_hostname)
         print(self.database_password)
