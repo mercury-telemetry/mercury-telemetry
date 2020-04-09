@@ -96,23 +96,6 @@ def validate_update_sensor_type_inputs(
     return form_valid, request
 
 
-def delete_sensor(request, sensor_id):
-    """This deletes a sensor from the database based on user button click"""
-
-    valid_id = False
-    for sensor in AGSensor.objects.all():
-        if sensor.id == sensor_id:
-            valid_id = True
-    if valid_id:
-        sensor_to_delete = AGSensor.objects.get(id=sensor_id)
-        sensor_to_delete.delete()
-    else:
-        messages.error(
-            request, "FAILED: Cannot find sensor with ID " + str(sensor_id) + "."
-        )
-    return redirect("/sensor")
-
-
 def delete_sensor_type(request, type_id):
     """This deletes a sensor type from the database based on user button click"""
 
@@ -180,6 +163,18 @@ def update_sensor_type(request, type_id):
         type_to_update.format = type_format
         type_to_update.save()
 
+    return redirect("/sensor")
+
+
+def delete_sensor(request, sensor_name):
+    """This deletes a sensor from the database based on a button click"""
+    sensor_to_delete = AGSensor.objects.get(name=sensor_name)
+    sensor_type_to_delete = AGSensorType.objects.get(name=sensor_name)
+    if sensor_type_to_delete:
+        sensor_to_delete.delete()
+        sensor_type_to_delete.delete()
+    else:
+        messages.error(request, sensor_name, " not found!!!")
     return redirect("/sensor")
 
 

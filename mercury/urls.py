@@ -14,7 +14,7 @@ urlpatterns = [
     path("index", views.HomePageView.as_view(), name="index"),
     path("sensor/", sensor.CreateSensorView.as_view(), name="sensor"),
     path(
-        "sensor/delete_sensor/<int:sensor_id>",
+        "sensor/delete_sensor/<sensor_name>",
         sensor.delete_sensor,
         name="delete_sensor",
     ),

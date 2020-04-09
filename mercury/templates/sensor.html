@@ -46,7 +46,10 @@
                             <button type="button" onclick="makeSensorEditable('{{ sensor.name }}', 0)" id="{{ sensor.name }}-edit-button" class="grafana-btn-block grafana-btn-gray"> Modify Sensor </button>
                             <button type="button" onclick="makeSensorEditable('{{ sensor.name }}', 1)" id="{{ sensor.name }}-cancel-button" class="grafana-btn-block grafana-btn-gray" style="display:none;"> Cancel </button>
                             <button type="submit" form="{{ sensor.name }}-form" id="{{ sensor.name }}-submit-button" class="grafana-btn-block grafana-btn-green" style="display:none;"> Update Sensor </button>
-                            <button type="submit" form="" id="{{ sensor.name }}-delete-button" class="grafana-btn-block grafana-btn-red" style="display:none;"> Delete Sensor </button>
+                            <form method="POST" action="delete_sensor/{{ sensor.name }}">
+                                {% csrf_token %}
+                                <button type="submit" id="{{ sensor.name }}-delete-button" class="grafana-btn-block grafana-btn-red" style="display:none;"> Delete Sensor </button>
+                            </form>
                         </div>
                     </div>
                     <br>
