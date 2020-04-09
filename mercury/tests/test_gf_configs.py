@@ -8,13 +8,14 @@ import os
 import datetime
 
 # default host and token, use this if user did not provide anything
-HOST = "https://mercurytests.grafana.net"
+HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 # this token has Admin level permissions
-TOKEN = "eyJrIjoiQzFMemVOQ0RDUExIcTdhbEluS0hPMDJTZXdKMWQyYTEiLCJuIjoiYXBpX2tleTIiLCJpZCI6MX0="
-# this token has Editor level permissions
-EDITOR_TOKEN = (
-    "eyJrIjoibHlrZ2JWY0pnQk94b1YxSGYzd0NJ"
-    "ZUdZa3JBeWZIT3QiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
+TOKEN = (
+    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+)
+# this token has viewer level permissions
+VIEWER_TOKEN = (
+    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 )
 
 
@@ -196,7 +197,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": EDITOR_TOKEN,
+                "gf_token": VIEWER_TOKEN,
             },
         )
         self.assertEqual(200, response.status_code)
