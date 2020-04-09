@@ -32,6 +32,8 @@ def add_measurement(request, event):
             )
         res[key] = json_data[json_key]
 
+    res["value"] = json.loads(res["value"])
+
     serializer = AGMeasurementSerializer(data=res)
     try:
         serializer.is_valid(raise_exception=True)
