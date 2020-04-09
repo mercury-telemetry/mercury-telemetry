@@ -35,7 +35,7 @@
                     <table class="table table-bordered table-striped mb-0">
                         <thead>
                         <tr bgcolor="#e0efdf">
-                            <th>VENUE ID</th>
+                            <th>Sr. No.</th>
                             <th>NAME</th>
                             <th>DESCRIPTION</th>
                             <th>LATITUDE</th>
@@ -63,14 +63,21 @@
     <!--Event Actions and Details -->
         <div id="all-events" class="mt-50">
             <h1>All Events</h1>
+            <p>
+                Active Event details:<b></b><b></b>
+                Event Name: {{ active_event.name }}
+                Event Date: {{ active_event.date }}
+                Event Description {{ active_event.description }}
+                Venue Name: {{ active_event.venue_uuid.name }}
+            </p>
             {% if events %}
                 <div class="table-wrapper-scroll-y my-custom-scrollbar full-height">
                     <table class="table table-bordered table-striped mb-0">
                         <thead>
                         <tr bgcolor="#e0efdf">
-                            <th>EVENT ID</th>
+                            <th>Sr. No.</th>
                             <th>NAME</th>
-                            <th>ANALYSE IN</th>
+                            <th>Event Active</th>
                             <th>LOCATION</th>
                             <th>DATE</th>
                             <th>DESCRIPTION</th>
@@ -82,7 +89,23 @@
                             <tr>
                                 <td></td>
                                 <td>{{ item.name }}</td>
-                                <td><a href="http://localhost:3000/" target="_blank">Grafana</a> </td>
+
+                                {% if  item == active_event %}
+                                    <td>
+                                        <label class="switch">
+                                            <input id='{{ item.name }}' type="checkbox" checked="true" onclick="toggleActiveEvents('{{ item.name }}', true);">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <label class="switch">
+                                            {% csrf_token %}
+                                            <input id='{{ item.name }}' type="checkbox" onclick="toggleActiveEvents('{{ item.name }}', true);">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                {% endif %}
                                 <td>{{ item.venue_uuid.name }}</td>
                                 <td>{{ item.date }}</td>
                                 <td>{{ item.description }}</td>
@@ -143,7 +166,7 @@
                 <table class="table table-bordered table-striped mb-0">
                     <thead>
                     <tr bgcolor="#e0efdf">
-                        <th>EVENT ID</th>
+                        <th>Sr. No.</th>
                         <th>NAME</th>
                         <th>LOCATION</th>
                         <th>DATE</th>
@@ -194,7 +217,7 @@
                     <table class="table table-bordered table-striped mb-0">
                         <thead>
                         <tr bgcolor="#e0efdf">
-                            <th>VENUE ID</th>
+                            <th>Sr. No.</th>
                             <th>NAME</th>
                             <th>DESCRIPTION</th>
                             <th>LATITUDE</th>
