@@ -10,12 +10,9 @@
 
 # Team Project repo
 
-Heroku Production (master) URI: [https://nyu-mercury-prod.herokuapp.com/](https://nyu-mercury-prod.herokuapp.com/)
+Heroku (master): [https://spring2020-cs-gy-9223-prod.herokuapp.com/](https://spring2020-cs-gy-9223-prod.herokuapp.com/)
 
-Heroku Staging (develop) URI: [https://nyu-mercury.herokuapp.com](https://nyu-mercury.herokuapp.com)
-
-Heroku Dashboard: [https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872](https://dashboard.heroku.com/pipelines/35c0558f-127e-482b-8cdf-3f4d24464872)
-
+*It's not automaticaly deployed for the time being. Please reach out to Dan Gopstein (dg2514@nyu.edu) or Yonguk Jeong (yj1679@nyu.edu) for access to the heroku instance.
 
 # First time repo setup
 1. From the root of the repo, run `scripts/setup.sh`. Activate your virtualenv first.
@@ -47,9 +44,3 @@ Run `python manage.py runserver` from the root of this Git repo
 
 # HOWTO Run tests locally
 Run `python manage.py test`
-
-# HOWTO Install SymmetricDS
-```
-cd symmetricds
-make install
-```
