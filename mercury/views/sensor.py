@@ -11,9 +11,9 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
-def validate_add_sensor_inputs(sensor_name, request):
-    """This validates the form before a user submits a new sensor to prevent bad
-    inputs"""
+def validate_inputs(sensor_name, field_names, request):
+    """This validates the form before a user submits a new or updated sensor to
+    prevent bad inputs"""
 
     form_valid = True
 
@@ -23,73 +23,18 @@ def validate_add_sensor_inputs(sensor_name, request):
         form_valid = False
 
     # duplicated sensor name
-    if AGSensor.objects.filter(name=sensor_name).count() > 0:
+    if AGSensorType.objects.filter(name=sensor_name).count() > 0:
         messages.error(request, "FAILED: Sensor name is already taken.")
         form_valid = False
 
-    return form_valid, request
-
-
-def validate_add_sensor_type_inputs(type_name, field_name_list, request):
-    """
-    This validates the form before a user submits a new sensor type to prevent bad
-    inputs
-    """
-
-    form_valid = True
-
-    # no type name
-    if not type_name:
-        messages.error(request, "FAILED: Type name is missing or invalid.")
-        form_valid = False
-
     # missing field names
-    for name in field_name_list:
+    for name in field_names:
         if not name:
-            messages.error(request, "FAILED: Type has missing field name(s).")
-            form_valid = False
-
-    # duplicated type name
-    if AGSensorType.objects.filter(name=type_name).count() > 0:
-        messages.error(request, "FAILED: Type name is already taken.")
-        form_valid = False
-
-    # duplicated field names
-    if len(field_name_list) > len(set(field_name_list)):
-        messages.error(request, "FAILED: Field names must be unique.")
-        form_valid = False
-
-    return form_valid, request
-
-
-def validate_update_sensor_type_inputs(
-    type_name, field_name_list, type_to_update, request
-):
-    """
-    This validates the form before a user submits a new sensor type to prevent bad inputs
-    """
-
-    form_valid = True
-
-    # no type name
-    if not type_name:
-        messages.error(request, "FAILED: Type name is missing or invalid.")
-        form_valid = False
-
-    # missing field names
-    for name in field_name_list:
-        if not name:
-            messages.error(request, "FAILED: Type has missing field name(s).")
-            form_valid = False
-
-    # duplicated type name
-    for sensor_type in AGSensorType.objects.all():
-        if sensor_type.name == type_name and sensor_type != type_to_update:
-            messages.error(request, "FAILED: Type name is already taken.")
+            messages.error(request, "FAILED: Sensor has missing field name(s).")
             form_valid = False
 
     # duplicated field names
-    if len(field_name_list) > len(set(field_name_list)):
+    if len(field_names) > len(set(field_names)):
         messages.error(request, "FAILED: Field names must be unique.")
         form_valid = False
 
@@ -146,8 +91,7 @@ class CreateSensorView(TemplateView):
 
             sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
             new_format = generate_sensor_format(field_names, field_types, field_units)
-            # add additional validation of inputs here
-            valid = True
+            valid, request = validate_inputs(sensor_name, field_names, request)
             if valid:
                 sensor_to_update = AGSensorType.objects.get(name=sensor_name)
                 sensor_to_update.format = new_format
@@ -163,9 +107,7 @@ class CreateSensorView(TemplateView):
             # like " "
             type_name, field_names = remove_whitespace_caps(type_name, field_names)
             sensor_name = type_name  # need this due to structure of models (Sensor and Sensor Type)
-            valid, request = validate_add_sensor_type_inputs(
-                type_name, field_names, request
-            )
+            valid, request = validate_inputs(type_name, field_names, request)
             type_format = generate_sensor_format(field_names, field_types, field_units)
 
             if valid:
