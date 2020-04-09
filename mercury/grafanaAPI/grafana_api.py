@@ -118,7 +118,7 @@ class Grafana:
             return None
 
     def get_dashboard_url_by_name(self, name):
-        name = name.lower().replace(" ", "-")
+        name = name.strip().lower().replace(" ", "-")
 
         dashboard = self.get_dashboard_by_name(name)
         if dashboard:

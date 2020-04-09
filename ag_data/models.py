@@ -53,9 +53,6 @@ class AGSensor(models.Model):
     name = models.CharField(max_length=1024, blank=True)
     type_id = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
 
-    # def __str__(self):
-    #    return u"{0}".format(self.name)
-
 
 class AGMeasurement(models.Model):
     """Stores the information about sensor measurements, including timestamp, event, sensor
