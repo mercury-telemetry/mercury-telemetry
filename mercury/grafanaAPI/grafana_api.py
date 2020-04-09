@@ -306,7 +306,7 @@ class Grafana:
         db = {
             "id": None,
             "orgId": None,
-            "name": title,
+            "name": self.database_name,
             "type": "postgres",
             "access": "proxy",
             "url": self.database_hostname,
