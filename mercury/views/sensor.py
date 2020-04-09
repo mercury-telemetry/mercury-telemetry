@@ -184,7 +184,7 @@ def update_sensor_type(request, type_id):
 
 
 class CreateSensorView(TemplateView):
-    """This is the view for creating a new event."""
+    """This is the view for creating a new ...."""
 
     template_name = "sensor.html"
 
@@ -197,6 +197,9 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
+        if "submit_form" in request.POST:
+            print("so happy!!!")
+
         if "submit_new_sensor" in request.POST:
             type_name = request.POST.get("type-name")
             field_names = request.POST.getlist("field-names")
@@ -256,12 +259,10 @@ class CreateSensorView(TemplateView):
                             request, f"Failed to add panel to active dashboard: {error}"
                         )
 
-            types = AGSensorType.objects.all()
-            sensors = AGSensor.objects.all()
-            context = {
-                "sensor_types": types,
-                "type_name": type_name,
-                "type_format": type_format,
-                "sensors": sensors,
-            }
-            return render(request, self.template_name, context)
+        types = AGSensorType.objects.all()
+        sensors = AGSensor.objects.all()
+        context = {
+            "sensor_types": types,
+            "sensors": sensors,
+        }
+        return render(request, self.template_name, context)

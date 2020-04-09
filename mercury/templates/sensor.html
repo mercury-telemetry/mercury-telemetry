@@ -43,21 +43,36 @@
                             <p id="{{ sensor_type.id }}" > ID Number: {{ sensor.id }} </p>
                         </div>
                         <div class="button-box">
-                            <button type="button" onclick="" class="grafana-btn-block grafana-btn-gray"> Edit this sensor </button>
-                            <button type="button" onclick="" class="grafana-btn-block grafana-btn-red"> Delete this sensor </button>
+                            <button type="button" onclick="makeSensorEditable('{{ sensor.name }}')" id="{{ sensor.name }}-edit-button" class="grafana-btn-block grafana-btn-gray"> Edit Sensor </button>
+                            <button type="submit" form="{{ sensor.name }}-form" id="{{ sensor.name }}-submit-button" class="grafana-btn-block grafana-btn-green" style="display:none;"> Update Sensor </button>
+                            <button type="button" onclick="" class="grafana-btn-block grafana-btn-red"> Delete Sensor </button>
                         </div>
                     </div>
                     <br>
-                    <p class="inline-block-child"><b><u>Field Name</u></b></p>
-                    <p class="inline-block-child"><b><u>Data Type</u></b></p>
-                    <p class="inline-block-child"><b><u>Units</u></b></p>
+                    <div>
+                        <p class="inline-block-child"><b><u>Field Name</u></b></p>
+                        <p class="inline-block-child"><b><u>Data Type</u></b></p>
+                        <p class="inline-block-child"><b><u>Units</u></b></p>
+                    </div>
 
                     {% for field_name, unit_and_format in sensor.type_id.format.items %}
-                    <div>
+                    <div class="{{ sensor.name }}-view">
                         <p class="inline-block-child">{{field_name}}</p>
                         <p class="inline-block-child">{{unit_and_format.data_type}}</p>
                         <p class="inline-block-child">{{unit_and_format.unit}}</p>
                     </div>
+
+                    <form method="POST" name="edit_sensor_form"  id="{{ sensor.name }}-form" class="{{ sensor.name }}-edit" style="display:none;">
+                    <!-- name used by sensor.py by post in View Class; id is used by submit button; class and default style are used by sensor.js to toggle view -->
+                        {% csrf_token %}
+                        <input type="text" name="edit-field-names" value={{field_name}}   ></input>
+                        <select name="edit-data-type"/>
+                            <option> Numeric </option>
+                            <option> Character </option>
+                            <option> Boolean </option>
+                        </select>
+                        <input type="text" name="edit-units" value={{unit_and_format.unit}}  ></input>
+                    </form>
                     {% endfor %}
                 </div>
                 {% endfor %}
@@ -74,7 +89,7 @@
                 {% csrf_token %}
                 <div id = "type-container"> <!-- single div for configuring entire sensor type -->
                     <div class="inline-box">
-                        <label for="type-name"> <b>Type Name:</b> </label>
+                        <label for="type-name"> <b>Sensor Name:</b> </label>
                         <input type="text" id="type-name" name="type-name" required/>
                     </div> <br>
 
@@ -102,7 +117,7 @@
                                     </select>
                                 </td>
 
-                                <td> <input type="text" id="unit" name="units"/> </td>
+                                <td> <input type="text" id="units" name="units"/> </td>
                             </tr>
                         </tbody>
                     </table> <br>

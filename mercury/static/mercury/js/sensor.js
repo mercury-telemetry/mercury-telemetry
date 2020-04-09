@@ -102,3 +102,23 @@ function displayEditSensorTypes() {
     sessionStorage.setItem('viewing', 'editingSensorTypes');
     selectView()
 }
+
+function makeSensorEditable(sensor_name) {
+    var view_name = sensor_name.concat("-view");
+    var edit_name = sensor_name.concat("-edit");
+    var view_sensors = document.getElementsByClassName(view_name);
+    var edit_sensors = document.getElementsByClassName(edit_name);
+    for(item of view_sensors){
+        item.style.display = "none";
+    }
+    for(item of edit_sensors){
+        item.style.display = "block";
+    }
+
+    var button_name = sensor_name.concat("-submit-button")
+    document.getElementById(button_name).style.display = "block";
+
+    var edit_button_name = sensor_name.concat("-edit-button")
+    document.getElementById(edit_button_name).style.display = "none";
+
+}
