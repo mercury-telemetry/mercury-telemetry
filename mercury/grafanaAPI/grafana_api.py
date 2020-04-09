@@ -318,12 +318,6 @@ class Grafana:
             "jsonData": {"postgresVersion": 903, "sslmode": require_ssl},
         }
 
-        print("CREATING A POSTGRES DB WITH THE FOLLOWING CREDS:")
-        print(self.database_hostname)
-        print(self.database_password)
-        print(self.database_username)
-        print(self.database_name)
-
         headers = {"Content-Type": "application/json"}
         response = requests.post(
             url=self.endpoints["datasources"],
