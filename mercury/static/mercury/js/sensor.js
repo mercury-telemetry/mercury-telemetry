@@ -79,7 +79,4 @@ function makeSensorEditable(sensor_name, offset) {
 
     var delete_button_name = sensor_name.concat("-delete-button")
     document.getElementById(delete_button_name).style.display = displayViews[1-offset];
-
-
-
 }

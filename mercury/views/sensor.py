@@ -96,76 +96,6 @@ def validate_update_sensor_type_inputs(
     return form_valid, request
 
 
-def delete_sensor_type(request, type_id):
-    """This deletes a sensor type from the database based on user button click"""
-
-    valid_id = False
-    for sensor_type in AGSensorType.objects.all():
-        if sensor_type.id == type_id:
-            valid_id = True
-    if valid_id:
-        for (
-            sensor
-        ) in (
-            AGSensor.objects.all()
-        ):  # delete sensors with this type first to avoid foreignkey error
-            sensor.delete()
-        type_to_delete = AGSensorType.objects.get(id=type_id)
-        type_to_delete.delete()
-    else:
-        messages.error(
-            request, "FAILED: Cannot find sensor type with ID " + str(type_id) + "."
-        )
-    return redirect("/sensor")
-
-
-def update_sensor(request, sensor_id):
-    """This updates a sensor in the database based on user input"""
-
-    sensor_to_update = AGSensor.objects.get(id=sensor_id)
-    sensor_name = request.POST.get("edit-sensor-name")
-
-    # reformat then validate name to avoid duplicated names or bad inputs like " "
-    sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
-    valid, request = validate_add_sensor_inputs(sensor_name, request)
-
-    if valid:
-        sensor_to_update.name = sensor_name
-        sensor_to_update.save()
-    return redirect("/sensor")
-
-
-def update_sensor_type(request, type_id):
-    """This updates a sensor type in the database based on user input"""
-
-    type_to_update = AGSensorType.objects.get(id=type_id)
-    type_name = request.POST.get("edit-type-name")
-    field_names = request.POST.getlist("edit-field-names")
-    field_types = request.POST.getlist("edit-data-types")
-    field_units = request.POST.getlist("edit-units")
-
-    # reformat then validate inputs to avoid duplicated names or bad inputs like " "
-    type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
-    field_names = [string.strip().lower() for string in field_names]
-    valid, request = validate_update_sensor_type_inputs(
-        type_name, field_names, type_to_update, request
-    )
-
-    # create sensor format which is dictionary of dictionaries
-    type_format = {}
-    fields = zip(field_names, field_types, field_units)
-    for field in fields:
-        type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
-
-    if valid:
-        type_to_update.name = type_name
-        type_to_update.processing_formula = 0
-        type_to_update.format = type_format
-        type_to_update.save()
-
-    return redirect("/sensor")
-
-
 def delete_sensor(request, sensor_name):
     """This deletes a sensor from the database based on a button click"""
     sensor_to_delete = AGSensor.objects.get(name=sensor_name)
@@ -183,6 +113,7 @@ def remove_whitespace_caps(name, field_list):
     return_list = [string.strip().lower() for string in field_list]
     return name, return_list
 
+
 def generate_sensor_format(field_names, field_data_types, units):
     """ Return proper JSON format for sensor based on form submission.
         Format structure is a dictionary of dictionaries """
@@ -191,6 +122,7 @@ def generate_sensor_format(field_names, field_data_types, units):
     for field in fields:
         sensor_format[field[0]] = {"data_type": field[1], "unit": field[2]}
     return sensor_format
+
 
 class CreateSensorView(TemplateView):
     """This is the view for creating a new ...."""
