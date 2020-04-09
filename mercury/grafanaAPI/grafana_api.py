@@ -334,6 +334,7 @@ class Grafana:
         print(response)
 
         datasource = response.json()
+        print(datasource)
 
         message = datasource.get("message")
         if message is None:
