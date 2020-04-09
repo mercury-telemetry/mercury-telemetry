@@ -167,6 +167,11 @@ class GFConfigView(TemplateView):
                 gf_db_pw=DB["default"]["PASSWORD"],
             )
 
+            try:
+                grafana.create_postgres_datasource()
+            except ValueError as error:
+                messages.error(request, f"Datasource couldn't be created. {error}")
+
             # Create Grafana instance with host and token
             grafana = Grafana(config_data)
             try:
@@ -186,11 +191,6 @@ class GFConfigView(TemplateView):
 
             except ValueError as error:
                 messages.error(request, f"Grafana initial set up failed: {error}")
-
-            try:
-                grafana.create_postgres_datasource()
-            except ValueError as error:
-                messages.error(request, f"Datasource couldn't be created. {error}")
 
             configs = GFConfig.objects.all().order_by("id")
             config_form = GFConfigForm(request.POST)
