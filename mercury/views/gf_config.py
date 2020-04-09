@@ -167,13 +167,14 @@ class GFConfigView(TemplateView):
                 gf_db_pw=DB["default"]["PASSWORD"],
             )
 
+            # Create Grafana instance with host and token
+            grafana = Grafana(config_data)
+
             try:
                 grafana.create_postgres_datasource()
             except ValueError as error:
                 messages.error(request, f"Datasource couldn't be created. {error}")
 
-            # Create Grafana instance with host and token
-            grafana = Grafana(config_data)
             try:
                 grafana.validate_credentials()
                 config_data.gf_current = True
