@@ -331,6 +331,7 @@ class Grafana:
             json=db,
             auth=("api_key", self.api_token),
         )
+        print(response)
 
         datasource = response.json()
 
