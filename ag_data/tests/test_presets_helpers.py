@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils.dateparse import parse_datetime
 
 from ag_data.models import AGVenue, AGEvent, AGSensorType, AGSensor, AGMeasurement
-from ag_data import presets
+from ag_data.presets import sample_user_data as presets
 
 
 class PresetsHelpersTest(TestCase):
