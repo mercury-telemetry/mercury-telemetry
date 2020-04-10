@@ -6,15 +6,15 @@ from django.utils import timezone
 from ag_data.simulator import Simulator
 from ag_data.models import AGMeasurement
 from ag_data.presets import helpers as preset_helpers
-from ag_data.presets import built_in_sensor_types as bist
+from ag_data.presets import built_in_content as bic
 from ag_data.presets import sample_user_data
 
 
 class SimulatorTest(TestCase):
     def setUp(self):
         self.sim = Simulator()
-        self.venue = preset_helpers.createVenueFromPresets(0)
-        self.event = preset_helpers.createEventFromPresets(self.venue, 0)
+        self.venue = preset_helpers.createVenueFromPresetAtIndex(0)
+        self.event = preset_helpers.createEventFromPresetAtIndex(self.venue, 0)
 
         # self.sim.venue = self.venue
         # self.sim.event = self.event
@@ -80,7 +80,7 @@ class SimulatorTest(TestCase):
         self.sim.createAVenueFromPresets(self.randVenueIndex())
         self.sim.createAnEventFromPresets(randEventIndex)
 
-        for index in range(len(bist.built_in_sensor_types)):
+        for index in range(len(bic.built_in_sensor_types)):
             self.sim.createASensorFromPresets(
                 index, cascadeCreation=True
             )  # FIXME: add another condition
@@ -97,7 +97,7 @@ class SimulatorTest(TestCase):
             # test measurement payload format by cross comparison of all keys in payload
             # and the expected specification
             measurement_payload = measurement_in_database.value
-            correct_payload_format = bist.built_in_sensor_types[index][
+            correct_payload_format = bic.built_in_sensor_types[index][
                 "agSensorTypeFormat"
             ]
 
