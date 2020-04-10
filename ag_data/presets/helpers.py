@@ -34,7 +34,7 @@ def createVenueFromPresetAtIndex(index):
     return venue
 
 
-def createEventFromPresets(venue, index):
+def createEventFromPresetAtIndex(venue, index):
     """Create an event from available presets of events
 
     Arguments:

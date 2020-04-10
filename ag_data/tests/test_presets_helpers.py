@@ -1,4 +1,5 @@
 from decimal import Decimal
+from random import randint
 
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
@@ -10,8 +11,8 @@ from ag_data import utilities
 from ag_data.presets import helpers
 
 
-class PresetsHelpersTest(TestCase):
-    def test_createVenueFromPresetAtIndex_in_range(self):
+class CreateVenueFromPresetsAtIndexTest(TestCase):
+    def test_in_range(self):
         totalTestVenues = len(presets.sample_venues)
 
         for index in range(totalTestVenues):
@@ -27,7 +28,7 @@ class PresetsHelpersTest(TestCase):
                 venue.longitude, Decimal(str(reference["agVenueLongitude"]))
             )
 
-    def test_createVenueFromPresetAtIndex_out_of_range(self):
+    def test_out_of_range(self):
         totalTestVenues = len(presets.sample_venues)
 
         with self.assertRaises(Exception) as e:
@@ -39,7 +40,7 @@ class PresetsHelpersTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def test_createVenueFromPresetAtIndex_multiple(self):
+    def test_multiple(self):
         totalTestVenues = len(presets.sample_venues)
 
         for index in range(totalTestVenues):
@@ -49,7 +50,50 @@ class PresetsHelpersTest(TestCase):
 
         self.assertEqual(totalTestVenues, AGVenue.objects.count())
 
-    def test_createSensorFromPresetAtIndex_in_range(self):
+
+class CreateEventFromPresetsAtIndexTest(TestCase):
+    def setUp(self):
+        self.totalTestEvents = len(presets.sample_events)
+
+        randomVenuePresetIndex = randint(0, len(presets.sample_venues) - 1)
+        self.testVenue = helpers.createVenueFromPresetAtIndex(randomVenuePresetIndex)
+
+    def test_in_range(self):
+        for index in range(self.totalTestEvents):
+            reference = presets.sample_events[index]
+
+            eventReturned = helpers.createEventFromPresetAtIndex(self.testVenue, index)
+
+            event = AGEvent.objects.get(pk=eventReturned.uuid)
+
+            self.assertEqual(eventReturned, event)
+
+            self.assertEqual(event.name, reference["agEventName"])
+            self.assertEqual(event.date, parse_datetime(reference["agEventDate"]))
+            self.assertEqual(event.description, reference["agEventDescription"])
+            self.assertEqual(event.venue_uuid, self.testVenue)
+
+    def test_out_of_range(self):
+        with self.assertRaises(Exception) as e:
+            helpers.createEventFromPresetAtIndex(self.testVenue, self.totalTestEvents)
+        correct_exception_message = (
+            "Cannot find requested event (index "
+            + str(self.totalTestEvents)
+            + ") from presets"
+        )
+        self.assertEqual(str(e.exception), correct_exception_message)
+
+    def test_multiple(self):
+        for index in range(self.totalTestEvents):
+            reference = presets.sample_events[index]
+
+            event = helpers.createEventFromPresetAtIndex(self.testVenue, index)
+
+        self.assertEqual(self.totalTestEvents, AGEvent.objects.count())
+
+
+class CreateSensorFromPresetsAtIndexTest(TestCase):
+    def test_in_range(self):
         totalTestSensors = len(presets.sample_sensors)
         utilities.createOrResetAllBuiltInSensorTypes()
 
@@ -62,7 +106,7 @@ class PresetsHelpersTest(TestCase):
             self.assertEqual(sensor.name, reference["agSensorName"])
             self.assertEqual(sensor.type_id.id, reference["agSensorType"])
 
-    def test_createSensorFromPresetAtIndex_out_of_range(self):
+    def test_out_of_range(self):
         totalTestSensors = len(presets.sample_sensors)
 
         with self.assertRaises(Exception) as e:
@@ -74,7 +118,7 @@ class PresetsHelpersTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def test_createSensorFromPresetAtIndex_stress(self):
+    def test_multiple(self):
         totalTestSensors = len(presets.sample_sensors)
         utilities.createOrResetAllBuiltInSensorTypes()
 
