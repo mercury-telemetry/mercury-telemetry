@@ -96,6 +96,7 @@ class TestGrafana(TestCase):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
+        self.event_delete_url = "mercury:delete_event"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -370,7 +371,6 @@ class TestGrafana(TestCase):
         )
 
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
-
         # Create an event
         event = self.create_venue_and_event(self.event_name)
 
@@ -542,3 +542,44 @@ class TestGrafana(TestCase):
         self.assertTrue(
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
+
+    def test_delete_event_no_data_deletes_grafana_dashboard(self):
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        # Create a venue
+        venue = AGVenue.objects.create(
+            name=self.event_name,
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+
+        # Retrieve event object
+        event = AGEvent.objects.all().first()
+
+        # Delete the event by posting to the delete view
+        self.client.post(reverse(self.event_delete_url, kwargs={"event_uuid":
+                                                                    event.uuid}))
+        # Try and retrieve the dashboard
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        print(dashboard)
+        self.assertFalse(dashboard)
+
+    # Generate sample data for the event, this should prevent the dashboard from
+    # being deleted
+    def test_delete_event_data_keeps_grafana_dashboard(self):
+        self.assertTrue(False)
