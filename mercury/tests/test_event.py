@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from mercury.models import EventCodeAccess, GFConfig
+from mercury.models import EventCodeAccess
 from ag_data.models import AGEvent, AGVenue
 import datetime
 
@@ -173,8 +173,9 @@ class TestEventView(TestCase):
         self.assertEquals(AGEvent.objects.all().count(), 1)
 
         # Delete the event
-        self.client.post(reverse(self.event_delete_url, kwargs={"event_uuid":
-                                                                    event.uuid}))
+        self.client.post(
+            reverse(self.event_delete_url, kwargs={"event_uuid": event.uuid})
+        )
 
         # Confirm that event was deleted
         self.assertEquals(AGEvent.objects.all().count(), 0)

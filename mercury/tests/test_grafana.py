@@ -575,8 +575,9 @@ class TestGrafana(TestCase):
         event = AGEvent.objects.all().first()
 
         # Delete the event by posting to the delete view
-        self.client.post(reverse(self.event_delete_url, kwargs={"event_uuid":
-                                                                    event.uuid}))
+        self.client.post(
+            reverse(self.event_delete_url, kwargs={"event_uuid": event.uuid})
+        )
         # Try and retrieve the dashboard
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
 

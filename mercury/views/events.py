@@ -62,7 +62,7 @@ def delete_event(request, event_uuid=None):
             messages.error(
                 request,
                 f"Failed to delete Event dashboard from Grafana instance: "
-                f"{gfconfig.gf_host}"
+                f"{gfconfig.gf_host}",
             )
 
     event_to_delete.delete()
