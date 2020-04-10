@@ -344,7 +344,7 @@ class TestGrafana(TestCase):
         sensor_type.save()
 
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
@@ -365,8 +365,9 @@ class TestGrafana(TestCase):
 
         # Note: converting test_sensor_name to lowercase because currently
         # sensor names are automatically capitalized when they are created
-        self.assertEquals(dashboard["dashboard"]["panels"][0]["title"],
-                          self.test_sensor_name.lower())
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
+        )
 
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
 

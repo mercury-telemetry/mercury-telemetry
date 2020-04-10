@@ -63,7 +63,7 @@ class Grafana:
         :param input: string
         :return: reformatted string
         """
-        return input.strip().lower().replace(" ","-")
+        return input.strip().lower().replace(" ", "-")
 
     def generate_random_string(self, length):
         """
@@ -281,9 +281,7 @@ class Grafana:
 
     def delete_dashboard_by_name(self, name):
         search_name = self.create_safe_string(name)
-        endpoint = os.path.join(
-            self.hostname, "api/dashboards/db", search_name
-        )
+        endpoint = os.path.join(self.hostname, "api/dashboards/db", search_name)
         response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
         dashboard = response.json().get("dashboard")

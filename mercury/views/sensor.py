@@ -287,7 +287,8 @@ class CreateSensorView(TemplateView):
                             grafana.add_panel(new_sensor, active_event)
                         except ValueError as error:
                             messages.error(
-                                request, f"Failed to add panel to active dashboard: {error}"
+                                request,
+                                f"Failed to add panel to active dashboard: {error}",
                             )
 
                 context = {"sensors": sensors, "sensor_types": sensor_types}
