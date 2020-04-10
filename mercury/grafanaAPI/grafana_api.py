@@ -57,6 +57,14 @@ class Grafana:
         self.base_panel_width = 15
         self.base_panel_height = 12
 
+    def create_safe_string(self, input):
+        """
+        Reformats the input string to be lowercase and with spaces replaced by '-'.
+        :param input: string
+        :return: reformatted string
+        """
+        return input.strip().lower().replace(" ","-")
+
     def generate_random_string(self, length):
         """
         Generates a random string of letters of given length.
@@ -107,8 +115,10 @@ class Grafana:
         """
         # If there are spaces in the name, the GF API will replace them with dashes
         # to generate the "slug". A slug can be used to query the API.
+        formatted_event_name = self.create_safe_string(event_name)
+
         endpoint = os.path.join(
-            self.hostname, "api/dashboards/db", event_name.lower().replace(" ", "-")
+            self.hostname, "api/dashboards/db", formatted_event_name
         )
         response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
@@ -118,9 +128,9 @@ class Grafana:
             return None
 
     def get_dashboard_url_by_name(self, name):
-        name = name.strip().lower().replace(" ", "-")
+        search_name = self.create_safe_string(name)
 
-        dashboard = self.get_dashboard_by_name(name)
+        dashboard = self.get_dashboard_by_name(search_name)
         if dashboard:
             endpoint = dashboard["meta"]["url"].strip("/")
             url = os.path.join(self.hostname, endpoint)
@@ -270,8 +280,9 @@ class Grafana:
         return False
 
     def delete_dashboard_by_name(self, name):
+        search_name = self.create_safe_string(name)
         endpoint = os.path.join(
-            self.hostname, "api/dashboards/db", name.lower().replace(" ", "-")
+            self.hostname, "api/dashboards/db", search_name
         )
         response = requests.get(url=endpoint, auth=("api_key", self.api_token))
 
