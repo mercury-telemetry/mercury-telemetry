@@ -93,44 +93,4 @@ class PresetsHelpersTest(TestCase):
         self.assertEqual(AGSensor.objects.all().count(), 2)
         self.assertEqual(AGMeasurement.objects.all().count(), 25)
 
-    def inactive_test_create_sensor_type(self):  # FIXME: reactivate this test
-        totalTestSensorTypes = len(presets.sensor_type_presets)
-
-        # test sensor type creation for indices in range
-        for index in range(totalTestSensorTypes):
-            self.sim.createOrResetASensorTypeFromPresets(index)
-
-            expected_type_id = presets.sensor_type_presets[index]
-
-            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.id)
-            self.assertEqual(sensorType.name, expected_type_id["agSensorTypeName"])
-            self.assertEqual(
-                sensorType.processing_formula, expected_type_id["agSensorTypeFormula"]
-            )
-            self.assertEqual(sensorType.format, expected_type_id["agSensorTypeFormat"])
-
-            # test when the method is called when the record already exists
-
-            sensorType.name = expected_type_id["agSensorTypeName"] + " "
-            sensorType.processing_formula = expected_type_id["agSensorTypeFormula"] + 1
-            sensorType.format = [expected_type_id["agSensorTypeFormat"]]
-            sensorType.save()
-
-            self.sim.createOrResetASensorTypeFromPresets(index)
-            sensorType = AGSensorType.objects.get(pk=self.sim.sensorType.id)
-
-            self.assertEqual(sensorType.name, expected_type_id["agSensorTypeName"])
-            self.assertEqual(
-                sensorType.processing_formula, expected_type_id["agSensorTypeFormula"]
-            )
-            self.assertEqual(sensorType.format, expected_type_id["agSensorTypeFormat"])
-
-        # test sensor type creation for index out of range
-        with self.assertRaises(Exception) as e:
-            self.sim.createOrResetASensorTypeFromPresets(totalTestSensorTypes)
-        correct_exception_message = (
-            "Cannot find requested sensor type (index "
-            + str(totalTestSensorTypes)
-            + ") from presets"
-        )
-        self.assertEqual(str(e.exception), correct_exception_message)
+    
