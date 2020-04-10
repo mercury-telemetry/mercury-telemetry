@@ -12,10 +12,11 @@ from ag_data.presets import helpers
 
 
 class CreateVenueFromPresetsAtIndexTest(TestCase):
-    def test_in_range(self):
-        totalTestVenues = len(presets.sample_venues)
+    def setUp(self):
+        self.totalTestVenues = len(presets.sample_venues)
 
-        for index in range(totalTestVenues):
+    def test_in_range(self):
+        for index in range(self.totalTestVenues):
             reference = presets.sample_venues[index]
 
             venue = helpers.createVenueFromPresetAtIndex(index)
@@ -29,26 +30,22 @@ class CreateVenueFromPresetsAtIndexTest(TestCase):
             )
 
     def test_out_of_range(self):
-        totalTestVenues = len(presets.sample_venues)
-
         with self.assertRaises(Exception) as e:
-            helpers.createVenueFromPresetAtIndex(totalTestVenues)
+            helpers.createVenueFromPresetAtIndex(self.totalTestVenues)
         correct_exception_message = (
             "Cannot find requested venue (index "
-            + str(totalTestVenues)
+            + str(self.totalTestVenues)
             + ") from presets"
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_multiple(self):
-        totalTestVenues = len(presets.sample_venues)
-
-        for index in range(totalTestVenues):
+        for index in range(self.totalTestVenues):
             reference = presets.sample_venues[index]
 
             venue = helpers.createVenueFromPresetAtIndex(index)
 
-        self.assertEqual(totalTestVenues, AGVenue.objects.count())
+        self.assertEqual(self.totalTestVenues, AGVenue.objects.count())
 
 
 class CreateEventFromPresetsAtIndexTest(TestCase):
