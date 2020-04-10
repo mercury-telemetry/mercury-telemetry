@@ -10,6 +10,21 @@ class UtilityFunctionUnitTest(TestCase):
     def setUp(self):
         self.totalTestSensorTypes = len(bist.built_in_sensor_types)
 
+    def test_createOrResetAllBuiltInSensorTypes(self):
+
+        utilities.createOrResetAllBuiltInSensorTypes()
+
+        for index in range(self.totalTestSensorTypes):
+            expected_sensor_type = bist.built_in_sensor_types[index]
+
+            self.checkSensorTypeRecord(expected_sensor_type)
+            
+            for index in range(self.totalTestSensorTypes):
+
+                reference = bist.built_in_sensor_types[index]
+
+                self.checkSensorTypeRecord(reference)
+
     def test_createOrResetBuiltInSensorTypeAtPresetIndex_creation(self):
 
         for index in range(self.totalTestSensorTypes):
