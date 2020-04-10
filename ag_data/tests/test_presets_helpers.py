@@ -11,27 +11,25 @@ from ag_data.presets import helpers
 
 
 class PresetsHelpersTest(TestCase):
-    def inactive_test_simulator_create_venue(self):  # FIXME: reactivate this test
-        totalTestVenues = len(presets.venue_presets)
+    def test_createVenueFromPresetAtIndex_in_range(self):
+        totalTestVenues = len(presets.sample_venues)
 
-        # test venue creation for indices in range
         for index in range(totalTestVenues):
-            self.sim.createAVenueFromPresets(index)
-            current_venue = presets.venue_presets[index]
+            reference = presets.sample_venues[index]
 
-            venue = AGVenue.objects.get(pk=self.sim.venue.uuid)
-            self.assertEqual(venue.name, current_venue["agVenueName"])
-            self.assertEqual((venue.description), current_venue["agVenueDescription"])
-            self.assertEqual(
-                venue.latitude, Decimal(str(current_venue["agVenueLatitude"]))
-            )
-            self.assertEqual(
-                venue.longitude, Decimal(str(current_venue["agVenueLongitude"]))
-            )
+            venue = helpers.createVenueFromPresetAtIndex(index)
+            venue = AGVenue.objects.get(pk=venue.uuid)
 
-        # test event creation for index out of range
+            self.assertEqual(venue.name, reference["agVenueName"])
+            self.assertEqual(venue.description, reference["agVenueDescription"])
+            self.assertEqual(venue.latitude, Decimal(str(reference["agVenueLatitude"])))
+            self.assertEqual(venue.longitude, Decimal(str(reference["agVenueLongitude"])))
+
+    def test_createVenueFromPresetAtIndex_out_of_range(self):
+        totalTestVenues = len(presets.sample_venues)
+
         with self.assertRaises(Exception) as e:
-            self.sim.createAVenueFromPresets(totalTestVenues)
+            helpers.createVenueFromPresetAtIndex(totalTestVenues)
         correct_exception_message = (
             "Cannot find requested venue (index "
             + str(totalTestVenues)

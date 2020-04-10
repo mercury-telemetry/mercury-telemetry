@@ -3,7 +3,7 @@ from ag_data.presets import sample_user_data
 from ag_data import utilities
 
 
-def createVenueFromPresets(index):
+def createVenueFromPresetAtIndex(index):
     """Create a venue from available presets of venues
 
     Arguments:
