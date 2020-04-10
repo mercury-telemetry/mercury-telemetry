@@ -9,13 +9,17 @@ from ag_data import models
 def fPass(timestamp, sensor, measurement_payload):
     print("passing")
 
-    return None
+    result = {}
+
+    return result
 
 
 def fMercurySimpleTemperatureSensor(timestamp, sensor, measurement_payload):
     print("fMercurySimpleTemperatureSensor")
 
-    return None
+    result = {}
+
+    return result
 
 
 def fMercuryDualTemperatureSensor(timestamp, sensor, measurement_payload):
@@ -33,7 +37,7 @@ def fMercuryFlowSensor(timestamp, sensor, measurement_payload):
 
     latest = models.AGMeasurement.objects.filter(sensor_id=sensor.id)
 
-    result = None
+    result = {}
 
     if latest.count() == 0:
         result = {"gasLevel": 100}
@@ -43,9 +47,7 @@ def fMercuryFlowSensor(timestamp, sensor, measurement_payload):
 
         lastResult = latest.value["result"]["gasLevel"]
 
-        if lastResult is None:
-            result = None
-        else:
+        if lastResult is not None:
             result = {
                 "gasLevel": lastResult
                 - measurement_payload["volumetricFlow"]
