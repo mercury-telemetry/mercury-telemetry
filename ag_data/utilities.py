@@ -86,8 +86,10 @@ def assertSensor(sensor):
 
 
 def getNextAvailableSensorTypeID():
-    sensorTypeWithMaxID = models.AGSensorType.objects.latest("id")
-    maxID = sensorTypeWithMaxID.id
+    maxID = 0
+    if models.AGSensorType.objects.count() > 0:
+        maxID = models.AGSensorType.objects.latest("id").id
+
     if maxID % 2 == 0:
         maxID = maxID + 1
     else:
