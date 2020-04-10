@@ -4,7 +4,7 @@ from random import randint
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
 
-from ag_data.models import AGVenue, AGEvent, AGSensorType, AGSensor, AGMeasurement
+from ag_data.models import AGVenue, AGEvent, AGSensor
 from ag_data.presets import sample_user_data as presets
 from ag_data import utilities
 
@@ -41,9 +41,7 @@ class CreateVenueFromPresetsAtIndexTest(TestCase):
 
     def test_multiple(self):
         for index in range(self.totalTestVenues):
-            reference = presets.sample_venues[index]
-
-            venue = helpers.createVenueFromPresetAtIndex(index)
+            helpers.createVenueFromPresetAtIndex(index)
 
         self.assertEqual(self.totalTestVenues, AGVenue.objects.count())
 
@@ -82,9 +80,7 @@ class CreateEventFromPresetsAtIndexTest(TestCase):
 
     def test_multiple(self):
         for index in range(self.totalTestEvents):
-            reference = presets.sample_events[index]
-
-            event = helpers.createEventFromPresetAtIndex(self.testVenue, index)
+            helpers.createEventFromPresetAtIndex(self.testVenue, index)
 
         self.assertEqual(self.totalTestEvents, AGEvent.objects.count())
 
@@ -94,7 +90,7 @@ class CreateSensorFromPresetsAtIndexTest(TestCase):
         self.totalTestSensors = len(presets.sample_sensors)
 
         utilities.createOrResetAllBuiltInSensorTypes()
-        
+
     def test_in_range(self):
         for index in range(self.totalTestSensors):
             reference = presets.sample_sensors[index]
@@ -117,8 +113,6 @@ class CreateSensorFromPresetsAtIndexTest(TestCase):
 
     def test_multiple(self):
         for index in range(self.totalTestSensors):
-            reference = presets.sample_sensors[index]
-
-            sensor = helpers.createSensorFromPresetAtIndex(index)
+            helpers.createSensorFromPresetAtIndex(index)
 
         self.assertEqual(self.totalTestSensors, AGSensor.objects.count())
