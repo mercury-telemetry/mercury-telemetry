@@ -70,7 +70,7 @@ def createEventFromPresets(venue, index):
     return event
 
 
-def createSensorFromPresets(index):
+def createSensorFromPresetAtIndex(index):
     """Create a sensor from available presets of sensors
 
     Arguments:

@@ -5,6 +5,9 @@ from django.utils.dateparse import parse_datetime
 
 from ag_data.models import AGVenue, AGEvent, AGSensorType, AGSensor, AGMeasurement
 from ag_data.presets import sample_user_data as presets
+from ag_data import utilities
+
+from ag_data.presets import helpers
 
 
 class PresetsHelpersTest(TestCase):
@@ -60,24 +63,24 @@ class PresetsHelpersTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def test_create_sensor(self):
-        totalTestSensors = len(presets.sensor_presets)
+    def test_createSensorFromPresetAtIndex_in_range(self):
+        totalTestSensors = len(presets.sample_sensors)
+        utilities.createOrResetAllBuiltInSensorTypes()
 
-        # test sensor creation for indices in range
         for index in range(totalTestSensors):
-            # create the corresponding sensor type, if it is not present
-            sensorTypeID = presets.sensor_presets[index]["agSensorType"]
-            self.sim.createOrResetASensorTypeFromPresets(sensorTypeID)
+            reference = presets.sample_sensors[index]
 
-            self.sim.createASensorFromPresets(index)
-            current_sensor = presets.sensor_presets[index]
+            sensor = helpers.createSensorFromPresetAtIndex(index)
+            sensor = AGSensor.objects.get(pk=sensor.id)
 
-            sensor = AGSensor.objects.get(pk=self.sim.sensor.id)
-            self.assertEqual(sensor.name, current_sensor["agSensorName"])
+            self.assertEqual(sensor.name, reference["agSensorName"])
+            self.assertEqual(sensor.type_id.id, reference["agSensorType"])
 
-        # test sensor creation for index out of range
+    def test_createSensorFromPresetAtIndex_out_of_range(self):
+        totalTestSensors = len(presets.sample_sensors)
+
         with self.assertRaises(Exception) as e:
-            self.sim.createASensorFromPresets(totalTestSensors)
+            helpers.createSensorFromPresetAtIndex(totalTestSensors)
         correct_exception_message = (
             "Cannot find requested sensor (index "
             + str(totalTestSensors)
