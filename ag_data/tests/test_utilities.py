@@ -1,28 +1,28 @@
 from django.test import TestCase
 
 from ag_data.models import AGSensorType
-from ag_data.presets import built_in_sensor_types as bist
+from ag_data.presets import built_in_content as built_in_content
 
 from ag_data import utilities
 
 
 class UtilityFunctionUnitTest(TestCase):
     def setUp(self):
-        self.totalTestSensorTypes = len(bist.built_in_sensor_types)
+        self.totalTestSensorTypes = len(built_in_content.built_in_sensor_types)
 
     def test_createOrResetAllBuiltInSensorTypes(self):
 
         utilities.createOrResetAllBuiltInSensorTypes()
 
         for index in range(self.totalTestSensorTypes):
-            reference = bist.built_in_sensor_types[index]
+            reference = built_in_content.built_in_sensor_types[index]
 
             self.checkSensorTypeRecord(reference)
 
     def test_createOrResetBuiltInSensorTypeAtPresetIndex_creation(self):
 
         for index in range(self.totalTestSensorTypes):
-            reference = bist.built_in_sensor_types[index]
+            reference = built_in_content.built_in_sensor_types[index]
 
             utilities.createOrResetBuiltInSensorTypeAtPresetIndex(index)
 
@@ -31,7 +31,7 @@ class UtilityFunctionUnitTest(TestCase):
     def test_createOrResetBuiltInSensorTypeAtPresetIndex_reset(self):
 
         for index in range(self.totalTestSensorTypes):
-            reference = bist.built_in_sensor_types[index]
+            reference = built_in_content.built_in_sensor_types[index]
 
             utilities.createOrResetBuiltInSensorTypeAtPresetIndex(index)
 

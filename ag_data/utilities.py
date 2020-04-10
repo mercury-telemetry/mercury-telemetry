@@ -1,5 +1,5 @@
 from ag_data import models
-from ag_data.presets.built_in_sensor_types import built_in_sensor_types
+from ag_data.presets.built_in_content import built_in_sensor_types
 
 
 def createOrResetAllBuiltInSensorTypes():
