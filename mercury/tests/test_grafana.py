@@ -44,6 +44,16 @@ class TestGrafana(TestCase):
         "right_gust": {"unit": "km/h", "format": "float"},
     }
 
+    test_type_object_name = "test-sensor-object"
+    test_sensor = {"name": "wind speed sensor", "type_id": test_type_object_name}
+    demo_sensor_type = {
+        "type-name": "fuel level",
+        "processing formula": 0,
+        "field-names": ["test-field-1", "test-field-2"],
+        "data-types": ["test-data-type-1", "test-data-type-2"],
+        "units": ["test-unit-1", "test-unit-2"],
+    }
+
     test_event_data = {
         "name": "Sunny Day Test Drive",
         "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
@@ -72,6 +82,7 @@ class TestGrafana(TestCase):
         config.save()
         return config
 
+    # Returns event
     def create_venue_and_event(self, event_name):
         venue = AGVenue.objects.create(
             name=self.test_venue_data["name"],
@@ -326,6 +337,55 @@ class TestGrafana(TestCase):
         for i in range(10):
             name = "".join([self.test_sensor_name, str(i)])
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
+
+    def test_add_sensor_creates_panel_in_dashboard(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        # self.create_venue_and_event(self.event_name)
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        # POST sensor data
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit_new_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "select-sensor-type": self.test_sensor_type,
+            },
+        )
+
+        """# POST sensor data
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit": "",
+                "type-name": self.demo_sensor_type["type-name"],
+                "field-names": self.demo_sensor_type["field-names"],
+                "data-types": self.demo_sensor_type["data-types"],
+                "units": self.demo_sensor_type["units"],
+            },
+        )"""
+
+        # Fetch the dashboard again
+        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        self.assertTrue(dashboard)
+
+        # Confirm that a panel was added to the dashboard with the expected title
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+        self.assertTrue(dashboard["dashboard"]["panels"][0]["title"] ==
+                        self.test_sensor_name)
 
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
 
