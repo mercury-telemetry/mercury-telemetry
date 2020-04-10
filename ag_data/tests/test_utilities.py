@@ -6,66 +6,59 @@ from ag_data.presets import built_in_sensor_types as bist
 from ag_data import utilities
 
 
-class UtilityFunctionsTest(TestCase):
-    def test_createOrResetBuiltInSensorTypeAtPresetIndex(self):
-        totalTestSensorTypes = len(bist.built_in_sensor_types)
+class UtilityFunctionUnitTest(TestCase):
+    def setUp(self):
+        self.totalTestSensorTypes = len(bist.built_in_sensor_types)
 
-        # test sensor type creation for indices in range
+    def test_createOrResetBuiltInSensorTypeAtPresetIndex_creation(self):
 
-        for index in range(totalTestSensorTypes):
-
-            # test object (sensor type) creation
+        for index in range(self.totalTestSensorTypes):
 
             utilities.createOrResetBuiltInSensorTypeAtPresetIndex(index)
 
-            expected_sensor_type = bist.built_in_sensor_types[index]
+            reference = bist.built_in_sensor_types[index]
 
-            sensorType = AGSensorType.objects.get(
-                pk=expected_sensor_type["agSensorTypeID"]
-            )
+            self.checkSensorTypeRecord(reference)
 
-            self.assertEqual(sensorType.name, expected_sensor_type["agSensorTypeName"])
-            self.assertEqual(
-                sensorType.processing_formula,
-                expected_sensor_type["agSensorTypeFormula"],
-            )
-            self.assertEqual(
-                sensorType.format, expected_sensor_type["agSensorTypeFormat"]
-            )
+    def test_createOrResetBuiltInSensorTypeAtPresetIndex_reset(self):
 
-            # test object (sensor type) reset
+        for index in range(self.totalTestSensorTypes):
 
-            sensorType.name = expected_sensor_type["agSensorTypeName"] + " "
-            sensorType.processing_formula = (
-                expected_sensor_type["agSensorTypeFormula"] + 1
-            )
-            sensorType.format = [expected_sensor_type["agSensorTypeFormat"]]
+            reference = bist.built_in_sensor_types[index]
+
+            utilities.createOrResetBuiltInSensorTypeAtPresetIndex(index)
+
+            sensorType = AGSensorType.objects.get(pk=reference["agSensorTypeID"])
+
+            sensorType.name = reference["agSensorTypeName"] + " "
+            sensorType.processing_formula = reference["agSensorTypeFormula"] + 1
+            sensorType.format = [reference["agSensorTypeFormat"]]
             sensorType.save()
 
             utilities.createOrResetBuiltInSensorTypeAtPresetIndex(index)
 
-            sensorType = AGSensorType.objects.get(
-                pk=expected_sensor_type["agSensorTypeID"]
-            )
+            self.checkSensorTypeRecord(reference)
 
-            self.assertEqual(sensorType.name, expected_sensor_type["agSensorTypeName"])
-            self.assertEqual(
-                sensorType.processing_formula,
-                expected_sensor_type["agSensorTypeFormula"],
-            )
-            self.assertEqual(
-                sensorType.format, expected_sensor_type["agSensorTypeFormat"]
-            )
-
-        # test sensor type creation for index out of range
+    def test_createOrResetBuiltInSensorTypeAtPresetIndex_index_out_of_range(self):
 
         with self.assertRaises(Exception) as e:
-            utilities.createOrResetBuiltInSensorTypeAtPresetIndex(totalTestSensorTypes)
+            utilities.createOrResetBuiltInSensorTypeAtPresetIndex(
+                self.totalTestSensorTypes
+            )
 
         correct_exception_message = (
             "Cannot find requested sensor type (index "
-            + str(totalTestSensorTypes)
+            + str(self.totalTestSensorTypes)
             + ") from presets"
         )
 
         self.assertEqual(str(e.exception), correct_exception_message)
+
+    def checkSensorTypeRecord(self, reference):
+        sensorType = AGSensorType.objects.get(pk=reference["agSensorTypeID"])
+
+        self.assertEqual(sensorType.name, reference["agSensorTypeName"])
+        self.assertEqual(
+            sensorType.processing_formula, reference["agSensorTypeFormula"]
+        )
+        self.assertEqual(sensorType.format, reference["agSensorTypeFormat"])
