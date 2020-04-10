@@ -278,7 +278,7 @@ class SimulatorTest(TestCase):
         finally:
             sys.stdout = saved_stdout
 
-    def test_simulator_log_continuous_measurements(self):
+    def not_test_simulator_log_continuous_measurements(self):
         """Tests the logLiveMeasurements(self, frequencyInHz, sleepTimer) method in the
         Simulator class. By default, it will run the test 10 times.
 
