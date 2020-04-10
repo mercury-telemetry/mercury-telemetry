@@ -93,11 +93,13 @@ class CreateEventFromPresetsAtIndexTest(TestCase):
 
 
 class CreateSensorFromPresetsAtIndexTest(TestCase):
-    def test_in_range(self):
-        totalTestSensors = len(presets.sample_sensors)
-        utilities.createOrResetAllBuiltInSensorTypes()
+    def setUp(self):
+        self.totalTestSensors = len(presets.sample_sensors)
 
-        for index in range(totalTestSensors):
+        utilities.createOrResetAllBuiltInSensorTypes()
+        
+    def test_in_range(self):
+        for index in range(self.totalTestSensors):
             reference = presets.sample_sensors[index]
 
             sensor = helpers.createSensorFromPresetAtIndex(index)
@@ -107,24 +109,19 @@ class CreateSensorFromPresetsAtIndexTest(TestCase):
             self.assertEqual(sensor.type_id.id, reference["agSensorType"])
 
     def test_out_of_range(self):
-        totalTestSensors = len(presets.sample_sensors)
-
         with self.assertRaises(Exception) as e:
-            helpers.createSensorFromPresetAtIndex(totalTestSensors)
+            helpers.createSensorFromPresetAtIndex(self.totalTestSensors)
         correct_exception_message = (
             "Cannot find requested sensor (index "
-            + str(totalTestSensors)
+            + str(self.totalTestSensors)
             + ") from presets"
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
     def test_multiple(self):
-        totalTestSensors = len(presets.sample_sensors)
-        utilities.createOrResetAllBuiltInSensorTypes()
-
-        for index in range(totalTestSensors):
+        for index in range(self.totalTestSensors):
             reference = presets.sample_sensors[index]
 
             sensor = helpers.createSensorFromPresetAtIndex(index)
 
-        self.assertEqual(totalTestSensors, AGSensor.objects.count())
+        self.assertEqual(self.totalTestSensors, AGSensor.objects.count())
