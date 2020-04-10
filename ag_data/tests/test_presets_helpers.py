@@ -88,10 +88,13 @@ class PresetsHelpersTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def inactive_test_multiple_sensors(self):  # FIXME: reactivate this test
+    def test_createSensorFromPresetAtIndex_stress(self):
+        totalTestSensors = len(presets.sample_sensors)
+        utilities.createOrResetAllBuiltInSensorTypes()
 
-        self.assertEqual(AGVenue.objects.all().count(), 2)
-        self.assertEqual(AGEvent.objects.all().count(), 2)
-        self.assertEqual(AGSensorType.objects.all().count(), 1)
-        self.assertEqual(AGSensor.objects.all().count(), 2)
-        self.assertEqual(AGMeasurement.objects.all().count(), 25)
+        for index in range(totalTestSensors):
+            reference = presets.sample_sensors[index]
+
+            sensor = helpers.createSensorFromPresetAtIndex(index)
+
+        self.assertEqual(totalTestSensors, AGSensor.objects.count())
