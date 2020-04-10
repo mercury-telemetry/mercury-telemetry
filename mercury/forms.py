@@ -1,7 +1,7 @@
 """This module defines the ModelForms (or Forms) that are used by the rendering
 engine to accept input for various features of the site"""
 from django import forms
-from ag_data.models import AGEvent, AGVenue
+from ag_data.models import AGEvent, AGVenue, AGSensor
 from mercury.models import (
     GFConfig,
     TemperatureSensor,
@@ -54,6 +54,21 @@ class GFConfigForm(forms.ModelForm):
             "gf_host": "Hostname (e.g. https://abc123.grafana.net, http://localhost:3000)",
             "gf_token": "API Token",
         }
+
+
+class CustomModelChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return "%s" % (obj.name)
+
+
+class DashboardSensorPanelsForm(forms.ModelForm):
+    class Meta:
+        model = AGSensor
+        exclude = ["id", "name", "type_id"]
+
+    sensors = CustomModelChoiceField(
+        widget=forms.CheckboxSelectMultiple, queryset=AGSensor.objects.all(), label=""
+    )
 
 
 class TemperatureForm(forms.ModelForm):

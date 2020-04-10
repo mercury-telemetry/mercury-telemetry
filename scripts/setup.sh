@@ -75,10 +75,21 @@ case $yn in
     ;;
 esac
 
+source $SCRIPT_DIR/../.env
+[[ -z $DB_USER ]] && DB_USER="postgres"
+[[ -z $DB_PASSWORD ]] && DB_PASSWORD=""
+[[ -z $DB_HOST ]] && DB_HOST="localhost"
+[[ -z $DB_PORT ]] && DB_PORT="5432"
+
 echo ""
-if ! psql -c "CREATE DATABASE mercury;" -U postgres 2> /dev/null; then # if it already exists, an error occurs. ignore it
-  __system "mercury database exists. Skip creating it"
+__system "Checking postgres connection..."
+psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT -c "" || exit 1
+__success "postgres connection"
+
+if ! psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT -c "CREATE DATABASE mercury;" 2> /dev/null; then # if it already exists, an error occurs. ignore it
+  __system "Skip creating mercury database"
 fi
+
 __success "mercury database"
 
 echo ""
