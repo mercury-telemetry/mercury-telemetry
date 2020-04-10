@@ -543,7 +543,7 @@ class TestGrafana(TestCase):
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
 
-    def test_delete_event_no_data_deletes_grafana_dashboard(self):
+    def test_delete_event_deletes_grafana_dashboard(self):
         self.grafana.create_postgres_datasource(self.datasource_name)
 
         # Create a venue
@@ -568,6 +568,9 @@ class TestGrafana(TestCase):
             },
         )
 
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
         # Retrieve event object
         event = AGEvent.objects.all().first()
 
@@ -576,10 +579,5 @@ class TestGrafana(TestCase):
                                                                     event.uuid}))
         # Try and retrieve the dashboard
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
-        print(dashboard)
-        self.assertFalse(dashboard)
 
-    # Generate sample data for the event, this should prevent the dashboard from
-    # being deleted
-    def test_delete_event_data_keeps_grafana_dashboard(self):
-        self.assertTrue(False)
+        self.assertFalse(dashboard)
