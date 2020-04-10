@@ -4,11 +4,11 @@ from ag_data.presets.built_in_sensor_types import built_in_sensor_types
 
 def createOrResetAllBuiltInSensorTypes():
     for index in range(len(built_in_sensor_types)):
-        sensorType = createOrResetBuiltInSensorType(index)
+        sensorType = createOrResetBuiltInSensorTypeAtPresetIndex(index)
         assertSensorType(sensorType)
 
 
-def createOrResetBuiltInSensorType(index):
+def createOrResetBuiltInSensorTypeAtPresetIndex(index):
     """Create a sensor type object from available presets of sensor types
 
         The sensor type record is a prerequisite for any sensor whose type is set to this.
