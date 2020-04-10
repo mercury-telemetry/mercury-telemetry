@@ -42,25 +42,23 @@ class TestMeasurement(TestCase):
         self.uuid2 = "d81cac8d-26e1-4983-a942-1922e54a943a"
 
     def post_radio_data_wo_event(self):
-        response = self.client.post(
-            reverse(self.post_url2),
-            data={
-                "sensor_id": 1,
-                "values": {"power": "2", "speed": 1},
-                "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
-            },
-        )
+        data = {
+            "sensor_id": 1,
+            "values": '{"power": 2, "speed": 1}',
+            "date": "2020-03-11T19:20:00",
+        }
+        response = self.client.post(reverse(self.post_url2), data=data,)
         return response
 
     def post_radio_data(self):
         # POST sensor data to the measurement url
+        data = {
+            "sensor_id": 1,
+            "values": '{"power": 2, "speed": 1}',
+            "date": "2020-03-11T19:20:00",
+        }
         response = self.client.post(
-            reverse(self.post_url, args=[self.uuid]),
-            data={
-                "sensor_id": 1,
-                "values": {"power": "2", "speed": 1},
-                "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
-            },
+            reverse(self.post_url, args=[self.uuid]), data=data,
         )
         return response
 
