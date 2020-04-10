@@ -72,29 +72,37 @@ class UtilityFunctionUnitTest(TestCase):
         }
 
         # called when table empty
-        newRecord = utilities.createCustomSensorType(name, processing_formula, custom_format)
+        newRecord = utilities.createCustomSensorType(
+            name, processing_formula, custom_format
+        )
 
-        self.assertTrue(newRecord.id %2 == 1)
+        self.assertTrue(newRecord.id % 2 == 1)
         self.assertEqual(AGSensorType.objects.count(), 1)
 
         # called when table not empty
-        newRecord = utilities.createCustomSensorType(name, processing_formula, custom_format)
+        newRecord = utilities.createCustomSensorType(
+            name, processing_formula, custom_format
+        )
 
-        self.assertTrue(newRecord.id %2 == 1)
+        self.assertTrue(newRecord.id % 2 == 1)
         self.assertEqual(AGSensorType.objects.count(), 2)
 
         # called when table with one built-in record
         utilities.createOrResetBuiltInSensorTypeAtPresetIndex(0)
-        newRecord = utilities.createCustomSensorType(name, processing_formula, custom_format)
+        newRecord = utilities.createCustomSensorType(
+            name, processing_formula, custom_format
+        )
 
-        self.assertTrue(newRecord.id %2 == 1)
+        self.assertTrue(newRecord.id % 2 == 1)
         self.assertEqual(AGSensorType.objects.count(), 4)
 
         # called when table with multiple built-in records
         utilities.createOrResetAllBuiltInSensorTypes()
-        newRecord = utilities.createCustomSensorType(name, processing_formula, custom_format)
+        newRecord = utilities.createCustomSensorType(
+            name, processing_formula, custom_format
+        )
 
-        self.assertTrue(newRecord.id %2 == 1)
+        self.assertTrue(newRecord.id % 2 == 1)
         self.assertEqual(AGSensorType.objects.count(), self.totalTestSensorTypes + 4)
 
     def checkSensorTypeRecord(self, reference):

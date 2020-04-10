@@ -60,7 +60,7 @@ class PresetsHelpersTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def inactive_test_simulator_create_sensor(self):  # FIXME: reactivate this test
+    def test_create_sensor(self):
         totalTestSensors = len(presets.sensor_presets)
 
         # test sensor creation for indices in range
@@ -92,5 +92,3 @@ class PresetsHelpersTest(TestCase):
         self.assertEqual(AGSensorType.objects.all().count(), 1)
         self.assertEqual(AGSensor.objects.all().count(), 2)
         self.assertEqual(AGMeasurement.objects.all().count(), 25)
-
-    
