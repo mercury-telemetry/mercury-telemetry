@@ -60,7 +60,7 @@ class PresetsHelpersTest(TestCase):
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
-    def test_createCustomSensorType(self):
+    def test_create_sensor(self):
         totalTestSensors = len(presets.sensor_presets)
 
         # test sensor creation for indices in range
