@@ -5,7 +5,7 @@ from ag_data.formulas.library.system import mercury_formulas as hgFormulas
 class MeasurementIngestionEngine:
 
     processingFormulas = {
-        0: hgFormulas.fPass,
+        0: hgFormulas.fEmptyResult,
         2: hgFormulas.fMercurySimpleTemperatureSensor,
         4: hgFormulas.fMercuryDualTemperatureSensor,
         6: hgFormulas.fMercuryFlowSensor,
@@ -21,7 +21,7 @@ class MeasurementIngestionEngine:
         processing_formula = sensor_type.processing_formula
 
         formula = MeasurementIngestionEngine.processingFormulas.get(
-            processing_formula, hgFormulas.fPass
+            processing_formula, hgFormulas.fEmptyResult
         )
 
         value = {"reading": rawValue}

@@ -6,7 +6,7 @@
 from ag_data import models
 
 
-def fPass(timestamp, sensor, measurement_payload):
+def fEmptyResult(timestamp, sensor, measurement_payload):
     result = {}
 
     return result
