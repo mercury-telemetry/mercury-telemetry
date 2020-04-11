@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
+from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor, AGActiveEvent
 from mercury.forms import EventForm, VenueForm
 from mercury.grafanaAPI.grafana_api import Grafana
 from mercury.models import GFConfig
@@ -97,7 +97,6 @@ def delete_event(request, event_uuid=None):
             )
 
     event_to_delete.delete()
-
     return redirect("/events")
 
 
@@ -222,6 +221,22 @@ def create_event_json(event_object, venue_object, measurements_object):
     return data
 
 
+def activate_event(request, event_uuid=None):
+    event_to_activate = AGEvent.objects.get(uuid=event_uuid)
+    if event_to_activate is not None:
+        AGActiveEvent.objects.all().delete()
+        active_event = AGActiveEvent(agevent=event_to_activate)
+        active_event.save()
+    return redirect("/events")
+
+
+def deactivate_event(request, event_uuid=None):
+    event_to_deactivate = AGEvent.objects.get(uuid=event_uuid)
+    if event_to_deactivate is not None:
+        AGActiveEvent.objects.all().delete()
+    return redirect("/events")
+
+
 def export_event(request, event_uuid=None, file_format="CSV"):
     event_to_export = AGEvent.objects.get(uuid=event_uuid)
     if event_to_export:
@@ -303,9 +318,11 @@ class CreateEventsView(TemplateView):
         venues = AGVenue.objects.all().order_by("uuid")
         event_form = EventForm()
         venue_form = VenueForm()
-        active_event = {}
-        if len(events) > 0:
-            active_event = events[0]
+        active_event_object = AGActiveEvent.objects.all()
+        active_event = None
+        if len(active_event_object) > 0:
+            active_event = active_event_object[0].agevent
+
         context = {
             "event_form": event_form,
             "venue_form": venue_form,
