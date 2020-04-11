@@ -37,7 +37,7 @@ urlpatterns = [
     ),
     path("events/", events.CreateEventsView.as_view(), name="events"),
     path("events/delete/<uuid:event_uuid>", events.delete_event, name="delete_event"),
-    path("events/update/<uuid:event_uuid>", events.update_event),
+    path("events/update/<uuid:event_uuid>", events.update_event, name="update_event"),
     path("events/updatevenue/<uuid:venue_uuid>", events.update_venue),
     path("events/activateevent/<uuid:event_uuid>", events.activate_event),
     path("events/deactivateevent/<uuid:event_uuid>", events.deactivate_event),

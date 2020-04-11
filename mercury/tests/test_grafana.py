@@ -52,6 +52,14 @@ class TestGrafana(TestCase):
         "location": "New York, NY",
     }
 
+    test_event_data_update = {
+        "name": "Another Day Test Drive",
+        "date": datetime.datetime(2020, 3, 3, 20, 21, 22),
+        "description": "A very modern test run at \
+                        my backyard.",
+        "location": "Buffalo, NY",
+    }
+
     test_venue_data = {
         "name": "Venue 1",
         "description": "foo",
@@ -97,6 +105,7 @@ class TestGrafana(TestCase):
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
         self.event_delete_url = "mercury:delete_event"
+        self.event_update_url = "mercury:update_event"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -582,3 +591,44 @@ class TestGrafana(TestCase):
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
 
         self.assertFalse(dashboard)
+
+    def test_update_event_name_updates_grafana_dashboard_name(self):
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        event = self.create_venue_and_event(self.event_name)
+
+        updated_event_name = self.event_name + " Day Two"
+
+        venue = AGVenue.objects.first()
+
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Update the event name
+        self.client.post(
+            reverse(self.event_update_url, kwargs={"event_uuid": event.uuid}),
+            data={
+                "name": updated_event_name,
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+
+        # Confirm that a dashboard exists with the new event name
+        dashboard = self.grafana.get_dashboard_by_name(updated_event_name)
+        self.assertTrue(dashboard)
+        print(dashboard)
+        self.assertEquals(dashboard["dashboard"]["title"], updated_event_name)
