@@ -6,13 +6,13 @@
 from ag_data import models
 
 
-def fEmptyResult(timestamp, sensor, measurement_payload):
+def fEmptyResult(timestamp, sensor, payload):
     result = {}
 
     return result
 
 
-def fMercurySimpleTemperatureSensor(timestamp, sensor, measurement_payload):
+def fMercurySimpleTemperatureSensor(timestamp, sensor, payload):
     result = {}
 
     # This Simple Temperature Sensor decides it wants its own formula, even though it does
@@ -21,16 +21,16 @@ def fMercurySimpleTemperatureSensor(timestamp, sensor, measurement_payload):
     return result
 
 
-def fMercuryDualTemperatureSensor(timestamp, sensor, measurement_payload):
-    mean = measurement_payload["internal"] / 2 + measurement_payload["external"] / 2
-    diff = measurement_payload["internal"] - measurement_payload["external"]
+def fMercuryDualTemperatureSensor(timestamp, sensor, payload):
+    mean = payload["internal"] / 2 + payload["external"] / 2
+    diff = payload["internal"] - payload["external"]
 
     result = {"mean": mean, "diff": diff}
 
     return result
 
 
-def fMercuryFlowSensor(timestamp, sensor, measurement_payload):
+def fMercuryFlowSensor(timestamp, sensor, payload):
     result = {}
 
     latest = models.AGMeasurement.objects.filter(sensor_id=sensor.id)
@@ -46,8 +46,7 @@ def fMercuryFlowSensor(timestamp, sensor, measurement_payload):
         if lastResult is not None:
             result = {
                 "gasLevel": lastResult
-                - measurement_payload["volumetricFlow"]
-                * (timeElapsed.microseconds / 1000000)
+                - payload["volumetricFlow"] * (timeElapsed.microseconds / 1000000)
             }
 
     return result
