@@ -516,9 +516,49 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Sensor panel not added: {error}")
 
-    #@TODO
-    def delete_panel(self, name, event):
-        pass
+    # @TODO
+    def delete_panel(self, panel_name, event):
+
+        # Retrieve current panels
+        dashboard_info = self.get_dashboard_by_name(event.name)
+
+        if dashboard_info is None:
+            return False
+
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except (KeyError, TypeError):
+            panels = []
+
+        # Build list of new panels, excluding any panel with title = name
+        if not panels:
+            return False
+
+        new_panels = [
+            panel for panel in panels if panel["title"].lower() != panel_name.lower()
+        ]
+        print(new_panels)
+        print(len(new_panels))
+
+        # Create updated dashboard dict with updated list of panels
+        updated_dashboard = self.create_dashboard_update_dict(
+            dashboard_info, new_panels
+        )
+
+        # POST updated dashboard
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(
+            self.endpoints["dashboards"],
+            data=json.dumps(updated_dashboard),
+            headers=headers,
+            auth=("api_key", self.api_token),
+        )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Sensor panel not deleted: {panel_name}")
+        except KeyError as error:
+            raise ValueError(f"Sensor panel not deleted: {error}")
 
     def delete_all_panels_by_dashboard_name(self, name):
         """

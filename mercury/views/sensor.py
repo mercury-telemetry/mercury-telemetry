@@ -105,6 +105,24 @@ def delete_sensor(request, sensor_id):
             valid_id = True
     if valid_id:
         sensor_to_delete = AGSensor.objects.get(id=sensor_id)
+
+        # delete any sensor panels from grafana
+        gfconfigs = GFConfig.objects.all()
+        events = AGEvent.objects.all()
+
+        # delete panl from every dashboard of all grafana instances
+        for gfconfig in gfconfigs:
+            grafana = Grafana(gfconfig)
+
+            # Delete sensor from each event panel
+            for event in events:
+                try:
+                    print("deleting grafana panel")
+                    grafana.delete_panel(sensor_to_delete.name, event)
+                except ValueError as error:
+                    messages.error(request, error)
+
+        # delete the sensor
         sensor_to_delete.delete()
     else:
         messages.error(
