@@ -95,6 +95,10 @@
             {% endif %}
         </div>
 
+        {% for message in messages %}
+        <p class="error"> {{ message }} </p>
+        {% endfor %}
+
         <!-- All Venues -->
         <div id="all-venues" class="mt-50 hide-display">
             <h1>All Venues</h1>
