@@ -723,5 +723,4 @@ class TestGrafana(TestCase):
         # Confirm that a dashboard exists with the new event name
         dashboard = self.grafana.get_dashboard_by_name(updated_event_name)
         self.assertTrue(dashboard)
-        print(dashboard)
         self.assertEquals(dashboard["dashboard"]["title"], updated_event_name)

@@ -516,7 +516,6 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Sensor panel not added: {error}")
 
-    # @TODO
     def delete_panel(self, panel_name, event):
 
         # Retrieve current panels
@@ -537,8 +536,6 @@ class Grafana:
         new_panels = [
             panel for panel in panels if panel["title"].lower() != panel_name.lower()
         ]
-        print(new_panels)
-        print(len(new_panels))
 
         # Create updated dashboard dict with updated list of panels
         updated_dashboard = self.create_dashboard_update_dict(
