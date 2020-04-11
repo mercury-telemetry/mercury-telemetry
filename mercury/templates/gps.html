@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="UTF-8">
+        <title>Create Event</title>
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+    </head>
+    <body>
+    {% include 'sidebar.html' %}
+     <div class="topbar-container">
+        <h1>GPS MAP</h1>
+        <p>GPS map enables you to track your vehicles GPS coordinates and sensor data using a dynamic visual map.</p>
+        <div>
+            <input class="grafana-btn grafana-btn-green" type="submit" value="All Events">
+            <input class="grafana-btn grafana-btn-green" type="submit" value="All Events">
+            <input class="grafana-btn grafana-btn-green" type="submit" value="All Events">
+            <input class="grafana-btn grafana-btn-green" type="submit" value="All Events">
+        </div>
+        <br><br>
+        <iframe id="encoder_iframe" height=100% width="100%" src="{% url 'mercury:gpspanels' %}">
+        </iframe>
+    </div>
+    </body>
+</html>
