@@ -138,7 +138,7 @@ class SimulatorTest(TestCase):
             startTime = timezone.now()
 
             self.sim.logLiveMeasurements(
-                frequencyInHz=randFrequencyInHz, sleepTimer=randSleepTimer
+                frequencyInHz=randFrequencyInHz, sleepTimerInSeconds=randSleepTimer
             )
 
             endTime = timezone.now()
