@@ -39,7 +39,7 @@ class UtilityFunctionUnitTest(TestCase):
 
             sensorType = AGSensorType.objects.get(pk=reference["agSensorTypeID"])
 
-            sensorType.name = reference["agSensorTypeName"] + " "
+            sensorType.name = reference["agSensorTypeName"].join(" ")
             sensorType.processing_formula = reference["agSensorTypeFormula"] + 1
             sensorType.format = [reference["agSensorTypeFormat"]]
             sensorType.save()
@@ -56,9 +56,8 @@ class UtilityFunctionUnitTest(TestCase):
             )
 
         correct_exception_message = (
-            "Cannot find requested sensor type (index "
-            + str(self.totalTestSensorTypes)
-            + ") from presets"
+            f"Cannot find requested sensor type "
+            f"(index {self.totalTestSensorTypes}) from presets"
         )
 
         self.assertEqual(str(e.exception), correct_exception_message)

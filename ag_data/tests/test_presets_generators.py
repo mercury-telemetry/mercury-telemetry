@@ -33,9 +33,7 @@ class CreateVenueFromPresetsAtIndexTest(TestCase):
         with self.assertRaises(Exception) as e:
             presets_generators.createVenueFromPresetAtIndex(self.totalTestVenues)
         correct_exception_message = (
-            "Cannot find requested venue (index "
-            + str(self.totalTestVenues)
-            + ") from presets"
+            f"Cannot find requested venue (index {self.totalTestVenues}) from presets"
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
@@ -78,9 +76,7 @@ class CreateEventFromPresetsAtIndexTest(TestCase):
                 self.testVenue, self.totalTestEvents
             )
         correct_exception_message = (
-            "Cannot find requested event (index "
-            + str(self.totalTestEvents)
-            + ") from presets"
+            f"Cannot find requested event (index {self.totalTestEvents}) from presets"
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 
@@ -111,9 +107,7 @@ class CreateSensorFromPresetsAtIndexTest(TestCase):
         with self.assertRaises(Exception) as e:
             presets_generators.createSensorFromPresetAtIndex(self.totalTestSensors)
         correct_exception_message = (
-            "Cannot find requested sensor (index "
-            + str(self.totalTestSensors)
-            + ") from presets"
+            f"Cannot find requested sensor (index {self.totalTestSensors}) from presets"
         )
         self.assertEqual(str(e.exception), correct_exception_message)
 

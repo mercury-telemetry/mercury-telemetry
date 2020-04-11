@@ -5,9 +5,7 @@ from ag_data import utilities
 
 def createVenueFromPresetAtIndex(index):
     if index > len(sample_user_data.sample_venues) - 1:
-        raise Exception(
-            "Cannot find requested venue (index " + str(index) + ") from presets"
-        )
+        raise Exception(f"Cannot find requested venue (index {index}) from presets")
     else:
         pass
 
@@ -25,9 +23,7 @@ def createVenueFromPresetAtIndex(index):
 
 def createEventFromPresetAtIndex(venue, index):
     if index > len(sample_user_data.sample_events) - 1:
-        raise Exception(
-            "Cannot find requested event (index " + str(index) + ") from presets"
-        )
+        raise Exception(f"Cannot find requested event (index {index}) from presets")
     else:
         pass
 
@@ -47,9 +43,7 @@ def createEventFromPresetAtIndex(venue, index):
 
 def createSensorFromPresetAtIndex(index):
     if index > len(sample_user_data.sample_sensors) - 1:
-        raise Exception(
-            "Cannot find requested sensor (index " + str(index) + ") from presets"
-        )
+        raise Exception(f"Cannot find requested sensor (index {index}) from presets")
     else:
         pass
 

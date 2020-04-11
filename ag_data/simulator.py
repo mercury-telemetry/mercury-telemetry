@@ -62,9 +62,7 @@ class Simulator:
             payload = {"sample": gauss(0.5, 0.5)}
 
         else:
-            raise ValueError(
-                "Unsupported sensor type (" + str(self.sensor.type_id) + ")"
-            )
+            raise ValueError(f"Unsupported sensor type ({self.sensor.type_id})")
 
         return payload
 
@@ -88,19 +86,12 @@ class Simulator:
             self.logSingleMeasurement(timeAtReading)
             if printProgress is True and count % 1000 == 0:
                 print(
-                    "("
-                    + "{:3.3f}%".format(count / totalMeasurements * 100)
-                    + ") Created "
-                    + str(count)
-                    + " measurements"
+                    f"({(count / totalMeasurements * 100):3.3f}%"
+                    f") Created {str(count)} measurements"
                 )
 
         if printProgress is True:
-            print(
-                "({}% done!) Created ".format(100)
-                + str(totalMeasurements)
-                + " measurements"
-            )
+            print(f"(100% done!) Created {totalMeasurements} measurements")
 
         endTime = timezone.now()
         if printProgress is True:
