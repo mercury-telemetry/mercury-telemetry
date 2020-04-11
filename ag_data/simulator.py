@@ -35,9 +35,9 @@ class Simulator:
         utilities.assertEvent(self.event)
         utilities.assertSensor(self.sensor)
 
-        value = self.generateMeasurementReading()
+        reading = self.generateMeasurementReading()
 
-        return self.logProcessedSingleMeasurement(timestamp, value)
+        return self.logProcessedSingleMeasurement(timestamp, reading)
 
     def checkSensorType(self, typeID):
         return self.sensor.type_id.id == typeID
@@ -45,7 +45,7 @@ class Simulator:
     def generateMeasurementReading(self):
         utilities.assertSensor(self.sensor)
 
-        reading = None
+        reading = {}
 
         if self.checkSensorType(0):
             reading = {"side": (random() < 0.5)}
