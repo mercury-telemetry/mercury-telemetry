@@ -35,37 +35,37 @@ class Simulator:
         utilities.assertEvent(self.event)
         utilities.assertSensor(self.sensor)
 
-        value = self.generateMeasurementPayload()
+        value = self.generateMeasurementReading()
 
         return self.logProcessedSingleMeasurement(timestamp, value)
 
     def checkSensorType(self, typeID):
         return self.sensor.type_id.id == typeID
 
-    def generateMeasurementPayload(self):
+    def generateMeasurementReading(self):
         utilities.assertSensor(self.sensor)
 
-        payload = None
+        reading = None
 
         if self.checkSensorType(0):
-            payload = {"side": (random() < 0.5)}
+            reading = {"side": (random() < 0.5)}
 
         elif self.checkSensorType(2):
-            payload = {"reading": gauss(23, 1)}
+            reading = {"reading": gauss(23, 1)}
 
         elif self.checkSensorType(4):
-            payload = {"internal": gauss(15, 3), "external": gauss(20, 2)}
+            reading = {"internal": gauss(15, 3), "external": gauss(20, 2)}
 
         elif self.checkSensorType(6):
-            payload = {"volumetricFlow": gauss(0.2, 0.15)}
+            reading = {"volumetricFlow": gauss(0.2, 0.15)}
 
         elif self.checkSensorType(8):
-            payload = {"sample": gauss(0.5, 0.5)}
+            reading = {"sample": gauss(0.5, 0.5)}
 
         else:
             raise ValueError(f"Unsupported sensor type ({self.sensor.type_id})")
 
-        return payload
+        return reading
 
     def logMeasurementsInThePastSeconds(
         self, seconds, frequencyInHz, printProgress=True
