@@ -7,6 +7,8 @@ from .views import (
     radioreceiver,
     gf_config,
     measurement,
+    gps,
+    gpspanels,
 )
 
 app_name = "mercury"
@@ -43,6 +45,8 @@ urlpatterns = [
     path("events/export/all/csv", events.export_all_event),
     path("events/export/<uuid:event_uuid>/json", events.export_event),
     path("events/export/all/json", events.export_all_event),
+    path("gps/", gps.CreateGPSView.as_view(), name="gps"),
+    path("gpspanels/", gpspanels.CreateGPSPanelView.as_view(), name="gpspanels"),
     path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
     path(
         "radioreceiver/<uuid:event_uuid>",
