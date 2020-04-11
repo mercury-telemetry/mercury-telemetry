@@ -1,5 +1,5 @@
-from random import gauss, random
 from time import sleep
+from random import gauss, random
 
 from django.utils import timezone
 
@@ -8,17 +8,14 @@ from ag_data import utilities
 
 class Simulator:
 
-    venue = None
     event = None
     sensor = None
 
-    def setUp(self, venue, event, sensor):
-        self.venue = venue
+    def setUp(self, event, sensor):
         self.event = event
         self.sensor = sensor
 
     def logProcessedSingleMeasurement(self, timestamp, value):
-        utilities.assertVenue(self.venue)
         utilities.assertEvent(self.event)
         utilities.assertSensor(self.sensor)
 
@@ -33,7 +30,7 @@ class Simulator:
         engine = MeasurementIngestionEngine()
         engine.event = self.event
 
-        engine.saveMeasurement(measurementDict)
+        return engine.saveMeasurement(measurementDict, self.event)
 
     def logSingleMeasurement(self, timestamp):
         """Create a single measurement for simulated sensor, from supported presets:
@@ -57,13 +54,12 @@ class Simulator:
             sensor.
         """
 
-        utilities.assertVenue(self.venue)
         utilities.assertEvent(self.event)
         utilities.assertSensor(self.sensor)
 
         value = self.generateMeasurementPayload()
 
-        self.logProcessedSingleMeasurement(timestamp, value)
+        return self.logProcessedSingleMeasurement(timestamp, value)
 
     def checkSensorType(self, typeID):
         return self.sensor.type_id.id == typeID
@@ -85,8 +81,13 @@ class Simulator:
         elif self.checkSensorType(6):
             payload = {"volumetricFlow": gauss(0.2, 0.15)}
 
-        elif self.checkSensorType(6):
+        elif self.checkSensorType(8):
             payload = {"sample": gauss(0.5, 0.5)}
+
+        else:
+            raise ValueError(
+                "Unsupported sensor type (" + str(self.sensor.type_id) + ")"
+            )
 
         return payload
 

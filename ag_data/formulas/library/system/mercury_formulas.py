@@ -7,24 +7,18 @@ from ag_data import models
 
 
 def fPass(timestamp, sensor, measurement_payload):
-    print("passing")
-
     result = {}
 
     return result
 
 
 def fMercurySimpleTemperatureSensor(timestamp, sensor, measurement_payload):
-    print("fMercurySimpleTemperatureSensor")
-
     result = {}
 
     return result
 
 
 def fMercuryDualTemperatureSensor(timestamp, sensor, measurement_payload):
-    print("fMercuryDualTemperatureSensor")
-
     mean = measurement_payload["internal"] / 2 + measurement_payload["external"] / 2
     diff = measurement_payload["internal"] - measurement_payload["external"]
 
@@ -34,10 +28,9 @@ def fMercuryDualTemperatureSensor(timestamp, sensor, measurement_payload):
 
 
 def fMercuryFlowSensor(timestamp, sensor, measurement_payload):
+    result = {}
 
     latest = models.AGMeasurement.objects.filter(sensor_id=sensor.id)
-
-    result = {}
 
     if latest.count() == 0:
         result = {"gasLevel": 100}

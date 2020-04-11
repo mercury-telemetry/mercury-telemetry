@@ -12,7 +12,7 @@ built_in_sensor_types = [
         "agSensorTypeName": "Simple Temperature Sensor",
         "agSensorTypeFormula": 2,
         "agSensorTypeFormat": {
-            "reading": {"unit": "Celsius", "format": "float"},
+            "reading": {"reading": {"unit": "Celsius", "format": "float"}},
             "result": {},
         },
     },

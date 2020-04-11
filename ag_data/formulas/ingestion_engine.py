@@ -26,8 +26,8 @@ class MeasurementIngestionEngine:
 
         value = {"reading": rawValue}
 
-        value["result"] = formula(timestamp, sensor, value)
+        value["result"] = formula(timestamp, sensor, rawValue)
 
-        models.AGMeasurement.objects.create(
+        return models.AGMeasurement.objects.create(
             timestamp=timestamp, event_uuid=event, sensor_id=sensor, value=value
         )

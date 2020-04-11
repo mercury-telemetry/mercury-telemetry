@@ -6,120 +6,86 @@ from django.utils import timezone
 from ag_data.simulator import Simulator
 from ag_data.models import AGMeasurement
 from ag_data.presets import helpers as preset_helpers
-from ag_data.presets import built_in_content as bic
 from ag_data.presets import sample_user_data
+from ag_data import utilities
+
+
+class SimulatorEmptyInitTest(TestCase):
+    def setUp(self):
+        self.sim = Simulator()
+
+        self.assertEqual(self.sim.event, None)
+        self.assertEqual(self.sim.sensor, None)
+
+    def test_simulator_log_single_measurement_no_event(self):
+        with self.assertRaises(AssertionError) as ae:
+            timestamp = timezone.now()
+            self.sim.logSingleMeasurement(timestamp=timestamp)
+        correct_assertion_message = "Missing an instance of AGEvent."
+        self.assertEqual(str(ae.exception), correct_assertion_message)
+
+    def test_simulator_log_single_measurement_no_sensor(self):
+        testVenue = preset_helpers.createVenueFromPresetAtIndex(0)
+        self.sim.event = preset_helpers.createEventFromPresetAtIndex(testVenue, 0)
+
+        with self.assertRaises(AssertionError) as ae:
+            timestamp = timezone.now()
+            self.sim.logSingleMeasurement(timestamp=timestamp)
+        correct_assertion_message = "Missing an instance of AGSensor."
+        self.assertEqual(str(ae.exception), correct_assertion_message)
 
 
 class SimulatorTest(TestCase):
     def setUp(self):
         self.sim = Simulator()
-        self.venue = preset_helpers.createVenueFromPresetAtIndex(0)
-        self.event = preset_helpers.createEventFromPresetAtIndex(self.venue, 0)
 
-        # self.sim.venue = self.venue
-        # self.sim.event = self.event
-
-    def test_simulator_creation(self):
-        self.assertEqual(self.sim.venue, None)
         self.assertEqual(self.sim.event, None)
         self.assertEqual(self.sim.sensor, None)
 
-    def inactive_test_simulator_log_single_measurement_no_venue(self):
-        # FIXME: reactivate this test
-
-        self.sim.createASensorFromPresets(
-            self.randSensorIndex(), cascadeCreation=True
-        )  # FIXME: another condition
-
-        with self.assertRaises(AssertionError) as ae:
-            timestamp = timezone.now()
-            self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = (
-            "No venue registered in the simulator. "
-            + "Create one first before calling this."
+        venue = preset_helpers.createVenueFromPresetAtIndex(self.randVenueIndex())
+        self.event = preset_helpers.createEventFromPresetAtIndex(
+            venue, self.randEventIndex()
         )
-        self.assertEqual(str(ae.exception), correct_assertion_message)
 
-    def inactive_test_simulator_log_single_measurement_no_event(self):
-        # FIXME: reactivate this test
-
-        self.sim.createAVenueFromPresets(self.randVenueIndex())
-        self.sim.createASensorFromPresets(
-            self.randSensorIndex(), cascadeCreation=True
-        )  # FIXME: another condition
-
-        with self.assertRaises(AssertionError) as ae:
-            timestamp = timezone.now()
-            self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = (
-            "No event registered in the simulator. "
-            + "Create one first before calling this."
+        utilities.createOrResetAllBuiltInSensorTypes()
+        self.sensor = preset_helpers.createSensorFromPresetAtIndex(
+            self.randSensorIndex()
         )
-        self.assertEqual(str(ae.exception), correct_assertion_message)
 
-    def inactive_test_simulator_log_single_measurement_no_sensor(self):
-        # FIXME: reactivate this test
+        self.sim.setUp(self.event, self.sensor)
 
-        self.sim.createAVenueFromPresets(self.randVenueIndex())
-        self.sim.createAnEventFromPresets(self.randEventIndex())
+    def test_simulator_log_single_measurement(self):
 
-        with self.assertRaises(AssertionError) as ae:
-            timestamp = timezone.now()
-            self.sim.logSingleMeasurement(timestamp=timestamp)
-        correct_assertion_message = (
-            "No sensor registered in the simulator. "
-            + "Create one first before calling this."
+        timestamp = timezone.now()
+        measurement = self.sim.logSingleMeasurement(timestamp=timestamp)
+
+        # test data in database
+        measurement_in_database = AGMeasurement.objects.get(pk=measurement.uuid)
+        self.assertEqual(measurement_in_database.timestamp, timestamp)
+        self.assertEqual(measurement_in_database.event_uuid, self.sim.event)
+        self.assertEqual(measurement_in_database.sensor_id, self.sim.sensor)
+
+        # test measurement payload format by cross comparison of all keys in payload
+        # and the expected specification
+        measurement_payload = measurement_in_database.value
+        correct_payload_format = self.sim.sensor.type_id.format
+
+        self.crossCompareKeys(
+            correct_payload_format["reading"], measurement_payload["reading"]
         )
-        self.assertEqual(str(ae.exception), correct_assertion_message)
+        self.crossCompareKeys(
+            correct_payload_format["result"], measurement_payload["result"]
+        )
 
-    def inactive_test_simulator_log_single_measurement(self):
-        # FIXME: reactivate this test
+        # FIXME: test measurement value field data type (string/float/bool/...)
 
-        randEventIndex = self.randEventIndex()
+    def test_simulator_log_single_measurement_all_sensor_samples(self):
+        # FIXME: add tests for all built-in sensor types and supported sample sensors
+        return
 
-        self.sim.createAVenueFromPresets(self.randVenueIndex())
-        self.sim.createAnEventFromPresets(randEventIndex)
-
-        for index in range(len(bic.built_in_sensor_types)):
-            self.sim.createASensorFromPresets(
-                index, cascadeCreation=True
-            )  # FIXME: add another condition
-
-            timestamp = timezone.now()
-            measurement = self.sim.logSingleMeasurement(timestamp=timestamp)
-
-            # test data in database
-            measurement_in_database = AGMeasurement.objects.get(pk=measurement.uuid)
-            self.assertEqual(measurement_in_database.timestamp, timestamp)
-            self.assertEqual(measurement_in_database.event_uuid, self.sim.event)
-            self.assertEqual(measurement_in_database.sensor_id, self.sim.sensor)
-
-            # test measurement payload format by cross comparison of all keys in payload
-            # and the expected specification
-            measurement_payload = measurement_in_database.value
-            correct_payload_format = bic.built_in_sensor_types[index][
-                "agSensorTypeFormat"
-            ]
-
-            # NOTE: limitation: this only checks the keys at root level of the payload
-            for field in correct_payload_format.keys():
-                self.assertIn(field, measurement_payload.keys())
-            for field in measurement_payload.keys():
-                self.assertIn(field, correct_payload_format.keys())
-
-            # FIXME: test string/number restriant
-
-    def inactive_test_simulator_log_multiple_measurements(self):
-        # FIXME: reactivate this test
-
+    def test_simulator_log_multiple_measurements(self):
         import sys
         from io import StringIO
-
-        self.sim.createAVenueFromPresets(self.randVenueIndex())
-        self.sim.createAnEventFromPresets(self.randEventIndex())
-        self.sim.createASensorFromPresets(
-            self.randSensorIndex(), cascadeCreation=True
-        )  # FIXME: add another condition
 
         randFrequencyInHz = uniform(1, 100)
         randSeconds = uniform(1, 60)
@@ -153,9 +119,7 @@ class SimulatorTest(TestCase):
         finally:
             sys.stdout = saved_stdout
 
-    def inactive_test_simulator_log_continuous_measurements(self):
-        # FIXME: reactivate this test
-
+    def test_simulator_log_continuous_measurements(self):
         """Tests the logLiveMeasurements(self, frequencyInHz, sleepTimer) method in the
         Simulator class. By default, it will run the test 10 times.
 
@@ -165,18 +129,9 @@ class SimulatorTest(TestCase):
         python manage.py test ag_data.tests.test_simulator.SimulatorTest.
         test_simulator_log_continuous_measurements --failfast
         """
-        randVenueIndex = self.randVenueIndex()
-        randEventIndex = self.randEventIndex()
-        randSensorIndex = self.randSensorIndex()
 
         # Change the number of loops for testing on demand
         for i in range(1):
-            self.sim.createAVenueFromPresets(randVenueIndex)
-            self.sim.createAnEventFromPresets(randEventIndex)
-            self.sim.createASensorFromPresets(
-                randSensorIndex, cascadeCreation=True
-            )  # FIXME: add another condition
-
             randFrequencyInHz = uniform(1, 100)
             randSleepTimer = uniform(1, 15)
 
@@ -227,3 +182,9 @@ class SimulatorTest(TestCase):
 
     def randSensorIndex(self):
         return randint(0, len(sample_user_data.sample_sensors) - 1)
+
+    def crossCompareKeys(self, dictionary1, dictionary2):
+        for field in dictionary1.keys():
+            self.assertIn(field, dictionary2.keys())
+        for field in dictionary2.keys():
+            self.assertIn(field, dictionary1.keys())

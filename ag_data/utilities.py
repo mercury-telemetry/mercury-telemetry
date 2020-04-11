@@ -68,11 +68,11 @@ def createCustomSensorType(name, processing_formula, format):
 
 
 def assertVenue(venue):
-    assert isinstance(venue, models.AGVenue), "Not an instance of AGVenue."
+    assert isinstance(venue, models.AGVenue), "Missing an instance of AGVenue."
 
 
 def assertEvent(event):
-    assert isinstance(event, models.AGEvent), "Not an instance of AGEvent"
+    assert isinstance(event, models.AGEvent), "Missing an instance of AGEvent."
 
 
 def assertSensorType(sensorType):
@@ -82,7 +82,7 @@ def assertSensorType(sensorType):
 
 
 def assertSensor(sensor):
-    assert isinstance(sensor, models.AGSensor), "Not an instance of AGSensor."
+    assert isinstance(sensor, models.AGSensor), "Missing an instance of AGSensor."
 
 
 def getNextAvailableSensorTypeID():
