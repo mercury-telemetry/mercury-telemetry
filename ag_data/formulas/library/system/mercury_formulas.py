@@ -15,6 +15,9 @@ def fEmptyResult(timestamp, sensor, measurement_payload):
 def fMercurySimpleTemperatureSensor(timestamp, sensor, measurement_payload):
     result = {}
 
+    # This Simple Temperature Sensor decides it wants its own formula, even though it does
+    # nothing more than the fEmptyResult function.
+
     return result
 
 
