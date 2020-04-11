@@ -72,6 +72,7 @@ class TestGrafana(TestCase):
         config.save()
         return config
 
+    # Returns event
     def create_venue_and_event(self, event_name):
         venue = AGVenue.objects.create(
             name=self.test_venue_data["name"],
@@ -95,6 +96,7 @@ class TestGrafana(TestCase):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
+        self.event_delete_url = "mercury:delete_event"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -327,8 +329,48 @@ class TestGrafana(TestCase):
             name = "".join([self.test_sensor_name, str(i)])
             self.assertTrue(dashboard_info["dashboard"]["panels"][i]["title"] == name)
 
-    def test_add_panel_fail_no_dashboard_exists_for_event(self):
+    def test_add_sensor_creates_panel_in_dashboard(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
 
+        # Create an event
+        self.create_venue_and_event(self.event_name)
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        # POST sensor data
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit_new_sensor": "",
+                "sensor-name": self.test_sensor_name,
+                "select-sensor-type": self.test_sensor_type,
+            },
+        )
+
+        # Fetch the dashboard again
+        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        self.assertTrue(dashboard)
+
+        # Confirm that a panel was added to the dashboard with the expected title
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+
+        # Note: converting test_sensor_name to lowercase because currently
+        # sensor names are automatically capitalized when they are created
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
+        )
+
+    def test_add_panel_fail_no_dashboard_exists_for_event(self):
         # Create an event
         event = self.create_venue_and_event(self.event_name)
 
@@ -500,3 +542,43 @@ class TestGrafana(TestCase):
         self.assertTrue(
             dashboard_info["dashboard"]["panels"][0]["title"] == sensor.name
         )
+
+    def test_delete_event_deletes_grafana_dashboard(self):
+        self.grafana.create_postgres_datasource(self.datasource_name)
+
+        # Create a venue
+        venue = AGVenue.objects.create(
+            name=self.event_name,
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        # Send a request to create an event (should trigger the creation of a
+        # grafana dashboard of the same name)
+        self.client.post(
+            reverse(self.event_url),
+            data={
+                "submit-event": "",
+                "name": self.event_name,
+                "date": self.test_event_data["date"],
+                "description": self.test_event_data["description"],
+                "venue_uuid": venue.uuid,
+            },
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Retrieve event object
+        event = AGEvent.objects.all().first()
+
+        # Delete the event by posting to the delete view
+        self.client.post(
+            reverse(self.event_delete_url, kwargs={"event_uuid": event.uuid})
+        )
+        # Try and retrieve the dashboard
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertFalse(dashboard)

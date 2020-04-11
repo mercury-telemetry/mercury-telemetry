@@ -23,9 +23,34 @@ class TestEventView(TestCase):
         "longitude": 200,
     }
 
+    # Returns event
+    def create_venue_and_event(self, event_name):
+        venue = AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        event = AGEvent.objects.create(
+            name=event_name,
+            date=self.test_event_data["date"],
+            description=self.test_event_data["description"],
+            venue_uuid=venue,
+        )
+        event.save()
+
+        return event
+
     def setUp(self):
         self.login_url = "mercury:EventAccess"
         self.event_url = "mercury:events"
+        self.event_delete_url = "mercury:delete_event"
+
+        # Create random event name
+        self.event_name = "test"
+
         test_code = EventCodeAccess(event_code=self.TESTCODE, enabled=True)
         test_code.save()
 
@@ -139,3 +164,18 @@ class TestEventView(TestCase):
         self.assertEqual(event.date, self.test_event_data["date"])
         self.assertEqual(event.venue_uuid.uuid, venue.uuid)
         self.assertEqual(event.description, self.test_event_data["description"])
+
+    def test_delete_event(self):
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Confirm that event was created
+        self.assertEquals(AGEvent.objects.all().count(), 1)
+
+        # Delete the event
+        self.client.post(
+            reverse(self.event_delete_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        # Confirm that event was deleted
+        self.assertEquals(AGEvent.objects.all().count(), 0)
