@@ -34,5 +34,6 @@ class MeasurementExchangeTest(TestCase):
         self.assertIs(measurement_data.reading, reading)
 
         self.assertIs(measurement_data.sensor_type, self.sensor.type_id)
-        self.assertIs(measurement_data.processing_formula, self.sensor.type_id.processing_formula)
-
+        self.assertIs(
+            measurement_data.processing_formula, self.sensor.type_id.processing_formula
+        )
