@@ -3,6 +3,7 @@ from random import gauss, random
 
 from django.utils import timezone
 
+from ag_data.formulas.ingestion_engine import MeasurementIngestionEngine
 from ag_data import utilities
 
 
@@ -10,6 +11,7 @@ class Simulator:
 
     event = None
     sensor = None
+    engine = MeasurementIngestionEngine()
 
     def setUp(self, event, sensor):
         self.event = event
@@ -25,12 +27,7 @@ class Simulator:
             "measurement_values": value,
         }
 
-        from ag_data.formulas.ingestion_engine import MeasurementIngestionEngine
-
-        engine = MeasurementIngestionEngine()
-        engine.event = self.event
-
-        return engine.saveMeasurement(measurementDict, self.event)
+        return self.engine.saveMeasurement(measurementDict, self.event)
 
     def logSingleMeasurement(self, timestamp):
         """Create a single measurement for simulated sensor, from supported presets:
