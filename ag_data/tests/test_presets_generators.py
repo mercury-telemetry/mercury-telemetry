@@ -51,13 +51,17 @@ class CreateEventFromPresetsAtIndexTest(TestCase):
         self.totalTestEvents = len(presets.sample_events)
 
         randomVenuePresetIndex = randint(0, len(presets.sample_venues) - 1)
-        self.testVenue = presets_generators.createVenueFromPresetAtIndex(randomVenuePresetIndex)
+        self.testVenue = presets_generators.createVenueFromPresetAtIndex(
+            randomVenuePresetIndex
+        )
 
     def test_in_range(self):
         for index in range(self.totalTestEvents):
             reference = presets.sample_events[index]
 
-            eventReturned = presets_generators.createEventFromPresetAtIndex(self.testVenue, index)
+            eventReturned = presets_generators.createEventFromPresetAtIndex(
+                self.testVenue, index
+            )
 
             event = AGEvent.objects.get(pk=eventReturned.uuid)
 
@@ -70,7 +74,9 @@ class CreateEventFromPresetsAtIndexTest(TestCase):
 
     def test_out_of_range(self):
         with self.assertRaises(Exception) as e:
-            presets_generators.createEventFromPresetAtIndex(self.testVenue, self.totalTestEvents)
+            presets_generators.createEventFromPresetAtIndex(
+                self.testVenue, self.totalTestEvents
+            )
         correct_exception_message = (
             "Cannot find requested event (index "
             + str(self.totalTestEvents)
