@@ -5,6 +5,7 @@ from django.utils import timezone
 from ag_data import models
 from ag_data.presets.built_in_content import built_in_sensor_types
 
+
 @attr.s
 class MeasurementExchange(object):
     event = attr.ib(kw_only=True, validator=attr.validators.instance_of(models.AGEvent))
@@ -23,6 +24,7 @@ class MeasurementExchange(object):
     @property
     def processing_formula(self):
         return self.sensor_type.processing_formula
+
 
 def createOrResetAllBuiltInSensorTypes():
     for index in range(len(built_in_sensor_types)):

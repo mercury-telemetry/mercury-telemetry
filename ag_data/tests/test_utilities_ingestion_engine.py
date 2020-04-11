@@ -1,14 +1,10 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from ag_data.models import AGVenue, AGEvent, AGSensorType, AGSensor, AGMeasurement
 from ag_data.presets import presets_generators
 from ag_data import utilities
 
-from ag_data.formulas.ingestion_engine import (
-    MeasurementIngestionEngine,
-    MeasurementExchange,
-)
+from ag_data.formulas.ingestion_engine import MeasurementExchange
 
 
 class MeasurementExchangeTest(TestCase):

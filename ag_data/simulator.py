@@ -3,7 +3,10 @@ from random import gauss, random
 
 from django.utils import timezone
 
-from ag_data.formulas.ingestion_engine import MeasurementIngestionEngine
+from ag_data.formulas.ingestion_engine import (
+    MeasurementIngestionEngine,
+    MeasurementExchange,
+)
 from ag_data import utilities
 
 
@@ -21,13 +24,11 @@ class Simulator:
         utilities.assertEvent(self.event)
         utilities.assertSensor(self.sensor)
 
-        measurementDict = {
-            "measurement_timestamp": timestamp,
-            "measurement_sensor": self.sensor.id,
-            "measurement_values": value,
-        }
+        measurement_data = MeasurementExchange(
+            event=self.event, timestamp=timestamp, sensor=self.sensor, reading=value
+        )
 
-        return self.engine.saveMeasurement(measurementDict, self.event)
+        return self.engine.saveMeasurement(measurement_data)
 
     def logSingleMeasurement(self, timestamp):
 
