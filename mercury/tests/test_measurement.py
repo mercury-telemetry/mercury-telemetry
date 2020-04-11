@@ -47,7 +47,7 @@ class TestMeasurement(TestCase):
             "values": '{"power": 2, "speed": 1}',
             "date": "2020-03-11T19:20:00",
         }
-        response = self.client.post(reverse(self.post_url2), data=data,)
+        response = self.client.post(reverse(self.post_url2), data=data)
         return response
 
     def post_radio_data(self):
@@ -57,9 +57,7 @@ class TestMeasurement(TestCase):
             "values": '{"power": 2, "speed": 1}',
             "date": "2020-03-11T19:20:00",
         }
-        response = self.client.post(
-            reverse(self.post_url, args=[self.uuid]), data=data,
-        )
+        response = self.client.post(reverse(self.post_url, args=[self.uuid]), data=data)
         return response
 
     def post_defect_data(self):
