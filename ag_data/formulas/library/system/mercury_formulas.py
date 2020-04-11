@@ -7,27 +7,23 @@ from ag_data import models
 
 
 def fEmptyResult(timestamp, sensor, payload):
-    result = {}
 
-    return result
+    return {}
 
 
 def fMercurySimpleTemperatureSensor(timestamp, sensor, payload):
-    result = {}
 
     # This Simple Temperature Sensor decides it wants its own formula, even though it does
     # nothing more than the fEmptyResult function.
 
-    return result
+    return {}
 
 
 def fMercuryDualTemperatureSensor(timestamp, sensor, payload):
     mean = payload["internal"] / 2 + payload["external"] / 2
     diff = payload["internal"] - payload["external"]
 
-    result = {"mean": mean, "diff": diff}
-
-    return result
+    return {"mean": mean, "diff": diff}
 
 
 def fMercuryFlowSensor(timestamp, sensor, payload):
