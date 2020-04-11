@@ -4,6 +4,8 @@ import argparse
 import serial
 import serial.tools.list_ports
 
+from .utils import get_logger
+
 
 def is_usb_serial(port, args):
     if port.vid is None:
@@ -108,31 +110,38 @@ def main():
     )
     args = parser.parse_args(sys.argv[1:])
 
+    logger = get_logger("PORT_LOGGER", file_name="PORT_LOG_FILE")
+
     if args.verbose:
-        print("pyserial version = {}".format(serial.__version__))
-        print("   vid =", args.vid)
-        print("   pid =", args.pid)
-        print("serial =", args.serial)
-        print("vendor =", args.vendor)
+        logger.info("pyserial version = {}".format(serial.__version__))
+        logger.info(f"   vid = {args.vid}")
+        logger.info(f"   pid = {args.pid}")
+        logger.info(f"serial = {args.serial}")
+        logger.info(f"vendor = {args.vendor}")
+        # print("pyserial version = {}".format(serial.__version__))
+        # print("   vid =", args.vid)
+        # print("   pid =", args.pid)
+        # print("serial =", args.serial)
+        # print("vendor =", args.vendor)
 
     if args.list:
         detected = False
         for port in serial.tools.list_ports.comports():
             if is_usb_serial(port, args):
-                print(
+                logger.info(
                     "USB Serial Device {:04x}:{:04x}{} found @{}\r".format(
                         port.vid, port.pid, extra_info(port), port.device
                     )
                 )
                 detected = True
         if not detected:
-            print("No USB Serial devices detected.\r")
+            logger.warn("No USB Serial devices detected.\r")
         return
 
     for port in serial.tools.list_ports.comports():
         if is_usb_serial(port, args):
-            print(port)
-            print(port.device)
+            logger.info(port)
+            logger.info(port.device)
             return
     sys.exit(1)
 
