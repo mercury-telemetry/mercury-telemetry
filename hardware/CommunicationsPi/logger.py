@@ -35,17 +35,17 @@ class Logger(object):
         return d + "/" + file_name
 
     def info(self, msg, extra=None):
-        print(msg)
+        # print(msg)
         self.logger.info(msg, extra=extra)
 
     def error(self, msg, extra=None):
-        print(msg)
+        # print(msg)
         self.logger.error(msg, extra=extra)
 
     def debug(self, msg, extra=None):
-        print(msg)
+        # print(msg)
         self.logger.debug(msg, extra=extra)
 
     def warn(self, msg, extra=None):
-        print(msg)
+        # print(msg)
         self.logger.warn(msg, extra=extra)
