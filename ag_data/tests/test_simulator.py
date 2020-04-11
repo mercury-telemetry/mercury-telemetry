@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from ag_data.simulator import Simulator
 from ag_data.models import AGMeasurement
-from ag_data.presets import helpers as preset_helpers
+from ag_data.presets import presets_generators
 from ag_data.presets import sample_user_data
 from ag_data import utilities
 
@@ -25,8 +25,8 @@ class SimulatorEmptyInitTest(TestCase):
         self.assertEqual(str(ae.exception), correct_assertion_message)
 
     def test_simulator_log_single_measurement_no_sensor(self):
-        testVenue = preset_helpers.createVenueFromPresetAtIndex(0)
-        self.sim.event = preset_helpers.createEventFromPresetAtIndex(testVenue, 0)
+        testVenue = presets_generators.createVenueFromPresetAtIndex(0)
+        self.sim.event = presets_generators.createEventFromPresetAtIndex(testVenue, 0)
 
         with self.assertRaises(AssertionError) as ae:
             timestamp = timezone.now()
@@ -42,13 +42,13 @@ class SimulatorTest(TestCase):
         self.assertEqual(self.sim.event, None)
         self.assertEqual(self.sim.sensor, None)
 
-        venue = preset_helpers.createVenueFromPresetAtIndex(self.randVenueIndex())
-        self.event = preset_helpers.createEventFromPresetAtIndex(
+        venue = presets_generators.createVenueFromPresetAtIndex(self.randVenueIndex())
+        self.event = presets_generators.createEventFromPresetAtIndex(
             venue, self.randEventIndex()
         )
 
         utilities.createOrResetAllBuiltInSensorTypes()
-        self.sensor = preset_helpers.createSensorFromPresetAtIndex(
+        self.sensor = presets_generators.createSensorFromPresetAtIndex(
             self.randSensorIndex()
         )
 
