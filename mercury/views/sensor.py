@@ -119,33 +119,39 @@ class CreateSensorView(TemplateView):
                 new_type.save()
 
                 sensor_type = AGSensorType.objects.get(name=sensor_name)
+
                 new_sensor = AGSensor.objects.create(
                     name=sensor_name, type_id=sensor_type
                 )
                 new_sensor.save()
 
                 # Add a Sensor panel to the Active Event
-                # Check that Grafana is already configured
-                # and that an Active Event exists
                 # Note: THIS IS A PLACEHOLDER - waiting to decide
                 # how to implement Current GFConfig
-                gf_configs = GFConfig.objects.filter(gf_current=True)
+                gfconfigs = GFConfig.objects.all()
+
                 # Note: THIS IS A PLACEHOLDER - waiting to decide
                 # how to implement Active Event
                 active_events = AGEvent.objects.all()
-                if len(gf_configs) > 0 and len(active_events) > 0:
-                    gf_config = gf_configs.first()
-                    active_event = active_events.first()
-                    # Grafana instance using current GFConfig
-                    grafana = Grafana(gf_config)
 
-                    # Add the Sensor Panel to the Active Event's dashboard
-                    try:
-                        grafana.add_panel(new_sensor, active_event)
-                    except ValueError as error:
-                        messages.error(
-                            request, f"Failed to add panel to active dashboard: {error}"
-                        )
+                # Only add panel to active event
+                if len(active_events) > 0:
+                    active_event = active_events.first()
+
+                    # Add panel to each grafana instance
+                    for gfconfig in gfconfigs:
+
+                        # Grafana instance using current GFConfig
+                        grafana = Grafana(gfconfig)
+
+                        # Add the Sensor Panel to the Active Event's dashboard
+                        try:
+                            grafana.add_panel(new_sensor, active_event)
+                        except ValueError as error:
+                            messages.error(
+                                request,
+                                f"Failed to add panel to active dashboard: {error}",
+                            )
 
         # gather sensors and sensor types (which should be the same) and render them
         types = AGSensorType.objects.all()
@@ -155,3 +161,4 @@ class CreateSensorView(TemplateView):
             "sensors": sensors,
         }
         return render(request, self.template_name, context)
+
