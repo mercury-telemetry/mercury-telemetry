@@ -29,12 +29,12 @@ def fMercuryDualTemperatureSensor(timestamp, sensor, payload):
 def fMercuryFlowSensor(timestamp, sensor, payload):
     result = {}
 
-    latest = models.AGMeasurement.objects.filter(sensor_id=sensor.id)
+    measurements = models.AGMeasurement.objects.filter(sensor_id=sensor.id)
 
-    if latest.count() == 0:
+    if measurements.count() == 0:
         result = {"gasLevel": 100}
     else:
-        latest = latest.latest("timestamp")
+        latest = measurements.latest("timestamp")
         timeElapsed = timestamp - latest.timestamp
 
         lastResult = latest.value["result"]["gasLevel"]
