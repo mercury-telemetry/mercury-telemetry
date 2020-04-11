@@ -38,6 +38,7 @@ class TestGrafana(TestCase):
     title = "Bar"
 
     test_sensor_name = "Wind Sensor"
+    test_sensor_name_update = "Another Name"
     test_sensor_type = "Dual wind"
     test_sensor_format = {
         "left_gust": {"unit": "km/h", "format": "float"},
@@ -106,6 +107,7 @@ class TestGrafana(TestCase):
         self.event_url = "mercury:events"
         self.event_delete_url = "mercury:delete_event"
         self.event_update_url = "mercury:update_event"
+        self.update_sensor_url = "mercury:update_sensor"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -344,7 +346,7 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
 
         # Create an event
-        self.create_venue_and_event(self.event_name)
+        event = self.create_venue_and_event(self.event_name)
 
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
@@ -378,6 +380,54 @@ class TestGrafana(TestCase):
         self.assertEquals(
             dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
         )
+
+    def test_update_sensor_updates_panel_in_dashboard(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name,
+            type_id=sensor_type
+        )
+        sensor.save()
+
+        self.grafana.add_panel(sensor, event)
+
+        # Fetch the dashboard again
+        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        self.assertTrue(dashboard)
+
+        # Confirm that a panel was added to the dashboard with the expected title
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+
+        # Update sensor
+        self.client.post(
+            reverse(self.update_sensor_url, kwargs={"sensor_id": sensor.id}),
+            data={"edit-sensor-name": self.test_sensor_name_update},
+            follow=True,
+        )
+
+        # Confirm sensor name was updated
+        self.assertEquals(AGSensor.objects.filter(
+            name=self.test_sensor_name_update).count(), 1)
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertEquals(dashboard["dashboard"]["panels"][0]["title"],
+                          self.test_sensor_name_update)
 
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
         # Create an event

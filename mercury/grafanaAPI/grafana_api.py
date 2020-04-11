@@ -371,7 +371,6 @@ class Grafana:
         except (KeyError, TypeError):
             return False
 
-    # @TODO
     def update_dashboard_title(self, event, title):
         """
         :param event: Event to update
@@ -516,6 +515,10 @@ class Grafana:
                 raise ValueError(f"Sensor panel not added: {sensor.name}")
         except KeyError as error:
             raise ValueError(f"Sensor panel not added: {error}")
+
+    #@TODO
+    def delete_panel(self, name, event):
+        pass
 
     def delete_all_panels_by_dashboard_name(self, name):
         """
