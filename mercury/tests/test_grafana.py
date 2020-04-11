@@ -597,6 +597,8 @@ class TestGrafana(TestCase):
 
         event = self.create_venue_and_event(self.event_name)
 
+        updated_event_name = self.event_name + " Day Two"
+
         venue = AGVenue.objects.first()
 
         # Send a request to create an event (should trigger the creation of a
@@ -619,17 +621,14 @@ class TestGrafana(TestCase):
         self.client.post(
             reverse(self.event_update_url, kwargs={"event_uuid": event.uuid}),
             data={
-                "name": self.test_event_data_update["name"],
-                "date": self.test_event_data["date"],
+                "name": updated_event_name,
                 "description": self.test_event_data["description"],
                 "venue_uuid": venue.uuid,
             },
         )
 
         # Confirm that a dashboard exists with the new event name
-        dashboard = self.grafana.get_dashboard_by_name(
-            self.test_event_data_update["name"]
-        )
+        dashboard = self.grafana.get_dashboard_by_name(updated_event_name)
         self.assertTrue(dashboard)
         print(dashboard)
-        self.assertEquals(dashboard["title"], self.test_event_data_update["name"])
+        self.assertEquals(dashboard["dashboard"]["title"], updated_event_name)

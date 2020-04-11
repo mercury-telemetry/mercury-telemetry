@@ -34,12 +34,43 @@ def update_venue(request, venue_uuid=None):
 def update_event(request, event_uuid=None):
     event_to_update = AGEvent.objects.get(uuid=event_uuid)
     if event_to_update:
-        event_to_update.name = request.POST.get("name")
-        post_event_location_id = request.POST.get("venue_uuid")
-        venue_object = AGVenue.objects.get(uuid=post_event_location_id)
-        event_to_update.venue_uuid = venue_object
-        event_to_update.description = request.POST.get("description")
+        new_name = request.POST.get("name")
+        new_venue_id = request.POST.get("venue_uuid")
+        new_venue_object = AGVenue.objects.get(uuid=new_venue_id)
+        new_description = request.POST.get("description")
+
+        # if the name was changed, update all Grafana dashboards with new name
+        if new_name != event_to_update.name:
+            gfconfigs = GFConfig.objects.all()
+
+            for gfconfig in gfconfigs:
+
+                # Grafana instance using current GFConfig
+                grafana = Grafana(gfconfig)
+
+                try:
+                    dashboard = grafana.update_dashboard_title(
+                        event_to_update, new_name
+                    )
+                    if dashboard:
+                        messages.success(request, "Grafana dashboard title " "updated")
+                    else:
+                        messages.error(
+                            request, "Grafana dashboard title not " "updated: "
+                        )
+
+                except ValueError as error:
+                    messages.error(
+                        request, f"Grafana dashboard title not updated: " f"{error}"
+                    )
+
+        # update the AGEvent object
+        event_to_update.name = new_name
+        event_to_update.venue_uuid = new_venue_object
+        event_to_update.description = new_description
         event_to_update.save()
+
+        messages.success(request, "Event updated successfully")
 
     return redirect("/events")
 

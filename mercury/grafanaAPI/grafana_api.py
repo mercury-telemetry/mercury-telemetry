@@ -371,6 +371,53 @@ class Grafana:
         except (KeyError, TypeError):
             return False
 
+    # @TODO
+    def update_dashboard_title(self, event, title):
+        """
+        :param event: Event to update
+        :param title: New title of the dashboard
+        :return:
+        If a dashboard exists with that title, the title is updated.
+        Returns False if no update was performed
+        Raises ValueError if there is an error updating the dashboard.
+        Returns JSON response if status = "success"
+        """
+
+        if event.name == title:
+            return False
+
+        dashboard = self.get_dashboard_by_name(event.name)
+
+        if dashboard is None:
+            return False
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except (KeyError, TypeError):
+            panels = []
+
+        # Create updated dashboard dict with updated list of panels
+        updated_dashboard = self.create_dashboard_update_dict(
+            dashboard, panels, True, title
+        )
+
+        # POST updated dashboard
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(
+            self.endpoints["dashboards"],
+            data=json.dumps(updated_dashboard),
+            headers=headers,
+            auth=("api_key", self.api_token),
+        )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Event dashboard {event.name} not updated to {title}")
+            return response.json()
+        except KeyError as error:
+            raise ValueError(f"Event dashboard {event.name} not updated: {error}")
+
     def add_panel(self, sensor, event):
         """
 
@@ -656,7 +703,9 @@ class Grafana:
         return panel
 
     # Helper method for add_panel
-    def create_dashboard_update_dict(self, dashboard_info, panels, overwrite=True):
+    def create_dashboard_update_dict(
+        self, dashboard_info, panels, overwrite=True, title=None
+    ):
         """
         Creates dashboard update dict with the provided dashboard_info dict and
         panels array. Can be posted to Create/Update Dashboard API endpoint to either
@@ -672,7 +721,7 @@ class Grafana:
             # Extract attributes from existing dashboard
             id = dashboard_info["dashboard"]["id"]
             uid = dashboard_info["dashboard"]["uid"]
-            title = dashboard_info["dashboard"]["title"]
+            title = title if title else dashboard_info["dashboard"]["title"]
             schema_version = dashboard_info["dashboard"]["schemaVersion"]
             # style = dashboard_info["dashboard"]["style"]
             tags = dashboard_info["dashboard"]["tags"]
