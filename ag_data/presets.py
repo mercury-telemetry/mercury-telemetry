@@ -44,9 +44,19 @@ sensor_type_presets = [
             "external": {"unit": "Keivin", "format": "float"},
         },
     },
+    {
+        "agSensorTypeID": 100,
+        "agSensorTypeName": "Violet GPS Sensor",
+        "agSensorTypeFormula": 0,
+        "agSensorTypeFormat": {
+            "latitude": {"unit": "degrees", "data_type": "Numeric"},
+            "longitude": {"unit": "degrees", "data_type": "Numeric"},
+        },
+    },
 ]
 
 sensor_presets = [
     {"agSensorName": "Sample Simple Temperature", "agSensorType": 0},
     {"agSensorName": "Sample Dual Temperature", "agSensorType": 1},
+    {"agSensorName": "Sunny's Violet GPS", "agSensorType": 2},
 ]

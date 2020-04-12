@@ -22,4 +22,3 @@ class CreateGPSView(TemplateView):
         }
 
         return render(request, self.template_name, context)
-

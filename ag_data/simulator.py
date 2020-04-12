@@ -193,6 +193,20 @@ class Simulator:
                 sensor_id=self.sensor,
                 value={"internal": gauss(15, 3), "external": gauss(20, 2)},
             )
+        elif self.checkSensorFormat(2):
+            import math
+
+            second = timestamp.second
+
+            x = math.cos(second / (2 * math.pi))
+            y = math.sin(second / (2 * math.pi))
+
+            return models.AGMeasurement.objects.create(
+                timestamp=timestamp,
+                event_uuid=self.event,
+                sensor_id=self.sensor,
+                value={"latitude": y, "longitude": x},
+            )
 
     def checkSensorFormat(self, index):
         return (
