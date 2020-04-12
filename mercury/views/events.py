@@ -46,7 +46,27 @@ def update_event(request, event_uuid=None):
 
 def delete_event(request, event_uuid=None):
     event_to_delete = AGEvent.objects.get(uuid=event_uuid)
+
+    # delete any dashboards that exist for this event
+    gfconfigs = GFConfig.objects.all()
+
+    # Add panel to each grafana instance
+    for gfconfig in gfconfigs:
+
+        # Grafana instance using current GFConfig
+        grafana = Grafana(gfconfig)
+
+        deleted = grafana.delete_dashboard_by_name(event_to_delete.name)
+
+        if not deleted:
+            messages.error(
+                request,
+                f"Failed to delete Event dashboard from Grafana instance: "
+                f"{gfconfig.gf_host}",
+            )
+
     event_to_delete.delete()
+
     return redirect("/events")
 
 
@@ -163,10 +183,7 @@ def create_event_json(event_object, venue_object, measurements_object):
             }
             measurement_info.append(temp)
 
-    data = {
-        "event_info": event_info,
-        "measurement_info": measurement_info,
-    }
+    data = {"event_info": event_info, "measurement_info": measurement_info}
 
     return data
 

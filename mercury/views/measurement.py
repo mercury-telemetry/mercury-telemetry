@@ -26,11 +26,7 @@ def add_measurement(request, event):
     json_data = request.data
 
     res = {"event_uuid": event.uuid}
-    key_map = {
-        "timestamp": "date",
-        "sensor_id": "sensor_id",
-        "value": "values",
-    }
+    key_map = {"timestamp": "date", "sensor_id": "sensor_id", "value": "values"}
 
     for key, json_key in key_map.items():
         if json_key not in json_data:
