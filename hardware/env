@@ -7,3 +7,4 @@ TRANSMITTER_LOG_FILE=transmitter.log
 RECEIVER_LOG_FILE=receiver.log
 LAN_SERVER_LOG_FILE=lan_server.log
 LAN_CLIENT_LOG_FILE=lan_client.log
+PORT_LOG_FILE=port.log
