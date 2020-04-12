@@ -113,6 +113,17 @@ class Simulator:
         does not have enough resources to generate required sensor measurements. Please
         notice that for some sensors, data generation use various random number generations
         extensively.
+
+        Arguments:
+
+            frequencyInHz {float} -- frequency for measurement generation. This method will
+            do its best to achieve the frequency at its best.
+
+        Keyword Arguments:
+
+            sleepTimerInSeconds {float} -- time in seconds before automatically stop
+            generate new measurements. (default: {0} which will result in generating
+            measurements infinitely)
         """
 
         startTime = timezone.now()
