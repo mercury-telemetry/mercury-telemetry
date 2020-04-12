@@ -1,13 +1,5 @@
 from django.urls import path
-from .views import (
-    views,
-    sensor,
-    events,
-    pitcrew,
-    radioreceiver,
-    gf_config,
-    measurement,
-)
+from .views import views, sensor, events, pitcrew, radioreceiver, gf_config, measurement
 
 app_name = "mercury"
 urlpatterns = [
@@ -36,7 +28,7 @@ urlpatterns = [
         name="update_type",
     ),
     path("events/", events.CreateEventsView.as_view(), name="events"),
-    path("events/delete/<uuid:event_uuid>", events.delete_event),
+    path("events/delete/<uuid:event_uuid>", events.delete_event, name="delete_event"),
     path("events/update/<uuid:event_uuid>", events.update_event),
     path("events/updatevenue/<uuid:venue_uuid>", events.update_venue),
     path("events/export/<uuid:event_uuid>/csv", events.export_event),

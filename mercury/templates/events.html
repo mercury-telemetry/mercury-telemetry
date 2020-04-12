@@ -124,6 +124,10 @@
             {% else %}
                     <div>There are no events to show.</div>
             {% endif %}
+
+            {% for message in messages %}
+            <p class="error"> {{ message }} </p>
+            {% endfor %}
         </div>
 
         <!--Create Events -->
