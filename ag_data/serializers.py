@@ -45,6 +45,7 @@ class AGMeasurementSerializer(serializers.ModelSerializer):
         read_only=False, queryset=AGEvent.objects.all()
     )
     value = AGJSONSerializerField(binary=True, encoder=DjangoJSONEncoder)
+    timestamp = serializers.DateTimeField()
 
     class Meta:
         model = AGMeasurement

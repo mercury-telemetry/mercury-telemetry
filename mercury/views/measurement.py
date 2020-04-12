@@ -12,6 +12,16 @@ def build_error(str):
     return json.dumps({"error": str})
 
 
+def fetch_event():
+    try:
+        events = AGEvent.objects.all()
+        event = events.first()
+    except AGEvent.DoesNotExist:
+        event = False
+
+    return event
+
+
 def add_measurement(request, event):
     json_data = request.data
     # # TODO: Abandon str as type of json_data in Sprint 6
@@ -79,10 +89,6 @@ class MeasurementWithoutEvent(APIView):
         TODO: fetch the active event
         Now we use the first event in the db
         """
-        try:
-            events = AGEvent.objects.all()
-            event = events.first()
-        except AGEvent.DoesNotExist:
-            event = False
+        event = fetch_event()
 
         return add_measurement(request, event)
