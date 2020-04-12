@@ -37,7 +37,6 @@ def fake_valid(res, raise_exception=True):
 class TestMeasurement(TestCase):
     def setUp(self) -> None:
         self.post_url = "mercury:measurement"
-        self.post_url2 = "mercury:measurementWO"
         self.uuid = "d81cac8d-26e1-4983-a942-1922e54a943d"
         self.uuid2 = "d81cac8d-26e1-4983-a942-1922e54a943a"
 
@@ -54,7 +53,7 @@ class TestMeasurement(TestCase):
         # POST sensor data to the measurement url
         data = {
             "sensor_id": 1,
-            "values": '{"power": 2, "speed": 1}',
+            "values": {"power": 2, "speed": 1},
             "date": "2020-03-11T19:20:00",
         }
         response = self.client.post(

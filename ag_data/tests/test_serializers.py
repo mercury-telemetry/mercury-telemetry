@@ -27,13 +27,10 @@ class TestSerializers(TestCase):
     test_sensor_type_data = {
         "name": "temperature",
         "processing_formula": 1,
-        "format": {1: 1}
+        "format": {1: 1},
     }
 
-    test_sensor_data = {
-        "name": "temperature",
-        "type_id": 1
-    }
+    test_sensor_data = {"name": "temperature", "type_id": 1}
 
     test_measurement_data = {
         "value": {"power": 2, "speed": 1},
@@ -41,19 +38,27 @@ class TestSerializers(TestCase):
     }
 
     def setUp(self):
-        AGVenue.objects.create(name=self.test_venue_data["name"],
-                               description=self.test_venue_data["description"],
-                               latitude=self.test_venue_data["latitude"],
-                               longitude=self.test_venue_data["longitude"])
-        AGEvent.objects.create(name=self.test_event_data["name"],
-                               date=self.test_event_data["date"],
-                               description=self.test_event_data["description"],
-                               venue_uuid=AGVenue.objects.all().first())
-        AGSensorType.objects.create(name=self.test_sensor_type_data["name"],
-                                    processing_formula=self.test_sensor_type_data["processing_formula"],
-                                    format=self.test_sensor_type_data["format"])
-        AGSensor.objects.create(name=self.test_sensor_data["name"],
-                                type_id=AGSensorType.objects.all().first())
+        AGVenue.objects.create(
+            name=self.test_venue_data["name"],
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        AGEvent.objects.create(
+            name=self.test_event_data["name"],
+            date=self.test_event_data["date"],
+            description=self.test_event_data["description"],
+            venue_uuid=AGVenue.objects.all().first(),
+        )
+        AGSensorType.objects.create(
+            name=self.test_sensor_type_data["name"],
+            processing_formula=self.test_sensor_type_data["processing_formula"],
+            format=self.test_sensor_type_data["format"],
+        )
+        AGSensor.objects.create(
+            name=self.test_sensor_data["name"],
+            type_id=AGSensorType.objects.all().first(),
+        )
 
         self.uuid = AGEvent.objects.all().first().uuid
         self.sensor_id = AGSensor.objects.all().first().id

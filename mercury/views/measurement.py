@@ -24,9 +24,6 @@ def fetch_event():
 
 def add_measurement(request, event):
     json_data = request.data
-    # # TODO: Abandon str as type of json_data in Sprint 6
-    # if isinstance(json_data, str):
-    #     json_data = json.loads(json_data)
 
     res = {"event_uuid": event.uuid}
     key_map = {
@@ -54,12 +51,11 @@ def add_measurement(request, event):
 
 
 class MeasurementView(APIView):
-    def post(self, request, event_uuid=None):
+    def post(self, request):
         """
-        DUPLICATED: delete in sprint 6
         The post receives sensor data through internet
         Url example:
-        http://localhost:8000/measurement/d81cac8d-26e1-4983-a942-1922e54a943d
+        http://localhost:8000/measurement/
         Post Json Data Example
         {
           "sensor_id": 1,
@@ -69,23 +65,7 @@ class MeasurementView(APIView):
           }
           "date" : 2020-03-11T20:20+01:00
         }
-        """
-        # First check event_uuid exists
-        try:
-            event = AGEvent.objects.get(uuid=event_uuid)
-        except AGEvent.DoesNotExist:
-            event = False
-        if event is False:
-            return Response(
-                build_error("Event uuid not found"), status=status.HTTP_404_NOT_FOUND
-            )
 
-        return add_measurement(request, event)
-
-
-class MeasurementWithoutEvent(APIView):
-    def post(self, request):
-        """
         TODO: fetch the active event
         Now we use the first event in the db
         """

@@ -17,7 +17,7 @@ class AGJSONSerializerField(serializers.JSONField):
 
         try:
             # If the binary is true, check whether data is a valid Json String
-            if self.binary or getattr(data, 'is_json_string', False):
+            if self.binary or getattr(data, "is_json_string", False):
                 if isinstance(data, bytes):
                     data = data.decode()
                 return json.loads(data)
