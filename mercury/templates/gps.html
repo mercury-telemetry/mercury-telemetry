@@ -21,8 +21,13 @@
             <input class="grafana-btn grafana-btn-green" type="submit" value="All Events">
         </div>
         <br><br>
-        <iframe id="encoder_iframe" height=100% width="100%" src="{% url 'mercury:gpspanels' %}">
-        </iframe>
+        {% if active_event %}
+            <b>Active event: {{ active_event.name }}</b>
+            <iframe id="encoder_iframe" height=100% width="100%" src="{% url 'mercury:gpspanels' %}">
+            </iframe>
+        {% else %}
+            <b>There is no active event. There should be one active event to see the gps data.</b>
+        {% endif %}
     </div>
     </body>
 </html>

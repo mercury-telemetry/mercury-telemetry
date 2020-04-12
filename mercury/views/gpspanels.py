@@ -12,7 +12,6 @@ from mercury.event_check import require_event_code
 
 class CreateGPSPanelView(TemplateView):
     """This is the view for creating a new event."""
-
     template_name = "gpspanels.html"
 
     @require_event_code
