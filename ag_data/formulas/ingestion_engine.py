@@ -1,6 +1,8 @@
 from ag_data import models
 from ag_data.formulas.library.system import mercury_formulas as hgFormulas
 
+from ag_data.utilities import MeasurementExchange
+
 
 class MeasurementIngestionEngine:
 
@@ -11,23 +13,21 @@ class MeasurementIngestionEngine:
         6: hgFormulas.fMercuryFlowSensor,
     }
 
-    def saveMeasurement(self, measurementDict, event):
-        timestamp = measurementDict["measurement_timestamp"]
-        sensor_id = measurementDict["measurement_sensor"]
-        rawValue = measurementDict["measurement_values"]
+    def saveMeasurement(self, rawMeasurement):
 
-        sensor = models.AGSensor.objects.get(pk=sensor_id)
-        sensor_type = sensor.type_id
-        processing_formula = sensor_type.processing_formula
+        assert isinstance(rawMeasurement, MeasurementExchange)
 
         formula = MeasurementIngestionEngine.processing_formulas.get(
-            processing_formula, hgFormulas.fEmptyResult
+            rawMeasurement.processing_formula, hgFormulas.fEmptyResult
         )
 
-        value = {"reading": rawValue}
+        value = {"reading": rawMeasurement.reading}
 
-        value["result"] = formula(timestamp, sensor, rawValue)
+        value["result"] = formula(rawMeasurement)
 
         return models.AGMeasurement.objects.create(
-            timestamp=timestamp, event_uuid=event, sensor_id=sensor, value=value
+            timestamp=rawMeasurement.timestamp,
+            event_uuid=rawMeasurement.event,
+            sensor_id=rawMeasurement.sensor,
+            value=value,
         )
