@@ -39,7 +39,7 @@ class UtilityFunctionUnitTest(TestCase):
 
             sensorType = AGSensorType.objects.get(pk=reference["agSensorTypeID"])
 
-            sensorType.name = reference["agSensorTypeName"].join(" ")
+            sensorType.name = reference["agSensorTypeName"] + " "
             sensorType.processing_formula = reference["agSensorTypeFormula"] + 1
             sensorType.format = [reference["agSensorTypeFormat"]]
             sensorType.save()
