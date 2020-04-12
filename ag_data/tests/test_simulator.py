@@ -67,14 +67,14 @@ class SimulatorTest(TestCase):
 
         # test measurement payload format by cross comparison of all keys in payload
         # and the expected specification
-        measurement_value = measurement_in_database.value
-        correct_payload_format = self.sensor.type_id.format
+        value_in_db = measurement_in_database.value
+        correct_value_format = self.sensor.type_id.format
 
         self.crossCompareKeys(
-            correct_payload_format["reading"], measurement_value["reading"]
+            correct_value_format["reading"], value_in_db["reading"]
         )
         self.crossCompareKeys(
-            correct_payload_format["result"], measurement_value["result"]
+            correct_value_format["result"], value_in_db["result"]
         )
 
         # FIXME: test measurement value field data type (string/float/bool/...)
