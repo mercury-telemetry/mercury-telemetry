@@ -14,9 +14,9 @@ def build_error(str):
 
 def add_measurement(request, event):
     json_data = request.data
-    # TODO: Abandon str as type of json_data in Sprint 6
-    if isinstance(json_data, str):
-        json_data = json.loads(json_data)
+    # # TODO: Abandon str as type of json_data in Sprint 6
+    # if isinstance(json_data, str):
+    #     json_data = json.loads(json_data)
 
     res = {"event_uuid": event.uuid}
     key_map = {
@@ -32,12 +32,6 @@ def add_measurement(request, event):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         res[key] = json_data[json_key]
-
-    # TODO: Abandon str as type of json_data in Sprint 6
-    # SQL query fails to select values from
-    # JSONField if the str is stored in it
-    if isinstance(res["value"], str):
-        res["value"] = json.loads(res["value"])
 
     serializer = AGMeasurementSerializer(data=res)
     try:
