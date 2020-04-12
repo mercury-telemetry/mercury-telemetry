@@ -70,12 +70,8 @@ class SimulatorTest(TestCase):
         value_in_db = measurement_in_database.value
         correct_value_format = self.sensor.type_id.format
 
-        self.crossCompareKeys(
-            correct_value_format["reading"], value_in_db["reading"]
-        )
-        self.crossCompareKeys(
-            correct_value_format["result"], value_in_db["result"]
-        )
+        self.crossCompareKeys(correct_value_format["reading"], value_in_db["reading"])
+        self.crossCompareKeys(correct_value_format["result"], value_in_db["result"])
 
         # FIXME: test measurement value field data type (string/float/bool/...)
 
