@@ -75,16 +75,25 @@ class TestMeasurement(TestCase):
     def test_Radio_Receiver_POST_Event_Not_Exist(self):
         response = self.client.post(reverse(self.post_url, args=[self.uuid2]))
         self.assertEqual(404, response.status_code)
+        self.assertTrue("Event uuid not found" in str(response.content))
+
+    @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
+    def test_Radio_Receiver_POST_Sensor_Not_Exist(self):
+        response = self.post_radio_data()
+        self.assertEqual(400, response.status_code)
+        self.assertTrue("sensor_id" in str(response.content))
 
     @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Missing_Params(self):
         response = self.post_defect_data()
         self.assertEqual(400, response.status_code)
+        self.assertTrue("Missing required params " in str(response.content))
 
     @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_POST_Fail_to_Save(self):
         response = self.post_radio_data()
         self.assertEqual(400, response.status_code)
+        self.assertTrue("object does not exist." in str(response.content))
 
     @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     @mock.patch("ag_data.serializers.AGMeasurementSerializer.is_valid", fake_valid)
