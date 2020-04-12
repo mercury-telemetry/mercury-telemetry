@@ -67,21 +67,23 @@ class SimulatorTest(TestCase):
 
         # test measurement payload format by cross comparison of all keys in payload
         # and the expected specification
-        measurement_payload = measurement_in_database.value
-        correct_payload_format = self.sim.sensor.type_id.format
+        value_in_db = measurement_in_database.value
+        correct_value_format = self.sensor.type_id.format
 
-        self.crossCompareKeys(
-            correct_payload_format["reading"], measurement_payload["reading"]
-        )
-        self.crossCompareKeys(
-            correct_payload_format["result"], measurement_payload["result"]
-        )
+        self.crossCompareKeys(correct_value_format["reading"], value_in_db["reading"])
+        self.crossCompareKeys(correct_value_format["result"], value_in_db["result"])
 
         # FIXME: test measurement value field data type (string/float/bool/...)
 
     def test_simulator_log_single_measurement_all_sensor_samples(self):
-        # FIXME: add tests for all built-in sensor types and supported sample sensors
-        return
+        totalSensorSamples = len(sample_user_data.sample_sensors)
+
+        for index in range(totalSensorSamples):
+            currentSample = presets_generators.createSensorFromPresetAtIndex(index)
+
+            self.updateSensor(currentSample)
+
+            self.test_simulator_log_single_measurement()
 
     def test_simulator_log_multiple_measurements(self):
         import sys
@@ -174,6 +176,10 @@ class SimulatorTest(TestCase):
                 <= expectedTotal * 1.1
             )
 
+    def updateSensor(self, sensor):
+        self.sensor = sensor
+        self.sim.sensor = sensor
+
     def randVenueIndex(self):
         return randint(0, len(sample_user_data.sample_venues) - 1)
 
@@ -185,6 +191,6 @@ class SimulatorTest(TestCase):
 
     def crossCompareKeys(self, dictionary1, dictionary2):
         for field in dictionary1.keys():
-            self.assertIn(field, dictionary2.keys())
+            self.assertIn(field, dictionary2.keys(), f"{dictionary1}\n{dictionary2}")
         for field in dictionary2.keys():
-            self.assertIn(field, dictionary1.keys())
+            self.assertIn(field, dictionary1.keys(), f"{dictionary1}\n{dictionary2}")
