@@ -4,7 +4,7 @@ from ag_data.formulas.library.system import mercury_formulas as hgFormulas
 
 class MeasurementIngestionEngine:
 
-    processingFormulas = {
+    processing_formulas = {
         0: hgFormulas.fEmptyResult,
         2: hgFormulas.fMercurySimpleTemperatureSensor,
         4: hgFormulas.fMercuryDualTemperatureSensor,
@@ -20,7 +20,7 @@ class MeasurementIngestionEngine:
         sensor_type = sensor.type_id
         processing_formula = sensor_type.processing_formula
 
-        formula = MeasurementIngestionEngine.processingFormulas.get(
+        formula = MeasurementIngestionEngine.processing_formulas.get(
             processing_formula, hgFormulas.fEmptyResult
         )
 

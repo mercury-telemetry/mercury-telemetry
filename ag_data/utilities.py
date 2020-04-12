@@ -26,7 +26,7 @@ def createOrResetBuiltInSensorTypeAtPresetIndex(index):
 
     if index > len(built_in_sensor_types) - 1:
         raise Exception(
-            "Cannot find requested sensor type (index " + str(index) + ") from presets"
+            f"Cannot find requested sensor type (index {index}) from presets"
         )
     else:
         pass

@@ -56,9 +56,8 @@ class UtilityFunctionUnitTest(TestCase):
             )
 
         correct_exception_message = (
-            "Cannot find requested sensor type (index "
-            + str(self.totalTestSensorTypes)
-            + ") from presets"
+            f"Cannot find requested sensor type "
+            f"(index {self.totalTestSensorTypes}) from presets"
         )
 
         self.assertEqual(str(e.exception), correct_exception_message)

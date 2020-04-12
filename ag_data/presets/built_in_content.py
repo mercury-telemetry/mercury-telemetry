@@ -4,7 +4,8 @@ built_in_sensor_types = [
         "agSensorTypeName": "Coin Side Sensor",
         "agSensorTypeFormula": 0,
         "agSensorTypeFormat": {
-            "reading": {"side": {"unit": "", "format": "bool"}, "result": {}}
+            "reading": {"side": {"unit": "", "format": "bool"}},
+            "result": {},
         },
     },
     {

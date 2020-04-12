@@ -3,6 +3,7 @@ from random import gauss, random
 
 from django.utils import timezone
 
+from ag_data.formulas.ingestion_engine import MeasurementIngestionEngine
 from ag_data import utilities
 
 
@@ -10,6 +11,7 @@ class Simulator:
 
     event = None
     sensor = None
+    engine = MeasurementIngestionEngine()
 
     def setUp(self, event, sensor):
         self.event = event
@@ -25,34 +27,9 @@ class Simulator:
             "measurement_values": value,
         }
 
-        from ag_data.formulas.ingestion_engine import MeasurementIngestionEngine
-
-        engine = MeasurementIngestionEngine()
-        engine.event = self.event
-
-        return engine.saveMeasurement(measurementDict, self.event)
+        return self.engine.saveMeasurement(measurementDict, self.event)
 
     def logSingleMeasurement(self, timestamp):
-        """Create a single measurement for simulated sensor, from supported presets:
-
-        - (index `0`) For a solo temperature sensor, the measurement is marked with
-        `reading`. Readings are around 23°C (+/- 3°C), shifted with Gaussian distribution.
-
-        - (index `1`) For a dual temperature sensor, the measurement is marked with `inner`
-        and `outside`. `inner` readings are around 15°C (+/- 3°C), shifted with Gaussian
-        distribution. `outside` readings are around 20°C (+/- 2°C), shifted with Gaussian
-        distribution.
-
-        Arguments:
-
-            timestamp {datetime} -- the exact moment this new measurement is read from the
-            virtual sensor
-
-        Raises:
-
-            Exception: an exception raises when the simulator does not have valid event or
-            sensor.
-        """
 
         utilities.assertEvent(self.event)
         utilities.assertSensor(self.sensor)
@@ -85,9 +62,7 @@ class Simulator:
             payload = {"sample": gauss(0.5, 0.5)}
 
         else:
-            raise ValueError(
-                "Unsupported sensor type (" + str(self.sensor.type_id) + ")"
-            )
+            raise ValueError(f"Unsupported sensor type ({self.sensor.type_id})")
 
         return payload
 
@@ -96,12 +71,6 @@ class Simulator:
     ):
         """Create as many measurements from the past till current time as needed
         with the specified time range and frequency.
-
-        Arguments:
-
-            seconds {int} -- The time range in seconds for generated measurements
-
-            frequencyInHz {int} -- sampling frequency for the simulated sensor
         """
 
         startTime = timezone.now()
@@ -117,25 +86,18 @@ class Simulator:
             self.logSingleMeasurement(timeAtReading)
             if printProgress is True and count % 1000 == 0:
                 print(
-                    "("
-                    + "{:3.3f}%".format(count / totalMeasurements * 100)
-                    + ") Created "
-                    + str(count)
-                    + " measurements"
+                    f"({(count / totalMeasurements * 100):3.3f}%"
+                    f") Created {str(count)} measurements"
                 )
 
         if printProgress is True:
-            print(
-                "({}% done!) Created ".format(100)
-                + str(totalMeasurements)
-                + " measurements"
-            )
+            print(f"(100% done!) Created {totalMeasurements} measurements")
 
         endTime = timezone.now()
         if printProgress is True:
             print("Time elapsed: " + str(endTime - startTime))
 
-    def logLiveMeasurements(self, frequencyInHz, sleepTimer=0):
+    def logLiveMeasurements(self, frequencyInHz, sleepTimerInSeconds=0):
         """log measurements as they generate in real time.
 
         Here, the definition of "live" is defined as achieving at least 70% of insertion
@@ -159,19 +121,19 @@ class Simulator:
 
         Keyword Arguments:
 
-            sleepTimer {float} -- time in seconds before automatically stop generate new
-            measurements. (default: {0} which will result in generating measurements
-            infinitely)
+            sleepTimerInSeconds {float} -- time in seconds before automatically stop
+            generate new measurements. (default: {0} which will result in generating
+            measurements infinitely)
         """
 
         startTime = timezone.now()
-        stopTime = startTime + timezone.timedelta(seconds=sleepTimer)
+        stopTime = startTime + timezone.timedelta(seconds=sleepTimerInSeconds)
         sampleInterval = 1 / frequencyInHz
         cycleEnd = startTime
 
         while True:
             self.logSingleMeasurement(timezone.now())
-            if sleepTimer != 0 and stopTime < timezone.now():
+            if sleepTimerInSeconds != 0 and stopTime < timezone.now():
                 break
             cycleEnd = cycleEnd + timezone.timedelta(
                 microseconds=sampleInterval * 1000000
