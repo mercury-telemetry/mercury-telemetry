@@ -45,6 +45,10 @@ class TestGrafana(TestCase):
         "right_gust": {"unit": "km/h", "format": "float"},
     }
 
+    test_sensor_format_update = {
+        "fuel reading": {"unit": "m", "format": "float"},
+    }
+
     test_event_data = {
         "name": "Sunny Day Test Drive",
         "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
@@ -109,6 +113,7 @@ class TestGrafana(TestCase):
         self.event_update_url = "mercury:update_event"
         self.update_sensor_url = "mercury:update_sensor"
         self.delete_sensor_url = "mercury:delete_sensor"
+        self.update_sensor_type_url = "mercury:update_type"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -423,7 +428,7 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard["dashboard"])
         self.assertEquals(len(dashboard["dashboard"]["panels"]), 0)
 
-    def test_update_sensor_updates_panel_in_dashboard(self):
+    def test_update_sensor_name_updates_panel_title_in_dashboard(self):
         # Create a dashboard, confirm it was created
         dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
@@ -445,16 +450,6 @@ class TestGrafana(TestCase):
 
         self.grafana.add_panel(sensor, event)
 
-        # Fetch the dashboard again
-        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
-        self.assertTrue(dashboard)
-
-        # Confirm that a panel was added to the dashboard with the expected title
-        self.assertTrue(dashboard)
-        self.assertTrue(dashboard["dashboard"])
-        self.assertTrue(dashboard["dashboard"]["panels"])
-        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
-
         # Update sensor
         self.client.post(
             reverse(self.update_sensor_url, kwargs={"sensor_id": sensor.id}),
@@ -470,6 +465,70 @@ class TestGrafana(TestCase):
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertEquals(
             dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name_update
+        )
+
+    def test_update_sensor_type_updates_panel_query(self):
+        # Create a dashboard, confirm it was created
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        sensor_type_new = AGSensorType.objects.create(
+            name=self.test_sensor_type + " 2",
+            processing_formula=0,
+            format=self.test_sensor_format_update,
+        )
+        sensor_type_new.save()
+
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        self.grafana.add_panel(sensor, event)
+
+        test_sensor_type = {
+            "type-name": "fuel level",
+            "processing formula": 0,
+            "field-names": ["test-field-1", "test-field-2"],
+            "data-types": ["test-data-type-1", "test-data-type-2"],
+            "units": ["test-unit-1", "test-unit-2"],
+        }
+
+        # Update sensor type
+        self.client.post(
+            reverse(
+                self.update_sensor_type_url, kwargs={"type_id": sensor_type_new.id}
+            ),
+            data={
+                "edit-type-name": sensor_type_new.name,
+                "edit-field-names": [test_sensor_type["field-names"][0]],
+                "edit-data-types": [test_sensor_type["data-types"][0]],
+                "edit-units": [test_sensor_type["units"][0]],
+            },
+            follow=True,
+        )
+
+        # Confirm that a new Grafana panel was created with a query containing all of
+        # the current field names (not checking the full syntax of the query, just that
+        # the new field name is in the query)
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        print(test_sensor_type["field-names"][0])
+        print(dashboard)
+        print(dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"])
+        self.assertIn(
+            test_sensor_type["field-names"][0],
+            dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
         )
 
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
