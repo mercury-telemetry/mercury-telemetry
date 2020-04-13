@@ -77,5 +77,6 @@ jobs:
       deploy:
         provider: script
         script: docker push nyumotorsportstelemetryorg/mercury
-
+        on:
+          all_branches: true
             
