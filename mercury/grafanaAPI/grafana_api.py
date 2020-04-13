@@ -558,12 +558,11 @@ class Grafana:
             if panel["title"] == current_sensor_name:
                 panel["title"] = new_sensor.name
                 panel["targets"][0]["rawSql"] = self.create_panel_query(
-                    new_sensor, event)
+                    new_sensor, event
+                )
 
         # Create updated dashboard dict with updated list of panels
-        updated_dashboard = self.create_dashboard_update_dict(
-            dashboard_info, panels
-        )
+        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}

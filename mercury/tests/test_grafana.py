@@ -462,13 +462,14 @@ class TestGrafana(TestCase):
 
         # Confirm sensor name was updated
         self.assertEquals(
-            AGSensor.objects.filter(name=self.test_sensor_name_update.lower()).count(), 1
+            AGSensor.objects.filter(name=self.test_sensor_name_update.lower()).count(),
+            1,
         )
 
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertEquals(
             dashboard["dashboard"]["panels"][0]["title"],
-            self.test_sensor_name_update.lower()
+            self.test_sensor_name_update.lower(),
         )
 
     def test_update_sensor_type_updates_panel_query_of_active_event(self):

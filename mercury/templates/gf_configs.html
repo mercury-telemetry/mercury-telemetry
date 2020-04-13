@@ -14,18 +14,17 @@
     {% include 'sidebar.html' %}
     <div class="topbar-container">
 
-
+        <h2>Configure Grafana</h2>
 
         <!-- View Existing Dashboards -->
         <div>
-            <h2>Existing Grafana Dashboards</h2>
+
             {% for config in configs %}
                 <div>
                 {% if config.dashboards %}
                     <h3> <a target="_blank" href="{{ config.config.gf_host }}/dashboards"/>
-                    {{ config.config.gf_name }} - {{ config.config.gf_host }}</a></h3>
+                    {{ config.config.gf_name }} Event Dashboards</a></h3>
                     {% for dashboard in config.dashboards %}
-
 
                         <div class="panel" name="{{ dashboard.name }}">
 
@@ -40,6 +39,7 @@
                             action="update_dashboard/{{ config.config.id }}"
                             id="update_{{ dashboard.name }}_{{ config.config.id }}">
                             {% csrf_token %} {% load crispy_forms_tags %}
+                            <h5> Sensor Panels: </h5>
                             {{ dashboard.sensor_form|crispy }}
 
                                 <input type="hidden" name="dashboard_name"

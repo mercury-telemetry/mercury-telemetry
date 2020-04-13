@@ -180,8 +180,7 @@ def update_sensor(request, sensor_id):
 
                 # Update sensor panel in the active event of each grafana instance
                 try:
-                    grafana.update_panel(active_event, prev_name,
-                                         sensor_to_update)
+                    grafana.update_panel(active_event, prev_name, sensor_to_update)
                 except ValueError as error:
                     messages.error(request, error)
 
