@@ -14,15 +14,12 @@ def build_error(str):
 
 def add_measurement(request, event):
     json_data = request.data
+    # TODO: Abandon str as type of json_data in Sprint 6
     if isinstance(json_data, str):
         json_data = json.loads(json_data)
 
     res = {"event_uuid": event.uuid}
-    key_map = {
-        "timestamp": "date",
-        "sensor_id": "sensor_id",
-        "value": "values",
-    }
+    key_map = {"timestamp": "date", "sensor_id": "sensor_id", "value": "values"}
 
     for key, json_key in key_map.items():
         if json_key not in json_data:
@@ -31,6 +28,12 @@ def add_measurement(request, event):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         res[key] = json_data[json_key]
+
+    # TODO: Abandon str as type of json_data in Sprint 6
+    # SQL query fails to select values from
+    # JSONField if the str is stored in it
+    if isinstance(res["value"], str):
+        res["value"] = json.loads(res["value"])
 
     serializer = AGMeasurementSerializer(data=res)
     try:
@@ -45,6 +48,7 @@ def add_measurement(request, event):
 class MeasurementView(APIView):
     def post(self, request, event_uuid=None):
         """
+        DUPLICATED: delete in sprint 6
         The post receives sensor data through internet
         Url example:
         http://localhost:8000/measurement/d81cac8d-26e1-4983-a942-1922e54a943d
