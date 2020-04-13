@@ -57,7 +57,11 @@ jobs:
       
       services:
           - docker
-        
+      
+      before_install:
+        - sudo apt-get update
+        - sudo apt-get install -y -o Dpkg::Options::="--force-confold" docker-engine
+
       before_script:
         - docker pull nyumotorsportstelemetryorg/mercury || true
         
@@ -70,6 +74,9 @@ jobs:
         # basic help world test to see if it's working
         - docker run nyumotorsportstelemetryorg/mercury grep -q "Hello, Docker!" hello.txt
         # - black --check --exclude "migrations/" hardware
+      
+      after_script:
+        - docker images
       
       before_deploy:
         - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
