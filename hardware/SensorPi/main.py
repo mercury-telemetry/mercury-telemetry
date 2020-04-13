@@ -13,7 +13,6 @@ sense.show_message("MERCURY", text_colour=nyu_purple, scroll_speed=0.04)
 sense.clear()
 
 while(1):
-    
     json_temperature  = temperature(sense)
     json_pressure     = pressure(sense)
     json_humidity     = humidity(sense)
@@ -26,18 +25,23 @@ while(1):
     #json_acceleration = json.dumps(acceleration(sense))
     #json_orientation  = json.dumps(orientation(sense))
     
+    #print(json_temperature)
+    #print(json_pressure)
+    #print(json_humidity)
+    #print(json_acceleration)
+    #print(json_orientation)
+    
     response_temperature  = requests.post(url=API_ENDPOINT, data=json_temperature)
     response_pressure     = requests.post(url=API_ENDPOINT, data=json_pressure)
     response_humidity     = requests.post(url=API_ENDPOINT, data=json_humidity)
     response_acceleration = requests.post(url=API_ENDPOINT, data=json_acceleration)
     response_orientation  = requests.post(url=API_ENDPOINT, data=json_orientation)
     
-    print(response_temperature)
-    
-    #print(json_temperature)
-    #print(json_pressure)
-    #print(json_humidity)
-    #print(json_acceleration)
-    #print(json_orientation)
+    #print(response_temperature)
+    #print(response_pressure)
+    #print(response_humidity)
+    #print(response_acceleration)
+    #print(response_orientation)
+    #print("")
 
 
