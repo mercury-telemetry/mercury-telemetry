@@ -157,7 +157,6 @@ def update_sensor(request, sensor_id):
     """This updates a sensor in the database based on user input"""
 
     sensor_to_update = AGSensor.objects.get(id=sensor_id)
-    prev_name = sensor_to_update.name
     sensor_name = request.POST.get("edit-sensor-name")
 
     # reformat then validate name to avoid duplicated names or bad inputs like " "
@@ -168,20 +167,6 @@ def update_sensor(request, sensor_id):
 
         sensor_to_update.name = sensor_name
         sensor_to_update.save()
-
-        # update sensor panel in each grafana instance
-        gfconfigs = GFConfig.objects.all()
-        events = AGEvent.objects.all()
-
-        for gfconfig in gfconfigs:
-            grafana = Grafana(gfconfig)
-
-            for event in events:
-                # Update sensor panel in the active event of each grafana instance
-                try:
-                    grafana.update_panel(event, prev_name, sensor_to_update)
-                except ValueError as error:
-                    messages.error(request, error)
 
     return redirect("/sensor")
 
