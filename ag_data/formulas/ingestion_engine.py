@@ -13,7 +13,9 @@ class MeasurementIngestionEngine:
         6: hgFormulas.fMercuryFlowSensor,
     }
 
-    def saveMeasurement(self, rawMeasurement):
+    def saveMeasurement(
+        self, rawMeasurement: MeasurementExchange
+    ) -> models.AGMeasurement:
 
         assert isinstance(rawMeasurement, MeasurementExchange)
 
