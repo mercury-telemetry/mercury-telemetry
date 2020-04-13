@@ -73,6 +73,26 @@ def delete_dashboard(request, gf_id=None):
     return redirect("/gfconfig")
 
 
+def create_dashboard(request, gf_id=None):
+    gfconfig = GFConfig.objects.filter(id=gf_id).first()
+    event_name = request.POST.get("selected_event_name")
+    event = AGEvent.objects.filter(name=event_name).first()
+    sensors = AGSensor.objects.all()
+
+    if gfconfig and event:
+
+        grafana = Grafana(gfconfig)
+
+        try:
+            grafana.create_dashboard(event.name)
+            for sensor in sensors:
+                grafana.add_panel(sensor, event)
+        except ValueError as error:
+            messages.error(f"Unable to add dashboard to Grafana: {error}")
+
+    return redirect("/gfconfig")
+
+
 class GFConfigView(TemplateView):
 
     template_name = "gf_configs.html"
@@ -83,9 +103,6 @@ class GFConfigView(TemplateView):
 
         # Initialize a GFConfig Form
         config_form = GFConfigForm()
-
-        # @TODO Provide a set of dashboards per GFConfig, have multiple views in
-        # @TODO the template, 1 per GFConfig.
 
         # Prepare an array of dicts with details for each GFConfig (GFConfig object,
         # list of dashboards/forms
@@ -99,6 +116,11 @@ class GFConfigView(TemplateView):
             current_dashboards = grafana.get_all_dashboards()
             # Assemble a list of dicts w/: url, sensors, initialized sensor form,
             # and dashboard name
+
+            # Retrieve missing events to pass to the context
+            all_events = list(AGEvent.objects.all())
+            existing_events = grafana.get_all_events()
+            missing_events = list(set(all_events) - set(existing_events))
 
             # Prepare an array of dashboards & their sensors to send to the template
             dashboards = []
@@ -129,6 +151,7 @@ class GFConfigView(TemplateView):
                 dashboards.append(dashboard_dict)
 
             config_info["dashboards"] = dashboards
+            config_info["missing_events"] = missing_events
             configs.append(config_info)
 
         # Pass dashboard data for each GFConfig and a GFConfig form to the template
@@ -143,7 +166,8 @@ class GFConfigView(TemplateView):
                     "sensors": QuerySet(Sensor object)
                     "name": "blah"
                 }]
-                "config": GFConfig object
+                "config": GFConfig object,
+                "missing_events": QuerySet of AGEvents without dashboards
             },
             {...}
         ]
