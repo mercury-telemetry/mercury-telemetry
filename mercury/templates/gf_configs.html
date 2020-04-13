@@ -21,9 +21,10 @@
 
             {% for config in configs %}
                 <div>
-                {% if config.dashboards %}
-                    <h3> <a target="_blank" href="{{ config.config.gf_host }}/dashboards"/>
+                <h3> <a target="_blank" href="{{ config.config.gf_host }}/dashboards"/>
                     {{ config.config.gf_name }} Event Dashboards</a></h3>
+                {% if config.dashboards %}
+
                     {% for dashboard in config.dashboards %}
 
                         <div class="panel" name="{{ dashboard.name }}">
@@ -91,13 +92,48 @@
 
                 {% else %}
 
-                <p> No dashboards yet. Add one? </p>
+                <p> No dashboards yet. </p>
 
                 {% endif %}
+
+                {% if config.missing_events %}
+
+                <div class="panel">
+
+                        <form method="POST"
+                        action="create_dashboard/{{ config.config.id }}"
+                        id="create_{{ missing_event.name }}_{{ config.config.id }}">
+
+                        {% csrf_token %} {% load crispy_forms_tags %}
+
+                        <input type="hidden" name="config_id"
+                        value="{{ config.config.id }}">
+
+                        <h5> There are missing dashboards. Add one? </h5>
+
+                        <select name="selected_event_name">
+                        {% for missing_event in config.missing_events %}
+
+                        <option>{{ missing_event.name }}</option>
+
+                        {% endfor %}
+                        </select>
+
+                        <br>
+
+                        <input
+                        class="submitbutton simulator-btn
+                        grafana-btn
+                        grafana-btn-green" type="submit"
+                        name="submit-create-dashboard"
+                        value="Add Dashboard for this Event">
+
+                        </form>
+                </div>
+                    {% endif %}
             </div>
             {% endfor %}
         </div>
-
 
         <!--Configs Table -->
         <div>

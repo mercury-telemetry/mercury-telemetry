@@ -74,6 +74,11 @@ urlpatterns = [
         name="gfconfig_delete_dashboard",
     ),
     path(
+        "gfconfig/create_dashboard/<int:gf_id>",
+        gf_config.create_dashboard,
+        name="gfconfig_create_dashboard",
+    ),
+    path(
         "measurement/<uuid:event_uuid>",
         measurement.MeasurementView.as_view(),
         name="measurement",

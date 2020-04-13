@@ -674,6 +674,19 @@ class Grafana:
                 "Unable to locate event with dashboard name: " + dashboard_name
             )
 
+    def get_all_events(self):
+        dashboards = self.get_all_dashboards()
+
+        events = []
+
+        for dashboard in dashboards:
+            dashboard_title = dashboard["title"]
+            event = AGEvent.objects.filter(name=dashboard_title).first()
+            if event:
+                events.append(event)
+
+        return events
+
     def get_all_sensors(self, dashboard_name):
         """
 
