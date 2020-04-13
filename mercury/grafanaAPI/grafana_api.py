@@ -371,7 +371,6 @@ class Grafana:
         except (KeyError, TypeError):
             return False
 
-    # @TODO
     def update_dashboard_title(self, event, title):
         """
         :param event: Event to update
@@ -417,6 +416,29 @@ class Grafana:
             return response.json()
         except KeyError as error:
             raise ValueError(f"Event dashboard {event.name} not updated: {error}")
+
+    def create_panel_query(self, sensor, event):
+        field_dict = sensor.type_id.format
+        field_array = []
+        for field in field_dict:
+            field_array.append(field)
+
+        # Build fields portion of SELECT query (select each field)
+        fields_query = ""
+        if len(field_array):
+            for i in range(0, len(field_array) - 1):
+                fields_query += f"value->'{field_array[i]}' AS {field_array[i]},\n"
+            fields_query += f"value->'{field_array[-1]}' AS {field_array[-1]}"
+
+        # Build SQL query
+        panel_sql_query = f"""
+                SELECT \"timestamp\" AS \"time\",
+                {fields_query}
+                FROM ag_data_agmeasurement
+                WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor.id} AND
+                "event_uuid_id"='{event.uuid}' \n
+                """
+        return panel_sql_query
 
     def add_panel(self, sensor, event):
         """
@@ -517,6 +539,88 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Sensor panel not added: {error}")
 
+    def update_panel(self, event, current_sensor_name, new_sensor):
+        # Retrieve current panels
+        dashboard_info = self.get_dashboard_by_name(event.name)
+
+        if dashboard_info is None:
+            return False
+
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except (KeyError, TypeError):
+            panels = []
+
+        if not panels:
+            return False
+
+        # Find the target panel and update it
+        for panel in panels:
+            if panel["title"] == current_sensor_name:
+                panel["title"] = new_sensor.name
+                panel["targets"][0]["rawSql"] = self.create_panel_query(
+                    new_sensor, event
+                )
+
+        # Create updated dashboard dict with updated list of panels
+        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
+
+        # POST updated dashboard
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(
+            self.endpoints["dashboards"],
+            data=json.dumps(updated_dashboard),
+            headers=headers,
+            auth=("api_key", self.api_token),
+        )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Sensor panel not updated: {new_sensor.name}")
+        except KeyError as error:
+            raise ValueError(f"Sensor panel not updated: {error}")
+
+    def delete_panel(self, panel_name, event):
+
+        # Retrieve current panels
+        dashboard_info = self.get_dashboard_by_name(event.name)
+
+        if dashboard_info is None:
+            return False
+
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except (KeyError, TypeError):
+            panels = []
+
+        # Build list of new panels, excluding any panel with title = name
+        if not panels:
+            return False
+
+        new_panels = [
+            panel for panel in panels if panel["title"].lower() != panel_name.lower()
+        ]
+
+        # Create updated dashboard dict with updated list of panels
+        updated_dashboard = self.create_dashboard_update_dict(
+            dashboard_info, new_panels
+        )
+
+        # POST updated dashboard
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(
+            self.endpoints["dashboards"],
+            data=json.dumps(updated_dashboard),
+            headers=headers,
+            auth=("api_key", self.api_token),
+        )
+
+        try:
+            if response.json()["status"] != "success":
+                raise ValueError(f"Sensor panel not deleted: {panel_name}")
+        except KeyError as error:
+            raise ValueError(f"Sensor panel not deleted: {error}")
+
     def delete_all_panels_by_dashboard_name(self, name):
         """
 
@@ -570,6 +674,19 @@ class Grafana:
             raise ValueError(
                 "Unable to locate event with dashboard name: " + dashboard_name
             )
+
+    def get_all_events(self):
+        dashboards = self.get_all_dashboards()
+
+        events = []
+
+        for dashboard in dashboards:
+            dashboard_title = dashboard["title"]
+            event = AGEvent.objects.filter(name=dashboard_title).first()
+            if event:
+                events.append(event)
+
+        return events
 
     def get_all_sensors(self, dashboard_name):
         """
