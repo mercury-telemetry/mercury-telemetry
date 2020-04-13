@@ -12,29 +12,72 @@
     <script src="{% static "mercury/js/sensor.js" %}" defer></script>
 </head>
 
-<body onload="selectView();">
+<body>
     {% include 'sidebar.html' %}
     <div id="grafana-base"> <!-- app default background -->
-        <h1> Add or Modify Sensors </h1>
-
-        <nav>
-            <ul>
-                <!-- Note that the button tag without type="button" will default into type="submit" and POST / GET in some browsers and contexts (like when used inside form) -->
-                <li><button onclick="displayCurrentSensors()" type="button" id="current-sensor-btn" class="grafana-btn"> View Sensors </button></li>
-                <li><button onclick="displayAddNewSensor()" type= "button" id="add-sensor-btn" class="grafana-btn"> Add New Sensor </button></li>
-            </ul>
-        </nav>
+        <h1> Configure Sensors </h1> <br><br><br>
 
         {% for message in messages %}
             <p class="error"> {{ message }} </p>
         {% endfor %}
 
         <div id="existing-sensors">
+            <h2>Add New Sensor</h2>
+            <div class="sensor-panel">
+            <form method="POST">
+                {% csrf_token %}
+                    <div class="inline-box">
+                        <label for="sensor-name"> <b>Sensor Name:</b> </label>
+                        <input type="text" id="sensor-name" name="sensor-name" required/>
+                    </div> <br>
+
+                    <table id="new-sensor-table" class="sensor-fields-table">
+                        <thead>
+                            <tr class="sensor-fields-table-td">
+                                <th class="sensor-fields-table-th"><b> <u>Field Name </u></b></th>
+                                <th class="sensor-fields-table-th"><b> <u>Field Data Type </u></b></th>
+                                <th class="sensor-fields-table-th"><b> <u>Unit</u></b></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr class="sensor-fields-table-td">
+
+                                <td class="sensor-fields-table-td"> <input type="text" id="field-name" name="field-names" required/> </td>
+
+                                <td class="sensor-fields-table-td">
+                                    <select id="data-type" name="data-types"/>
+                                        <option> Numeric </option>
+                                        <option> Character </option>
+                                        <option> Boolean </option>
+                                    </select>
+                                </td>
+
+                                <td class="sensor-fields-table-td"> <input type="text" id="units" name="units"/> </td>
+                            </tr>
+
+                            <tr class="sensor-fields-table-tr">
+                                <td class="sensor-fields-table-td"></td>
+                                <td class="sensor-fields-table-td"></td>
+                                <td class="sensor-fields-table-td">
+                                    <button type="button" onclick="addRow('new-sensor-table')" class="grafana-btn grafana-btn-green">+</button>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table> <br>
+
+
+                <br>
+
+                <button type="submit" name="submit_new_sensor" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
+            </form> 
+            </div>
+            <br><hr><br>
             <h2>Existing Sensors</h2>
-            <br>
             {% if sensors %}
                 {% for sensor in sensors %}
-                <div class="panel">
+                <div class="sensor-panel">
                     <div class="name-button-box">
                         <div class="button-box">
                             <button type="button" onclick="makeSensorEditable('{{ sensor.name }}', 0)" id="{{ sensor.name }}-edit-button" class="grafana-btn-block grafana-btn-gray"> Modify Sensor </button>
@@ -53,18 +96,26 @@
                             <p id="{{ sensor_type.id }}" > ID Number: {{ sensor.id }} </p>
                         </div> 
 
-                        <div>
-                            <p class="inline-block-child"><b><u>Field Name</u></b></p>
-                            <p class="inline-block-child"><b><u>Data Type</u></b></p>
-                            <p class="inline-block-child"><b><u>Units</u></b></p>
-                        </div>
-
-                        {% for field_name, unit_and_format in sensor.type_id.format.items %}
-                            <p class="inline-block-child">{{field_name}}</p>
-                            <p class="inline-block-child">{{unit_and_format.data_type}}</p>
-                            <p class="inline-block-child">{{unit_and_format.unit}}</p>
+                        <table id="{{ sensor.name }}-fields-table" class="sensor-fields-table">
+                            <thead>
+                                <tr class="sensor-fields-table-tr">
+                                    <th class="sensor-fields-table-th"><b> <u>Field Name </u></b></th>
+                                    <th class="sensor-fields-table-th"><b> <u>Field Data Type </u></b></th>
+                                    <th class="sensor-fields-table-th"><b> <u>Unit</u></b></th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                {% for field_name, unit_and_format in sensor.type_id.format.items %}
+                                <tr class="sensor-fields-table-tr">
+                                        <td class="sensor-fields-table-td">{{field_name}}</p>
+                                        <td class="sensor-fields-table-td">{{unit_and_format.data_type}}</p>
+                                        <td class="sensor-fields-table-td">{{unit_and_format.unit}}</p>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    {% endfor %}
 
                     <form method="POST" id="{{ sensor.name }}-form" class="{{ sensor.name }}-edit" style="display:none;">
                     <!-- id is used by submit button; class and default style are used by sensor.js to toggle view -->
@@ -76,23 +127,64 @@
                             <p id="{{ sensor_type.id }}" > ID Number: {{ sensor.id }} </p>
                         </div>
 
-                        <div>
-                            <p class="inline-block-child"><b><u>Field Name</u></b></p>
-                            <p class="inline-block-child"><b><u>Data Type</u></b></p>
-                            <p class="inline-block-child"><b><u>Units</u></b></p>
-                        </div>
+                        <table id="{{ sensor.name }}-fields-table-edit" class="sensor-fields-table">
+                            <thead>
+                                <tr class="sensor-fields-table-tr">
+                                    <th class="sensor-fields-table-th"><b> <u>Field Name </u></b></th>
+                                    <th class="sensor-fields-table-th"><b> <u>Field Data Type </u></b></th>
+                                    <th class="sensor-fields-table-th"><b> <u>Unit</u></b></th>
+                                    <th class="sensor-fields-table-th"><b> <u>Action </u></b></th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                {% for field_name, unit_and_format in sensor.type_id.format.items %}
+                                <tr class="sensor-fields-table-tr">
+                                        <td class="sensor-fields-table-td">
+                                            <input type="text" id="field-name" name="field-names" value="{{ field_name }}" required/> </input>
+                                        </td>
+                                        <td class="sensor-fields-table-td">
+                                            <select id="data-types" name="data-types"/>
+                                            {% if unit_and_format.data_type == "Numeric" %}
+                                                <option selected="selected"> Numeric </option>
+                                                <option> Character </option>
+                                                <option> Boolean </option>
+                                            {% else %}
+                                                {% if unit_and_format.data_type == "Character" %}
+                                                    <option> Numeric </option>
+                                                    <option selected="selected"> Character </option>
+                                                    <option> Boolean </option>
+                                                {% else %}
+                                                    <option> Numeric </option>
+                                                    <option> Character </option>
+                                                    <option selected="selected"> Boolean </option>
+                                                {% endif %}
+                                            {% endif %}
+                                            </select>
+                                        </td>
+                                        <td class="sensor-fields-table-td">
+                                            <input type="text" id="units" name="units" value="{{unit_and_format.unit}}"/></input>
+                                        </td>
 
-                        {% for field_name, unit_and_format in sensor.type_id.format.items %}
-                        <div>
-                            <input type="text" name="field-names" value={{field_name}}   ></input>
-                            <select name="data-types"/>
-                                <option> Numeric </option>
-                                <option> Character </option>
-                                <option> Boolean </option>
-                            </select>
-                            <input type="text" name="units" value={{unit_and_format.unit}}  ></input>
-                        </div>
-                        {% endfor %}
+                                        <td class="sensor-fields-table-td">
+                                            <button type="button" onclick="deleteRow('{{ sensor.name }}-fields-table-edit','{{forloop.counter}}')" class="grafana-btn grafana-btn-red">X</button>
+                                        </td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="sensor-fields-table-tr">
+                                    <td class="sensor-fields-table-td"></td>
+                                    <td class="sensor-fields-table-td"></td>
+                                    <td class="sensor-fields-table-td"></td>
+                                    <td class="sensor-fields-table-td">
+                                        <button type="button" onclick="addRow('{{ sensor.name }}-fields-table-edit')" class="grafana-btn grafana-btn-green">+</button>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+
                         <input type="hidden" name="sensor-name" value={{sensor.name}} ></input>
                         <input type="hidden" name="edit_sensor" value="true"></input> <!--used to trigger edit sensor in sensors.py -->
                     </form>
@@ -103,59 +195,6 @@
                 <img class=center-image src="{% static 'mercury/technical_difficulties.jpg' %}">
             {% endif%}
         </div> <!-- end existing sensors -->
-
-
-        <div id = "add-new-sensor">
-            <h2>Add a New Sensor</h2>
-            <form method="POST">
-                {% csrf_token %}
-                <div id = "type-container"> <!-- single div for configuring entire sensor type -->
-                    <div class="inline-box">
-                        <label for="sensor-name"> <b>Sensor Name:</b> </label>
-                        <input type="text" id="sensor-name" name="sensor-name" required/>
-                    </div> <br>
-
-                    <table id="new-type-table">
-                        <thead>
-                            <tr>
-                                <th><b> Field Number </b></th>
-                                <th><b> Field Name </b></th>
-                                <th><b> Field Data Type </b></th>
-                                <th><b> Unit </b> (optional) </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-
-                                <td> <input type="text" id="field-name" name="field-names" required/> </td>
-
-                                <td>
-                                    <select id="data-type" name="data-types"/>
-                                        <option> Numeric </option>
-                                        <option> Character </option>
-                                        <option> Boolean </option>
-                                    </select>
-                                </td>
-
-                                <td> <input type="text" id="units" name="units"/> </td>
-                            </tr>
-                        </tbody>
-                    </table> <br>
-
-                    <div class="inline-box">
-                        <button type="button" onclick="addRow()" class="grafana-btn grafana-btn-gray"> Add Another Sensor Field </button>
-                        <button type="button" onclick="deleteRow()" class="grafana-btn grafana-btn-red"> Delete Last Sensor Field </button> <br><br>
-                    </div>
-
-                </div> <br> <!-- end new sensor type container -->
-
-                <button type="submit" name="submit_new_sensor" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
-            </form>
-            <br>
-
-        </div> <!-- end add new sensor -->
 
     </div>
 </body>

@@ -1,59 +1,22 @@
-function addRow(){
-    var table = document.getElementById("new-type-table");
+function addRow(table_name){
+    var table = document.getElementById(table_name);
     var rowCount = table.rows.length;
     var colCount = table.rows[0].cells.length;
-    var newRow = table.insertRow(rowCount);
+    var newRow = table.insertRow(rowCount-1);
+    newRow.className = "sensor-fields-table-tr"
     for(var i=0; i<colCount; i++){
         var newCell = newRow.insertCell(i);
         /* set new cell to be same as cell in first data (non-header) row */
         newCell.innerHTML = table.rows[1].cells[i].innerHTML
-    }
-    table.rows[rowCount].cells[0].innerHTML =rowCount
-}
-
-function deleteRow() {
-    var table = document.getElementById("new-type-table");
-    var rowCount = table.rows.length;
-    if (rowCount > 2){
-        table.deleteRow(rowCount-1)
+        newCell.className = "sensor-fields-table-td"
     }
 }
 
-/*
-selectView displays the correct view of the "Add or Modify Sensors" page
--the default view is to show existing sensors
--if a user submits a new sensor which posts and reloads page, then the add new sensor view should remain
-*/
-function selectView() {
-    var existingSensorDiv = document.getElementById("existing-sensors");
-    var newSensorDiv = document.getElementById("add-new-sensor");
-    var viewSensorsButton = document.getElementById("current-sensor-btn");
-    var newSensorButton = document.getElementById("add-sensor-btn");
-
-    if (sessionStorage.getItem('viewing') == 'addingNew'){
-        newSensorDiv.style.display = "block";
-        existingSensorDiv.style.display = 'none';
-        viewSensorsButton.style.backgroundColor = 'var(--light-accent)';
-        newSensorButton.style.backgroundColor = 'var(--green)';
+function deleteRow(table_name, row) {
+    var table = document.getElementById(table_name);
+    if (table.rows.length > 3) {
+        table.deleteRow(row);
     }
-    else if (sessionStorage.getItem('viewing') == 'existing'){
-        newSensorDiv.style.display = "none";
-        existingSensorDiv.style.display = 'block';
-        viewSensorsButton.style.backgroundColor = 'var(--green)';
-        newSensorButton.style.backgroundColor = 'var(--light-accent)';
-    }
-    /*Added to prevent undesired behavior when opening sensors in new browser tab*/
-    else {displayCurrentSensors()}
-}
-
-function displayCurrentSensors() {
-    sessionStorage.setItem('viewing', 'existing');
-    selectView()
-}
-
-function displayAddNewSensor() {
-  sessionStorage.setItem('viewing', 'addingNew');
-  selectView()
 }
 
 function makeSensorEditable(sensor_name, offset) {

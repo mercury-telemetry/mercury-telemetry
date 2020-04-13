@@ -244,6 +244,20 @@ input#id_can_msg{
   overflow: auto;
 }
 
+.sensor-panel {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: center;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  min-width: 400px;
+  width: 75%;
+  overflow: auto;
+}
+
 #grafana-panel {
   border-color:var(--light-border);
   background: var(--light-panel);
@@ -665,8 +679,6 @@ a {
     border: 1px solid black;
     width: 100%;
     height: 100%;
-
-
   }
 
   td {
@@ -794,6 +806,31 @@ a {
   
   .end-sensor-list {
     width: 100%;
+  }
+
+  .sensor-fields-table {
+    border: none;
+    border-collapse: collapse;
+    table-layout: fixed ;
+    width: 100% ;
+    height: 100%;
+  }
+
+  .sensor-fields-table-th{
+    width: 1px;
+    border: none;
+    text-align: center;
+  }
+
+  .sensor-fields-table-td{
+    background-color: white;
+    width: 33%;
+    border: none;
+    text-align: center;
+  }
+
+  .sensor-fields-table-tr {
+    border: none;
   }
 
   [name="event_name"] {

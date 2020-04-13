@@ -96,6 +96,7 @@ class CreateSensorView(TemplateView):
 
         if "edit_sensor" in request.POST:
             new_name = request.POST.get("sensor-name-updated")
+            new_name, field_names= remove_whitespace_caps(new_name, field_names)
             valid, request = validate_inputs(sensor_name, field_names, request)
             new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
@@ -108,6 +109,7 @@ class CreateSensorView(TemplateView):
                 sensor_type_to_update.save()
 
         if "submit_new_sensor" in request.POST:
+            print("\n\n\n\n" + "HELLO")
             valid, request = validate_inputs(
                 sensor_name, field_names, request, new=True
             )
