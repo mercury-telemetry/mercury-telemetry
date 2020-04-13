@@ -42,8 +42,7 @@ def fMercuryFlowSensor(measurement):
         if lastResult is not None:
             result = {
                 "gasLevel": lastResult
-                - measurement.reading["volumetricFlow"]
-                * (timeElapsed.microseconds / 1000000)
+                - measurement.reading["volumetricFlow"] * timeElapsed.total_seconds()
             }
 
     return result
