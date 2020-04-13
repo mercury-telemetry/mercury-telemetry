@@ -172,10 +172,7 @@ class GFConfigView(TemplateView):
             {...}
         ]
         """
-        context = {
-            "config_form": config_form,
-            "configs": configs,
-        }
+        context = {"config_form": config_form, "configs": configs}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):

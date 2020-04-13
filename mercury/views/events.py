@@ -213,10 +213,7 @@ def create_event_json(event_object, venue_object, measurements_object):
             }
             measurement_info.append(temp)
 
-    data = {
-        "event_info": event_info,
-        "measurement_info": measurement_info,
-    }
+    data = {"event_info": event_info, "measurement_info": measurement_info}
 
     return data
 
