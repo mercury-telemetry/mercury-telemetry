@@ -20,6 +20,10 @@ def validate_inputs(sensor_name, field_names, request, new=False):
     if new:
         # duplicated sensor name
         if AGSensorType.objects.filter(name=sensor_name).count() > 0:
+            messages.error(request, "FAILED: Sensor (type) name is already taken.")
+            form_valid = False
+
+        if AGSensor.objects.filter(name=sensor_name).count() > 0:
             messages.error(request, "FAILED: Sensor name is already taken.")
             form_valid = False
 
