@@ -554,6 +554,7 @@ class Grafana:
         if not panels:
             return False
 
+        # Find the target panel and update it
         for panel in panels:
             if panel["title"] == current_sensor_name:
                 panel["title"] = new_sensor.name

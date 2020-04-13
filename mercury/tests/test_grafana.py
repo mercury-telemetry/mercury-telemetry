@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
@@ -428,16 +428,13 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard["dashboard"])
         self.assertEquals(len(dashboard["dashboard"]["panels"]), 0)
 
-    def test_update_sensor_name_updates_panel_title_in_dashboard_of_active_event(self):
+    def test_update_sensor_name_updates_panel_in_dashboard(self):
         # Create a dashboard, confirm it was created
         dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
 
         # Create an event
         event = self.create_venue_and_event(self.event_name)
-
-        # Register event as Active Event
-        AGActiveEvent.objects.create(agevent=event)
 
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
@@ -472,16 +469,13 @@ class TestGrafana(TestCase):
             self.test_sensor_name_update.lower(),
         )
 
-    def test_update_sensor_type_updates_panel_query_of_active_event(self):
+    def test_update_sensor_updates_panel_query(self):
         # Create a dashboard, confirm it was created
         dashboard = self.grafana.create_dashboard(self.event_name)
         self.assertTrue(dashboard)
 
         # Create an event
         event = self.create_venue_and_event(self.event_name)
-
-        # Register event as Active Event
-        AGActiveEvent.objects.create(agevent=event)
 
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,

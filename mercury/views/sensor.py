@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent
+from ag_data.models import AGSensor, AGSensorType, AGEvent
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -169,18 +169,17 @@ def update_sensor(request, sensor_id):
         sensor_to_update.name = sensor_name
         sensor_to_update.save()
 
-        # update sensor panel in the active event for each GF instance
+        # update sensor panel in each grafana instance
         gfconfigs = GFConfig.objects.all()
-        active_event_ref = AGActiveEvent.objects.first()
-        if active_event_ref:
-            active_event = active_event_ref.agevent
+        events = AGEvent.objects.all()
 
-            for gfconfig in gfconfigs:
-                grafana = Grafana(gfconfig)
+        for gfconfig in gfconfigs:
+            grafana = Grafana(gfconfig)
 
+            for event in events:
                 # Update sensor panel in the active event of each grafana instance
                 try:
-                    grafana.update_panel(active_event, prev_name, sensor_to_update)
+                    grafana.update_panel(event, prev_name, sensor_to_update)
                 except ValueError as error:
                     messages.error(request, error)
 
