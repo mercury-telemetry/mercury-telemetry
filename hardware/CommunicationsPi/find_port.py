@@ -44,8 +44,6 @@ def extra_info(port):
 def get_port():
     for port in serial.tools.list_ports.comports():
         if is_usb_serial(port, None):
-            # print(port)
-            # print(port.device)
             return "port found"
     return
 
@@ -118,11 +116,6 @@ def main():
         logger.info(f"   pid = {args.pid}")
         logger.info(f"serial = {args.serial}")
         logger.info(f"vendor = {args.vendor}")
-        # print("pyserial version = {}".format(serial.__version__))
-        # print("   vid =", args.vid)
-        # print("   pid =", args.pid)
-        # print("serial =", args.serial)
-        # print("vendor =", args.vendor)
 
     if args.list:
         detected = False
