@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from ag_data.models import AGSensor, AGSensorType, AGEvent
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -117,7 +117,6 @@ def delete_sensor(request, sensor_id):
             # Delete sensor from each event panel
             for event in events:
                 try:
-                    print("deleting grafana panel")
                     grafana.delete_panel(sensor_to_delete.name, event)
                 except ValueError as error:
                     messages.error(request, error)
@@ -158,6 +157,7 @@ def update_sensor(request, sensor_id):
     """This updates a sensor in the database based on user input"""
 
     sensor_to_update = AGSensor.objects.get(id=sensor_id)
+    prev_name = sensor_to_update.name
     sensor_name = request.POST.get("edit-sensor-name")
 
     # reformat then validate name to avoid duplicated names or bad inputs like " "
@@ -165,8 +165,26 @@ def update_sensor(request, sensor_id):
     valid, request = validate_add_sensor_inputs(sensor_name, request)
 
     if valid:
+
         sensor_to_update.name = sensor_name
         sensor_to_update.save()
+
+        # update sensor panel in the active event for each GF instance
+        gfconfigs = GFConfig.objects.all()
+        active_event_ref = AGActiveEvent.objects.first()
+        if active_event_ref:
+            active_event = active_event_ref.agevent
+
+            for gfconfig in gfconfigs:
+                grafana = Grafana(gfconfig)
+
+                # Update sensor panel in the active event of each grafana instance
+                try:
+                    grafana.update_panel(active_event, prev_name,
+                                         sensor_to_update)
+                except ValueError as error:
+                    messages.error(request, error)
+
     return redirect("/sensor")
 
 
