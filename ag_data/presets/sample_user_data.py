@@ -1,4 +1,4 @@
-venue_presets = [
+sample_venues = [
     {
         "agVenueName": "Washington Square Park",
         "agVenueDescription": "Sunnyside Daycare's Butterfly Room.",
@@ -13,7 +13,7 @@ venue_presets = [
     },
 ]
 
-event_presets = [
+sample_events = [
     {
         "agEventName": "Sunny Day Test Drive",
         "agEventDate": "2020-02-02T20:21:22",
@@ -28,25 +28,10 @@ event_presets = [
     },
 ]
 
-sensor_type_presets = [
-    {
-        "agSensorTypeID": 0,
-        "agSensorTypeName": "Simple Temperature Sensor",
-        "agSensorTypeFormula": 0,
-        "agSensorTypeFormat": {"reading": {"unit": "Celsius", "format": "float"}},
-    },
-    {
-        "agSensorTypeID": 1,
-        "agSensorTypeName": "Dual Temperature Sensor",
-        "agSensorTypeFormula": 0,
-        "agSensorTypeFormat": {
-            "internal": {"unit": "Keivin", "format": "float"},
-            "external": {"unit": "Keivin", "format": "float"},
-        },
-    },
-]
-
-sensor_presets = [
-    {"agSensorName": "Sample Simple Temperature", "agSensorType": 0},
-    {"agSensorName": "Sample Dual Temperature", "agSensorType": 1},
+sample_sensors = [
+    {"agSensorName": "Sample Simple Temperature", "agSensorType": 2},
+    {"agSensorName": "Sample Dual Temperature", "agSensorType": 4},
+    {"agSensorName": "Sample Gas Tank Flow", "agSensorType": 6},
+    {"agSensorName": "Sample Coin Side", "agSensorType": 0},
+    {"agSensorName": "Sample Gaussian Value", "agSensorType": 8},
 ]
