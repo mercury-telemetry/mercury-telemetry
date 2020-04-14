@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
@@ -352,7 +352,10 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
 
         # Create an event
-        self.create_venue_and_event(self.event_name)
+        event = self.create_venue_and_event(self.event_name)
+
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
 
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
