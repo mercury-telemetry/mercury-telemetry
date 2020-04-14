@@ -397,8 +397,8 @@ class TestGrafana(TestCase):
         # Note: converting test_sensor_name to lowercase because currently
         # sensor names are automatically capitalized when they are created
         self.assertEquals(
-            dashboard["dashboard"]["panels"][0]["title"], self.test_sensor[
-                "name"].lower()
+            dashboard["dashboard"]["panels"][0]["title"],
+            self.test_sensor["name"].lower(),
         )
 
     def test_delete_sensor_deletes_panel_in_dashboard(self):
