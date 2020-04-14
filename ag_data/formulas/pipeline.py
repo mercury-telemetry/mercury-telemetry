@@ -1,5 +1,5 @@
 from ag_data.models import AGMeasurement
-import ag_data.formulas.library.system.mercury_formulas as formulas
+from ag_data.formulas import formulas
 
 
 def preprocess(sensor, formula, timestamp, measurement):
@@ -18,7 +18,7 @@ def preprocess(sensor, formula, timestamp, measurement):
     return measurement
 
 
-class MeasurementIngestionEngine:
+class FormulaPipeline:
     def __init__(self, event=None):
         self.event = event
 
@@ -26,7 +26,7 @@ class MeasurementIngestionEngine:
 
         assert self.event is not None
 
-        formula = formulas.processing_formulas.get(
+        formula = formulas.formula_map.get(
             sensor.type_id.processing_formula, formulas.identity
         )
 

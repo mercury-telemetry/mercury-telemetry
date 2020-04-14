@@ -19,7 +19,7 @@ def flow_sensor(prevGasLevel, prevTimestamp, volumetricFlow, timestamp):
         return {"gasLevel": 100}
 
 
-processing_formulas = {
+formula_map = {
     0: identity,
     2: simple_temperature_sensor,
     4: dual_temperature_sensor,

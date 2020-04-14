@@ -1,26 +1,26 @@
 from django.test import TestCase
 
-from ag_data.formulas.ingestion_engine import MeasurementIngestionEngine
+from ag_data.formulas.pipeline import FormulaPipeline
 from ag_data.models import AGEvent, AGVenue, AGSensorType, AGSensor
-import ag_data.formulas.library.system.mercury_formulas as formulas
+from ag_data.formulas import formulas
 
 import datetime
 
 
 def get_formula_id(f):
-    for fid, formula in formulas.processing_formulas.items():
+    for fid, formula in formulas.formula_map.items():
         if formula == f:
             return fid
     return None
 
 
-class MeasurementIngestionEngineTests(TestCase):
+class FormulaPipelineTests(TestCase):
     fixtures = ["sample.json"]
 
     def setUp(self):
         self.venue = AGVenue.objects.first()
         self.event = AGEvent.objects.first()
-        self.engine = MeasurementIngestionEngine(event=self.event)
+        self.pipeline = FormulaPipeline(event=self.event)
         self.timestamp = datetime.datetime.now()
 
     def test_save_measurement_flow(self):
@@ -28,7 +28,7 @@ class MeasurementIngestionEngineTests(TestCase):
         sensor_type = AGSensorType.objects.filter(processing_formula=formula_id).first()
         sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type)
 
-        result = self.engine.save_measurement(
+        result = self.pipeline.save_measurement(
             sensor, self.timestamp, {"volumetricFlow": 2.0}
         )
         self.assertEqual(result.timestamp, self.timestamp)
@@ -40,7 +40,7 @@ class MeasurementIngestionEngineTests(TestCase):
         sensor_type = AGSensorType.objects.filter(processing_formula=formula_id).first()
         sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type)
 
-        result = self.engine.save_measurement(
+        result = self.pipeline.save_measurement(
             sensor, self.timestamp, {"internal": 2.0, "external": 1.0}
         )
         self.assertEqual(result.timestamp, self.timestamp)
@@ -52,7 +52,7 @@ class MeasurementIngestionEngineTests(TestCase):
         sensor_type = AGSensorType.objects.filter(processing_formula=formula_id).first()
         sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type)
 
-        result = self.engine.save_measurement(
+        result = self.pipeline.save_measurement(
             sensor, self.timestamp, {"internal": 2.0, "external": 1.0}
         )
         self.assertEqual(result.timestamp, self.timestamp)
