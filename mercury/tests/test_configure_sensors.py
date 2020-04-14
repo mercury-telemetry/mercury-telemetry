@@ -99,9 +99,11 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 1)
         self.assertEqual(sensor_types.count(), 1)
 
-# Invalid
-    #Invalid POST name conflict with existing AGSensor returns status ok
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_name_returns_status_ok(self):
+    # Invalid
+    # Invalid POST name conflict with existing AGSensor returns status ok
+    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_name_returns_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -134,8 +136,10 @@ class TestConfigureSensorView(TestCase):
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
-    #Invalid POST name conflict with existing AGSensor no object created
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_name_not_created(self):
+    # Invalid POST name conflict with existing AGSensor no object created
+    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_name_not_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -172,8 +176,10 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 1)
         self.assertEqual(sensor_types.count(), 1)
 
-    #Invalid POST name conflict with existing AGSensorType returns status ok
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_type_name_returns_status_ok(self):
+    # Invalid POST name conflict with existing AGSensorType returns status ok
+    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_type_name_returns_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -201,8 +207,10 @@ class TestConfigureSensorView(TestCase):
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
 
-    #Invalid POST name conflict with existing AGSensorType object not created
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_type_name_not_created(self):
+    # Invalid POST name conflict with existing AGSensorType object not created
+    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_type_name_not_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -234,7 +242,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensor_types.count(), 1)
 
     # Invalid POST missing name returns status OK
-    def test_configure_sensor_invalid_POST_add_new_sensor_missing_name_returns_status_ok(self):
+    def test_configure_sensor_invalid_POST_add_new_sensor_missing_name_returns_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -254,7 +264,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     # Invalid POST missing name doesn't create objects
-    def test_configure_sensor_invalid_POST_add_new_sensor_missing_name_not_created(self):
+    def test_configure_sensor_invalid_POST_add_new_sensor_missing_name_not_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -277,7 +289,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensor_types.count(), 0)
 
     # Invalid POST missing field name returns status OK
-    def test_configure_sensor_invalid_POST_add_new_sensor_missing_field_names_returns_status_ok(self):
+    def test_configure_sensor_invalid_POST_add_new_sensor_missing_field_names_returns_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -297,7 +311,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     # Invalid POST missing field name doesn't create objects
-    def test_configure_sensor_invalid_POST_add_new_sensor_missing_field_names_not_created(self):
+    def test_configure_sensor_invalid_POST_add_new_sensor_missing_field_names_not_created(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -320,7 +336,9 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensor_types.count(), 0)
 
     # Invalid POST duplicate field names returns status OK
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(self):
+    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -340,10 +358,12 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     # Invalid POST duplicate field names objects not created
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(self):
+    """def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(
+        self,
+    ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
-
+    
         # POST sensor data
         response = self.client.post(
             reverse(self.sensor_url),
@@ -360,6 +380,7 @@ class TestConfigureSensorView(TestCase):
         sensors = AGSensor.objects.all()
         sensor_types = AGSensor.objects.all()
         self.assertEqual(sensors.count(), 0)
+<<<<<<< HEAD
         self.assertEqual(sensor_types.count(), 0)
 
     #Modifying Sensors Tests
@@ -706,3 +727,6 @@ class TestConfigureSensorView(TestCase):
         sensor_type = AGSensorType.objects.all()[0]
         field = sensor_type.format[self.field_name_2]
         self.assertEqual(field["unit"], self.updated_unit_2)
+=======
+        self.assertEqual(sensor_types.count(), 0)"""
+>>>>>>> 76afcc67808adf1afe7ce4b9b1aed0bf63e6cddd

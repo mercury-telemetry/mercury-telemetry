@@ -96,11 +96,16 @@ class CreateSensorView(TemplateView):
 
         if "edit_sensor" in request.POST:
             new_name = request.POST.get("sensor-name-updated")
+<<<<<<< HEAD
             new_name, field_names= remove_whitespace_caps(new_name, field_names)
             new = True
             if new_name == sensor_name:
                 new = False
             valid, request = validate_inputs(new_name, field_names, request, new)
+=======
+            new_name, field_names = remove_whitespace_caps(new_name, field_names)
+            valid, request = validate_inputs(sensor_name, field_names, request)
+>>>>>>> 76afcc67808adf1afe7ce4b9b1aed0bf63e6cddd
             new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
                 sensor_to_update = AGSensor.objects.get(name=sensor_name)
@@ -174,4 +179,3 @@ class CreateSensorView(TemplateView):
             "sensors": sensors,
         }
         return render(request, self.template_name, context)
-
