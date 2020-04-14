@@ -13,11 +13,11 @@ sense.show_message("MERCURY", text_colour=nyu_purple, scroll_speed=0.04)
 sense.clear()
 
 while 1:
-    json_temperature = temperature(sense)
-    json_pressure = pressure(sense)
-    json_humidity = humidity(sense)
-    json_acceleration = acceleration(sense)
-    json_orientation = orientation(sense)
+    json_temperature = temperature()
+    json_pressure = pressure()
+    json_humidity = humidity()
+    json_acceleration = acceleration()
+    json_orientation = orientation()
 
     # json_temperature  = json.dumps(temperature(sense))
     # json_pressure     = json.dumps(pressure(sense))

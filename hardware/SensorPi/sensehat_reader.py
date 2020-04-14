@@ -9,7 +9,8 @@ ACCELERATION_ID = 8
 ORIENTATION_ID = 9
 
 
-def temperature(sense):
+def temperature():
+    sense = SenseHat()
     temperature = sense.get_temperature()
     date = str(datetime.now())
     data = {}
@@ -20,7 +21,8 @@ def temperature(sense):
     return data
 
 
-def pressure(sense):
+def pressure():
+    sense = SenseHat()
     pressure = sense.get_pressure()
     date = str(datetime.now())
     data = {}
@@ -31,7 +33,8 @@ def pressure(sense):
     return data
 
 
-def humidity(sense):
+def humidity():
+    sense = SenseHat()
     humidity = sense.get_humidity()
     date = str(datetime.now())
     data = {}
@@ -42,7 +45,8 @@ def humidity(sense):
     return data
 
 
-def acceleration(sense):
+def acceleration():
+    sense = SenseHat()
     acceleration = sense.get_accelerometer_raw()
     date = str(datetime.now())
     data = {}
@@ -57,7 +61,8 @@ def acceleration(sense):
     return data
 
 
-def orientation(sense):
+def orientation():
+    sense = SenseHat()
     orientation = sense.get_orientation()
     date = str(datetime.now())
     data = {}
