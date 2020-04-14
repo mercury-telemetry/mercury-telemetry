@@ -45,6 +45,21 @@ class TestGrafana(TestCase):
         "right_gust": {"unit": "km/h", "format": "float"},
     }
 
+    field_name_1 = "test-field-1"
+    field_name_2 = "test-field-2"
+    data_type_1 = "test-data-type-1"
+    data_type_2 = "test-data-type-2"
+    unit_1 = "test-unit-1"
+    unit_2 = "test-unit-2"
+
+    test_sensor = {
+        "name": test_sensor_name,
+        "processing formula": 0,
+        "field-names": [field_name_1, field_name_2],
+        "data-types": [data_type_1, data_type_2],
+        "units": [unit_1, unit_2],
+    }
+
     test_sensor_format_update = {
         "fuel reading": {"unit": "m", "format": "float"},
     }
@@ -357,25 +372,22 @@ class TestGrafana(TestCase):
         # Make the event the active event
         AGActiveEvent.objects.create(agevent=event).save()
 
-        sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
-            processing_formula=0,
-            format=self.test_sensor_format,
-        )
-        sensor_type.save()
-
-        # POST sensor data
+        # Create a sensor through the UI
         self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
-                "sensor-name": self.test_sensor_name,
-                "select-sensor-type": self.test_sensor_type,
+                "sensor-name": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
             },
         )
 
+        self.assertEquals(AGSensor.objects.count(), 1)
+
         # Fetch the dashboard again
-        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertTrue(dashboard)
 
         # Confirm that a panel was added to the dashboard with the expected title
@@ -387,7 +399,8 @@ class TestGrafana(TestCase):
         # Note: converting test_sensor_name to lowercase because currently
         # sensor names are automatically capitalized when they are created
         self.assertEquals(
-            dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
+            dashboard["dashboard"]["panels"][0]["title"],
+            self.test_sensor["name"].lower(),
         )
 
     def test_delete_sensor_deletes_panel_in_dashboard(self):
@@ -399,7 +412,7 @@ class TestGrafana(TestCase):
         event = self.create_venue_and_event(self.event_name)
 
         sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
+            name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
         )
@@ -414,7 +427,7 @@ class TestGrafana(TestCase):
 
         # Delete sensor
         self.client.post(
-            reverse(self.delete_sensor_url, kwargs={"sensor_id": sensor.id}),
+            reverse(self.delete_sensor_url, kwargs={"sensor_name": sensor.name}),
             follow=True,
         )
 
