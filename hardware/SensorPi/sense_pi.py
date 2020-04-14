@@ -1,7 +1,4 @@
 import os
-import json
-import requests
-from requests.exceptions import HTTPError
 from datetime import datetime
 from Utils.utils import get_logger, get_sensor_keys
 
