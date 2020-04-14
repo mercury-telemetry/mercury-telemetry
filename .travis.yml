@@ -57,10 +57,6 @@ jobs:
       
       services:
           - docker
-      
-      before_install:
-        - sudo apt-get update
-        - sudo apt-get install -y -o Dpkg::Options::="--force-confold" docker-engine
 
       before_script:
         - docker pull nyumotorsportstelemetryorg/mercury || true
