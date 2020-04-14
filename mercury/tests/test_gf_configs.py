@@ -73,6 +73,7 @@ class TestGFConfig(TestCase):
         self.config_update_dashboard_url = "mercury:gfconfig_update_dashboard"
         self.config_reset_dashboard_url = "mercury:gfconfig_reset_dashboard"
         self.config_delete_dashboard_url = "mercury:gfconfig_delete_dashboard"
+        self.config_add_dashboard_url = "mercury:gfconfig_create_dashboard"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
         # Login
@@ -539,5 +540,56 @@ class TestGFConfig(TestCase):
 
         # No dashboard should exist with this name
         self.assertFalse(dashboard)
+
+    # User can post to a create_dashboard view in GFConfig in order to add an event
+    # dashboard to Grafana
+    def test_add_event_dashboard_through_gfconfig_view(self):
+        # Create an event
+        self.create_venue_and_event(self.event_name)
+
+        # User posts to add_dashboard view
+        self.client.post(
+            reverse(self.config_add_dashboard_url, kwargs={"gf_id": self.gfconfig.id}),
+            data={"selected_event_name": self.event_name},
+        )
+
+        # Confirm dashboard added to Grafana
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
+    def test_add_event_dashboard_through_gfconfig_sensor_panels_added(self):
+        # Create an event
+        self.create_venue_and_event(self.event_name)
+
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        # User posts to add_dashboard view
+        self.client.post(
+            reverse(self.config_add_dashboard_url, kwargs={"gf_id": self.gfconfig.id}),
+            data={"selected_event_name": self.event_name},
+        )
+
+        # Confirm dashboard added with panel for existing sensor
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Retrieve current panels
+        try:
+            panels = dashboard["dashboard"]["panels"]
+        except KeyError:
+            panels = []
+
+        self.assertEquals(len(panels), 1)
+        self.assertEquals(panels[0]["title"], sensor.name)
 
     # @TODO Add tests to handle multiple GFConfigs
