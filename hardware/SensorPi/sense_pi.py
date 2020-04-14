@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from Utils.utils import get_logger, get_sensor_keys
+from ..Utils.utils import get_logger, get_sensor_keys
 
 # Conditional import for sense hat and emulator
 try:
