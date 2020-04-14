@@ -18,6 +18,16 @@ class TestConfigureSensorView(TestCase):
     unit_1 = "test-unit-1"
     unit_2 = "test-unit-2"
 
+    updated_test_sensor_name = "updated-live-feed"
+    updated_field_name_1 = "updated-test-field-1"
+    updated_field_name_2 = "updated-test-field-2"
+    updated_data_type_1 = "updated-test-data-type-1"
+    updated_data_type_2 = "updated-test-data-type-2"
+    updated_unit_1 = "updated-test-unit-1"
+    updated_unit_2 = "updated-test-unit-2"
+
+
+
     test_sensor = {
         "name": test_sensor_name,
         "processing formula": 0,
@@ -100,7 +110,7 @@ class TestConfigureSensorView(TestCase):
             processing_formula=0,
             format={
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
-                self.field_name_2: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
         )
         test_type_object.save()
@@ -134,7 +144,7 @@ class TestConfigureSensorView(TestCase):
             processing_formula=0,
             format={
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
-                self.field_name_2: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
         )
         test_type_object.save()
@@ -172,7 +182,7 @@ class TestConfigureSensorView(TestCase):
             processing_formula=0,
             format={
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
-                self.field_name_2: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
         )
         test_type_object.save()
@@ -201,7 +211,7 @@ class TestConfigureSensorView(TestCase):
             processing_formula=0,
             format={
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
-                self.field_name_2: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
         )
         test_type_object.save()
@@ -352,3 +362,347 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensors.count(), 0)
         self.assertEqual(sensor_types.count(), 0)
 
+    #Modifying Sensors Tests
+
+    #Valid
+
+    def test_configure_sensor_valid_POST_edit_sensor_name_returns_status_ok(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.updated_test_sensor_name,
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that POST redirects to sensor (same page reloads)
+        self.assertEqual(200, response.status_code)
+
+    def test_configure_sensor_valid_POST_edit_sensor_name_updates(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.updated_test_sensor_name,
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that AGSensor object has new name
+        sensor = AGSensor.objects.all()[0]
+        self.assertEqual(sensor.name, self.updated_test_sensor_name)
+
+    def test_configure_sensor_valid_POST_edit_sensor_type_name_updates(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.updated_test_sensor_name,
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that AGSensorType object has new name
+        sensor_type = AGSensorType.objects.all()[0]
+        self.assertEqual(sensor_type.name, self.updated_test_sensor_name)
+
+    def test_configure_sensor_valid_POST_edit_field_name_returns_status_ok(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.test_sensor["name"],
+                "field-names": [self.field_name_1, self.updated_field_name_1],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that POST redirects to sensor (same page reloads)
+        self.assertEqual(200, response.status_code)
+
+    def test_configure_sensor_valid_POST_edit_field_name_updates(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.test_sensor["name"],
+                "field-names": [self.field_name_1, self.updated_field_name_1],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that field name updated
+        sensor_type = AGSensorType.objects.all()[0]
+        self.assertTrue(self.updated_field_name_1 in sensor_type.format)
+        self.assertTrue(self.field_name_2 not in sensor_type.format)
+
+    def test_configure_sensor_valid_POST_edit_data_type_returns_status_ok(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": [self.data_type_1, self.updated_data_type_2],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that POST redirects to sensor (same page reloads)
+        self.assertEqual(200, response.status_code)
+
+    def test_configure_sensor_valid_POST_edit_data_type_updates(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": [self.data_type_1, self.updated_data_type_2],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that data type updated
+        sensor_type = AGSensorType.objects.all()[0]
+        field = sensor_type.format[self.field_name_2]
+        self.assertEqual(field["data_type"], self.updated_data_type_2)
+
+    def test_configure_sensor_valid_POST_edit_unit_returns_status_ok(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": [self.unit_1, self.updated_unit_2],
+            },
+        )
+
+        # Check that POST redirects to sensor (same page reloads)
+        self.assertEqual(200, response.status_code)
+
+    def test_configure_sensor_valid_POST_edit_unit_updates(self):
+         # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        # Post Edited Name
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"],
+                "sensor-name-updated": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": [self.unit_1, self.updated_unit_2],
+            },
+        )
+
+        # Check that unit updated
+        sensor_type = AGSensorType.objects.all()[0]
+        field = sensor_type.format[self.field_name_2]
+        self.assertEqual(field["unit"], self.updated_unit_2)
