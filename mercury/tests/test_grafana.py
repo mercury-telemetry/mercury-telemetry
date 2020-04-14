@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
@@ -352,10 +352,11 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
 
         # Create an event
-        self.create_venue_and_event(self.event_name)
+        event = self.create_venue_and_event(self.event_name)
+        AGActiveEvent.objects.create(agevent=event).save()
 
         sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
+            name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
         )
@@ -367,12 +368,14 @@ class TestGrafana(TestCase):
             data={
                 "submit_new_sensor": "",
                 "sensor-name": self.test_sensor_name,
-                "select-sensor-type": self.test_sensor_type,
+                "select-sensor-type": self.test_sensor_name,
             },
         )
 
+        self.assertEquals(AGSensor.objects.count(), 1)
+
         # Fetch the dashboard again
-        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertTrue(dashboard)
 
         # Confirm that a panel was added to the dashboard with the expected title
@@ -383,6 +386,8 @@ class TestGrafana(TestCase):
 
         # Note: converting test_sensor_name to lowercase because currently
         # sensor names are automatically capitalized when they are created
+        print(dashboard)
+        print(dashboard["dashboard"]["panels"])
         self.assertEquals(
             dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
         )
@@ -396,7 +401,7 @@ class TestGrafana(TestCase):
         event = self.create_venue_and_event(self.event_name)
 
         sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
+            name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
         )
@@ -411,7 +416,7 @@ class TestGrafana(TestCase):
 
         # Delete sensor
         self.client.post(
-            reverse(self.delete_sensor_url, kwargs={"sensor_id": sensor.id}),
+            reverse(self.delete_sensor_url, kwargs={"sensor_name": sensor.name}),
             follow=True,
         )
 
