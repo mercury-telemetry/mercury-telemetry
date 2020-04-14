@@ -14,37 +14,19 @@ import datetime
 
 
 class MeasurementIngestionEngineTests(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(MeasurementIngestionEngineTests, cls).setUpClass()
-
-        cls.venue, _ = AGVenue.objects.get_or_create(
-            name="Washington Square Park",
-            description="Sunnyside Daycare's Butterfly Room.",
-            latitude=40.730812,
-            longitude=-73.997456,
-        )
-
-        cls.event, _ = AGEvent.objects.get_or_create(
-            name="Sunny Day Test Drive",
-            date="2020-02-02T20:21:22",
-            description="A very progressive test run at Sunnyside Daycare's Butterfly Room.",
-            venue_uuid=cls.venue,
-        )
+    fixtures = ["sample.json"]
 
     def setUp(self):
-        self.venue = MeasurementIngestionEngineTests.venue
-        self.event = MeasurementIngestionEngineTests.event
+        self.venue = AGVenue.objects.first()
+        self.event = AGEvent.objects.first()
 
     def test_save_measurement(self):
-        sensor_type, _ = AGSensorType.objects.get_or_create(
+        sensor_type = AGSensorType.objects.create(
             name="Coin Side Sensor",
             processing_formula=0,
             format={"reading": {"side": {"unit": "", "format": "bool"}}, "result": {}},
         )
-        sensor, _ = AGSensor.objects.get_or_create(
-            name="Test Sensor", type_id=sensor_type,
-        )
+        sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type,)
 
         engine = MeasurementIngestionEngine()
 
@@ -61,38 +43,16 @@ class MeasurementIngestionEngineTests(TestCase):
 
 
 class FormulaTests(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(FormulaTests, cls).setUpClass()
-
-        cls.venue, _ = AGVenue.objects.get_or_create(
-            name="Washington Square Park",
-            description="Sunnyside Daycare's Butterfly Room.",
-            latitude=40.730812,
-            longitude=-73.997456,
-        )
-
-        cls.event, _ = AGEvent.objects.get_or_create(
-            name="Sunny Day Test Drive",
-            date="2020-02-02T20:21:22",
-            description="A very progressive test run at Sunnyside Daycare's Butterfly Room.",
-            venue_uuid=cls.venue,
-        )
-
-        cls.sensor_type, _ = AGSensorType.objects.get_or_create(
-            name="Coin Side Sensor",
-            processing_formula=0,
-            format={"reading": {"side": {"unit": "", "format": "bool"}}, "result": {}},
-        )
-        cls.sensor, _ = AGSensor.objects.get_or_create(
-            name="Test Sensor", type_id=cls.sensor_type,
-        )
+    fixtures = ["sample.json"]
 
     def setUp(self):
+        event = AGEvent.objects.first()
+        sensor_type = AGSensorType.objects.first()
+        sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type,)
         self.measurement = MeasurementExchange(
-            event=FormulaTests.event,
+            event=event,
             timestamp=timezone.now(),
-            sensor=FormulaTests.sensor,
+            sensor=sensor,
             reading={"side": True},
         )
 
