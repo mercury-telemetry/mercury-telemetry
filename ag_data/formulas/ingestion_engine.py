@@ -1,26 +1,21 @@
 from ag_data import models
-from ag_data.formulas.library.system import mercury_formulas as hgFormulas
+from ag_data.formulas.library.system.mercury_formulas import (
+    processing_formulas,
+    fEmptyResult,
+)
 
 from ag_data.utilities import MeasurementExchange
 
 
 class MeasurementIngestionEngine:
-
-    processing_formulas = {
-        0: hgFormulas.fEmptyResult,
-        2: hgFormulas.fMercurySimpleTemperatureSensor,
-        4: hgFormulas.fMercuryDualTemperatureSensor,
-        6: hgFormulas.fMercuryFlowSensor,
-    }
-
     def saveMeasurement(
         self, rawMeasurement: MeasurementExchange
     ) -> models.AGMeasurement:
 
         assert isinstance(rawMeasurement, MeasurementExchange)
 
-        formula = MeasurementIngestionEngine.processing_formulas.get(
-            rawMeasurement.processing_formula, hgFormulas.fEmptyResult
+        formula = processing_formulas.get(
+            rawMeasurement.processing_formula, fEmptyResult
         )
 
         value = {"reading": rawMeasurement.reading}

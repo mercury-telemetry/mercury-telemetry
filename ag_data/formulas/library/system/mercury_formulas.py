@@ -1,8 +1,3 @@
-#
-# Formulas for Mercury's built-in and natively supported sensor types
-# Sample processing formulas with primary sensors and fictional Mercury-branded sensors
-#
-
 from ag_data import models
 
 
@@ -11,12 +6,7 @@ def fEmptyResult(measurement):
     return {}
 
 
-def fMercurySimpleTemperatureSensor(measurement):
-
-    # This Simple Temperature Sensor decides it wants its own formula, even though it does
-    # nothing more than the fEmptyResult function.
-
-    return {}
+fMercurySimpleTemperatureSensor = fEmptyResult
 
 
 def fMercuryDualTemperatureSensor(measurement):
@@ -46,3 +36,11 @@ def fMercuryFlowSensor(measurement):
             }
 
     return result
+
+
+processing_formulas = {
+    0: fEmptyResult,
+    2: fMercurySimpleTemperatureSensor,
+    4: fMercuryDualTemperatureSensor,
+    6: fMercuryFlowSensor,
+}
