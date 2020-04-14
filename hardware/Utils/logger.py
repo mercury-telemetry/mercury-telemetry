@@ -12,7 +12,7 @@ class Logger(object):
         filename,
         format="%(asctime)s | %(levelname)s | %(message)s",
         level=INFO,
-        show_logs=False
+        show_logs=False,
     ):
         # Initial construct.
         self.format = format
@@ -29,7 +29,7 @@ class Logger(object):
         self.logger.setLevel(self.level)
         self.logger.addHandler(self.console_logger)
 
-        #show logs on screen
+        # show logs on screen
         self.showLogsOnScreen = show_logs
 
     def get_logger_file(self, file_name):
