@@ -26,8 +26,6 @@ class TestConfigureSensorView(TestCase):
     updated_unit_1 = "updated-test-unit-1"
     updated_unit_2 = "updated-test-unit-2"
 
-
-
     test_sensor = {
         "name": test_sensor_name,
         "processing formula": 0,
@@ -158,7 +156,7 @@ class TestConfigureSensorView(TestCase):
         )
         test_sensor_object.save()
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
@@ -224,7 +222,7 @@ class TestConfigureSensorView(TestCase):
         )
         test_type_object.save()
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
@@ -271,7 +269,7 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
@@ -318,7 +316,7 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
@@ -358,14 +356,14 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     # Invalid POST duplicate field names objects not created
-    """def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(
+    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_objects_not_created(
         self,
     ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
-    
+
         # POST sensor data
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
@@ -380,15 +378,14 @@ class TestConfigureSensorView(TestCase):
         sensors = AGSensor.objects.all()
         sensor_types = AGSensor.objects.all()
         self.assertEqual(sensors.count(), 0)
-<<<<<<< HEAD
         self.assertEqual(sensor_types.count(), 0)
 
-    #Modifying Sensors Tests
+    # Modifying Sensors Tests
 
-    #Valid
+    # Valid
 
     def test_configure_sensor_valid_POST_edit_sensor_name_returns_status_ok(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -446,7 +443,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
 
         # Post Edited Name
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "edit_sensor": "",
@@ -484,7 +481,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
 
         # Post Edited Name
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "edit_sensor": "",
@@ -501,7 +498,7 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(sensor_type.name, self.updated_test_sensor_name)
 
     def test_configure_sensor_valid_POST_edit_field_name_returns_status_ok(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -538,7 +535,7 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_configure_sensor_valid_POST_edit_field_name_updates(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -559,7 +556,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
 
         # Post Edited Name
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "edit_sensor": "",
@@ -577,7 +574,7 @@ class TestConfigureSensorView(TestCase):
         self.assertTrue(self.field_name_2 not in sensor_type.format)
 
     def test_configure_sensor_valid_POST_edit_data_type_returns_status_ok(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -614,7 +611,7 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_configure_sensor_valid_POST_edit_data_type_updates(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -635,7 +632,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
 
         # Post Edited Name
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "edit_sensor": "",
@@ -653,7 +650,7 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(field["data_type"], self.updated_data_type_2)
 
     def test_configure_sensor_valid_POST_edit_unit_returns_status_ok(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -690,7 +687,7 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_configure_sensor_valid_POST_edit_unit_updates(self):
-         # Login
+        # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # Create AGSensorType object for foreign key reference
@@ -711,7 +708,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
 
         # Post Edited Name
-        response = self.client.post(
+        self.client.post(
             reverse(self.sensor_url),
             data={
                 "edit_sensor": "",
@@ -727,6 +724,3 @@ class TestConfigureSensorView(TestCase):
         sensor_type = AGSensorType.objects.all()[0]
         field = sensor_type.format[self.field_name_2]
         self.assertEqual(field["unit"], self.updated_unit_2)
-=======
-        self.assertEqual(sensor_types.count(), 0)"""
->>>>>>> 76afcc67808adf1afe7ce4b9b1aed0bf63e6cddd
