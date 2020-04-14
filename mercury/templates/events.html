@@ -1,3 +1,12 @@
+{% load bootstrap4 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
@@ -98,6 +107,8 @@
         {% for message in messages %}
         <p class="error"> {{ message }} </p>
         {% endfor %}
+
+
 
         <!-- All Venues -->
         <div id="all-venues" class="mt-50 hide-display">
