@@ -1,46 +1,27 @@
-from ag_data import models
+def identity(**kwargs):
+    return kwargs
 
 
-def fEmptyResult(measurement):
-
-    return {}
+simple_temperature_sensor = identity
 
 
-fMercurySimpleTemperatureSensor = fEmptyResult
+def dual_temperature_sensor(internal, external):
+    return {"mean": (internal + external) / 2, "diff": internal - external}
 
 
-def fMercuryDualTemperatureSensor(measurement):
-    mean = measurement.reading["internal"] / 2 + measurement.reading["external"] / 2
-    diff = measurement.reading["internal"] - measurement.reading["external"]
-
-    return {"mean": mean, "diff": diff}
-
-
-def fMercuryFlowSensor(measurement):
-    result = {}
-
-    measurements = models.AGMeasurement.objects.filter(sensor_id=measurement.sensor.id)
-
-    if measurements.count() == 0:
-        result = {"gasLevel": 100}
+def flow_sensor(prevGasLevel, prevTimestamp, volumetricFlow, timestamp):
+    if prevGasLevel is not None and prevTimestamp is not None:
+        time_elapsed = timestamp - prevTimestamp
+        return {
+            "gasLevel": prevGasLevel - volumetricFlow * time_elapsed.total_seconds()
+        }
     else:
-        latest = measurements.latest("timestamp")
-        timeElapsed = measurement.timestamp - latest.timestamp
-
-        lastResult = latest.value["result"]["gasLevel"]
-
-        if lastResult is not None:
-            result = {
-                "gasLevel": lastResult
-                - measurement.reading["volumetricFlow"] * timeElapsed.total_seconds()
-            }
-
-    return result
+        return {"gasLevel": 100}
 
 
 processing_formulas = {
-    0: fEmptyResult,
-    2: fMercurySimpleTemperatureSensor,
-    4: fMercuryDualTemperatureSensor,
-    6: fMercuryFlowSensor,
+    0: identity,
+    2: simple_temperature_sensor,
+    4: dual_temperature_sensor,
+    6: flow_sensor,
 }

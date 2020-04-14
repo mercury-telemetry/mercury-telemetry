@@ -15,4 +15,3 @@ selenium==3.141.0
 django-annoying
 mock
 requests
-attr

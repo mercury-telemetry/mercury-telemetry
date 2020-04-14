@@ -1,30 +1,41 @@
-from ag_data import models
-from ag_data.formulas.library.system.mercury_formulas import (
-    processing_formulas,
-    fEmptyResult,
-)
+from ag_data.models import AGMeasurement
+import ag_data.formulas.library.system.mercury_formulas as formulas
 
-from ag_data.utilities import MeasurementExchange
+
+def preprocess(sensor, formula, timestamp, measurement):
+    measurement = measurement.copy()
+    if formulas.flow_sensor == formula:
+        measurement["timestamp"] = timestamp
+        measurement["prevGasLevel"] = None
+        measurement["prevTimestamp"] = None
+
+        measurements = AGMeasurement.objects.filter(sensor_id=sensor.id)
+        if measurements:
+            latest = measurements.latest("timestamp")
+            if latest:
+                measurement["prevGasLevel"] = latest["result"]["gasLevel"]
+                measurement["prevTimestamp"] = latest.timestamp
+    return measurement
 
 
 class MeasurementIngestionEngine:
-    def saveMeasurement(
-        self, rawMeasurement: MeasurementExchange
-    ) -> models.AGMeasurement:
+    def __init__(self, event=None):
+        self.event = event
 
-        assert isinstance(rawMeasurement, MeasurementExchange)
+    def save_measurement(self, sensor, timestamp, measurement) -> AGMeasurement:
 
-        formula = processing_formulas.get(
-            rawMeasurement.processing_formula, fEmptyResult
+        assert self.event is not None
+
+        formula = formulas.processing_formulas.get(
+            sensor.type_id.processing_formula, formulas.identity
         )
 
-        value = {"reading": rawMeasurement.reading}
+        preprocessed = preprocess(sensor, formula, timestamp, measurement)
+        result = formula(**preprocessed)
 
-        value["result"] = formula(rawMeasurement)
-
-        return models.AGMeasurement.objects.create(
-            timestamp=rawMeasurement.timestamp,
-            event_uuid=rawMeasurement.event,
-            sensor_id=rawMeasurement.sensor,
-            value=value,
+        return AGMeasurement.objects.create(
+            timestamp=timestamp,
+            event_uuid=self.event,
+            sensor_id=sensor,
+            value={"raw": measurement, "result": result},
         )
