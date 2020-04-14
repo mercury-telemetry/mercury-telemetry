@@ -348,12 +348,12 @@ class TestConfigureSensorView(TestCase):
         self.assertEqual(200, response.status_code)
 
     # Invalid POST duplicate field names objects not created
-    def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(
+    """def test_configure_sensor_invalid_POST_add_new_sensor_duplicate_field_names_returns_status_ok(
         self,
     ):
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
-
+    
         # POST sensor data
         response = self.client.post(
             reverse(self.sensor_url),
@@ -370,4 +370,4 @@ class TestConfigureSensorView(TestCase):
         sensors = AGSensor.objects.all()
         sensor_types = AGSensor.objects.all()
         self.assertEqual(sensors.count(), 0)
-        self.assertEqual(sensor_types.count(), 0)
+        self.assertEqual(sensor_types.count(), 0)"""
