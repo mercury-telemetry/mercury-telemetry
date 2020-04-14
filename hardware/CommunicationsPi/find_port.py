@@ -4,7 +4,7 @@ import argparse
 import serial
 import serial.tools.list_ports
 
-from .utils import get_logger
+from Utils.utils import get_logger
 
 
 def is_usb_serial(port, args):
