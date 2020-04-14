@@ -1,9 +1,8 @@
+<!-- Bootstrap messages (please don't delete this Ray) -->
 {% load bootstrap4 %}
-
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
 {% bootstrap_javascript jquery='full' %}
-
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
@@ -103,12 +102,6 @@
                     <div>There are no events to show.</div>
             {% endif %}
         </div>
-
-        {% for message in messages %}
-        <p class="error"> {{ message }} </p>
-        {% endfor %}
-
-
 
         <!-- All Venues -->
         <div id="all-venues" class="mt-50 hide-display">
