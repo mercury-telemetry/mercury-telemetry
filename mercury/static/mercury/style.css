@@ -12,11 +12,16 @@ body {
 
 tr:nth-child(even) {background-color: #f2f2f2;}
 
-tr td:first-child:before
+
+/*Commenting this out because it breaks appearance of several tables
+If desiring to use this styling, create a class (.counter) or id (#counter)
+and apply as needed. Do not apply universally */
+
+/*tr td:first-child:before  TODO
 {
-  counter-increment: Serial;      /* Increment the Serial counter */
-  content: counter(Serial); /* Display the counter */
-}
+  counter-increment: Serial;      Increment the Serial counter
+  content: counter(Serial); Display the counter
+}  */
 
 .hide-display {
   display: none;
@@ -33,12 +38,6 @@ nav ul{
 
 nav li {
   display: inline-block;
-}
-
-tr td:first-child:before
-{
-  counter-increment: Serial;      /* Increment the Serial counter */
-  content: counter(Serial); /* Display the counter */
 }
 
 .hide-display {
@@ -58,8 +57,24 @@ li{
 } */
 
 .inline-box{
-    display: inline-block;
+    display: inline;
 }
+
+.name-button-box{
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-box{
+    margin-left:auto; 
+    margin-right:0;
+}
+
+.big-text{
+    font-size: 150%;
+}
+
 
 .inline-box label{
     text-align:right;
@@ -224,8 +239,23 @@ input#id_can_msg{
   border-style: solid;
   border-width: thin;
   padding: 20px;
-  width: 1000px;
-  overflow: hidden;
+  min-width: 400px;
+  width: 50%;
+  overflow: auto;
+}
+
+.sensor-panel {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: center;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  min-width: 400px;
+  width: 75%;
+  overflow: auto;
 }
 
 #grafana-panel {
@@ -294,6 +324,24 @@ input#id_can_msg{
   line-height: 1.5;
   border-radius: 0.35rem;
 }
+
+.grafana-btn-block {
+  color: var(--light-text);
+  display: block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.35rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
 
 .grafana-btn {
   color: var(--light-text);
@@ -631,8 +679,6 @@ a {
     border: 1px solid black;
     width: 100%;
     height: 100%;
-
-
   }
 
   td {
@@ -760,6 +806,31 @@ a {
   
   .end-sensor-list {
     width: 100%;
+  }
+
+  .sensor-fields-table {
+    border: none;
+    border-collapse: collapse;
+    table-layout: fixed ;
+    width: 100% ;
+    height: 100%;
+  }
+
+  .sensor-fields-table-th{
+    width: 1px;
+    border: none;
+    text-align: center;
+  }
+
+  .sensor-fields-table-td{
+    background-color: white;
+    width: 33%;
+    border: none;
+    text-align: center;
+  }
+
+  .sensor-fields-table-tr {
+    border: none;
   }
 
   [name="event_name"] {
