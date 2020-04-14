@@ -1,6 +1,7 @@
 from sense_hat import SenseHat
 import requests
 from sensehat_reader import temperature, pressure, humidity, acceleration, orientation
+
 # import json
 
 TEST_ENDPOINT = "http://pastebin.com/api/api_post.php"
