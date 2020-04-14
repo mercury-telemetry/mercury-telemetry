@@ -35,6 +35,14 @@ class FormulaPipelineTests(TestCase):
         self.assertEqual(result.event_uuid, self.event)
         self.assertEqual(result.sensor_id, sensor)
 
+        self.timestamp += datetime.timedelta(seconds=5)
+        result = self.pipeline.save_measurement(
+            sensor, self.timestamp, {"volumetricFlow": 1.0}
+        )
+        self.assertEqual(result.timestamp, self.timestamp)
+        self.assertEqual(result.event_uuid, self.event)
+        self.assertEqual(result.sensor_id, sensor)
+
     def test_save_measurement_dual_temperature(self):
         formula_id = get_formula_id(formulas.dual_temperature_sensor)
         sensor_type = AGSensorType.objects.filter(processing_formula=formula_id).first()

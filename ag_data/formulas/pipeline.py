@@ -13,7 +13,7 @@ def preprocess(sensor, formula, timestamp, measurement):
         if measurements:
             latest = measurements.latest("timestamp")
             if latest:
-                measurement["prevGasLevel"] = latest["result"]["gasLevel"]
+                measurement["prevGasLevel"] = latest.value["result"]["gasLevel"]
                 measurement["prevTimestamp"] = latest.timestamp
     return measurement
 
