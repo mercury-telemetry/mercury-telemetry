@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor
+from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor, AGActiveEvent
 from mercury.forms import EventForm, VenueForm
 from mercury.grafanaAPI.grafana_api import Grafana
 from mercury.models import GFConfig
@@ -34,12 +34,43 @@ def update_venue(request, venue_uuid=None):
 def update_event(request, event_uuid=None):
     event_to_update = AGEvent.objects.get(uuid=event_uuid)
     if event_to_update:
-        event_to_update.name = request.POST.get("name")
-        post_event_location_id = request.POST.get("venue_uuid")
-        venue_object = AGVenue.objects.get(uuid=post_event_location_id)
-        event_to_update.venue_uuid = venue_object
-        event_to_update.description = request.POST.get("description")
+        new_name = request.POST.get("name")
+        new_venue_id = request.POST.get("venue_uuid")
+        new_venue_object = AGVenue.objects.get(uuid=new_venue_id)
+        new_description = request.POST.get("description")
+
+        # if the name was changed, update all Grafana dashboards with new name
+        if new_name != event_to_update.name:
+            gfconfigs = GFConfig.objects.all()
+
+            for gfconfig in gfconfigs:
+
+                # Grafana instance using current GFConfig
+                grafana = Grafana(gfconfig)
+
+                try:
+                    dashboard = grafana.update_dashboard_title(
+                        event_to_update, new_name
+                    )
+                    if dashboard:
+                        messages.success(request, "Grafana dashboard title " "updated")
+                    else:
+                        messages.error(
+                            request, "Grafana dashboard title not " "updated: "
+                        )
+
+                except ValueError as error:
+                    messages.error(
+                        request, f"Grafana dashboard title not updated: " f"{error}"
+                    )
+
+        # update the AGEvent object
+        event_to_update.name = new_name
+        event_to_update.venue_uuid = new_venue_object
+        event_to_update.description = new_description
         event_to_update.save()
+
+        messages.success(request, "Event updated successfully")
 
     return redirect("/events")
 
@@ -66,7 +97,6 @@ def delete_event(request, event_uuid=None):
             )
 
     event_to_delete.delete()
-
     return redirect("/events")
 
 
@@ -183,12 +213,25 @@ def create_event_json(event_object, venue_object, measurements_object):
             }
             measurement_info.append(temp)
 
-    data = {
-        "event_info": event_info,
-        "measurement_info": measurement_info,
-    }
+    data = {"event_info": event_info, "measurement_info": measurement_info}
 
     return data
+
+
+def activate_event(request, event_uuid=None):
+    event_to_activate = AGEvent.objects.get(uuid=event_uuid)
+    if event_to_activate is not None:
+        AGActiveEvent.objects.all().delete()
+        active_event = AGActiveEvent(agevent=event_to_activate)
+        active_event.save()
+    return redirect("/events")
+
+
+def deactivate_event(request, event_uuid=None):
+    event_to_deactivate = AGEvent.objects.get(uuid=event_uuid)
+    if event_to_deactivate is not None:
+        AGActiveEvent.objects.all().delete()
+    return redirect("/events")
 
 
 def export_event(request, event_uuid=None, file_format="CSV"):
@@ -272,9 +315,11 @@ class CreateEventsView(TemplateView):
         venues = AGVenue.objects.all().order_by("uuid")
         event_form = EventForm()
         venue_form = VenueForm()
-        active_event = {}
-        if len(events) > 0:
-            active_event = events[0]
+        active_event_object = AGActiveEvent.objects.all()
+        active_event = None
+        if len(active_event_object) > 0:
+            active_event = active_event_object[0].agevent
+
         context = {
             "event_form": event_form,
             "venue_form": venue_form,
