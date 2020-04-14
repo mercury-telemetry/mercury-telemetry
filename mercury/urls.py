@@ -63,14 +63,5 @@ urlpatterns = [
         gf_config.delete_dashboard,
         name="gfconfig_delete_dashboard",
     ),
-    path(
-        "measurement/<uuid:event_uuid>",
-        measurement.MeasurementView.as_view(),
-        name="measurement",
-    ),
-    path(
-        "measurement/",
-        measurement.MeasurementWithoutEvent.as_view(),
-        name="measurementWO",
-    ),
+    path("measurement/", measurement.MeasurementView.as_view(), name="measurement",),
 ]
