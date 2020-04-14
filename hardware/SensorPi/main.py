@@ -1,8 +1,7 @@
 from sense_hat import SenseHat
-import json
 import requests
-from datetime import datetime
-from sensehat_reader import *
+from sensehat_reader import temperature, pressure, humidity, acceleration, orientation
+# import json
 
 TEST_ENDPOINT = "http://pastebin.com/api/api_post.php"
 API_ENDPOINT = "http://mecury-backend-prod.herokuapp.com/measurement/"
