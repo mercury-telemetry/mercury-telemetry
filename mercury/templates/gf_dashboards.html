@@ -1,0 +1,143 @@
+<!-- Bootstrap messages (please don't delete this Ray) -->
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Configure Dashboards</title>
+        <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+    </head>
+
+    <body>
+    {% include 'sidebar.html' %}
+    <div class="topbar-container">
+
+        <!-- View Existing Dashboards -->
+        <div>
+            <div>
+            <h3> <a target="_blank" href="{{ config.config.gf_host }}/dashboards"/> 
+            {{ config.config.gf_name }} Event Dashboards</a></h3>
+            
+            {% if config.dashboards %}
+
+                {% for dashboard in config.dashboards %}
+
+                    <div class="panel" name="{{ dashboard.name }}">
+
+                        <h4 class="gfconfig-text-align"> Event:
+                        <a target="_blank" href="{{ dashboard.dashboard_url }}">
+                        {{ dashboard.name }}</a>
+                        </h4>
+
+                        <br>
+
+                        <form class="gfconfig-text-align" method="POST"
+                        action="update_dashboard/{{ config.config.id }}"
+                        id="update_{{ dashboard.name }}_{{ config.config.id }}">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+                        <h5> Sensor Panels: </h5>
+                        {{ dashboard.sensor_form|crispy }}
+
+                            <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+                        </form>
+
+                        <form class="gfconfig-text-align" method="POST"
+                        action="reset_dashboard/{{ config.config.id }}"
+                        id="reset_{{ dashboard.name }}_{{ config.config.id }}">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+
+                            <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+                        </form>
+
+                        <form class="gfconfig-text-align" method="POST"
+                        action="delete_dashboard/{{ config.config.id }}"
+                        id="delete_{{ dashboard.name }}_{{ config.config.id }}">
+                        {% csrf_token %} {% load crispy_forms_tags %}
+                            <input type="hidden" name="dashboard_name"
+                                value="{{ dashboard.name }}">
+                        </form>
+
+                        <br>
+                            <div>
+                                <input form="reset_{{ dashboard.name }}_{{ config.config.id }}" class="submitbutton simulator-btn
+                                grafana-btn
+                                grafana-btn-blue gfconfig-text-align" type="submit"
+                                name="submit-reset-dashboard"
+                                value="Reset Sensor Panels">
+
+                                <input form="delete_{{ dashboard.name }}_{{ config.config.id }}"
+                                class="submitbutton simulator-btn
+                                grafana-btn
+                                grafana-btn-red gfconfig-text-align" type="submit"
+                                name="submit-delete-dashboard"
+                                value="Delete Dashboard">
+
+                                <input form="update_{{ dashboard.name }}_{{ config.config.id }}"
+                                class="submitbutton simulator-btn grafana-btn
+                                grafana-btn-green gfconfig-text-align" type="submit"
+                                name="submit-update-sensors"
+                                value="Update Sensor Panels">
+
+                            </div>
+                            <br> <br>
+                    </div>
+                {% endfor %}
+
+                {% else %}
+
+                <p> No dashboards yet. </p>
+
+                {% endif %}
+
+                {% if config.missing_events %}
+
+                <div class="panel">
+
+                        <form method="POST"
+                        action="create_dashboard/{{ config.config.id }}"
+                        id="create_{{ missing_event.name }}_{{ config.config.id }}">
+
+                        {% csrf_token %} {% load crispy_forms_tags %}
+
+                        <input type="hidden" name="config_id"
+                        value="{{ config.config.id }}">
+
+                        <h5> There are missing dashboards. Add one? </h5>
+
+                        <select name="selected_event_name">
+                        {% for missing_event in config.missing_events %}
+
+                        <option>{{ missing_event.name }}</option>
+
+                        {% endfor %}
+                        </select>
+
+                        <br>
+
+                        <input
+                        class="submitbutton simulator-btn
+                        grafana-btn
+                        grafana-btn-green" type="submit"
+                        name="submit-create-dashboard"
+                        value="Add Dashboard for this Event">
+
+                        </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </body>
+    </div>
+</html>
