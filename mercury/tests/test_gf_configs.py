@@ -12,7 +12,7 @@ HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 TOKEN = "eyJrIjoiSzM4b3N1Um9HMmI2Z1RpcVd6bFdEMGVRTGlSNGcwV2giLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
 
 # this token has viewer level permissions
-VIEWER_TOKEN = "eyJrIjoicndxanEyazdlNWwzMllEYWN0NUFXOXZzeGM1c0JHUjAiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
+VIEWER_TOKEN = "eyJrIjoiZ1M5WmhXaWVyUndRVHozc1dVQVQ1b1lsODZBZVFid2EiLCJuIjoidmlld2VyX2tleSIsImlkIjoxfQ=="
 
 
 class TestGFConfig(TestCase):
