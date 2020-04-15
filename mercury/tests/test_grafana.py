@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
 from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
@@ -15,12 +15,12 @@ HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 # this token has Admin level permissions
 # tokens for mercurytests
 TOKEN = (
-    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+    "eyJrIjoic1JMTXFuVUl6dDRKbVhjRWVRNzVHSTQyN3RRNzdQcFIiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
 )
 
 # this token has viewer level permissions
 VIEWER_TOKEN = (
-    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
+    "eyJrIjoiQnJDU01tVHdPN1Q5UXNiMm9ZUXB0WEw4U25haW5EejgiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 )
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
 DB_NAME = "d76k4515q6qv"
@@ -43,6 +43,21 @@ class TestGrafana(TestCase):
     test_sensor_format = {
         "left_gust": {"unit": "km/h", "format": "float"},
         "right_gust": {"unit": "km/h", "format": "float"},
+    }
+
+    field_name_1 = "test-field-1"
+    field_name_2 = "test-field-2"
+    data_type_1 = "test-data-type-1"
+    data_type_2 = "test-data-type-2"
+    unit_1 = "test-unit-1"
+    unit_2 = "test-unit-2"
+
+    test_sensor = {
+        "name": test_sensor_name,
+        "processing formula": 0,
+        "field-names": [field_name_1, field_name_2],
+        "data-types": [data_type_1, data_type_2],
+        "units": [unit_1, unit_2],
     }
 
     test_sensor_format_update = {
@@ -352,27 +367,27 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
 
         # Create an event
-        self.create_venue_and_event(self.event_name)
+        event = self.create_venue_and_event(self.event_name)
 
-        sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
-            processing_formula=0,
-            format=self.test_sensor_format,
-        )
-        sensor_type.save()
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
 
-        # POST sensor data
+        # Create a sensor through the UI
         self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
-                "sensor-name": self.test_sensor_name,
-                "select-sensor-type": self.test_sensor_type,
+                "sensor-name": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
             },
         )
 
+        self.assertEquals(AGSensor.objects.count(), 1)
+
         # Fetch the dashboard again
-        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertTrue(dashboard)
 
         # Confirm that a panel was added to the dashboard with the expected title
@@ -384,7 +399,8 @@ class TestGrafana(TestCase):
         # Note: converting test_sensor_name to lowercase because currently
         # sensor names are automatically capitalized when they are created
         self.assertEquals(
-            dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
+            dashboard["dashboard"]["panels"][0]["title"],
+            self.test_sensor["name"].lower(),
         )
 
     def test_delete_sensor_deletes_panel_in_dashboard(self):
@@ -396,7 +412,7 @@ class TestGrafana(TestCase):
         event = self.create_venue_and_event(self.event_name)
 
         sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
+            name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
         )
@@ -411,7 +427,7 @@ class TestGrafana(TestCase):
 
         # Delete sensor
         self.client.post(
-            reverse(self.delete_sensor_url, kwargs={"sensor_id": sensor.id}),
+            reverse(self.delete_sensor_url, kwargs={"sensor_name": sensor.name}),
             follow=True,
         )
 
