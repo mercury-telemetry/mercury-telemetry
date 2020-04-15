@@ -1,5 +1,6 @@
 function toggleEventButton(button_name){
     resetEventButtons();
+    
     if (button_name == "all_events"){
         $('#all-events').removeClass("hide-display");
     } else if (button_name == "create_event"){

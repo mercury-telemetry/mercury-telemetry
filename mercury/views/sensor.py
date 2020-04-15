@@ -105,6 +105,23 @@ def delete_sensor(request, sensor_id):
             valid_id = True
     if valid_id:
         sensor_to_delete = AGSensor.objects.get(id=sensor_id)
+
+        # delete any sensor panels from grafana
+        gfconfigs = GFConfig.objects.all()
+        events = AGEvent.objects.all()
+
+        # delete panl from every dashboard of all grafana instances
+        for gfconfig in gfconfigs:
+            grafana = Grafana(gfconfig)
+
+            # Delete sensor from each event panel
+            for event in events:
+                try:
+                    grafana.delete_panel(sensor_to_delete.name, event)
+                except ValueError as error:
+                    messages.error(request, error)
+
+        # delete the sensor
         sensor_to_delete.delete()
     else:
         messages.error(
@@ -147,8 +164,10 @@ def update_sensor(request, sensor_id):
     valid, request = validate_add_sensor_inputs(sensor_name, request)
 
     if valid:
+
         sensor_to_update.name = sensor_name
         sensor_to_update.save()
+
     return redirect("/sensor")
 
 
@@ -253,6 +272,9 @@ class CreateSensorView(TemplateView):
             sensor_types = (
                 AGSensorType.objects.all()
             )  # for when we return context later
+
+            sensors = AGSensor.objects.all()
+
             if valid:
                 new_sensor = AGSensor.objects.create(
                     name=sensor_name, type_id=sensor_type
@@ -261,33 +283,33 @@ class CreateSensorView(TemplateView):
 
                 # Add a Sensor panel to the Active Event
 
-                # Check that Grafana is already configured
-                # and that an Active Event exists
-
                 # Note: THIS IS A PLACEHOLDER - waiting to decide
                 # how to implement Current GFConfig
-                gf_configs = GFConfig.objects.filter(gf_current=True)
+                gfconfigs = GFConfig.objects.all()
 
                 # Note: THIS IS A PLACEHOLDER - waiting to decide
                 # how to implement Active Event
                 active_events = AGEvent.objects.all()
 
-                if len(gf_configs) > 0 and len(active_events) > 0:
-                    gf_config = gf_configs.first()
+                # Only add panel to active event
+                if len(active_events) > 0:
                     active_event = active_events.first()
 
-                    # Grafana instance using current GFConfig
-                    grafana = Grafana(gf_config)
+                    # Add panel to each grafana instance
+                    for gfconfig in gfconfigs:
 
-                    # Add the Sensor Panel to the Active Event's dashboard
-                    try:
-                        grafana.add_panel(new_sensor, active_event)
-                    except ValueError as error:
-                        messages.error(
-                            request, f"Failed to add panel to active dashboard: {error}"
-                        )
+                        # Grafana instance using current GFConfig
+                        grafana = Grafana(gfconfig)
 
-                sensors = AGSensor.objects.all()
+                        # Add the Sensor Panel to the Active Event's dashboard
+                        try:
+                            grafana.add_panel(new_sensor, active_event)
+                        except ValueError as error:
+                            messages.error(
+                                request,
+                                f"Failed to add panel to active dashboard: {error}",
+                            )
+
                 context = {"sensors": sensors, "sensor_types": sensor_types}
             else:
                 sensors = AGSensor.objects.all()
