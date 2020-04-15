@@ -368,6 +368,8 @@ class TestGrafana(TestCase):
 
         # Create an event
         event = self.create_venue_and_event(self.event_name)
+
+        # Make the event the active event
         AGActiveEvent.objects.create(agevent=event).save()
 
         # Create a sensor through the UI

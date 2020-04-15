@@ -1,3 +1,11 @@
+<!-- Bootstrap messages (please don't delete this Ray) -->
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -183,10 +191,6 @@
                 </form>
             {% endif %}
         </div>
-
-        {% for message in messages %}
-        <p class="error"> {{ message }} </p>
-        {% endfor %}
 
     </div>
     </body>
