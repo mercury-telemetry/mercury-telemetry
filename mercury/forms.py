@@ -50,10 +50,11 @@ class GFConfigForm(forms.ModelForm):
         model = GFConfig
         fields = ["gf_name", "gf_host", "gf_token"]
         labels = {
-            "gf_name": "Label (e.g. remote, local)",
-            "gf_host": "Hostname (e.g. https://abc123.grafana.net, http://localhost:3000)",
+            "gf_name": "Label",
+            "gf_host": "Hostname",
             "gf_token": "API Token",
         }
+        default_data = {'gf_name': 'Local', 'gf_host': 'http://localhost:3000'}
 
 
 class CustomModelChoiceField(forms.ModelMultipleChoiceField):
