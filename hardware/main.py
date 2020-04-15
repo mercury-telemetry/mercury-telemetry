@@ -1,6 +1,6 @@
 import time
-from CommunicationsPi.lan_client import LANClient
-from SensorPi.sense_pi import SensePi
+from hardware.CommunicationsPi.lan_client import LANClient
+from hardware.SensorPi.sense_pi import SensePi
 
 # This file shows the usage of SensePi and LANClient
 sensePi = SensePi()
