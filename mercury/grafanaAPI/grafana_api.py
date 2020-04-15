@@ -427,8 +427,8 @@ class Grafana:
         fields_query = ""
         if len(field_array):
             for i in range(0, len(field_array) - 1):
-                fields_query += f"value->'{field_array[i]}' AS {field_array[i]},\n"
-            fields_query += f"value->'{field_array[-1]}' AS {field_array[-1]}"
+                fields_query += f"value->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+            fields_query += f"value->'{field_array[-1]}' AS \"{field_array[-1]}\""
 
         # Build SQL query
         panel_sql_query = f"""
@@ -436,8 +436,9 @@ class Grafana:
                 {fields_query}
                 FROM ag_data_agmeasurement
                 WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor.id} AND
-                "event_uuid_id"='{event.uuid}' \n
+                "event_uuid_id"='{event.uuid}'
                 ORDER BY timestamp
+                \n
                 """
         return panel_sql_query
 
