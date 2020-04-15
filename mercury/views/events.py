@@ -169,7 +169,7 @@ def create_event_csv(writer, response, event_object, venue_object, measurements_
                     venue_object.name,
                     sensor.name,
                     measurement.timestamp,
-                    measurement.value["reading"],
+                    measurement.value,
                 ]
             )
     else:
@@ -209,7 +209,7 @@ def create_event_json(event_object, venue_object, measurements_object):
             temp = {
                 "sensor name": sensor.name,
                 "timestamp": str(measurement.timestamp),
-                "reading": measurement.value["reading"],
+                "values": measurement.value,
             }
             measurement_info.append(temp)
 
@@ -277,7 +277,7 @@ def export_event(request, event_uuid=None, file_format="CSV"):
                     temp = {
                         "sensor name": sensor.name,
                         "timestamp": str(measurement.timestamp),
-                        "reading": measurement.value["reading"],
+                        "reading": measurement.value,
                     }
                     measurement_info.append(temp)
 
