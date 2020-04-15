@@ -8,8 +8,8 @@ import os
 import serial
 
 from ..CommunicationsPi.radio_transceiver import Transceiver
-from ..CommunicationsPi.logger import Logger
-from ..CommunicationsPi.utils import get_serial_stream
+from ..Utils.logger import Logger
+from ..Utils.utils import get_serial_stream
 
 
 class TransceiverTests(SimpleTestCase):

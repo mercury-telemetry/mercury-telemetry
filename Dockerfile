@@ -1,8 +1,9 @@
 FROM raspbian/stretch
 
-# install common build dependencies
+# install common build dependencies and clean up afterwards
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    raspi-config
+    raspi-config \
+    && rm -rf /var/lib/apt/lists/*
 
 # copy setup scripts
 COPY ./hardware .

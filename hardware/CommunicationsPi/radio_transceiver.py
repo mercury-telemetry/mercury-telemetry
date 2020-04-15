@@ -3,7 +3,7 @@ import serial
 import json
 import serial.tools.list_ports
 
-from .utils import get_logger, get_serial_stream
+from ..Utils.utils import get_logger, get_serial_stream
 
 
 class Transceiver:
