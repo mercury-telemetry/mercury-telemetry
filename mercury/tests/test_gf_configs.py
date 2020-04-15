@@ -10,11 +10,12 @@ import datetime
 HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 # this token has Admin level permissions
 TOKEN = (
-    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+    "eyJrIjoic1JMTXFuVUl6dDRKbVhjRWVRNzVHSTQyN3RRNzdQcFIiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
 )
+
 # this token has viewer level permissions
 VIEWER_TOKEN = (
-    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
+    "eyJrIjoiQnJDU01tVHdPN1Q5UXNiMm9ZUXB0WEw4U25haW5EejgiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 )
 
 
