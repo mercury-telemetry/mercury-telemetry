@@ -54,7 +54,7 @@ class GFConfigForm(forms.ModelForm):
             "gf_host": "Hostname",
             "gf_token": "API Token",
         }
-        default_data = {'gf_name': 'Local', 'gf_host': 'http://localhost:3000'}
+        default_data = {"gf_name": "Local", "gf_host": "http://localhost:3000"}
 
 
 class CustomModelChoiceField(forms.ModelMultipleChoiceField):

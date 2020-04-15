@@ -48,7 +48,9 @@ urlpatterns = [
         "gfconfig/update/<int:gf_id>", gf_config.update_config, name="gfconfig_update"
     ),
     path(
-        "gfconfig/configure/<int:gf_id>", gf_config.configure_dashboard, name="gfconfig_configure"
+        "gfconfig/configure/<int:gf_id>",
+        gf_config.configure_dashboard,
+        name="gfconfig_configure",
     ),
     path(
         "gfconfig/configure/update_dashboard/<int:gf_id>",

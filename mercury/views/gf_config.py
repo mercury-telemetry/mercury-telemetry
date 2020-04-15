@@ -59,9 +59,7 @@ def configure_dashboard(request, gf_id=None):
         existing_sensors = grafana.get_all_sensors(dashboard["title"])
 
         # Set initial form data so that only existing sensors are checked
-        sensor_form = DashboardSensorPanelsForm(
-            initial={"sensors": existing_sensors}
-        )
+        sensor_form = DashboardSensorPanelsForm(initial={"sensors": existing_sensors})
 
         # Retrieve the URL for this dashboard or ""
         dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
@@ -75,7 +73,6 @@ def configure_dashboard(request, gf_id=None):
         dashboard_dict["name"] = dashboard["title"]
 
         dashboards.append(dashboard_dict)
-
 
     config_info["dashboards"] = dashboards
     config_info["missing_events"] = missing_events
@@ -171,7 +168,8 @@ class GFConfigView(TemplateView):
 
         # Initialize a GFConfig Form
         config_form = GFConfigForm(
-            initial={'gf_name':'Local', 'gf_host':'http://localhost:3000'})
+            initial={"gf_name": "Local", "gf_host": "http://localhost:3000"}
+        )
 
         # Pass dashboard data for each GFConfig and a GFConfig form to the template
         """
@@ -217,7 +215,7 @@ class GFConfigView(TemplateView):
 
             try:
                 grafana.validate_credentials()
-                config_data.gf_current = True # Deprecated
+                config_data.gf_current = True  # Deprecated
                 # Only save the config if credentials were validated
                 config_data.save()
 
@@ -237,7 +235,7 @@ class GFConfigView(TemplateView):
             # list of dashboards/forms
             # Retrieve all available GFConfigs
             current_configs = GFConfig.objects.all().order_by("id")
-            
+
             config_form = GFConfigForm()
             context = {"config_form": config_form, "configs": current_configs}
             return render(request, self.template_name, context)
