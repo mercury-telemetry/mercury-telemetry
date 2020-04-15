@@ -14,14 +14,10 @@ HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 
 # this token has Admin level permissions
 # tokens for mercurytests
-TOKEN = (
-    "eyJrIjoiSzM4b3N1Um9HMmI2Z1RpcVd6bFdEMGVRTGlSNGcwV2giLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
-)
+TOKEN = "eyJrIjoiSzM4b3N1Um9HMmI2Z1RpcVd6bFdEMGVRTGlSNGcwV2giLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
 
 # this token has viewer level permissions
-VIEWER_TOKEN = (
-    "eyJrIjoicndxanEyazdlNWwzMllEYWN0NUFXOXZzeGM1c0JHUjAiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
-)
+VIEWER_TOKEN = "eyJrIjoicndxanEyazdlNWwzMllEYWN0NUFXOXZzeGM1c0JHUjAiLCJuIjoiZWRpdG9yX2tleSIsImlkIjoxfQ=="
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
 DB_NAME = "d76k4515q6qv"
 DB_USERNAME = "qvqhuplbiufdyq"

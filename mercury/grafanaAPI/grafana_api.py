@@ -427,7 +427,9 @@ class Grafana:
         fields_query = ""
         if len(field_array):
             for i in range(0, len(field_array) - 1):
-                fields_query += f"value->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+                fields_query += (
+                    f"value->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+                )
             fields_query += f"value->'{field_array[-1]}' AS \"{field_array[-1]}\""
 
         # Build SQL query
@@ -461,7 +463,6 @@ class Grafana:
         """
 
         # Retrieve id, title, and fields from AGSensor object
-        sensor_id = sensor.id
         title = sensor.name
         field_dict = sensor.type_id.format
         field_array = []
