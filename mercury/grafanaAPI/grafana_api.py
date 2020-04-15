@@ -437,6 +437,7 @@ class Grafana:
                 FROM ag_data_agmeasurement
                 WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor.id} AND
                 "event_uuid_id"='{event.uuid}' \n
+                ORDER BY timestamp
                 """
         return panel_sql_query
 
