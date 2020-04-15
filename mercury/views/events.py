@@ -53,15 +53,15 @@ def update_event(request, event_uuid=None):
                         event_to_update, new_name
                     )
                     if dashboard:
-                        messages.success(request, "Grafana dashboard title " "updated")
-                    else:
-                        messages.error(
-                            request, "Grafana dashboard title not " "updated: "
+                        messages.success(
+                            request,
+                            f"{gfconfig.gf_name}: Grafana " f"dashboard title updated",
                         )
-
                 except ValueError as error:
                     messages.error(
-                        request, f"Grafana dashboard title not updated: " f"{error}"
+                        request,
+                        f"{gfconfig.gf_name}: Grafana dashboard "
+                        f"title not updated: {error} ",
                     )
 
         # update the AGEvent object
