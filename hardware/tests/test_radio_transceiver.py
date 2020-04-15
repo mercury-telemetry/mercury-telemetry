@@ -7,9 +7,9 @@ from serial.tools.list_ports_common import ListPortInfo
 import os
 import serial
 
-from ..CommunicationsPi.radio_transceiver import Transceiver
-from ..Utils.logger import Logger
-from ..Utils.utils import get_serial_stream
+from hardware.CommunicationsPi.radio_transceiver import Transceiver
+from hardware.Utils.logger import Logger
+from hardware.Utils.utils import get_serial_stream
 
 
 class TransceiverTests(SimpleTestCase):

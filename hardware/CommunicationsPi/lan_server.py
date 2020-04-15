@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from ..Utils.utils import get_logger
+from hardware.Utils.utils import get_logger
 
 log = get_logger("LAN_SERVER_LOG_FILE")
 
