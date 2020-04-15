@@ -9,13 +9,10 @@ import datetime
 # default host and token, use this if user did not provide anything
 HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 # this token has Admin level permissions
-TOKEN = (
-    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
-)
+TOKEN = "eyJrIjoiSzM4b3N1Um9HMmI2Z1RpcVd6bFdEMGVRTGlSNGcwV2giLCJuIjoiYXBpX2tleSIsImlkIjoxfQ=="
+
 # this token has viewer level permissions
-VIEWER_TOKEN = (
-    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
-)
+VIEWER_TOKEN = "eyJrIjoiZ1M5WmhXaWVyUndRVHozc1dVQVQ1b1lsODZBZVFid2EiLCJuIjoidmlld2VyX2tleSIsImlkIjoxfQ=="
 
 
 class TestGFConfig(TestCase):
