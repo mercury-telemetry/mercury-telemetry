@@ -1,3 +1,22 @@
+/* CSS document is organized in the following order:
+    1) HTML tag styling
+    2) Class selectors (class selectors start with . )
+    3) ID selectors (ID selectors start with # )
+
+    Failure to keep the CSS document well-structure will bring seven years of
+    bad luck where code you write will fail randomly and silently leading
+    to unimaginable side-effects and a slow descent into madness...
+    */
+
+/******************* HTML LEVEL TAG STYLING ************************************/
+
+html {
+    font-family: sans-serif;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
 body {
   color: var(--light-text);
   background-color: var(--light-background);
@@ -10,27 +29,6 @@ body {
   counter-reset: Serial;
 }
 
-tr:nth-child(even) {background-color: #f2f2f2;}
-
-
-/*Commenting this out because it breaks appearance of several tables
-If desiring to use this styling, create a class (.counter) or id (#counter)
-and apply as needed. Do not apply universally */
-
-/*tr td:first-child:before  TODO
-{
-  counter-increment: Serial;      Increment the Serial counter
-  content: counter(Serial); Display the counter
-}  */
-
-.hide-display {
-  display: none;
-}
-
-.full-height {
-  height: 100%!important;
-}
-
 nav ul{
     display:flex;
     justify-content: space-around;
@@ -40,415 +38,20 @@ nav li {
   display: inline-block;
 }
 
-.hide-display {
-  display: none;
-}
-
-.full-height {
-  height: 100%!important;
-}
-
 li{
     list-style-type: none; /* removes bulleting */
 }
 
-/* #sensor-container{
-    background-color:lightgray;
-} */
+tr:nth-child(even) {background-color: #f2f2f2;}
+/*Commenting this out because it breaks appearance of several tables
+If desiring to use this styling, create a class (.counter) or id (#counter)
+and apply as needed. Do not apply universally */
 
-.inline-box{
-    display: inline;
-}
-
-.name-button-box{
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-}
-
-.button-box{
-    margin-left:auto; 
-    margin-right:0;
-}
-
-.big-text{
-    font-size: 150%;
-}
-
-
-.inline-box label{
-    text-align:right;
-    width: auto;
-    min-width:150px;
-}
-
-.sensor-field-row{
-    display: inline-block;
-    vertical-align: middle;
-    border: 1px solid black;
-}
-
-.sensor-field-row-item{
-   display: inline-block;
-   vertical-align: middle;
-   margin: 5px;
-   min-height: 30px;
-}
-
-.topbar-container {
-  margin-left: 14%;
-  position: fixed;
-  width: 85%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: var(--light-panel);
-  border-color: var(--light-border);
-  text-align: center;
-  padding: 30px;
-  border-style: solid;
-  border-width: thin;
-}
-
-.mt-50 {
-  margin-top: 50px
-}
-
-.sidebar-container {
-  position: fixed;
-  width: var(--sidebar-size);
-  height: 100%;
-  background: var(--light-panel);
-  border-color: var(--light-border);
-  text-align: center;
-  padding-top: 30px;
-  border-style: solid;
-  border-width: thin;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.sidebar-btn {
-  width: var(--sidebar-btn-width);
-}
-
-input#id_can_msg{
-  width: 100%;
-  color: green;
-}
-
-#accordion-text {
-  display: none;
-  text-align: left;
-  margin: 30px;
-}
-
-#accordion-event-form {
-  display: none; 
-  text-align: left;
-  margin: 30px;
-}
-
-.my-custom-scrollbar {
-  position: relative;
-  height: 200px;
-  overflow: auto;
-}
-
-.table-wrapper-scroll-y {
-  display: block;
-}
-
-.col-centered{
-  float: none;
-  margin: 0 auto;
-}
-
-.team-logo {
-  padding: 5px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background-color: var(--light-background);
-}
-
-#grafana-base {
-  padding-top: 50px;
-  padding-left: var(--sidebar-size);
-  overflow: hidden;
-}
-
-.inline-block-child {
-  display: inline-block;
-  width: 30%;
-}
-
-.panel {
-  border-color:var(--light-border);
-  background: var(--light-panel);
-  text-align: center;
-  margin: auto;
-  vertical-align: middle;
-  border-style: solid;
-  border-width: thin;
-  padding: 20px;
-  min-width: 400px;
-  width: 50%;
-  overflow: auto;
-}
-
-.sensor-panel {
-  border-color:var(--light-border);
-  background: var(--light-panel);
-  text-align: center;
-  margin: auto;
-  vertical-align: middle;
-  border-style: solid;
-  border-width: thin;
-  padding: 20px;
-  min-width: 400px;
-  width: 75%;
-  overflow: auto;
-}
-
-#grafana-panel {
-  border-color:var(--light-border);
-  background: var(--light-panel);
-  text-align: center;
-  margin: auto;
-  vertical-align: middle;
-  border-style: solid;
-  border-width: thin;
-  padding: 20px;
-  width: 600px;
-}
-
-#grafana-text-box {
-  color: var(--light-text);
-  border-color:var(--light-border);
-  background: var(--light-panel);
-  text-align: left;
-  margin: auto;
-  vertical-align: middle;
-  border-style: solid;
-  border-width: thin;
-  padding: 20px;
-  width: 95%;
-}
-
-#grafana-text-box:hover {
-  background-color: var(--light-background);
-}
-
-.grafana-current-tab {
-  color: var(--button-text-dark);
-  background-color: var(--light-accent);
-  border-color: var(--light-accent);
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.35rem;
-}
-
-.grafana-btn-block {
-  color: var(--light-text);
-  display: block;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.35rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-
-.grafana-btn {
-  color: var(--light-text);
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.35rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.grafana-btn:hover {
-  color: var(--light-text);
-  text-decoration: none;
-}
-
-.grafana-btn-gray {
-  color: var(--light-text);
-  background-color: var(--light-background);
-  border-color: var(--light-background);
-}
-
-.grafana-btn-gray:hover {
-  color: var(--button-text-dark);
-  background-color: var(--light-accent);
-  border-color: var(--light-accent);
-}
-
-.grafana-btn-green {
-  color: var(--light-text);
-  background-color: var(--light-green);
-  border-color: var(--light-green);
-}
-
-.grafana-btn-green:hover {
-  color: var(--button-text-dark);
-  background-color: var(--green);
-  border-color: var(--green);
-}
-
-.grafana-btn-red {
-  color: var(--light-text);
-  background-color: var(--light-red);
-  border-color: var(--light-red);
-}
-
-.grafana-btn-red:hover {
-  color: var(--button-text-dark);
-  background-color: var(--red);
-  border-color: var(--red);
-}
-
-.grafana-btn-yellow {
-  color: var(--light-text);
-  background-color: var(--light-yellow);
-  border-color: var(--light-yellow);
-}
-
-.grafana-btn-yellow:hover {
-  color: var(--button-text-dark);
-  background-color: var(--yellow);
-  border-color: var(--yellow);
-}
-.grafana-btn-purple {
-  color: var(--light-text);
-  background-color: var(--light-purple);
-  border-color: var(--light-purple);
-}
-
-.grafana-btn-purple:hover {
-  color: var(--button-text-dark);
-  background-color: var(--purple);
-  border-color: var(--purple);
-}
-
-
-
-.error {
-  color: var(--red)
-}
-
-.index-text {
-    color: var(--light-text);
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-    text-align: center!important;
-}
-
-/* Base Bootstrap Style Elements */
-
-:root {
-
-  
-
-/* NYU Motorsports Elements Begin */
-  --red: #EE4B5E;
-  --green: #74BE6D;
-  --yellow: #F8D943;
-  --purple: #6f42c1;
-
-  --dark-text: #D8D9DB;
-  --dark-panel: #212025;
-  --dark-background: #161719;
-  --dark-border: #161618;
-  --dark-accent: #302F34;
-  --dark-green:#303D33;
-  --dark-yellow: #453C2B;
-  --dark-red: #44292E;
-
-  --light-text: #51545D;
-  --light-panel: #FFFFFF;
-  --light-background: #F7F8FA;
-  --light-border: #DBE4ED;
-  --light-accent: #DADEE7;
-  --light-green: #E1EFDE;
-  --light-yellow: #FCF7DA;
-  --light-red: #F9DADF;
-  --light-purple: #c5abf9;
-
-  --black: #000000;
-  --white: #fff;
-
-  --button-text-light: #d8d9da;
-  --button-text-dark: #161719;
-
-  --sidebar-size: 170px;
-  --sidebar-btn-width: 130px;
-/* End */
-
-    --blue: #4e73df;
-    --indigo: #6610f2;
-    --pink: #e83e8c;
-    /* --red: #e74a3b; */
-    --orange: #fd7e14;
-    /* --yellow: #f6c23e; */
-    /* --green: #1cc88a; */
-    --teal: #20c9a6;
-    --cyan: #36b9cc;
-    /* --white: #fff; */
-    --gray: #858796;
-    --gray-dark: #5a5c69;
-    --primary: #4e73df;
-    --secondary: #858796;
-    --success: #1cc88a;
-    --info: #36b9cc;
-    --warning: #f6c23e;
-    --danger: #e74a3b;
-    --light: #f8f9fc;
-    --dark: #5a5c69;
-    --breakpoint-xs: 0;
-    --breakpoint-sm: 576px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 992px;
-    --breakpoint-xl: 1200px;
-    --font-family-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
-
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  html {
-    font-family: sans-serif;
-    line-height: 1.15;
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
+/*tr td:first-child:before  TODO
+{
+  counter-increment: Serial;      Increment the Serial counter
+  content: counter(Serial); Display the counter
+}  */
 
   article, aside, figcaption, figure, footer, header, hgroup, main, section {
     display: block;
@@ -629,8 +232,6 @@ a {
     text-align: center;
   }
 
-
-
   caption {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
@@ -638,8 +239,6 @@ a {
     text-align: left;
     caption-side: bottom;
   }
-
-
 
   label {
     display: inline-block;
@@ -680,105 +279,147 @@ a {
     word-wrap: normal;
   }
 
-  .sensor-list {
-    width: 100%;
+
+/*asterisk denotes CSS wildcard selector - This should be checked and maybe removed */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
 
-  .sensor-list-sensor-name {
-    width: 100%;
-    display: inline-block;
-  }
-  .sensor-list-field-name {
-    width: 59%;
-    display: inline-block;
-  } 
+/******************* CLASS SELECTOR STYLING ***********************************/
 
-  .sensor-list-field-type {
-    width: 40%;
-    display: inline-block;
-  }
+/* In HTML, the :root CSS pseudo-class represents the <html> element and is
+identical to the selector html, except that its specificity is higher. */
+:root {
+    /* NYU Motorsports Elements Begin */
+  --red: #EE4B5E;  /*--red denotes a CSS variable */
+  --green: #74BE6D;
+  --yellow: #F8D943;
+  --purple: #6f42c1;
 
-  .end-sensor-list {
-    width: 100%;
-  }
+  --dark-text: #D8D9DB;
+  --dark-panel: #212025;
+  --dark-background: #161719;
+  --dark-border: #161618;
+  --dark-accent: #302F34;
+  --dark-green:#303D33;
+  --dark-yellow: #453C2B;
+  --dark-red: #44292E;
 
-  .submitbutton {
-    width: 47%;
-  }
+  --light-text: #51545D;
+  --light-panel: #FFFFFF;
+  --light-background: #F7F8FA;
+  --light-border: #DBE4ED;
+  --light-accent: #DADEE7;
+  --light-green: #E1EFDE;
+  --light-yellow: #FCF7DA;
+  --light-red: #F9DADF;
+  --light-purple: #c5abf9;
 
-  .sensor-list {
-    width: 100%;
-    list-style: square;
-  }
-  
-  .sensor-list-field-name {
-    width: 48%;
-    display: inline-block;
-  } 
-  
-  .sensor-list-field-type {
-    width: 35%;
-    display: inline-block;
-  }
-  
-  .sensor-list-add-field {
-    width: 13%;
-    display: inline-block;
-  }
-  
-  .end-sensor-list-element {
-    width: 100%;
-  }
-  
-  .end-sensor-list {
-    width: 100%;
-  }
+  --black: #000000;
+  --white: #fff;
 
-  .sensor-fields-table {
-    border: none;
-    border-collapse: collapse;
-    table-layout: fixed ;
-    width: 100% ;
-    height: 100%;
-  }
+  --button-text-light: #d8d9da;
+  --button-text-dark: #161719;
 
-  .sensor-fields-table-th{
-    width: 1px;
-    border: none;
-    text-align: center;
-  }
+  --sidebar-size: 170px;
+  --sidebar-btn-width: 130px;
+    /* End */
 
-  .sensor-fields-table-td{
-    background-color: white;
-    width: 33%;
-    border: none;
-    text-align: center;
+    --blue: #4e73df;
+    --indigo: #6610f2;
+    --pink: #e83e8c;
+    /* --red: #e74a3b; */
+    --orange: #fd7e14;
+    /* --yellow: #f6c23e; */
+    /* --green: #1cc88a; */
+    --teal: #20c9a6;
+    --cyan: #36b9cc;
+    /* --white: #fff; */
+    --gray: #858796;
+    --gray-dark: #5a5c69;
+    --primary: #4e73df;
+    --secondary: #858796;
+    --success: #1cc88a;
+    --info: #36b9cc;
+    --warning: #f6c23e;
+    --danger: #e74a3b;
+    --light: #f8f9fc;
+    --dark: #5a5c69;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --font-family-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
-  .sensor-fields-table-tr {
-    border: none;
-  }
-
-  [name="event_name"] {
-    width: 70%;
-  }
-
-  [name="event_location"] {
-    width: 70%;
-  }
-
-body {
-  color: var(--light-text);
-  background-color: var(--light-background);
-  margin: 0;
-  font-family: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  text-align: left;
+.hide-display {
+  display: none;
 }
 
-tr:nth-child(even) {background-color: #f2f2f2;}
+.full-height {
+  height: 100%!important;
+}
+
+.inline-box{
+    display: inline;
+}
+
+.name-button-box{
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-box{
+    margin-left:auto; 
+    margin-right:0;
+}
+
+.big-text{
+    font-size: 150%;
+}
+
+.inline-box label{
+    text-align:right;
+    width: auto;
+    min-width:150px;
+}
+
+.sensor-field-row{
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid black;
+}
+
+.sensor-field-row-item{
+   display: inline-block;
+   vertical-align: middle;
+   margin: 5px;
+   min-height: 30px;
+}
+
+.topbar-container {
+  margin-left: 14%;
+  position: fixed;
+  width: 85%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--light-panel);
+  border-color: var(--light-border);
+  text-align: center;
+  padding: 30px;
+  border-style: solid;
+  border-width: thin;
+}
+
+.mt-50 {
+  margin-top: 50px
+}
 
 .sidebar-container {
   position: fixed;
@@ -798,23 +439,6 @@ tr:nth-child(even) {background-color: #f2f2f2;}
   width: var(--sidebar-btn-width);
 }
 
-input#id_can_msg{
-  width: 100%;
-  color: green;
-}
-
-#accordion-text {
-  display: none;
-  text-align: left;
-  margin: 30px;
-}
-
-#accordion-event-form {
-  display: none; 
-  text-align: left;
-  margin: 30px;
-}
-
 .my-custom-scrollbar {
   position: relative;
   height: 200px;
@@ -825,11 +449,6 @@ input#id_can_msg{
   display: block;
 }
 
-.col-centered{
-  float: none;
-  margin: 0 auto;
-}
-
 .team-logo {
   padding: 5px;
   width: 90px;
@@ -838,13 +457,7 @@ input#id_can_msg{
   background-color: var(--light-background);
 }
 
-#grafana-base {
-  padding-top: 50px;
-  padding-left: var(--sidebar-size);
-  overflow: hidden;
-}
-
-#grafana-panel {
+.panel {
   border-color:var(--light-border);
   background: var(--light-panel);
   text-align: center;
@@ -853,26 +466,158 @@ input#id_can_msg{
   border-style: solid;
   border-width: thin;
   padding: 20px;
-  width: 600px;
+  min-width: 400px;
+  width: 50%;
+  overflow: auto;
 }
 
-#grafana-text-box {
-  color: var(--light-text);
+.sensor-panel {
   border-color:var(--light-border);
   background: var(--light-panel);
-  text-align: left;
+  text-align: center;
   margin: auto;
   vertical-align: middle;
   border-style: solid;
   border-width: thin;
   padding: 20px;
-  width: 95%;
+  min-width: 400px;
+  width: 75%;
+  overflow: auto;
 }
 
-#grafana-text-box:hover {
+.grafana-current-tab {
+  color: var(--button-text-dark);
+  background-color: var(--light-accent);
+  border-color: var(--light-accent);
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.35rem;
+}
+
+.grafana-btn-block {
+  color: var(--light-text);
+  display: block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.35rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.grafana-btn {
+  color: var(--light-text);
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.35rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.grafana-btn:hover {
+  color: var(--light-text);
+  text-decoration: none;
+}
+
+.grafana-btn-gray {
+  color: var(--light-text);
   background-color: var(--light-background);
+  border-color: var(--light-background);
 }
 
+.grafana-btn-gray:hover {
+  color: var(--button-text-dark);
+  background-color: var(--light-accent);
+  border-color: var(--light-accent);
+}
+
+.grafana-btn-green {
+  color: var(--light-text);
+  background-color: var(--light-green);
+  border-color: var(--light-green);
+}
+
+.grafana-btn-green:hover {
+  color: var(--button-text-dark);
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+.grafana-btn-red {
+  color: var(--light-text);
+  background-color: var(--light-red);
+  border-color: var(--light-red);
+}
+
+.grafana-btn-red:hover {
+  color: var(--button-text-dark);
+  background-color: var(--red);
+  border-color: var(--red);
+}
+
+.grafana-btn-yellow {
+  color: var(--light-text);
+  background-color: var(--light-yellow);
+  border-color: var(--light-yellow);
+}
+
+.grafana-btn-yellow:hover {
+  color: var(--button-text-dark);
+  background-color: var(--yellow);
+  border-color: var(--yellow);
+}
+
+.error {
+  color: var(--red)
+}
+
+.submitbutton {
+width: 47%;
+}
+
+.sensor-fields-table {
+border: none;
+border-collapse: collapse;
+table-layout: fixed ;
+width: 100% ;
+height: 100%;
+}
+
+.sensor-fields-table-th{
+width: 1px;
+border: none;
+text-align: center;
+}
+
+.sensor-fields-table-td{
+background-color: white;
+width: 33%;
+border: none;
+text-align: center;
+}
+
+.sensor-fields-table-tr {
+border: none;
+}
 
 .simulator-btn {
   width: 95%;
@@ -973,10 +718,6 @@ input#id_can_msg{
   border-color: var(--purple);
 }
 
-.error {
-  color: var(--red)
-}
-
 .index-text {
     color: var(--light-text);
     position: relative;
@@ -984,81 +725,89 @@ input#id_can_msg{
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
-/* Base Bootstrap Style Elements */
 
-:root {
+/***************** RANDOM ATTRIBUTE SELECTORS I GUESS *************/
+[name="event_name"] {
+width: 70%;
+}
 
-  
+[name="event_location"] {
+width: 70%;
+}
 
-/* NYU Motorsports Elements Begin */
-  --red: #EE4B5E;
-  --green: #74BE6D;
-  --yellow: #F8D943;
-  --purple: #6f42c1;
 
-  --dark-text: #D8D9DB;
-  --dark-panel: #212025;
-  --dark-background: #161719;
-  --dark-border: #161618;
-  --dark-accent: #302F34;
-  --dark-green:#303D33;
-  --dark-yellow: #453C2B;
-  --dark-red: #44292E;
+/******************* ID SELECTOR STYLING ***********************************/
 
-  --light-text: #51545D;
-  --light-panel: #FFFFFF;
-  --light-background: #F7F8FA;
-  --light-border: #DBE4ED;
-  --light-accent: #DADEE7;
-  --light-green: #E1EFDE;
-  --light-yellow: #FCF7DA;
-  --light-red: #F9DADF;
-  --light-purple: #c5abf9;
+#grafana-base {
+  padding-top: 50px;
+  padding-left: var(--sidebar-size);
+  overflow: hidden;
+}
 
-  --black: #000000;
-  --white: #fff;
+#grafana-base {
+  padding-top: 50px;
+  padding-left: var(--sidebar-size);
+  overflow: hidden;
+}
 
-  --button-text-light: #d8d9da;
-  --button-text-dark: #161719;
+#grafana-panel {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: center;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  width: 600px;
+}
 
-  --sidebar-size: 170px;
-  --sidebar-btn-width: 130px;
-/* End */
+#grafana-text-box {
+  color: var(--light-text);
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: left;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  width: 95%;
+}
 
-    --blue: #4e73df;
-    --indigo: #6610f2;
-    --pink: #e83e8c;
-    /* --red: #e74a3b; */
-    --orange: #fd7e14;
-    /* --yellow: #f6c23e; */
-    /* --green: #1cc88a; */
-    --teal: #20c9a6;
-    --cyan: #36b9cc;
-    /* --white: #fff; */
-    --gray: #858796;
-    --gray-dark: #5a5c69;
-    --primary: #4e73df;
-    --secondary: #858796;
-    --success: #1cc88a;
-    --info: #36b9cc;
-    --warning: #f6c23e;
-    --danger: #e74a3b;
-    --light: #f8f9fc;
-    --dark: #5a5c69;
-    --breakpoint-xs: 0;
-    --breakpoint-sm: 576px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 992px;
-    --breakpoint-xl: 1200px;
-    --font-family-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
+#grafana-text-box:hover {
+  background-color: var(--light-background);
+}
 
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
+#grafana-panel {
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: center;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  width: 600px;
+}
+
+#grafana-text-box {
+  color: var(--light-text);
+  border-color:var(--light-border);
+  background: var(--light-panel);
+  text-align: left;
+  margin: auto;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: thin;
+  padding: 20px;
+  width: 95%;
+}
+
+#grafana-text-box:hover {
+  background-color: var(--light-background);
+}
+
 
   html {
     font-family: sans-serif;
@@ -1308,7 +1057,7 @@ a {
   .sensor-list-field-name {
     width: 48%;
     display: inline-block;
-  } 
+  }
 
   .sensor-list-field-type {
     width: 35%;
@@ -1336,26 +1085,26 @@ a {
     width: 100%;
     list-style: square;
   }
-  
+
   .sensor-list-field-name {
     width: 48%;
     display: inline-block;
-  } 
-  
+  }
+
   .sensor-list-field-type {
     width: 35%;
     display: inline-block;
   }
-  
+
   .sensor-list-add-field {
     width: 13%;
     display: inline-block;
   }
-  
+
   .end-sensor-list-element {
     width: 100%;
   }
-  
+
   .end-sensor-list {
     width: 100%;
   }
