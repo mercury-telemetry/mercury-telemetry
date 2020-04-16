@@ -1,3 +1,11 @@
+<!-- Bootstrap messages (please don't delete this Ray) -->
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
@@ -27,7 +35,77 @@
             <a class="grafana-btn grafana-btn-green" href="export/all/json">Export all to JSON</a>
         </div>
 
-    <!-- All Venues -->
+    <!--Event Actions and Details -->
+        <div id="all-events" class="mt-50">
+            <h1>All Events</h1>
+            {% if active_event %}
+            <div>
+                 <b>Active Event: {{ active_event.name }}</b>
+            </div>
+            {% else %}
+                <div>
+                    <b>There are no active events</b>
+                </div>
+            {% endif %}
+            {% if events %}
+                <div class="table-wrapper-scroll-y my-custom-scrollbar full-height">
+                    <table class="table table-bordered table-striped mb-0">
+                        <thead>
+                        <tr bgcolor="#e0efdf">
+                            <th>Sr. No.</th>
+                            <th>NAME</th>
+                            <th>Event Active</th>
+                            <th>LOCATION</th>
+                            <th>DATE</th>
+                            <th>DESCRIPTION</th>
+                            <th>Event ID</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in events %}
+                            <tr>
+                                <td></td>
+                                <td>{{ item.name }}</td>
+
+                                {% if  item == active_event %}
+                                    <td>
+                                        <label class="switch">
+                                            <input id='{{ item.name }}' type="checkbox" checked="checked" onclick="location.href='deactivateevent/{{ item.uuid }}';">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <label class="switch">
+                                            {% csrf_token %}
+                                            <input id='{{ item.name }}' type="checkbox" onclick="location.href='activateevent/{{ item.uuid }}';">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                {% endif %}
+                                <td>{{ item.venue_uuid.name }}</td>
+                                <td>{{ item.date }}</td>
+                                <td>{{ item.description }}</td>
+                                <td>{{ item.uuid }}</td>
+                                <td>
+                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/csv">Export CSV</a>
+                                    <br><br>
+                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/json">Export JSON</a>
+                                    <br><br>
+                                    <a class="grafana-btn grafana-btn-red" href="delete/{{ item.uuid }}">Delete</a>
+                                </td>
+                            </tr>
+                        {%  endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                    <div>There are no events to show.</div>
+            {% endif %}
+        </div>
+
+        <!-- All Venues -->
         <div id="all-venues" class="mt-50 hide-display">
             <h1>All Venues</h1>
             {% if venues %}
@@ -60,75 +138,6 @@
             {% endif %}
         </div>
 
-    <!--Event Actions and Details -->
-        <div id="all-events" class="mt-50">
-            <h1>All Events</h1>
-            <p>
-                Active Event details:<b></b><b></b>
-                Event Name: {{ active_event.name }}
-                Event Date: {{ active_event.date }}
-                Event Description {{ active_event.description }}
-                Venue Name: {{ active_event.venue_uuid.name }}
-            </p>
-            {% if events %}
-                <div class="table-wrapper-scroll-y my-custom-scrollbar full-height">
-                    <table class="table table-bordered table-striped mb-0">
-                        <thead>
-                        <tr bgcolor="#e0efdf">
-                            <th>Sr. No.</th>
-                            <th>NAME</th>
-                            <th>Event Active</th>
-                            <th>LOCATION</th>
-                            <th>DATE</th>
-                            <th>DESCRIPTION</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for item in events %}
-                            <tr>
-                                <td></td>
-                                <td>{{ item.name }}</td>
-
-                                {% if  item == active_event %}
-                                    <td>
-                                        <label class="switch">
-                                            <input id='{{ item.name }}' type="checkbox" checked="true" onclick="toggleActiveEvents('{{ item.name }}', true);">
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </td>
-                                {% else %}
-                                    <td>
-                                        <label class="switch">
-                                            {% csrf_token %}
-                                            <input id='{{ item.name }}' type="checkbox" onclick="toggleActiveEvents('{{ item.name }}', true);">
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </td>
-                                {% endif %}
-                                <td>{{ item.venue_uuid.name }}</td>
-                                <td>{{ item.date }}</td>
-                                <td>{{ item.description }}</td>
-                                <td>
-                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/csv">Export CSV</a>
-                                    <br><br>
-                                    <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/json">Export JSON</a>
-                                    <br><br>
-                                    <a class="grafana-btn grafana-btn-red" href="delete/{{ item.uuid }}">Delete</a>
-                                </td>
-                            </tr>
-                        {%  endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                    <div>There are no events to show.</div>
-            {% endif %}
-
-            {% for message in messages %}
-            <p class="error"> {{ message }} </p>
-            {% endfor %}
-        </div>
 
         <!--Create Events -->
         <div id="create-event" class="mt-50 hide-display">

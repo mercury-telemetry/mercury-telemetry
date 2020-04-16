@@ -5,7 +5,7 @@ from logging import INFO, ERROR, DEBUG
 from unittest import mock
 import os
 
-from ..CommunicationsPi.logger import Logger
+from ..Utils.logger import Logger
 
 
 class LoggerTests(SimpleTestCase):
