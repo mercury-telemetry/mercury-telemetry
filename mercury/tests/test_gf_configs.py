@@ -3,7 +3,6 @@ from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
 from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType
 from mercury.grafanaAPI.grafana_api import Grafana
-from mercury.forms import DashboardSensorPanelsForm
 import os
 import datetime
 
@@ -11,11 +10,12 @@ import datetime
 HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
 # this token has Admin level permissions
 TOKEN = (
-    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+    "eyJrIjoic1JMTXFuVUl6dDRKbVhjRWVRNzVHSTQyN3RRNzdQcFIiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
 )
+
 # this token has viewer level permissions
 VIEWER_TOKEN = (
-    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
+    "eyJrIjoiQnJDU01tVHdPN1Q5UXNiMm9ZUXB0WEw4U25haW5EejgiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 )
 
 
@@ -145,14 +145,9 @@ class TestGFConfig(TestCase):
                 "venue_uuid": venue.uuid,
             },
         )
-        response = self.client.get(reverse(self.config_url))
-
+        response = self.client.get("/gfconfig/configure/{}".format(self.gfconfig.id))
         self.assertContains(response, self.event_name)
         self.assertContains(response, sensor.name)
-        self.assertIsInstance(
-            response.context["configs"][0]["dashboards"][0]["sensor_form"],
-            DashboardSensorPanelsForm,
-        )
 
     def test_config_post_success(self):
         response = self.client.post(

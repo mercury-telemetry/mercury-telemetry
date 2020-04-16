@@ -18,24 +18,9 @@ urlpatterns = [
     path("index", views.HomePageView.as_view(), name="index"),
     path("sensor/", sensor.CreateSensorView.as_view(), name="sensor"),
     path(
-        "sensor/delete_sensor/<int:sensor_id>",
+        "sensor/delete_sensor/<sensor_name>",
         sensor.delete_sensor,
         name="delete_sensor",
-    ),
-    path(
-        "sensor/delete_type/<int:type_id>",
-        sensor.delete_sensor_type,
-        name="delete_sensor_type",
-    ),
-    path(
-        "sensor/update_sensor/<int:sensor_id>",
-        sensor.update_sensor,
-        name="update_sensor",
-    ),
-    path(
-        "sensor/update_type/<int:type_id>",
-        sensor.update_sensor_type,
-        name="update_type",
     ),
     path("events/", events.CreateEventsView.as_view(), name="events"),
     path("events/delete/<uuid:event_uuid>", events.delete_event, name="delete_event"),
@@ -63,22 +48,27 @@ urlpatterns = [
         "gfconfig/update/<int:gf_id>", gf_config.update_config, name="gfconfig_update"
     ),
     path(
-        "gfconfig/update_dashboard/<int:gf_id>",
+        "gfconfig/configure/<int:gf_id>",
+        gf_config.configure_dashboard,
+        name="gfconfig_configure",
+    ),
+    path(
+        "gfconfig/configure/update_dashboard/<int:gf_id>",
         gf_config.update_dashboard,
         name="gfconfig_update_dashboard",
     ),
     path(
-        "gfconfig/reset_dashboard/<int:gf_id>",
+        "gfconfig/configure/reset_dashboard/<int:gf_id>",
         gf_config.reset_dashboard,
         name="gfconfig_reset_dashboard",
     ),
     path(
-        "gfconfig/delete_dashboard/<int:gf_id>",
+        "gfconfig/configure/delete_dashboard/<int:gf_id>",
         gf_config.delete_dashboard,
         name="gfconfig_delete_dashboard",
     ),
     path(
-        "gfconfig/create_dashboard/<int:gf_id>",
+        "gfconfig/configure/create_dashboard/<int:gf_id>",
         gf_config.create_dashboard,
         name="gfconfig_create_dashboard",
     ),

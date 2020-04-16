@@ -16,7 +16,6 @@ import django_heroku
 import dj_database_url
 import dotenv
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     "ag_data.apps.AgDataConfig",
     "rest_framework",
     "drf_yasg",
+    "bootstrap4",
 ]
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_SAVE_EVERY_REQUEST = True

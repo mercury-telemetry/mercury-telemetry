@@ -53,15 +53,15 @@ def update_event(request, event_uuid=None):
                         event_to_update, new_name
                     )
                     if dashboard:
-                        messages.success(request, "Grafana dashboard title " "updated")
-                    else:
-                        messages.error(
-                            request, "Grafana dashboard title not " "updated: "
+                        messages.success(
+                            request,
+                            f"{gfconfig.gf_name}: Grafana " f"dashboard title updated",
                         )
-
                 except ValueError as error:
                     messages.error(
-                        request, f"Grafana dashboard title not updated: " f"{error}"
+                        request,
+                        f"{gfconfig.gf_name}: Grafana dashboard "
+                        f"title not updated: {error} ",
                     )
 
         # update the AGEvent object
@@ -169,7 +169,7 @@ def create_event_csv(writer, response, event_object, venue_object, measurements_
                     venue_object.name,
                     sensor.name,
                     measurement.timestamp,
-                    measurement.value["reading"],
+                    measurement.value,
                 ]
             )
     else:
@@ -209,7 +209,7 @@ def create_event_json(event_object, venue_object, measurements_object):
             temp = {
                 "sensor name": sensor.name,
                 "timestamp": str(measurement.timestamp),
-                "reading": measurement.value["reading"],
+                "values": measurement.value,
             }
             measurement_info.append(temp)
 
@@ -277,7 +277,7 @@ def export_event(request, event_uuid=None, file_format="CSV"):
                     temp = {
                         "sensor name": sensor.name,
                         "timestamp": str(measurement.timestamp),
-                        "reading": measurement.value["reading"],
+                        "reading": measurement.value,
                     }
                     measurement_info.append(temp)
 
