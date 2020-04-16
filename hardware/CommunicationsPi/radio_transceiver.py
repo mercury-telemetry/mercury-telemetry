@@ -95,6 +95,9 @@ class Transceiver:
             try:
                 message = json.loads(payload)
                 self.logging.info(message)
+            except json.JSONDecodeError:
+                self.logging.error(json.JSONDecodeError)
+                raise
             except Exception as err:
                 self.logging.error("error occurred: {}".format(str(err)))
                 raise
