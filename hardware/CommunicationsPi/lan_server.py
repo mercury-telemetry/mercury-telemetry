@@ -42,7 +42,9 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
 
-def runServer(server_class=HTTPServer, handler_class=Server, log_file_name=None, port=None):
+def runServer(
+    server_class=HTTPServer, handler_class=Server, log_file_name=None, port=None
+):
     global log
     log = (
         get_logger("LAN_SERVER_LOG_FILE")

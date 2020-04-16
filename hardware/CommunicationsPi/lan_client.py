@@ -18,12 +18,12 @@ class LANClient:
             self.url = lan_server_url
 
     def get_server_url_from_env(self):
-        protocol = 'https' if os.environ['LAN_SERVER_HTTPS'] else 'http';
+        protocol = "https" if os.environ["LAN_SERVER_HTTPS"] else "http"
         ip = os.environ["LAN_SERVER_IP"]
         port = os.environ["LAN_PORT"]
 
         url = "{}://{}".format(protocol, ip)
-        url += ":{}".format(port) if port else ''
+        url += ":{}".format(port) if port else ""
 
         return url
 
@@ -45,9 +45,5 @@ class LANClient:
 
         except Exception as err:
             self.logging.error("error occurred: {}".format(str(err)))
-            raise
-        except:
-            e = sys.exc_info()[0]
-            self.logging.error("error occured: {}".format(str(e)))
             raise
         return

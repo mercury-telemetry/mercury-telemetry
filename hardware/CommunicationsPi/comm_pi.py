@@ -1,7 +1,8 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
 
 transceiver = Transceiver()
+
 
 class CommPi(BaseHTTPRequestHandler):
     def _set_response(self):
@@ -14,9 +15,7 @@ class CommPi(BaseHTTPRequestHandler):
         self.wfile.write("GET request for {}".format(self.path).encode("utf-8"))
 
     def do_POST(self):
-        content_length = int(
-                self.headers["Content-Length"]
-                )
+        content_length = int(self.headers["Content-Length"])
         post_data = self.rfile.read(content_length)
 
         self.send_data(str(post_data.decode("utf-8")))

@@ -6,11 +6,11 @@ from hardware.CommunicationsPi.lan_server import runServer
 from hardware.CommunicationsPi.lan_client import LANClient
 from hardware.SensorPi.sense_pi import SensePi
 
-if os.environ['PI_TYPE'] == 'commPi':
-    print('CommunicationsPi')
+if os.environ["PI_TYPE"] == "commPi":
+    print("CommunicationsPi")
     runServer(handler_class=CommPi)
 else:
-    print('SensePi')
+    print("SensePi")
     sensePi = SensePi()
     client = LANClient()
 
@@ -27,7 +27,7 @@ else:
             print(i)
             try:
                 client.ping_lan_server(i)
-            except:
-                e = sys.exc_info()[0]
-                print("Error", e)
+            except Exception as err:
+                print("error occurred: {}".format(str(err)))
+                raise
             time.sleep(1)

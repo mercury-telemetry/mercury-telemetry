@@ -90,12 +90,12 @@ class Transceiver:
 
     def listen(self):
         payload = self.serial.readline().decode("utf-8")
-        message = ''
+        message = ""
         if payload and len(payload) > 0:
             try:
                 message = json.loads(payload)
                 self.logging.info(message)
-            except:
-                e = sys.exc_info()[0]
-                self.logging.error(e)
+            except Exception as err:
+                self.logging.error("error occurred: {}".format(str(err)))
+                raise
         return message
