@@ -1,5 +1,5 @@
-from CommunicationsPi.radio_transceiver import Transceiver
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from hardware.CommunicationsPi.radio_transceiver import Transceiver
 
 transceiver = Transceiver()
 
