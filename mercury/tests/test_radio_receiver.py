@@ -51,6 +51,7 @@ class TestRadioReceiverView(TestCase):
     def test_Radio_Receiver_GET_No_Related_Event(self):
         response = self.client.get(reverse(self.get_url, args=[self.uuid2]))
         self.assertEqual(404, response.status_code)
+        self.assertTrue("Event uuid not found" in str(response.content))
 
     @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     def test_Radio_Receiver_GET_Missing_Enable(self):
@@ -65,6 +66,7 @@ class TestRadioReceiverView(TestCase):
             },
         )
         self.assertEqual(400, response.status_code)
+        self.assertTrue("Missing enable value in url" in str(response.content))
 
     @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_invalid_port)
@@ -81,6 +83,7 @@ class TestRadioReceiverView(TestCase):
             },
         )
         self.assertEqual(503, response.status_code)
+        self.assertTrue("No valid ports on the backend" in str(response.content))
 
     @mock.patch("ag_data.models.AGEvent.objects.get", fake_event)
     @mock.patch("mercury.views.radioreceiver.serial_ports", fake_valid_port)
