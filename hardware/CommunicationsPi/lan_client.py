@@ -34,7 +34,7 @@ class LANClient:
 
         try:
             self.logging.info("data: " + json.dumps(payload))
-            response = requests.post(self.url, data=payload)
+            response = requests.post(self.url, data=json.dumps(payload))
             response.raise_for_status()
             return response
 
@@ -49,4 +49,5 @@ class LANClient:
         except:
             e = sys.exc_info()[0]
             self.logging.error("error occured: {}".format(str(e)))
+            raise
         return
