@@ -1,18 +1,3 @@
-function toggleActiveEvents(event_name, active){
-    console.log(event_name)
-    resetActiveEvents();
-    if (active == true) {
-        $('#'+event_name+'').add-attr( "checked", "false");
-    } else {
-        $('#'+event_name+'').add-attr( "checked", "true");
-    }
-}
-
-function resetActiveEvents(){
-    console.log("reset")
-    $('input:checkbox').removeAttr( "checked");
-}
-
 function toggleEventButton(button_name){
     resetEventButtons();
     
