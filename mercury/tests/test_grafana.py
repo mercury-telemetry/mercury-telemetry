@@ -32,8 +32,6 @@ DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 class TestGrafana(TestCase):
     TESTCODE = "testcode"
 
-    sim = simulator.Simulator()
-
     title = "Bar"
 
     test_sensor_name = "Wind Sensor"
