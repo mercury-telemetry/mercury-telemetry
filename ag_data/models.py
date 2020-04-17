@@ -72,3 +72,34 @@ class AGMeasurement(models.Model):
 
 class AGActiveEvent(models.Model):
     agevent = models.ForeignKey(AGEvent, null=True, on_delete=models.SET_NULL)
+
+
+class ErrorLog(models.Model):
+    UNRECOGNIZED_FORMAT = 1001
+    MISSING_COLUMN = 1002
+    MISSING_FIELD_IN_RAW_READING = 1003
+    INVALID_COLUMN = 1004
+    INVALID_FIELD_IN_RAW_READING = 1005
+    FORMULA_PROCESS_MEASUREMENT_ERROR = 1006
+    EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT = 1007
+    OTHER_ERROR = 1008
+
+    ERROR_CODE_CHOICES = [
+        (UNRECOGNIZED_FORMAT, "Unrecognized Format"),
+        (MISSING_COLUMN, "Missing Column"),
+        (MISSING_FIELD_IN_RAW_READING, "Missing Field In Raw Reading"),
+        (INVALID_COLUMN, "Invalid Column"),
+        (INVALID_FIELD_IN_RAW_READING, "Invalid Field In Raw Reading"),
+        (FORMULA_PROCESS_MEASUREMENT_ERROR, "Error When Formula Processing Measurement"),
+        (EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT, "Extraneous Key-Value In Measurement")
+        (OTHER_ERROR, "Other Error")
+    ]
+
+    error_id = models.AutoField(primary_key=True)
+    error_timestamp = models.DateTimeField(default=timezone.now)
+    error_code = models.IntegerField(choices=ERROR_CODE_CHOICES, null=False)
+    error_description = models.CharField(max_length=100, null=False, blank=False)
+    error_raw_content = models.CharField(max_length=500, null=False)
+
+    def __str__(self):
+        return ErrorLog.__name__
