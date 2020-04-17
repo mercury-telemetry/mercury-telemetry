@@ -75,20 +75,15 @@ class AGActiveEvent(models.Model):
 
 
 class ErrorLog(models.Model):
-    #declearation error
+    # declearation error
     UNKNOWN_FMT = "UNKNOWN_FORMAT"
-    
     MISSING_COL = "MISSING_COLUMN"
     MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
-    
     INVALID_COL_NM = "INVALID_COLUMN_NAME"
     INVALID_COL_VL = "INVALID_COLUMN_VALUE"
     INVALID_FIELD_IN_RAW = "INVALID_FIELD_IN_RAW_READING"
-    
     ERROR_F_PROC_MMT = "FORMULA_PROCESS_MEASUREMENT_ERROR"
-    
     EXTRA_KEYVAL_IN_MMT = "EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT"
-    
     OTHER = "OTHER_ERROR"
 
     ERROR_CODE_CHOICES = [
@@ -105,7 +100,9 @@ class ErrorLog(models.Model):
 
     error_id = models.AutoField(primary_key=True)
     error_timestamp = models.DateTimeField(default=timezone.now)
-    error_code = models.CharField(max_length=30, choices=ERROR_CODE_CHOICES, default=OTHER)
+    error_code = models.CharField(
+        max_length=30, choices=ERROR_CODE_CHOICES, default=OTHER
+    )
     error_description = models.CharField(max_length=100, null=False, blank=False)
     error_raw_data = models.CharField(max_length=500, null=False)
 
