@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from ag_data.models import AGSensor, AGSensorType, AGEvent
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
