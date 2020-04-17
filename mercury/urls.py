@@ -72,9 +72,5 @@ urlpatterns = [
         gf_config.create_dashboard,
         name="gfconfig_create_dashboard",
     ),
-    path(
-        "measurement/<uuid:event_uuid>",
-        measurement.MeasurementView.as_view(),
-        name="measurement",
-    ),
+    path("measurement/", measurement.MeasurementView.as_view(), name="measurement",),
 ]
