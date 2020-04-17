@@ -105,7 +105,7 @@ class ErrorLog(models.Model):
 
     error_id = models.AutoField(primary_key=True)
     error_timestamp = models.DateTimeField(default=timezone.now)
-    error_code = models.CharField(max_length=30, choices=ERROR_CODE_CHOICES, null=False),
+    error_code = models.CharField(max_length=30, choices=ERROR_CODE_CHOICES, default=OTHER)
     error_description = models.CharField(max_length=100, null=False, blank=False)
     error_raw_data = models.CharField(max_length=500, null=False)
 
