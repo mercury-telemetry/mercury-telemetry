@@ -4,7 +4,7 @@ from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ag_data.models import AGEvent
+from ag_data.models import AGActiveEvent
 from ag_data.serializers import AGMeasurementSerializer
 
 
@@ -14,10 +14,10 @@ def build_error(str):
 
 def fetch_event():
     try:
-        events = AGEvent.objects.all()
-        event = events.first()
-    except AGEvent.DoesNotExist:
-        event = False
+        active_event = AGActiveEvent.objects.first()
+        event = active_event.first().agevent
+    except (AGActiveEvent.DoesNotExist, AttributeError):
+        return Response(build_error("No active events"), status=status.HTTP_404_NOT_FOUND)
 
     return event
 
@@ -66,5 +66,7 @@ class MeasurementView(APIView):
         Now we use the first event in the db
         """
         event = fetch_event()
+        if isinstance(event, Response):
+            return event
 
         return add_measurement(request, event)
