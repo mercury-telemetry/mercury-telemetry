@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib import pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
 
 from django.http import HttpResponse
