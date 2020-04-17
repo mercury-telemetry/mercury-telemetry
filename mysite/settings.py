@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "mercury.apps.MercuryConfig",
-    "schema_demo",
     "ag_data.apps.AgDataConfig",
     "rest_framework",
     "drf_yasg",
