@@ -37,8 +37,20 @@ def fake_valid(res, raise_exception=True):
 class TestMeasurement(TestCase):
     def setUp(self) -> None:
         self.post_url = "mercury:measurement"
+        self.post_url2 = "mercury:measurementWO"
         self.uuid = "d81cac8d-26e1-4983-a942-1922e54a943d"
         self.uuid2 = "d81cac8d-26e1-4983-a942-1922e54a943a"
+
+    def post_radio_data_wo_event(self):
+        response = self.client.post(
+            reverse(self.post_url2),
+            data={
+                "sensor_id": 1,
+                "values": {"power": "2", "speed": 1},
+                "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+            },
+        )
+        return response
 
     def post_radio_data(self):
         # POST sensor data to the measurement url
