@@ -14,12 +14,14 @@ def build_error(str):
 
 def fetch_event():
     try:
-        active_event = AGActiveEvent.objects.first()
-        event = active_event.first().agevent
+        active_event = AGActiveEvent.objects.all()
+        if active_event.count() > 0:
+            return active_event.first().agevent
     except (AGActiveEvent.DoesNotExist, AttributeError):
-        return Response(build_error("No active events"), status=status.HTTP_404_NOT_FOUND)
+        pass
 
-    return event
+    return Response(build_error("No active events"), status=status.HTTP_404_NOT_FOUND)
+
 
 
 def add_measurement(request, event):
