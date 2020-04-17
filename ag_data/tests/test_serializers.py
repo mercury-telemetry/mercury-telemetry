@@ -1,4 +1,3 @@
-import datetime
 import uuid
 import json
 
@@ -35,7 +34,7 @@ class TestSerializers(TestCase):
 
     test_measurement_data = {
         "value": {"power": 2, "speed": 1},
-        "timestamp": "2020-04-17T12:12:16.102657"
+        "timestamp": "2020-04-17T12:12:16.102657",
     }
 
     def setUp(self):
@@ -108,7 +107,9 @@ class TestSerializers(TestCase):
         self.assertEqual(measurement.value, self.test_measurement_data["value"])
         self.assertEqual(measurement.event_uuid.uuid, self.uuid)
         self.assertEqual(measurement.sensor_id.id, self.sensor_id)
-        self.assertEqual(measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"])
+        self.assertEqual(
+            measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"]
+        )
 
     def test_create_measurement_successfully_JSON_dict(self):
         self.data["sensor_id"] = self.sensor_id
@@ -129,7 +130,9 @@ class TestSerializers(TestCase):
         self.assertEqual(measurement.value, self.test_measurement_data["value"])
         self.assertEqual(measurement.event_uuid.uuid, self.uuid)
         self.assertEqual(measurement.sensor_id.id, self.sensor_id)
-        self.assertEqual(measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"])
+        self.assertEqual(
+            measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"]
+        )
 
     def test_create_measurement_JSON_binary(self):
         self.data["sensor_id"] = self.sensor_id
@@ -148,4 +151,6 @@ class TestSerializers(TestCase):
         self.assertEqual(measurement.value, self.test_measurement_data["value"])
         self.assertEqual(measurement.event_uuid.uuid, self.uuid)
         self.assertEqual(measurement.sensor_id.id, self.sensor_id)
-        self.assertEqual(measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"])
+        self.assertEqual(
+            measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"]
+        )
