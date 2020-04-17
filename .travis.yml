@@ -1,6 +1,13 @@
+
 dist: xenial
 os: linux
 language: ruby
+
+env:
+  global:
+    - REGISTRY_USER=nyutelemetryrobot
+    # REGISTRY_PASS=...
+    - secure: "tzd1LpQ4MzCHB2FMSDjJec0hEi9SLrZHnILvNb1pj7P/agnFtUduC37aCcGSyrecfC4VF84wQNMYfndWn0L+M5XG1VWUuHcRYxJF7/F9ytkT91ZbZaUzaUy1m29up4C+jQdvYL4bR5WAMn330/SZiWF1Qr9N2DsLqGj4oYHOD6eOK9P1skmYK2CU5i1tjcjz0OOn2rxdGKTPxOwSg+8/OINYLVMkcK0iTAvPMXqR9UQjZqNmD+Z60HWEBF2xZuGXFXQ43sOilXrEY9FxrnQEFVeAJ5KzK9YSX38rJdTWasc0BFkyjSagFUCD9tvdQTc6+NOK4U7MLDCWJsMVwYnbV2tTmEA5bjPgocRsyX2+uBhEuSUW1RKP2MWtq0EmyYwnDHgpIWsuqnZlshtoA+ZEa7TcQsZqjjPqC6hBxVU32dVJDsUSwOLZ+xO+eyfb203az6PXldbetl48D5UN+qDRWlyr2T++IaZAGJHBNzkCMeyOURVhFnIxkFMEKB075PkKWf2M9cmN4hB3UTCNmo820Wpw1Cn2j/shMZ4KgKtnCXFDchGEpLzyUzdLeBZple5bPOGuw9xWUCn+V04kDewO0m/53DUz8xu+7bG7QFi4cFhqguPGge35ULnWPYgi+NkAW3BO1eAj8wgYB1gfZ10YNAjG4XYyaIrgTFh3h+SNwgk="
 
 jobs:
   include:
@@ -46,21 +53,33 @@ jobs:
 
     # run the hardware tests
     - language: bash
-      
+
       # python: '3.6'
-      
+
       services:
           - docker
-        
+
       before_script:
+        - docker pull nyumotorsportstelemetryorg/mercury || true
+
+      script:
         # prepare qemu for arm emulation on x64 hardware
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
-        - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
-        
-      script:
+        # - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
+        - docker build --pull --cache-from nyumotorsportstelemetryorg/mercury --tag nyumotorsportstelemetryorg/mercury .
         # basic help world test to see if it's working
-        - docker run gcivil-nyu-org/spring2020-cs-gy-9223-class grep -q "Hello, Docker!" hello.txt
+        - docker run nyumotorsportstelemetryorg/mercury grep -q "Hello, Docker!" hello.txt
         # - black --check --exclude "migrations/" hardware
 
-            
+      after_script:
+        - docker images
+
+      before_deploy:
+        - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+
+      deploy:
+        provider: script
+        script: docker push nyumotorsportstelemetryorg/mercury
+        on:
+          branch: master
