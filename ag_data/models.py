@@ -69,5 +69,6 @@ class AGMeasurement(models.Model):
     )
     value = JSONField()
 
+
 class AGActiveEvent(models.Model):
     agevent = models.ForeignKey(AGEvent, null=True, on_delete=models.SET_NULL)
