@@ -1,3 +1,11 @@
+<!-- Bootstrap messages (please don't delete this Ray) -->
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
 <!DOCTYPE html>
@@ -21,9 +29,6 @@
             {%  endif %}
             <form method="post" action="{% url 'mercury:EventAccess' %}">
                 {% csrf_token %}
-                {% for message in messages %}
-                    <p class="error"> {{ message }} </p>
-                {% endfor %}
                 <label>Event Code:</label>
                 <input type="text" name="eventcode" placeholder="Enter Event Code" required maxlength="8">
                 <br>
