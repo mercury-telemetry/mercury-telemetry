@@ -75,31 +75,39 @@ class AGActiveEvent(models.Model):
 
 
 class ErrorLog(models.Model):
-    UNRECOGNIZED_FORMAT = 1001
-    MISSING_COLUMN = 1002
-    MISSING_FIELD_IN_RAW_READING = 1003
-    INVALID_COLUMN = 1004
-    INVALID_FIELD_IN_RAW_READING = 1005
-    FORMULA_PROCESS_MEASUREMENT_ERROR = 1006
-    EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT = 1007
-    OTHER_ERROR = 1008
+    #declearation error
+    UNKNOWN_FMT = "UNKNOWN_FORMAT"
+    
+    MISSING_COL = "MISSING_COLUMN"
+    MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
+    
+    INVALID_COL_NM = "INVALID_COLUMN_NAME"
+    INVALID_COL_VL = "INVALID_COLUMN_VALUE"
+    INVALID_FIELD_IN_RAW = "INVALID_FIELD_IN_RAW_READING"
+    
+    ERROR_F_PROC_MMT = "FORMULA_PROCESS_MEASUREMENT_ERROR"
+    
+    EXTRA_KEYVAL_IN_MMT = "EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT"
+    
+    OTHER = "OTHER_ERROR"
 
     ERROR_CODE_CHOICES = [
-        (UNRECOGNIZED_FORMAT, "Unrecognized Format"),
-        (MISSING_COLUMN, "Missing Column"),
-        (MISSING_FIELD_IN_RAW_READING, "Missing Field In Raw Reading"),
-        (INVALID_COLUMN, "Invalid Column"),
-        (INVALID_FIELD_IN_RAW_READING, "Invalid Field In Raw Reading"),
-        (FORMULA_PROCESS_MEASUREMENT_ERROR, "Error When Formula Processing Measurement"),
-        (EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT, "Extraneous Key-Value In Measurement")
-        (OTHER_ERROR, "Other Error")
+        (UNKNOWN_FMT, "Unknown Format"),
+        (MISSING_COL, "Missing Column"),
+        (MISSING_FIELD_IN_RAW, "Missing Field In Raw Reading"),
+        (INVALID_COL_NM, "Invalid Column Name"),
+        (INVALID_COL_VL, "Invalid Column Value"),
+        (INVALID_FIELD_IN_RAW, "Invalid Field In Raw Reading"),
+        (ERROR_F_PROC_MMT, "Error When Formula Processing Measurement"),
+        (EXTRA_KEYVAL_IN_MMT, "Extraneous Key-Value Pair In Measurement"),
+        (OTHER, "Other Error"),
     ]
 
     error_id = models.AutoField(primary_key=True)
     error_timestamp = models.DateTimeField(default=timezone.now)
-    error_code = models.IntegerField(choices=ERROR_CODE_CHOICES, null=False)
+    error_code = models.CharField(max_length=30, choices=ERROR_CODE_CHOICES, null=False),
     error_description = models.CharField(max_length=100, null=False, blank=False)
-    error_raw_content = models.CharField(max_length=500, null=False)
+    error_raw_data = models.CharField(max_length=500, null=False)
 
     def __str__(self):
         return ErrorLog.__name__
