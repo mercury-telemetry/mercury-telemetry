@@ -38,11 +38,11 @@ class Transceiver:
             self.port_serial_number = port_info.serial_number
             self.find_port()
 
-        baudrate = 9600
+        baudrate = os.environ["TRANSCEIVER_BAUDRATE"]
         parity = serial.PARITY_NONE
         stopbits = serial.STOPBITS_ONE
         bytesize = serial.EIGHTBITS
-        timeout = 1
+        timeout = os.environ["TRANSCEIVER_TIMEOUT"]
 
         self.logging.info("Opening serial on: " + str(self.port))
         self.serial = serial.Serial(

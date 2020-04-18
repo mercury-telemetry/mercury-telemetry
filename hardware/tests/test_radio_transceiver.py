@@ -16,11 +16,11 @@ class TransceiverTests(SimpleTestCase):
     def setUp(self):
         self.temp_dir = TempDirectory()
 
-        self.baudrate = 9600
+        self.baudrate = "9600"
         self.parity = serial.PARITY_NONE
         self.stopbits = serial.STOPBITS_ONE
         self.bytesize = serial.EIGHTBITS
-        self.timeout = 1
+        self.timeout = "1"
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -48,6 +48,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "TRANSMITTER_LOG_FILE": "logger.txt",
                 "RADIO_TRANSMITTER_PORT": "",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver()
@@ -95,6 +97,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -135,6 +139,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -183,6 +189,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -238,6 +246,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -293,6 +303,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb2",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -348,6 +360,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb2",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -403,6 +417,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb2",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -458,6 +474,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb2",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -513,6 +531,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb2",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -563,6 +583,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             with LogCapture() as capture:
@@ -604,6 +626,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             with LogCapture() as capture:
@@ -643,6 +667,8 @@ class TransceiverTests(SimpleTestCase):
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "RADIO_TRANSMITTER_PORT": "usb",
                 "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             with LogCapture() as capture:
