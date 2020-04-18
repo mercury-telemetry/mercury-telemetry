@@ -1,5 +1,6 @@
 from django.test import SimpleTestCase
 from testfixtures import TempDirectory, LogCapture
+from json.decoder import JSONDecodeError
 
 from unittest.mock import patch, MagicMock
 from serial.tools.list_ports_common import ListPortInfo
@@ -652,7 +653,9 @@ class TransceiverTests(SimpleTestCase):
                 mock_receiver.readline.return_value.decode.return_value = test_input
                 transceiver.serial = mock_receiver
 
-                transceiver.listen()
+                with self.assertRaises(JSONDecodeError):
+                    transceiver.listen()
+
                 capture.check(
                     ("LOG_FILE", "INFO", "Port device found: usb"),
                     ("LOG_FILE", "INFO", "Opening serial on: usb"),
