@@ -12,6 +12,7 @@ class Logger(object):
         filename,
         format="%(asctime)s | %(levelname)s | %(message)s",
         level=INFO,
+        show_logs=False,
     ):
         # Initial construct.
         self.format = format
@@ -28,6 +29,9 @@ class Logger(object):
         self.logger.setLevel(self.level)
         self.logger.addHandler(self.console_logger)
 
+        # show logs on screen
+        self.showLogsOnScreen = show_logs
+
     def get_logger_file(self, file_name):
         d = os.environ["LOG_DIRECTORY"]
         if not os.path.exists(d):
@@ -35,17 +39,22 @@ class Logger(object):
         return d + "/" + file_name
 
     def info(self, msg, extra=None):
-        print(msg)
+        self.printData(msg)
         self.logger.info(msg, extra=extra)
 
     def error(self, msg, extra=None):
-        print(msg)
+        self.printData(msg)
         self.logger.error(msg, extra=extra)
 
     def debug(self, msg, extra=None):
-        print(msg)
+        self.printData(msg)
         self.logger.debug(msg, extra=extra)
 
     def warn(self, msg, extra=None):
-        print(msg)
+        self.printData(msg)
         self.logger.warn(msg, extra=extra)
+
+    def printData(self, msg):
+        if self.showLogsOnScreen:
+            print(msg)
+        return

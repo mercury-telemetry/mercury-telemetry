@@ -4,36 +4,38 @@ import argparse
 import serial
 import serial.tools.list_ports
 
+from ..Utils.utils import get_logger
+
 
 def is_usb_serial(port, args):
-    if port["vid"] is None:
+    if port.vid is None:
         return False
-    if not args.get("vid") is None:
-        if port["vid"] != args.get("vid"):
+    if hasattr(args, "vid") and args.vid is not None:
+        if port.vid is not args.vid:
             return False
-    if not args.get("pid") is None:
-        if port.get("pid") != args.get("pid"):
+    if hasattr(args, "pid") and args.pid is not None:
+        if port.pid is not args.pid:
             return False
-    if not args.get("vendor") is None:
-        if not port["manufacturer"].startswith(args.get("vendor")):
+    if hasattr(args, "vendor") and args.vendor is not None:
+        if not port.manufacturer.startswith(args.vendor):
             return False
-    if not args.get("serial") is None:
-        if not port["serial_number"].startswith(args.get("serial")):
+    if hasattr(args, "serial") and args.serial is not None:
+        if not port.serial_number.startswith(args.serial):
             return False
-    if not args.get("intf") is None:
-        if port["interface"] is None or not args.get("intf") in port.get("interface"):
+    if hasattr(args, "intf") and args.intf is not None:
+        if port.interface is None or args.intf not in port.interface:
             return False
     return True
 
 
 def extra_info(port):
     extra_items = []
-    if port.get("manufacturer"):
-        extra_items.append("vendor '{}'".format(port["manufacturer"]))
-    if port.get("serial_number"):
-        extra_items.append("serial '{}'".format(port["serial_number"]))
-    if port.get("interface"):
-        extra_items.append("intf '{}'".format(port["interface"]))
+    if port.manufacturer:
+        extra_items.append("vendor '{}'".format(port.manufacturer))
+    if port.serial_number:
+        extra_items.append("serial '{}'".format(port.serial_number))
+    if port.interface:
+        extra_items.append("intf '{}'".format(port.interface))
     if extra_items:
         return " with " + " ".join(extra_items)
     return ""
@@ -41,9 +43,7 @@ def extra_info(port):
 
 def get_port():
     for port in serial.tools.list_ports.comports():
-        if is_usb_serial(port, {}):
-            print(port)
-            print(port["device"])
+        if is_usb_serial(port, None):
             return "port found"
     return
 
@@ -108,31 +108,33 @@ def main():
     )
     args = parser.parse_args(sys.argv[1:])
 
+    logger = get_logger("PORT_LOGGER", file_name="PORT_LOG_FILE")
+
     if args.verbose:
-        print("pyserial version = {}".format(serial.__version__))
-        print("   vid =", args.vid)
-        print("   pid =", args.pid)
-        print("serial =", args.serial)
-        print("vendor =", args.vendor)
+        logger.info("pyserial version = {}".format(serial.__version__))
+        logger.info(f"   vid = {args.vid}")
+        logger.info(f"   pid = {args.pid}")
+        logger.info(f"serial = {args.serial}")
+        logger.info(f"vendor = {args.vendor}")
 
     if args.list:
         detected = False
         for port in serial.tools.list_ports.comports():
             if is_usb_serial(port, args):
-                print(
+                logger.info(
                     "USB Serial Device {:04x}:{:04x}{} found @{}\r".format(
                         port.vid, port.pid, extra_info(port), port.device
                     )
                 )
                 detected = True
         if not detected:
-            print("No USB Serial devices detected.\r")
+            logger.warn("No USB Serial devices detected.\r")
         return
 
     for port in serial.tools.list_ports.comports():
         if is_usb_serial(port, args):
-            print(port)
-            print(port.device)
+            logger.info(port)
+            logger.info(port.device)
             return
     sys.exit(1)
 

@@ -3,7 +3,7 @@ import serial
 import json
 import serial.tools.list_ports
 
-from .utils import get_logger, get_serial_stream
+from ..Utils.utils import get_logger, get_serial_stream
 
 
 class Transceiver:
@@ -21,6 +21,21 @@ class Transceiver:
             self.port_vendor = None
             self.port_intf = None
             self.port_serial_number = None
+            self.find_port()
+        else:
+            port_info = next(
+                (
+                    p
+                    for p in serial.tools.list_ports.comports()
+                    if p.device == self.port
+                ),
+                {},
+            )
+            self.port_vid = port_info.vid
+            self.port_pid = port_info.pid
+            self.port_vendor = port_info.manufacturer
+            self.port_intf = port_info.interface
+            self.port_serial_number = port_info.serial_number
             self.find_port()
 
         baudrate = 9600
