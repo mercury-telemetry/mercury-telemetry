@@ -5,20 +5,14 @@ from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType
 from mercury.grafanaAPI.grafana_api import Grafana
 import os
 import datetime
-import requests
-import json
 
 
-# local grafana container with basic auth
-HOST = "http://admin:admin@localhost:3000/api/auth/keys"
+# grafana host with basic auth
+HOST = "http://admin:admin@localhost:3000"
 
-# create admin token
-_SCOPE = {"name": "admin", "role": "Admin"}
-ADMIN = json.loads(requests.post(HOST, _SCOPE).text)["key"]
-
-# create viewer token
-_SCOPE = {"name": "viewer", "role": "Viewer"}
-VIEWER = json.loads(requests.post(HOST, _SCOPE).text)["key"]
+# api keys with admin and viewer level permissions
+ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
+VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
 
 
 class TestGFConfig(TestCase):
