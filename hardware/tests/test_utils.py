@@ -5,8 +5,8 @@ from testfixtures import TempDirectory
 from logging import INFO
 import os
 
-from ..CommunicationsPi.utils import get_logger, get_serial_stream
-from ..CommunicationsPi.logger import Logger
+from ..Utils.utils import get_logger, get_serial_stream
+from ..Utils.logger import Logger
 
 
 class UtilsTests(SimpleTestCase):

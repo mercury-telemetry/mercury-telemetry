@@ -60,7 +60,7 @@ jobs:
 
       before_script:
         - docker pull nyumotorsportstelemetryorg/mercury || true
-
+        
       script:
         # prepare qemu for arm emulation on x64 hardware
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
@@ -70,15 +70,16 @@ jobs:
         # basic help world test to see if it's working
         - docker run nyumotorsportstelemetryorg/mercury grep -q "Hello, Docker!" hello.txt
         # - black --check --exclude "migrations/" hardware
-
+      
       after_script:
         - docker images
-
+      
       before_deploy:
         - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-
+      
       deploy:
         provider: script
         script: docker push nyumotorsportstelemetryorg/mercury
         on:
           branch: master
+            

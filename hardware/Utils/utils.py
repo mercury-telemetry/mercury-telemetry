@@ -2,6 +2,19 @@ import os
 import json
 from .logger import Logger
 
+SENSOR_KEYS = {
+    "ALL": "all",
+    "TEMPERATURE": "temperature",
+    "PRESSURE": "pressure",
+    "HUMIDITY": "humidity",
+    "ACCELERATION": "acceleration",
+    "ORIENTATION": "orientation",
+}
+
+
+def get_sensor_keys():
+    return SENSOR_KEYS
+
 
 def get_serial_stream(s):
     return (json.dumps(s) + "\n").encode()
