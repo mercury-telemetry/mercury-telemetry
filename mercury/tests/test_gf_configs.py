@@ -11,8 +11,8 @@ import datetime
 HOST = "http://admin:admin@localhost:3000"
 
 # api keys with admin and viewer level permissions
-ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
-VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+ADMIN = "eyJrIjoiNVo2YkMzNUNaMEUzcEdWckFXSkVoaTVxakgzQTBua28iLCJuIjoiYWRtaW4iLCJpZCI6MX0"
+VIEWER = "eyJrIjoiT2owYmdUVFVsS0Q3ejNqZjNVV1BRek04aksxbTBjanYiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 
 
 class TestGFConfig(TestCase):

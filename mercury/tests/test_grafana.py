@@ -12,8 +12,10 @@ import datetime
 HOST = "http://admin:admin@localhost:3000"
 
 # api keys with admin and viewer level permissions
-ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
-VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+# ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
+# VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+ADMIN = "eyJrIjoiNVo2YkMzNUNaMEUzcEdWckFXSkVoaTVxakgzQTBua28iLCJuIjoiYWRtaW4iLCJpZCI6MX0"
+VIEWER = "eyJrIjoiT2owYmdUVFVsS0Q3ejNqZjNVV1BRek04aksxbTBjanYiLCJuIjoidmlld2VyIiwiaWQiOjF9"
 
 # db credentials
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
