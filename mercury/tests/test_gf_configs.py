@@ -10,10 +10,6 @@ import datetime
 # grafana host with basic auth
 HOST = "http://admin:admin@localhost:3000"
 
-# api keys with admin and viewer level permissions
-ADMIN = "eyJrIjoiNVo2YkMzNUNaMEUzcEdWckFXSkVoaTVxakgzQTBua28iLCJuIjoiYWRtaW4iLCJpZCI6MX0"
-VIEWER = "eyJrIjoiT2owYmdUVFVsS0Q3ejNqZjNVV1BRek04aksxbTBjanYiLCJuIjoidmlld2VyIiwiaWQiOjF9"
-
 
 class TestGFConfig(TestCase):
     TESTCODE = "testcode"
@@ -60,6 +56,10 @@ class TestGFConfig(TestCase):
         return event
 
     def setUp(self):
+        # api keys with admin and viewer level permissions
+        self.ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
+        self.VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
@@ -76,7 +76,7 @@ class TestGFConfig(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         self.gfconfig = GFConfig.objects.create(
-            gf_name="Test", gf_host=HOST, gf_token=ADMIN, gf_current=True
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
         )
         self.gfconfig.save()
         # Create fresh grafana object
@@ -152,7 +152,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": ADMIN,
+                "gf_token": self.ADMIN,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -161,7 +161,7 @@ class TestGFConfig(TestCase):
         self.assertTrue(gfconfig.count() > 0)
         self.assertTrue(gfconfig[0].gf_name == "Test Grafana Instance")
         self.assertTrue(gfconfig[0].gf_host == HOST)
-        self.assertTrue(gfconfig[0].gf_token == ADMIN)
+        self.assertTrue(gfconfig[0].gf_token == self.ADMIN)
 
     def test_config_post_fail_invalid_api_key(self):
         response = self.client.post(
@@ -186,7 +186,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": VIEWER,
+                "gf_token": self.VIEWER,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -202,7 +202,7 @@ class TestGFConfig(TestCase):
         GFConfig.objects.all().delete()
 
         gfconfig = GFConfig.objects.create(
-            gf_name="Test Grafana Instance", gf_host=HOST, gf_token=ADMIN
+            gf_name="Test Grafana Instance", gf_host=HOST, gf_token=self.ADMIN
         )
         gfconfig.save()
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance").first()
@@ -215,7 +215,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": ADMIN,
+                "gf_token": self.ADMIN,
             },
         )
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
@@ -228,7 +228,7 @@ class TestGFConfig(TestCase):
         gfconfig = GFConfig.objects.create(
             gf_name="Test Grafana Instance",
             gf_host=HOST,
-            gf_token=ADMIN,
+            gf_token=self.ADMIN,
             gf_current=False,
         )
         gfconfig.save()
@@ -249,7 +249,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": ADMIN,
+                "gf_token": self.ADMIN,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -280,7 +280,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": ADMIN,
+                "gf_token": self.ADMIN,
             },
         )
         self.assertEqual(200, response.status_code)
