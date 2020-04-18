@@ -13,10 +13,12 @@ import json
 HOST = "http://admin:admin@localhost:3000/api/auth/keys"
 
 # create admin token
-ADMIN = json.loads(requests.post(HOST, {"name":"admin", "role":"Admin"}).text)['key']
+_SCOPE = {"name": "admin", "role": "Admin"}
+ADMIN = json.loads(requests.post(HOST, _SCOPE).text)["key"]
 
 # create viewer token
-VIEWER = json.loads(requests.post(HOST, {"name":"viewer", "role":"Viewer"}).text)['key']
+_SCOPE = {"name": "viewer", "role": "Viewer"}
+VIEWER = json.loads(requests.post(HOST, _SCOPE).text)["key"]
 
 
 class TestGFConfig(TestCase):

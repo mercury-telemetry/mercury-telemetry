@@ -13,10 +13,12 @@ import datetime
 HOST = "http://admin:admin@localhost:3000/api/auth/keys"
 
 # create admin token
-ADMIN = json.loads(requests.post(HOST, {"name":"admin", "role":"Admin"}).text)['key']
+_SCOPE = {"name": "admin", "role": "Admin"}
+ADMIN = json.loads(requests.post(HOST, _SCOPE).text)["key"]
 
 # create viewer token
-VIEWER = json.loads(requests.post(HOST, {"name":"viewer", "role":"Viewer"}).text)['key']
+_SCOPE = {"name": "viewer", "role": "Viewer"}
+VIEWER = json.loads(requests.post(HOST, _SCOPE).text)["key"]
 
 # db credentials
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
