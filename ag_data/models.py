@@ -75,7 +75,11 @@ class AGActiveEvent(models.Model):
 
 
 class ErrorLog(models.Model):
-    # declearation error
+    """Stores information about error log data,including error timestamp, error code,
+    error description and error raw data
+    """
+
+    # error declearation
     UNKNOWN_FMT = "UNKNOWN_FORMAT"
     MISSING_COL = "MISSING_COLUMN"
     MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
@@ -98,13 +102,10 @@ class ErrorLog(models.Model):
         (OTHER, "Other Error"),
     ]
 
-    error_id = models.AutoField(primary_key=True)
-    error_timestamp = models.DateTimeField(default=timezone.now)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    timestamp = models.DateTimeField(default=timezone.now)
     error_code = models.CharField(
-        max_length=30, choices=ERROR_CODE_CHOICES, default=OTHER
+        max_length=100, choices=ERROR_CODE_CHOICES, default=OTHER
     )
-    error_description = models.CharField(max_length=100, null=False, blank=False)
-    error_raw_data = models.CharField(max_length=500, null=False)
-
-    def __str__(self):
-        return ErrorLog.__name__
+    description = models.CharField(max_length=100, null=False, blank=False)
+    raw_data = models.CharField(max_length=256, null=False)
