@@ -205,6 +205,19 @@ class Grafana:
                 "timezone": "browser",
                 "schemaVersion": None,
                 "version": 0,
+                "time": {"from": "now-5m", "to": "now"},
+                "timepicker": {
+                    "refresh_intervals": [
+                        "0.1s",
+                        "0.5s",
+                        "1s",
+                        "5s",
+                        "10s",
+                        "30s",
+                        "1m",
+                    ]
+                },
+                "refresh": "0.5s",
             },
             "folderId": 0,
             "overwrite": False,
@@ -846,13 +859,25 @@ class Grafana:
                 "title": title,
                 "version": version,
                 "panels": panels,
-                "refresh": False,
                 "schemaVersion": schema_version,
                 "style": "dark",
                 "tags": tags,
                 "templating": {"list": []},
                 "folderId": folder_id,
                 "overwrite": overwrite,
+                "time": {"from": "now-5m", "to": "now"},
+                "timepicker": {
+                    "refresh_intervals": [
+                        "0.1s",
+                        "0.5s",
+                        "1s",
+                        "5s",
+                        "10s",
+                        "30s",
+                        "1m",
+                    ]
+                },
+                "refresh": "0.5s",
             }
         }
 
