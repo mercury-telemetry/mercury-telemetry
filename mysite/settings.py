@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/dev/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
-import logging
 import os
 
 import django_heroku
@@ -25,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "ee@v))dd&_+-29rp@nmpl0jnqccj@us-u!nrd1+n9n#*r2^rrf"
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = [
     "nyu-mercury.herokuapp.com",
     "nyu-mercury-prod.herokuapp.com",
@@ -66,7 +65,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'request_logging.middleware.LoggingMiddleware',
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -136,26 +134,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
-
-REQUEST_LOGGING_HTTP_4XX_LOG_LEVEL = logging.ERROR
-REQUEST_LOGGING_DATA_LOG_LEVEL = logging.ERROR
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['console'],
-            'level': 'INFO',  # change debug level as appropiate
-            'propagate': False,
-        },
-    },
-}
 
 
 # Internationalization

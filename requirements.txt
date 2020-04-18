@@ -17,4 +17,3 @@ mock
 requests
 matplotlib
 django-bootstrap4
-django-request-logging

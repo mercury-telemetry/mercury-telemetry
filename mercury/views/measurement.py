@@ -23,7 +23,6 @@ def fetch_event():
     return Response(build_error("No active events"), status=status.HTTP_404_NOT_FOUND)
 
 
-
 def add_measurement(request, event):
     json_data = request.data
 
@@ -63,9 +62,6 @@ class MeasurementView(APIView):
           }
           "date" : 2020-03-11T20:20+01:00
         }
-
-        TODO: fetch the active event
-        Now we use the first event in the db
         """
         event = fetch_event()
         if isinstance(event, Response):
