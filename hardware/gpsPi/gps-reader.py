@@ -1,10 +1,14 @@
 import serial
 
-GPS = serial.Serial('/dev/serial0', 9600)
+# want GPRMC and GPGGA
+# GPRMC universal coordinated time 
+
+
+gps = serial.Serial('/dev/serial0', 9600)
 
 while True:
-    while GPS.inWaiting() == 0:
+    while gps.inWaiting() == 0:
         pass
 
-    NMEA = GPS.readline()
-    print(NMEA)
+    nmeaSentence = gps.readline().split(",")
+    print(nmeaSentence)
