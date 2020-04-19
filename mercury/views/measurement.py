@@ -44,7 +44,7 @@ def add_measurement(request):
 
     measurement = pipeline.shared_instance.save_measurement(sensor, timestamp, values)
     return Response(
-        serializers.serialize("json", [measurement,]), status=status.HTTP_201_CREATED,
+        serializers.serialize("json", [measurement]), status=status.HTTP_201_CREATED,
     )
 
 
