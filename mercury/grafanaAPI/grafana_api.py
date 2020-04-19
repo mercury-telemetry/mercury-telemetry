@@ -71,15 +71,17 @@ class Grafana:
         rsp = requests.post(url, data={"name": name, "role": role})
         return json.loads(rsp.text)["key"]
 
-    def create_safe_string(self, input):
+    @staticmethod
+    def create_safe_string(input_string):
         """
         Reformats the input string to be lowercase and with spaces replaced by '-'.
-        :param input: string
+        :param input_string: string
         :return: reformatted string
         """
-        return input.strip().lower().replace(" ", "-")
+        return input_string.strip().lower().replace(" ", "-")
 
-    def generate_random_string(self, length):
+    @staticmethod
+    def generate_random_string(length):
         """
         Generates a random string of letters of given length.
         :param length: Target length for the random string
