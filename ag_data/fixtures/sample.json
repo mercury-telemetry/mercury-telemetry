@@ -1,0 +1,128 @@
+[
+    {
+        "model": "ag_data.agvenue",
+        "pk": "48a81e62-9b55-447a-8b59-ae57dbbb6b9b",
+        "fields": {
+            "name": "Washington Square Park",
+            "description": "Sunnyside Daycare's Butterfly Room.",
+            "latitude": "40.730812",
+            "longitude": "-73.997456"
+        }
+    },
+    {
+        "model": "ag_data.agvenue",
+        "pk": "5e6ae980-1f87-460b-bee8-e2f124e51662",
+        "fields": {
+            "name": "Central Park",
+            "description": "Muddy Puddles",
+            "latitude": "40.794692",
+            "longitude": "-73.959156"
+        }
+    },
+    {
+        "model": "ag_data.agevent",
+        "pk": "089b9deb-df69-4467-8e32-400567d7030c",
+        "fields": {
+            "name": "Peppa Pig Muddy Puddles",
+            "date": "2020-04-13T20:08:57",
+            "description": "George, if you jump in muddy puddles, you must wear your boots.",
+            "venue_uuid": "48a81e62-9b55-447a-8b59-ae57dbbb6b9b"
+        }
+    },
+    {
+        "model": "ag_data.agevent",
+        "pk": "260c29d3-7af2-4503-b48c-c3890ca14c1b",
+        "fields": {
+            "name": "Sunny Day Test Drive",
+            "date": "2020-04-13T20:08:26",
+            "description": "A very progressive test run at  Sunnyside Daycare's Butterfly Room.",
+            "venue_uuid": "5e6ae980-1f87-460b-bee8-e2f124e51662"
+        }
+    },
+    {
+        "model": "ag_data.agsensortype",
+        "pk": 0,
+        "fields": {
+            "name": "Coin Side Sensor",
+            "processing_formula": 0,
+            "format": {
+                "result": {},
+                "reading": {
+                    "side": {
+                        "unit": "",
+                        "format": "bool"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "ag_data.agsensortype",
+        "pk": 1,
+        "fields": {
+            "name": "Simple Temperature Sensor",
+            "processing_formula": 2,
+            "format": {
+                "result": {},
+                "reading": {
+                    "reading": {
+                        "unit": "Celsius",
+                        "format": "float"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "ag_data.agsensortype",
+        "pk": 2,
+        "fields": {
+            "name": "Dual Temperature Sensor",
+            "processing_formula": 4,
+            "format": {
+                "result": {
+                    "diff": {
+                        "unit": "Keivin",
+                        "format": "float"
+                    },
+                    "mean": {
+                        "unit": "Keivin",
+                        "format": "float"
+                    }
+                },
+                "reading": {
+                    "external": {
+                        "unit": "Keivin",
+                        "format": "float"
+                    },
+                    "internal": {
+                        "unit": "Keivin",
+                        "format": "float"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "ag_data.agsensortype",
+        "pk": 3,
+        "fields": {
+            "name": "Gas Flow Sensor",
+            "processing_formula": 6,
+            "format": {
+                "result": {
+                    "gasLevel": {
+                        "unit": "%",
+                        "format": "float"
+                    }
+                },
+                "reading": {
+                    "volumetricFlow": {
+                        "unit": "cc/sec",
+                        "format": "float"
+                    }
+                }
+            }
+        }
+    }
+]

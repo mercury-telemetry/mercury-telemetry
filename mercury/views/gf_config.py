@@ -37,15 +37,21 @@ def configure_dashboard(request, gf_id=None):
     # Create Grafana class to handle this GF instance
     grafana = Grafana(config)
 
-    # Get an array of all dashboards
-    current_dashboards = grafana.get_all_dashboards()
+    try:
+        grafana.validate_credentials()
+        existing_events = grafana.get_all_events()
+        current_dashboards = grafana.get_all_dashboards()
+
+    except ValueError as error:
+        messages.error(request, f"Cannot to connect to Grafana: {error}")
+        existing_events = []
+        current_dashboards = []
 
     # Assemble a list of dicts w/: url, sensors, initialized sensor form,
     # and dashboard name
 
     # Retrieve missing events to pass to the context
     all_events = list(AGEvent.objects.all())
-    existing_events = grafana.get_all_events()
     missing_events = list(set(all_events) - set(existing_events))
 
     # Prepare an array of dashboards & their sensors to send to the template
