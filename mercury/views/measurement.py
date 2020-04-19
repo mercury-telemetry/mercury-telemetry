@@ -72,7 +72,5 @@ class MeasurementView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # FIXME: don't have to set event here. set event when the active event is changed instead.
-        pipeline.shared_instance.event = active_event.agevent
 
         return add_measurement(request)
