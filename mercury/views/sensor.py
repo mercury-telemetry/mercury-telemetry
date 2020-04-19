@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent, AGMeasurement
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -120,12 +120,75 @@ class CreateSensorView(TemplateView):
             new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
                 sensor_to_update = AGSensor.objects.get(name=sensor_name)
+                prev_name = sensor_to_update.name
+
                 sensor_type_to_update = AGSensorType.objects.get(name=sensor_name)
+                prev_format = sensor_type_to_update.format
                 sensor_to_update.name = new_name
                 sensor_type_to_update.name = new_name
                 sensor_type_to_update.format = new_format
                 sensor_to_update.save()
                 sensor_type_to_update.save()
+
+                # update sensor panel in each grafana instance
+                gfconfigs = GFConfig.objects.all()
+                events = AGEvent.objects.all()
+
+                name_changed = True if new_name != prev_name else False
+                format_changed = True if new_format != prev_format else False
+
+                if name_changed and format_changed:
+                    for gfconfig in gfconfigs:
+                        grafana = Grafana(gfconfig)
+
+                        for event in events:
+                            # Update sensor panel in each event dashboard
+                            # instance
+                            try:
+                                grafana.update_panel_sensor(
+                                    event, prev_name, sensor_to_update
+                                )
+                            except ValueError as error:
+                                messages.error(request, error)
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
+                elif name_changed:
+                    for gfconfig in gfconfigs:
+                        grafana = Grafana(gfconfig)
+
+                        for event in events:
+                            # Update sensor panel in each event dashboard
+                            # instance
+                            try:
+                                grafana.update_panel_title(event, prev_name, new_name)
+                            except ValueError as error:
+                                messages.error(request, error)
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
+                elif format_changed:
+                    # Delete any existing measurement data for the sensor
+                    AGMeasurement.objects.filter(sensor_id=sensor_to_update.id).delete()
+
+                    for gfconfig in gfconfigs:
+                        grafana = Grafana(gfconfig)
+
+                        for event in events:
+                            # Update sensor panel in each event dashboard
+                            # instance
+                            try:
+                                grafana.update_panel_sensor(
+                                    event, prev_name, sensor_to_update
+                                )
+                            except ValueError as error:
+                                messages.error(request, error)
+
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
+                else:
+                    messages.error(request, f"No changes detected - no updates made")
 
         if "submit_new_sensor" in request.POST:
             valid, request = validate_inputs(

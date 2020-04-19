@@ -9,6 +9,7 @@ from .views import (
     measurement,
     gps,
     gpspanels,
+    sensor_data,
 )
 
 app_name = "mercury"
@@ -21,6 +22,9 @@ urlpatterns = [
         "sensor/delete_sensor/<sensor_name>",
         sensor.delete_sensor,
         name="delete_sensor",
+    ),
+    path(
+        "sensor_data_exists/<int:sensor_id>", sensor_data.get, name="sensor_data_exists"
     ),
     path("events/", events.CreateEventsView.as_view(), name="events"),
     path("events/delete/<uuid:event_uuid>", events.delete_event, name="delete_event"),
