@@ -68,9 +68,7 @@ class MeasurementView(APIView):
         active_event = AGActiveEvent.objects.first()
         if not active_event:
             return Response(
-                build_error("No active event"),
-                status=status.HTTP_400_BAD_REQUEST,
+                build_error("No active event"), status=status.HTTP_400_BAD_REQUEST,
             )
-
 
         return add_measurement(request)
