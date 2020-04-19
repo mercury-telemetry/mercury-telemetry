@@ -14,7 +14,6 @@ class AGJSONSerializerField(serializers.JSONField):
     """
 
     def to_internal_value(self, data):
-
         try:
             # If the binary is true, check whether data is a valid Json String
             if self.binary or getattr(data, "is_json_string", False):
