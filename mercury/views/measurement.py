@@ -38,7 +38,7 @@ def add_measurement(request):
         sensor = AGSensor.objects.get(pk=sensor_id)
     except models.ObjectDoesNotExist:
         return Response(
-            build_error(f"AGSensor does not exist for sensor_id={sensor_id}"),
+            build_error(f"No sensor for given sensor_id={sensor_id}"),
             status=status.HTTP_400_BAD_REQUEST,
         )
 
