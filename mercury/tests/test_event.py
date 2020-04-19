@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGEvent, AGVenue
+from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType, AGMeasurement
 import datetime
 
 
@@ -58,6 +58,36 @@ class TestEventView(TestCase):
         event.save()
 
         return event
+
+    # Returns sensor
+    def create_sensor(self):
+
+        sensor_type = AGSensorType.objects.create(
+            name = "test",
+            format = {"lefts": {
+                "data_type": "test",
+                "unit": "test",
+                },
+            },
+        )
+
+        sensor = AGSensor.objects.create(
+            name = "test",
+            type_id = sensor_type,
+        )
+
+        return sensor
+
+    # Returns measurement
+    def create_measurement(self, event, sensor):
+
+        measurement = AGMeasurement.objects.create(
+            event_uuid = event,
+            sensor_id = sensor,
+            value = {"lefts": 30},
+        )
+
+        return measurement
 
     def setUp(self):
         self.login_url = "mercury:EventAccess"
@@ -277,6 +307,8 @@ class TestEventView(TestCase):
 
     def test_export_all_csv(self):
         event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        measurement = self.create_measurement(event, sensor)
 
         response = self.client.post(
             reverse(self.event_export_all_csv_url)
@@ -286,6 +318,8 @@ class TestEventView(TestCase):
 
     def test_export_all_json(self):
         event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        measurement = self.create_measurement(event, sensor)
 
         response = self.client.post(
             reverse(self.event_export_all_json_url)
@@ -293,7 +327,29 @@ class TestEventView(TestCase):
 
         self.assertEqual(200, response.status_code)
 
-    def test_export_csv(self):
+    # def test_export_csv(self):
+    #     event = self.create_venue_and_event(self.event_name)
+    #     sensor = self.create_sensor()
+    #     measurement = self.create_measurement(event, sensor)
+
+    #     response = self.client.post(
+    #         reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
+    #     )
+
+    #     self.assertEqual(200, response.status_code)
+        
+    def test_export_json(self):
+        event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        measurement = self.create_measurement(event, sensor)
+
+        response = self.client.post(
+            reverse(self.event_export_json_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(200, response.status_code)
+
+    def test_export_no_measurements(self):
         event = self.create_venue_and_event(self.event_name)
 
         response = self.client.post(
@@ -301,14 +357,28 @@ class TestEventView(TestCase):
         )
 
         self.assertEqual(302, response.status_code)
-        
-    def test_export_json(self):
+
+    def test_activate_event(self):
         event = self.create_venue_and_event(self.event_name)
 
         response = self.client.post(
-            reverse(self.event_export_json_url, kwargs={"event_uuid": event.uuid})
+            reverse(self.event_activate_url, kwargs={"event_uuid": event.uuid})
         )
 
         self.assertEqual(302, response.status_code)
 
+    def test_deactivate_event(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_activate_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(302, response.status_code)
+
+        response = self.client.post(
+            reverse(self.event_deactivate_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(302, response.status_code)
 
