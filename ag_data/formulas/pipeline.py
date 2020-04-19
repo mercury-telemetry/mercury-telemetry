@@ -39,3 +39,6 @@ class FormulaPipeline:
             sensor_id=sensor,
             value={"raw": measurement, "result": result},
         )
+
+
+shared_instance = FormulaPipeline()
