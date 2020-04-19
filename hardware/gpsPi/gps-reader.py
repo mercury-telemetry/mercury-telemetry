@@ -14,10 +14,10 @@ while True:
     nmeaType = nmeaSentence[0]
 
     if nmeaType == "$GPRMC":
-        latitude_hours = float(nmeaSentence[3].split(".")[0])
-        latitude_minutes = float(nmeaSentence[3].split(".")[1])
-        longitude_hours = float(nmeaSentence[5].split(".")[0])
-        longitude_minutes = float(nmeaSentence[5].split(".")[1])
+        latitude_hours = float(nmeaSentence[3][0:2])
+        latitude_minutes = float(nmeaSentence[3][2:])
+        longitude_hours = float(nmeaSentence[5][0:3])
+        longitude_minutes = float(nmeaSentence[5][3:])
 
         latitude_decimal = latitude_hours + latitude_minutes / 60
         longitude_decimal = longitude_hours + longitude_minutes / 60
