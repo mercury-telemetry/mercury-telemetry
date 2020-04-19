@@ -10,3 +10,9 @@ LAN_SERVER_LOG_FILE=lan_server.log
 LAN_CLIENT_LOG_FILE=lan_client.log
 PORT_LOG_FILE=port.log
 SENSE_HAT_LOG_FILE=sense_hat.log
+
+TEST_ENDPOINT=http://pastebin.com/api/api_post.php
+API_ENDPOINT=http://mecury-backend-prod.herokuapp.com/measurement/
+
+TRANSCEIVER_BAUDRATE=9600
+TRANSCEIVER_TIMEOUT=1
