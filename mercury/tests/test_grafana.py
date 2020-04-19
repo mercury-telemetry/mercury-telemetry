@@ -565,7 +565,6 @@ class TestGrafana(TestCase):
             dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
         )
 
-
     def test_delete_sensor_deletes_panel_in_dashboard(self):
         # Create a dashboard, confirm it was created
         dashboard = self.grafana.create_dashboard(self.event_name)
