@@ -37,7 +37,6 @@ class TestEventView(TestCase):
         "latitude": 200,
         "longitude": 100,
     }
-        
 
     # Returns event
     def create_venue_and_event(self, event_name):
@@ -63,18 +62,10 @@ class TestEventView(TestCase):
     def create_sensor(self):
 
         sensor_type = AGSensorType.objects.create(
-            name = "test",
-            format = {"lefts": {
-                "data_type": "test",
-                "unit": "test",
-                },
-            },
+            name="test", format={"lefts": {"data_type": "test", "unit": "test", } ,},
         )
 
-        sensor = AGSensor.objects.create(
-            name = "test",
-            type_id = sensor_type,
-        )
+        sensor = AGSensor.objects.create(name="test", type_id=sensor_type,)
 
         return sensor
 
@@ -82,9 +73,7 @@ class TestEventView(TestCase):
     def create_measurement(self, event, sensor):
 
         measurement = AGMeasurement.objects.create(
-            event_uuid = event,
-            sensor_id = sensor,
-            value = {"lefts": 30},
+            event_uuid=event, sensor_id=sensor, value={"lefts": 30},
         )
 
         return measurement
@@ -308,22 +297,18 @@ class TestEventView(TestCase):
     def test_export_all_csv(self):
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
-        measurement = self.create_measurement(event, sensor)
+        self.create_measurement(event, sensor)
 
-        response = self.client.post(
-            reverse(self.event_export_all_csv_url)
-        )
+        response = self.client.post(reverse(self.event_export_all_csv_url))
 
         self.assertEqual(200, response.status_code)
 
     def test_export_all_json(self):
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
-        measurement = self.create_measurement(event, sensor)
+        self.create_measurement(event, sensor)
 
-        response = self.client.post(
-            reverse(self.event_export_all_json_url)
-        )
+        response = self.client.post(reverse(self.event_export_all_json_url))
 
         self.assertEqual(200, response.status_code)
 
@@ -337,11 +322,11 @@ class TestEventView(TestCase):
     #     )
 
     #     self.assertEqual(200, response.status_code)
-        
+
     def test_export_json(self):
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
-        measurement = self.create_measurement(event, sensor)
+        self.create_measurement(event, sensor)
 
         response = self.client.post(
             reverse(self.event_export_json_url, kwargs={"event_uuid": event.uuid})
@@ -359,11 +344,9 @@ class TestEventView(TestCase):
         self.assertEqual(302, response.status_code)
 
     def test_export_all_no_measurements(self):
-        event = self.create_venue_and_event(self.event_name)
+        self.create_venue_and_event(self.event_name)
 
-        response = self.client.post(
-            reverse(self.event_export_all_csv_url)
-        )
+        response = self.client.post(reverse(self.event_export_all_csv_url))
 
         self.assertEqual(200, response.status_code)
 
@@ -390,4 +373,3 @@ class TestEventView(TestCase):
         )
 
         self.assertEqual(302, response.status_code)
-
