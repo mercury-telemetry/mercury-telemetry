@@ -52,9 +52,9 @@ jobs:
 
     # run the hardware tests
     - language: bash
-      
+
       # python: '3.6'
-      
+
       services:
           - docker
 

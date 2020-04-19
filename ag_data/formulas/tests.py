@@ -11,7 +11,6 @@ def get_formula_id(f):
     for fid, formula in formulas.formula_map.items():
         if formula == f:
             return fid
-    return None
 
 
 class FormulaPipelineTests(TestCase):
