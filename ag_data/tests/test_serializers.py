@@ -1,5 +1,5 @@
-import datetime
 import uuid
+import json
 
 from django.test import TestCase
 
@@ -11,7 +11,7 @@ from ag_data.serializers import AGMeasurementSerializer
 class TestSerializers(TestCase):
     test_event_data = {
         "name": "Sunny Day Test Drive",
-        "date": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        "date": "2020-04-17T12:12:16.102657",
         "description": "A very progressive test run at \
                 Sunnyside Daycare's Butterfly Room.",
         "location": "New York, NY",
@@ -34,7 +34,7 @@ class TestSerializers(TestCase):
 
     test_measurement_data = {
         "value": {"power": 2, "speed": 1},
-        "timestamp": datetime.datetime(2020, 2, 2, 20, 21, 22),
+        "timestamp": "2020-04-17T12:12:16.102657",
     }
 
     def setUp(self):
@@ -88,7 +88,7 @@ class TestSerializers(TestCase):
             self.assertTrue("sensor_id", serializer.errors)
 
     def test_create_measurement_successfully_JSON_String(self):
-        self.data["event_uuid"] = self.uuid
+        self.data["event_uuid"] = str(self.uuid)
         self.data["sensor_id"] = self.sensor_id
         self.data["value"] = '{"power": 2, "speed": 1}'
         serializer = AGMeasurementSerializer(data=self.data)
@@ -107,7 +107,9 @@ class TestSerializers(TestCase):
         self.assertEqual(measurement.value, self.test_measurement_data["value"])
         self.assertEqual(measurement.event_uuid.uuid, self.uuid)
         self.assertEqual(measurement.sensor_id.id, self.sensor_id)
-        self.assertEqual(measurement.timestamp, self.test_measurement_data["timestamp"])
+        self.assertEqual(
+            measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"]
+        )
 
     def test_create_measurement_successfully_JSON_dict(self):
         self.data["sensor_id"] = self.sensor_id
@@ -128,4 +130,27 @@ class TestSerializers(TestCase):
         self.assertEqual(measurement.value, self.test_measurement_data["value"])
         self.assertEqual(measurement.event_uuid.uuid, self.uuid)
         self.assertEqual(measurement.sensor_id.id, self.sensor_id)
-        self.assertEqual(measurement.timestamp, self.test_measurement_data["timestamp"])
+        self.assertEqual(
+            measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"]
+        )
+
+    def test_create_measurement_JSON_binary(self):
+        self.data["sensor_id"] = self.sensor_id
+        self.data["event_uuid"] = str(self.uuid)
+        self.data["value"] = json.dumps(self.data["value"]).encode("utf-8")
+
+        serializer = AGMeasurementSerializer(data=self.data)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        measurements = AGMeasurement.objects.all()
+        self.assertTrue(measurements.count() > 0)
+
+        measurement = measurements.first()
+        self.assertEqual(measurement.value, self.test_measurement_data["value"])
+        self.assertEqual(measurement.event_uuid.uuid, self.uuid)
+        self.assertEqual(measurement.sensor_id.id, self.sensor_id)
+        self.assertEqual(
+            measurement.timestamp.isoformat(), self.test_measurement_data["timestamp"]
+        )

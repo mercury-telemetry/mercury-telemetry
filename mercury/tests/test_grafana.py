@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess, GFConfig
 from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
-from ag_data import simulator
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
@@ -32,8 +31,6 @@ DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 # we will need to wipe out the sensors each time it runs it runs
 class TestGrafana(TestCase):
     TESTCODE = "testcode"
-
-    sim = simulator.Simulator()
 
     title = "Bar"
 
