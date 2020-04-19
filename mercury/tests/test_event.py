@@ -31,6 +31,14 @@ class TestEventView(TestCase):
         "longitude": 200,
     }
 
+    test_venue_data_update = {
+        "name": "Venue 2",
+        "description": "bar",
+        "latitude": 200,
+        "longitude": 100,
+    }
+        
+
     # Returns event
     def create_venue_and_event(self, event_name):
         venue = AGVenue.objects.create(
@@ -56,6 +64,13 @@ class TestEventView(TestCase):
         self.event_url = "mercury:events"
         self.event_delete_url = "mercury:delete_event"
         self.event_update_url = "mercury:update_event"
+        self.venue_update_url = "mercury:update_venue"
+        self.event_activate_url = "mercury:activate_event"
+        self.event_deactivate_url = "mercury:deactivate_event"
+        self.event_export_csv_url = "mercury:export_csv"
+        self.event_export_all_csv_url = "mercury:export_all_csv"
+        self.event_export_json_url = "mercury:export_json"
+        self.event_export_all_json_url = "mercury:export_all_json"
 
         # Create random event name
         self.event_name = "test"
@@ -223,3 +238,77 @@ class TestEventView(TestCase):
         self.assertEquals(event.name, self.test_event_data_update["name"])
         self.assertEquals(event.venue_uuid.name, venue_name_update)
         self.assertEquals(event.description, self.test_event_data_update["description"])
+
+    def test_update_venue(self):
+
+        venue_name_update = "test name"
+        # Create a venue
+        venue = AGVenue.objects.create(
+            name=venue_name_update,
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        # Confirm that venue was created
+        self.assertEquals(AGVenue.objects.all().count(), 1)
+
+        # Update the event
+        response = self.client.post(
+            reverse(self.venue_update_url, kwargs={"venue_uuid": venue.uuid}),
+            data={
+                "name": self.test_venue_data_update["name"],
+                "description": self.test_venue_data_update["description"],
+                "latitude": self.test_venue_data_update["latitude"],
+                "longitude": self.test_venue_data_update["longitude"],
+            },
+        )
+
+        self.assertEqual(302, response.status_code)
+
+        # Confirm that venue was updated
+        venue = AGVenue.objects.all().first()
+
+        self.assertEquals(venue.name, self.test_venue_data_update["name"])
+        self.assertEquals(venue.description, self.test_venue_data_update["description"])
+        self.assertEquals(venue.latitude, self.test_venue_data_update["latitude"])
+        self.assertEquals(venue.longitude, self.test_venue_data_update["longitude"])
+
+    def test_export_all_csv(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_export_all_csv_url)
+        )
+
+        self.assertEqual(200, response.status_code)
+
+    def test_export_all_json(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_export_all_json_url)
+        )
+
+        self.assertEqual(200, response.status_code)
+
+    def test_export_csv(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(302, response.status_code)
+        
+    def test_export_json(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_export_json_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(302, response.status_code)
+
+
