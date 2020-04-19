@@ -19,7 +19,8 @@ def get(request, sensor_id=None):
     if not sensor_id:
         response["status"] = False
 
-    response["status"] = True if AGMeasurement.objects.filter(
-        sensor_id=sensor_id).count() > 0 else False
+    response["status"] = (
+        True if AGMeasurement.objects.filter(sensor_id=sensor_id).count() > 0 else False
+    )
 
     return HttpResponse(json.dumps(response))

@@ -135,8 +135,7 @@ class CreateSensorView(TemplateView):
                 events = AGEvent.objects.all()
 
                 name_changed = True if new_name != prev_name else False
-                format_changed = True if new_format != prev_format \
-                    else False
+                format_changed = True if new_format != prev_format else False
 
                 if name_changed and format_changed:
                     for gfconfig in gfconfigs:
@@ -146,12 +145,14 @@ class CreateSensorView(TemplateView):
                             # Update sensor panel in each event dashboard
                             # instance
                             try:
-                                grafana.update_panel_sensor(event, prev_name,
-                                                            sensor_to_update)
+                                grafana.update_panel_sensor(
+                                    event, prev_name, sensor_to_update
+                                )
                             except ValueError as error:
                                 messages.error(request, error)
-                    messages.success(request, f"Grafana panels updated based on sensor "
-                                              f"changes")
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
                 elif name_changed:
                     for gfconfig in gfconfigs:
                         grafana = Grafana(gfconfig)
@@ -160,12 +161,12 @@ class CreateSensorView(TemplateView):
                             # Update sensor panel in each event dashboard
                             # instance
                             try:
-                                grafana.update_panel_title(event, prev_name,
-                                                            new_name)
+                                grafana.update_panel_title(event, prev_name, new_name)
                             except ValueError as error:
                                 messages.error(request, error)
-                    messages.success(request, f"Grafana panels updated based on sensor "
-                                              f"changes")
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
                 elif format_changed:
                     # Delete any existing measurement data for the sensor
                     AGMeasurement.objects.filter(sensor_id=sensor_to_update.id).delete()
@@ -177,13 +178,15 @@ class CreateSensorView(TemplateView):
                             # Update sensor panel in each event dashboard
                             # instance
                             try:
-                                grafana.update_panel_sensor(event, prev_name,
-                                                            sensor_to_update)
+                                grafana.update_panel_sensor(
+                                    event, prev_name, sensor_to_update
+                                )
                             except ValueError as error:
                                 messages.error(request, error)
 
-                    messages.success(request, f"Grafana panels updated based on sensor "
-                                              f"changes")
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
                 else:
                     messages.error(request, f"No changes detected - no updates made")
 

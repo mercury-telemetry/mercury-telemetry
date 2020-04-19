@@ -579,8 +579,9 @@ class Grafana:
                 panel["title"] = new_sensor_name
 
                 # Create updated dashboard dict with updated list of panels
-                updated_dashboard = self.create_dashboard_update_dict(dashboard_info,
-                                                                      panels)
+                updated_dashboard = self.create_dashboard_update_dict(
+                    dashboard_info, panels
+                )
 
                 # POST updated dashboard
                 headers = {"Content-Type": "application/json"}
@@ -593,8 +594,9 @@ class Grafana:
 
                 try:
                     if response.json()["status"] != "success":
-                        raise ValueError(f"Sensor panel title not updated:"
-                                         f" {new_sensor_name}")
+                        raise ValueError(
+                            f"Sensor panel title not updated:" f" {new_sensor_name}"
+                        )
                 except KeyError as error:
                     raise ValueError(f"Sensor panel title not updated: {error}")
 
