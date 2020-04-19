@@ -358,6 +358,15 @@ class TestEventView(TestCase):
 
         self.assertEqual(302, response.status_code)
 
+    def test_export_all_no_measurements(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_export_all_csv_url)
+        )
+
+        self.assertEqual(200, response.status_code)
+
     def test_activate_event(self):
         event = self.create_venue_and_event(self.event_name)
 
