@@ -18,3 +18,4 @@ requests
 matplotlib
 attr
 django-bootstrap4
+django-js-reverse # manage.py collectstatic_js_reverse
