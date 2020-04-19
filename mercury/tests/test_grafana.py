@@ -395,6 +395,122 @@ class TestGrafana(TestCase):
             self.test_sensor["name"].lower(),
         )
 
+    def test_update_sensor_name_updates_panel_title(self):
+        # Create a dashboard
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event, create a sensor
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create AGSensorType object for foreign key reference
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor["name"].lower(),
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        sensor_type.save()
+
+        # Create AG Sensor Object
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor["name"].lower(), type_id=sensor_type
+        )
+        sensor.save()
+
+        # Add the sensor panel to the dashboard
+        self.grafana.add_panel(sensor, event)
+
+        updated_test_sensor_name = "foo"
+
+        # Post Edited Name
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"].lower(),
+                "sensor-name-updated": updated_test_sensor_name,
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that AGSensor object has new name
+        sensor = AGSensor.objects.all()[0]
+        self.assertEqual(sensor.name, updated_test_sensor_name)
+
+        # Check that sensor name was updated
+        sensor = AGSensor.objects.all()[0]
+        self.assertEquals(sensor.name, updated_test_sensor_name)
+
+        # Confirm that Grafana panel title was updated
+        # Confirm that a panel was added to the dashboard with the expected title
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], updated_test_sensor_name,
+        )
+
+    def test_update_sensor_type_updates_panel_query(self):
+        # Create a dashboard, confirm it was created
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create sensor and sensor type
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_name.lower(),
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name.lower(), type_id=sensor_type
+        )
+        sensor.save()
+
+        # Create grafana sensor panel
+        self.grafana.add_panel(sensor, event)
+
+        # New fields
+        field_names_updated = ["foo"]
+        data_types_updated = ["float"]
+        units_updated = ["km/h"]
+
+        # Post edited sensor type
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"].lower(),
+                "sensor-name-updated": self.test_sensor["name"].lower(),
+                "field-names": field_names_updated,
+                "data-types": data_types_updated,
+                "units": units_updated,
+            },
+        )
+
+        # Confirm that a new Grafana panel was created with a query containing all of
+        # the current field names (not checking the full syntax of the query, just that
+        # the new field name is in the query)
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertIn(
+            field_names_updated[0],
+            dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
+        )
+
     def test_delete_sensor_deletes_panel_in_dashboard(self):
         # Create a dashboard, confirm it was created
         dashboard = self.grafana.create_dashboard(self.event_name)
