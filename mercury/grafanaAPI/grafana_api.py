@@ -57,6 +57,20 @@ class Grafana:
         self.base_panel_width = 15
         self.base_panel_height = 12
 
+    @staticmethod
+    def create_api_key(auth_url, name, role):
+        # delete keys with same name or level of permission
+        url = auth_url + "/api/auth/keys"
+        rsp = requests.get(url)
+        data = json.loads(rsp.text)
+        for D in data:
+            if name == D["name"] or role == D["role"]:
+                requests.delete(url + "/" + str(D["id"]))
+
+        # create new key
+        rsp = requests.post(url, data={"name": name, "role": role})
+        return json.loads(rsp.text)["key"]
+
     def create_safe_string(self, input):
         """
         Reformats the input string to be lowercase and with spaces replaced by '-'.
