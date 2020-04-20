@@ -127,3 +127,13 @@ class TestSensorDataExistsView(TestCase):
         )
 
         self.assertEquals(response.json()["status"], True)
+
+    def test_sensor_data_sensor_id_not_found(self):
+        bad_id = 20
+
+        kwargs = {"sensor_id": bad_id}
+        response, session = self._get_with_event_code(
+            self.sensor_data_exists_url, self.TESTCODE, kwargs
+        )
+
+        self.assertEquals(response.json()["status"], False)
