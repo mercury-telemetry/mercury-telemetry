@@ -108,4 +108,4 @@ class ErrorLog(models.Model):
         max_length=100, choices=ERROR_CODE_CHOICES, default=OTHER
     )
     description = models.CharField(max_length=100, null=False, blank=False)
-    raw_data = models.CharField(max_length=256, null=False)
+    raw_data = models.TextField(null=False)
