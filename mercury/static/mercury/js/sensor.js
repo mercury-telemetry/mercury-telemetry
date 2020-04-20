@@ -13,10 +13,11 @@ $(document).ready(function () {
     $.ajax({
         url: `/sensor_data_exists/${sensor_id}`,
         type: "GET",
+        dataType: "json",
 
         success: function(response) {
 
-            var data = JSON.parse(response);
+            var data = response;
 
             if (data["status"] == true) {
                 runUpdateWarning(event, sensor_name);
@@ -38,7 +39,6 @@ function runUpdateWarning(event, sensor_name){
     var warning_id = `${sensor_name}-update-warning`;
     warning = document.getElementById(warning_id);
 
-    console.log('hide modify/update/delete buttons');
     // hide update button
     var update_button_id = `${sensor_name}-submit-button`;
     var delete_button_id = `${sensor_name}-delete-button`;
