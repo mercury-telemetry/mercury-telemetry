@@ -57,15 +57,31 @@ class Grafana:
         self.base_panel_width = 15
         self.base_panel_height = 12
 
-    def create_safe_string(self, input):
+    @staticmethod
+    def create_api_key(auth_url, name, role):
+        # delete keys with same name or level of permission
+        url = auth_url + "/api/auth/keys"
+        rsp = requests.get(url)
+        data = json.loads(rsp.text)
+        for D in data:
+            if name == D["name"] or role == D["role"]:
+                requests.delete(url + "/" + str(D["id"]))
+
+        # create new key
+        rsp = requests.post(url, data={"name": name, "role": role})
+        return json.loads(rsp.text)["key"]
+
+    @staticmethod
+    def create_safe_string(input_string):
         """
         Reformats the input string to be lowercase and with spaces replaced by '-'.
-        :param input: string
+        :param input_string: string
         :return: reformatted string
         """
-        return input.strip().lower().replace(" ", "-")
+        return input_string.strip().lower().replace(" ", "-")
 
-    def generate_random_string(self, length):
+    @staticmethod
+    def generate_random_string(length):
         """
         Generates a random string of letters of given length.
         :param length: Target length for the random string
@@ -205,6 +221,19 @@ class Grafana:
                 "timezone": "browser",
                 "schemaVersion": None,
                 "version": 0,
+                "time": {"from": "now-5m", "to": "now"},
+                "timepicker": {
+                    "refresh_intervals": [
+                        "0.1s",
+                        "0.5s",
+                        "1s",
+                        "5s",
+                        "10s",
+                        "30s",
+                        "1m",
+                    ]
+                },
+                "refresh": "0.5s",
             },
             "folderId": 0,
             "overwrite": False,
@@ -427,8 +456,10 @@ class Grafana:
         fields_query = ""
         if len(field_array):
             for i in range(0, len(field_array) - 1):
-                fields_query += f"value->'{field_array[i]}' AS {field_array[i]},\n"
-            fields_query += f"value->'{field_array[-1]}' AS {field_array[-1]}"
+                fields_query += (
+                    f"value->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+                )
+            fields_query += f"value->'{field_array[-1]}' AS \"{field_array[-1]}\""
 
         # Build SQL query
         panel_sql_query = f"""
@@ -436,7 +467,9 @@ class Grafana:
                 {fields_query}
                 FROM ag_data_agmeasurement
                 WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor.id} AND
-                "event_uuid_id"='{event.uuid}' \n
+                "event_uuid_id"='{event.uuid}'
+                ORDER BY timestamp
+                \n
                 """
         return panel_sql_query
 
@@ -459,7 +492,6 @@ class Grafana:
         """
 
         # Retrieve id, title, and fields from AGSensor object
-        sensor_id = sensor.id
         title = sensor.name
         field_dict = sensor.type_id.format
         field_array = []
@@ -497,21 +529,8 @@ class Grafana:
 
             new_panel_id = panels[-1]["id"] + 1
 
-        # Build fields portion of SELECT query (select each field)
-        fields_query = ""
-        if len(field_array):
-            for i in range(0, len(field_array) - 1):
-                fields_query += f"value->'{field_array[i]}' AS {field_array[i]},\n"
-            fields_query += f"value->'{field_array[-1]}' AS {field_array[-1]}"
-
         # Build SQL query
-        panel_sql_query = f"""
-        SELECT \"timestamp\" AS \"time\",
-        {fields_query}
-        FROM ag_data_agmeasurement
-        WHERE $__timeFilter(\"timestamp\") AND sensor_id_id={sensor_id} AND
-        "event_uuid_id"='{event.uuid}' \n
-        """
+        panel_sql_query = self.create_panel_query(sensor, event)
 
         # Build a panel dict for the new panel
         panel = self.create_panel_dict(
@@ -539,7 +558,49 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Sensor panel not added: {error}")
 
-    def update_panel(self, event, current_sensor_name, new_sensor):
+    def update_panel_title(self, event, current_sensor_name, new_sensor_name):
+        # Retrieve current panels
+        dashboard_info = self.get_dashboard_by_name(event.name)
+
+        if dashboard_info is None:
+            return False
+
+        try:
+            panels = dashboard_info["dashboard"]["panels"]
+        except (KeyError, TypeError):
+            panels = []
+
+        if not panels:
+            return False
+
+        # Find the target panel and update it
+        for panel in panels:
+            if panel["title"] == current_sensor_name:
+                panel["title"] = new_sensor_name
+
+                # Create updated dashboard dict with updated list of panels
+                updated_dashboard = self.create_dashboard_update_dict(
+                    dashboard_info, panels
+                )
+
+                # POST updated dashboard
+                headers = {"Content-Type": "application/json"}
+                response = requests.post(
+                    self.endpoints["dashboards"],
+                    data=json.dumps(updated_dashboard),
+                    headers=headers,
+                    auth=("api_key", self.api_token),
+                )
+
+                try:
+                    if response.json()["status"] != "success":
+                        raise ValueError(
+                            f"Sensor panel title not updated:" f" {new_sensor_name}"
+                        )
+                except KeyError as error:
+                    raise ValueError(f"Sensor panel title not updated: {error}")
+
+    def update_panel_sensor(self, event, current_sensor_name, new_sensor):
         # Retrieve current panels
         dashboard_info = self.get_dashboard_by_name(event.name)
 
@@ -856,13 +917,25 @@ class Grafana:
                 "title": title,
                 "version": version,
                 "panels": panels,
-                "refresh": False,
                 "schemaVersion": schema_version,
                 "style": "dark",
                 "tags": tags,
                 "templating": {"list": []},
                 "folderId": folder_id,
                 "overwrite": overwrite,
+                "time": {"from": "now-5m", "to": "now"},
+                "timepicker": {
+                    "refresh_intervals": [
+                        "0.1s",
+                        "0.5s",
+                        "1s",
+                        "5s",
+                        "10s",
+                        "30s",
+                        "1m",
+                    ]
+                },
+                "refresh": "0.5s",
             }
         }
 

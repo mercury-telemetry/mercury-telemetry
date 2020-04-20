@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code
-from ag_data.models import AGSensor, AGSensorType, AGEvent
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent, AGMeasurement
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -11,100 +11,46 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
-def validate_add_sensor_inputs(sensor_name, request):
-    """This validates the form before a user submits a new sensor to prevent bad
-    inputs"""
+def validate_inputs(sensor_name, field_names, request, new=False):
+    """This validates the form before a user submits a new or updated sensor to
+    prevent bad inputs"""
 
     form_valid = True
+
+    if new:
+        # duplicated sensor name
+        if AGSensorType.objects.filter(name=sensor_name).count() > 0:
+            messages.error(request, "FAILED: Sensor (type) name is already taken.")
+            form_valid = False
+
+        if AGSensor.objects.filter(name=sensor_name).count() > 0:
+            messages.error(request, "FAILED: Sensor name is already taken.")
+            form_valid = False
 
     # no sensor name
     if not sensor_name:
         messages.error(request, "FAILED: Sensor name is missing or invalid.")
         form_valid = False
 
-    # duplicated sensor name
-    if AGSensor.objects.filter(name=sensor_name).count() > 0:
-        messages.error(request, "FAILED: Sensor name is already taken.")
-        form_valid = False
-
-    return form_valid, request
-
-
-def validate_add_sensor_type_inputs(type_name, field_name_list, request):
-    """
-    This validates the form before a user submits a new sensor type to prevent bad
-    inputs
-    """
-
-    form_valid = True
-
-    # no type name
-    if not type_name:
-        messages.error(request, "FAILED: Type name is missing or invalid.")
-        form_valid = False
-
     # missing field names
-    for name in field_name_list:
+    for name in field_names:
         if not name:
-            messages.error(request, "FAILED: Type has missing field name(s).")
+            messages.error(request, "FAILED: Sensor has missing field name(s).")
             form_valid = False
 
-    # duplicated type name
-    if AGSensorType.objects.filter(name=type_name).count() > 0:
-        messages.error(request, "FAILED: Type name is already taken.")
-        form_valid = False
-
     # duplicated field names
-    if len(field_name_list) > len(set(field_name_list)):
+    if len(field_names) > len(set(field_names)):
         messages.error(request, "FAILED: Field names must be unique.")
         form_valid = False
 
     return form_valid, request
 
 
-def validate_update_sensor_type_inputs(
-    type_name, field_name_list, type_to_update, request
-):
-    """
-    This validates the form before a user submits a new sensor type to prevent bad inputs
-    """
-
-    form_valid = True
-
-    # no type name
-    if not type_name:
-        messages.error(request, "FAILED: Type name is missing or invalid.")
-        form_valid = False
-
-    # missing field names
-    for name in field_name_list:
-        if not name:
-            messages.error(request, "FAILED: Type has missing field name(s).")
-            form_valid = False
-
-    # duplicated type name
-    for sensor_type in AGSensorType.objects.all():
-        if sensor_type.name == type_name and sensor_type != type_to_update:
-            messages.error(request, "FAILED: Type name is already taken.")
-            form_valid = False
-
-    # duplicated field names
-    if len(field_name_list) > len(set(field_name_list)):
-        messages.error(request, "FAILED: Field names must be unique.")
-        form_valid = False
-
-    return form_valid, request
-
-
-def delete_sensor(request, sensor_id):
-    """This deletes a sensor from the database based on user button click"""
-
-    valid_id = False
-    for sensor in AGSensor.objects.all():
-        if sensor.id == sensor_id:
-            valid_id = True
-    if valid_id:
-        sensor_to_delete = AGSensor.objects.get(id=sensor_id)
+def delete_sensor(request, sensor_name):
+    """This deletes a sensor from the database based on a button click"""
+    sensor_to_delete = AGSensor.objects.get(name=sensor_name)
+    sensor_type_to_delete = AGSensorType.objects.get(name=sensor_name)
+    if sensor_type_to_delete:
 
         # delete any sensor panels from grafana
         gfconfigs = GFConfig.objects.all()
@@ -121,89 +67,31 @@ def delete_sensor(request, sensor_id):
                 except ValueError as error:
                     messages.error(request, error)
 
-        # delete the sensor
         sensor_to_delete.delete()
+        sensor_type_to_delete.delete()
     else:
-        messages.error(
-            request, "FAILED: Cannot find sensor with ID " + str(sensor_id) + "."
-        )
+        messages.error(request, sensor_name, " not found!!!")
     return redirect("/sensor")
 
 
-def delete_sensor_type(request, type_id):
-    """This deletes a sensor type from the database based on user button click"""
-
-    valid_id = False
-    for sensor_type in AGSensorType.objects.all():
-        if sensor_type.id == type_id:
-            valid_id = True
-    if valid_id:
-        for (
-            sensor
-        ) in (
-            AGSensor.objects.all()
-        ):  # delete sensors with this type first to avoid foreignkey error
-            sensor.delete()
-        type_to_delete = AGSensorType.objects.get(id=type_id)
-        type_to_delete.delete()
-    else:
-        messages.error(
-            request, "FAILED: Cannot find sensor type with ID " + str(type_id) + "."
-        )
-    return redirect("/sensor")
+def remove_whitespace_caps(name, field_list):
+    name = name.strip().lower()  # remove excess whitespace and CAPS
+    return_list = [string.strip().lower() for string in field_list]
+    return name, return_list
 
 
-def update_sensor(request, sensor_id):
-    """This updates a sensor in the database based on user input"""
-
-    sensor_to_update = AGSensor.objects.get(id=sensor_id)
-    sensor_name = request.POST.get("edit-sensor-name")
-
-    # reformat then validate name to avoid duplicated names or bad inputs like " "
-    sensor_name = sensor_name.strip().lower()  # remove excess whitespace and CAPS
-    valid, request = validate_add_sensor_inputs(sensor_name, request)
-
-    if valid:
-
-        sensor_to_update.name = sensor_name
-        sensor_to_update.save()
-
-    return redirect("/sensor")
-
-
-def update_sensor_type(request, type_id):
-    """This updates a sensor type in the database based on user input"""
-
-    type_to_update = AGSensorType.objects.get(id=type_id)
-    type_name = request.POST.get("edit-type-name")
-    field_names = request.POST.getlist("edit-field-names")
-    field_types = request.POST.getlist("edit-data-types")
-    field_units = request.POST.getlist("edit-units")
-
-    # reformat then validate inputs to avoid duplicated names or bad inputs like " "
-    type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
-    field_names = [string.strip().lower() for string in field_names]
-    valid, request = validate_update_sensor_type_inputs(
-        type_name, field_names, type_to_update, request
-    )
-
-    # create sensor format which is dictionary of dictionaries
-    type_format = {}
-    fields = zip(field_names, field_types, field_units)
+def generate_sensor_format(field_names, field_data_types, units):
+    """ Return proper JSON format for sensor based on form submission.
+        Format structure is a dictionary of dictionaries """
+    sensor_format = {}
+    fields = zip(field_names, field_data_types, units)
     for field in fields:
-        type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
-
-    if valid:
-        type_to_update.name = type_name
-        type_to_update.processing_formula = 0
-        type_to_update.format = type_format
-        type_to_update.save()
-
-    return redirect("/sensor")
+        sensor_format[field[0]] = {"data_type": field[1], "unit": field[2]}
+    return sensor_format
 
 
 class CreateSensorView(TemplateView):
-    """This is the view for creating a new event."""
+    """This is the view for creating a new ...."""
 
     template_name = "sensor.html"
 
@@ -216,91 +104,135 @@ class CreateSensorView(TemplateView):
 
     @require_event_code
     def post(self, request, *args, **kwargs):
-        if "submit_new_type" in request.POST:
-            type_name = request.POST.get("type-name")
-            field_names = request.POST.getlist("field-names")
-            field_types = request.POST.getlist("data-types")
-            field_units = request.POST.getlist("units")
+        sensor_name = request.POST.get("sensor-name")  # name = type name
+        field_names = request.POST.getlist("field-names")
+        field_types = request.POST.getlist("data-types")
+        field_units = request.POST.getlist("units")
+        sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
 
-            # reformat then validate inputs to avoid duplicated names or bad inputs
-            # like " "
-            type_name = type_name.strip().lower()  # remove excess whitespace and CAPS
-            field_names = [string.strip().lower() for string in field_names]
-            valid, request = validate_add_sensor_type_inputs(
-                type_name, field_names, request
-            )
-
-            # create sensor format which is dictionary of dictionaries
-            type_format = {}
-            fields = zip(field_names, field_types, field_units)
-            for field in fields:
-                type_format[field[0]] = {"data_type": field[1], "unit": field[2]}
-
-            sensors = AGSensor.objects.all()  # for when we return context later
+        if "edit_sensor" in request.POST:
+            new_name = request.POST.get("sensor-name-updated")
+            new_name, field_names = remove_whitespace_caps(new_name, field_names)
+            new = True
+            if new_name == sensor_name:
+                new = False
+            valid, request = validate_inputs(new_name, field_names, request, new)
+            new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
+                sensor_to_update = AGSensor.objects.get(name=sensor_name)
+                prev_name = sensor_to_update.name
+
+                sensor_type_to_update = AGSensorType.objects.get(name=sensor_name)
+                prev_format = sensor_type_to_update.format
+                sensor_to_update.name = new_name
+                sensor_type_to_update.name = new_name
+                sensor_type_to_update.format = new_format
+                sensor_to_update.save()
+                sensor_type_to_update.save()
+
+                # update sensor panel in each grafana instance
+                gfconfigs = GFConfig.objects.all()
+                events = AGEvent.objects.all()
+
+                name_changed = True if new_name != prev_name else False
+                format_changed = True if new_format != prev_format else False
+
+                if name_changed and format_changed:
+                    for gfconfig in gfconfigs:
+                        grafana = Grafana(gfconfig)
+
+                        for event in events:
+                            # Update sensor panel in each event dashboard
+                            # instance
+                            try:
+                                grafana.update_panel_sensor(
+                                    event, prev_name, sensor_to_update
+                                )
+                            except ValueError as error:
+                                messages.error(request, error)
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
+                elif name_changed:
+                    for gfconfig in gfconfigs:
+                        grafana = Grafana(gfconfig)
+
+                        for event in events:
+                            # Update sensor panel in each event dashboard
+                            # instance
+                            try:
+                                grafana.update_panel_title(event, prev_name, new_name)
+                            except ValueError as error:
+                                messages.error(request, error)
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
+                elif format_changed:
+                    # Delete any existing measurement data for the sensor
+                    AGMeasurement.objects.filter(sensor_id=sensor_to_update.id).delete()
+
+                    for gfconfig in gfconfigs:
+                        grafana = Grafana(gfconfig)
+
+                        for event in events:
+                            # Update sensor panel in each event dashboard
+                            # instance
+                            try:
+                                grafana.update_panel_sensor(
+                                    event, prev_name, sensor_to_update
+                                )
+                            except ValueError as error:
+                                messages.error(request, error)
+
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor " f"changes"
+                    )
+                else:
+                    messages.error(request, f"No changes detected - no updates made")
+
+        if "submit_new_sensor" in request.POST:
+            valid, request = validate_inputs(
+                sensor_name, field_names, request, new=True
+            )
+            sensor_format = generate_sensor_format(
+                field_names, field_types, field_units
+            )
+            if valid:
+                """1) The structure of the models (database API) is confusing and we hide
+                 the confusing details from the user. 2) Note that we have to first
+                 create a sensor type, save it then create a sensor which takes
+                 type as an input 3) Sensor types and sensors have the same name.
+                 They are the same concept and should not be separated. Separating
+                 sensors from sensor types will likely cause bad things to happen...
+                 """
                 new_type = AGSensorType.objects.create(
-                    name=type_name, processing_formula=0, format=type_format
+                    name=sensor_name, processing_formula=0, format=sensor_format
                 )
                 new_type.save()
-                sensor_types = AGSensorType.objects.all()
-                context = {"sensor_types": sensor_types, "sensors": sensors}
-            else:
-                sensor_types = AGSensorType.objects.all()
-                context = {
-                    "sensor_types": sensor_types,
-                    "type_name": type_name,
-                    "type_format": type_format,
-                    "sensors": sensors,
-                }
 
-            return render(request, self.template_name, context)
+                sensor_type = AGSensorType.objects.get(name=sensor_name)
 
-        elif "submit_new_sensor" in request.POST:
-            sensor_name = request.POST.get("sensor-name")
-            sensor_type = request.POST.get("select-sensor-type")
-            sensor_type = AGSensorType.objects.get(
-                name=sensor_type
-            )  # str --> AGSensorType
-
-            # reformat then validate name to avoid duplicated names or bad inputs
-            # like " "
-            sensor_name = (
-                sensor_name.strip().lower()
-            )  # remove excess whitespace and CAPS
-            valid, request = validate_add_sensor_inputs(sensor_name, request)
-
-            sensor_types = (
-                AGSensorType.objects.all()
-            )  # for when we return context later
-
-            sensors = AGSensor.objects.all()
-
-            if valid:
                 new_sensor = AGSensor.objects.create(
                     name=sensor_name, type_id=sensor_type
                 )
                 new_sensor.save()
 
-                # Add a Sensor panel to the Active Event
-
-                # Note: THIS IS A PLACEHOLDER - waiting to decide
-                # how to implement Current GFConfig
+                # Add Sensor panel to the Active Event dashboard in each Grafana
+                # instances
                 gfconfigs = GFConfig.objects.all()
 
-                # Note: THIS IS A PLACEHOLDER - waiting to decide
-                # how to implement Active Event
-                active_events = AGEvent.objects.all()
+                # Retrieve the active event
+                active_events_ref = AGActiveEvent.objects.first()
+                active_event = None
 
-                # Only add panel to active event
-                if len(active_events) > 0:
-                    active_event = active_events.first()
+                if isinstance(active_events_ref, AGActiveEvent):
+                    active_event = active_events_ref.agevent
 
+                if isinstance(active_event, AGEvent):
                     # Add panel to each grafana instance
                     for gfconfig in gfconfigs:
-
                         # Grafana instance using current GFConfig
                         grafana = Grafana(gfconfig)
-
                         # Add the Sensor Panel to the Active Event's dashboard
                         try:
                             grafana.add_panel(new_sensor, active_event)
@@ -310,13 +242,11 @@ class CreateSensorView(TemplateView):
                                 f"Failed to add panel to active dashboard: {error}",
                             )
 
-                context = {"sensors": sensors, "sensor_types": sensor_types}
-            else:
-                sensors = AGSensor.objects.all()
-                context = {
-                    "sensors": sensors,
-                    "sensor_name": sensor_name,
-                    "sensor_type": sensor_type,
-                    "sensor_types": sensor_types,
-                }
-            return render(request, self.template_name, context)
+        # gather sensors and sensor types (which should be the same) and render them
+        types = AGSensorType.objects.all()
+        sensors = AGSensor.objects.all()
+        context = {
+            "sensor_types": types,
+            "sensors": sensors,
+        }
+        return render(request, self.template_name, context)

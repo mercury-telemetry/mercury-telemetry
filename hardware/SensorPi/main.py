@@ -1,13 +1,14 @@
 import os
 from sense_hat import SenseHat
 import requests
+import os
 from sensehat_reader import temperature, pressure, humidity, acceleration, orientation
 from datetime import datetime
 
 # import json
 
-TEST_ENDPOINT = "http://pastebin.com/api/api_post.php"
-API_ENDPOINT = "http://mecury-backend-prod.herokuapp.com/measurement/"
+TEST_ENDPOINT = os.environ["TEST_ENDPOINT"]
+API_ENDPOINT = os.environ["API_ENDPOINT"]
 
 sense = SenseHat()
 nyu_purple = (87, 46, 140)
@@ -36,19 +37,7 @@ while 1:
     json_humidity = humidity()
     json_acceleration = acceleration()
     json_orientation = orientation()
-
-    # json_temperature  = json.dumps(temperature(sense))
-    # json_pressure     = json.dumps(pressure(sense))
-    # json_humidity     = json.dumps(humidity(sense))
-    # json_acceleration = json.dumps(acceleration(sense))
-    # json_orientation  = json.dumps(orientation(sense))
-
-    # print(json_temperature)
-    # print(json_pressure)
-    # print(json_humidity)
-    # print(json_acceleration)
-    # print(json_orientation)
-
+    
     tdelta = datetime.strptime(datetime.now().strftime(fmt), fmt) - datetime.strptime(
         time_of_last_sent_temperature, fmt
     )
@@ -88,10 +77,3 @@ while 1:
         print("Send Post request for Orientation")
         response_orientation = requests.post(url=API_ENDPOINT, data=json_orientation)
         time_of_last_sent_orientation = datetime.now().strftime(fmt)
-
-    # print(response_temperature)
-    # print(response_pressure)
-    # print(response_humidity)
-    # print(response_acceleration)
-    # print(response_orientation)
-    # print("")

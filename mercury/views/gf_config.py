@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+# Deprecated
 # Sets the GFConfig's current status to True
 def update_config(request, gf_id=None):
     GFConfig.objects.all().update(gf_current=False)
@@ -23,6 +24,67 @@ def update_config(request, gf_id=None):
 def delete_config(request, gf_id=None):
     GFConfig.objects.get(id=gf_id).delete()
     return redirect("/gfconfig")
+
+
+def configure_dashboard(request, gf_id=None):
+    config = GFConfig.objects.get(id=gf_id)
+
+    # Prepare a dict with details for this GFConfig (GFConfig object,
+    # list of dashboards/forms
+    config_info = dict()
+    config_info["config"] = config
+
+    # Create Grafana class to handle this GF instance
+    grafana = Grafana(config)
+
+    try:
+        grafana.validate_credentials()
+        existing_events = grafana.get_all_events()
+        current_dashboards = grafana.get_all_dashboards()
+
+    except ValueError as error:
+        messages.error(request, f"Cannot to connect to Grafana: {error}")
+        existing_events = []
+        current_dashboards = []
+
+    # Assemble a list of dicts w/: url, sensors, initialized sensor form,
+    # and dashboard name
+
+    # Retrieve missing events to pass to the context
+    all_events = list(AGEvent.objects.all())
+    missing_events = list(set(all_events) - set(existing_events))
+
+    # Prepare an array of dashboards & their sensors to send to the template
+    dashboards = []
+
+    for dashboard in current_dashboards:
+
+        dashboard_dict = dict()
+
+        # Get all currently used panels to initialize the form
+        existing_sensors = grafana.get_all_sensors(dashboard["title"])
+
+        # Set initial form data so that only existing sensors are checked
+        sensor_form = DashboardSensorPanelsForm(initial={"sensors": existing_sensors})
+
+        # Retrieve the URL for this dashboard or ""
+        dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
+        if dashboard_url is None:
+            dashboard_url = ""
+
+        # Store everything in a list of dicts
+        dashboard_dict["sensor_form"] = sensor_form
+        dashboard_dict["dashboard_url"] = dashboard_url
+        dashboard_dict["sensors"] = AGSensor.objects.all()
+        dashboard_dict["name"] = dashboard["title"]
+
+        dashboards.append(dashboard_dict)
+
+    config_info["dashboards"] = dashboards
+    config_info["missing_events"] = missing_events
+
+    context = {"config": config_info}
+    return render(request, "gf_dashboards.html", context)
 
 
 def update_dashboard(request, gf_id=None):
@@ -37,11 +99,13 @@ def update_dashboard(request, gf_id=None):
             sensor = AGSensor.objects.filter(id=sensor).first()
             sensor_objects.append(sensor)
         grafana.update_dashboard_panels(dashboard_name, sensor_objects)
+        msg = "Successfully updated dashboard: {}".format(dashboard_name)
+        messages.success(request, msg)
     else:
         messages.error(
             request, "Unable to update dashboard, Grafana instance not found"
         )
-    return redirect("/gfconfig")
+    return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
 def reset_dashboard(request, gf_id=None):
@@ -52,9 +116,11 @@ def reset_dashboard(request, gf_id=None):
         dashboard_name = request.POST.get("dashboard_name")
         sensors = AGSensor.objects.all()
         grafana.update_dashboard_panels(dashboard_name, sensors)
+        msg = "Successfully reset dashboard: {}".format(dashboard_name)
+        messages.success(request, msg)
     else:
         messages.error(request, "Unable to reset dashboard, Grafana instance not found")
-    return redirect("/gfconfig")
+    return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
 def delete_dashboard(request, gf_id=None):
@@ -66,11 +132,14 @@ def delete_dashboard(request, gf_id=None):
         # try to delete the dashboard
         if grafana.delete_dashboard_by_name(dashboard_name) is False:
             messages.error(request, "Unable to delete dashboard")
+        else:
+            msg = "Successfully deleted dashboard: {}".format(dashboard_name)
+            messages.success(request, msg)
     else:
         messages.error(
             request, "Unable to delete dashboard, Grafana instance not found"
         )
-    return redirect("/gfconfig")
+    return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
 def create_dashboard(request, gf_id=None):
@@ -87,10 +156,12 @@ def create_dashboard(request, gf_id=None):
             grafana.create_dashboard(event.name)
             for sensor in sensors:
                 grafana.add_panel(sensor, event)
+            msg = "Successfully created dashboard: {}".format(event_name)
+            messages.success(request, msg)
         except ValueError as error:
             messages.error(f"Unable to add dashboard to Grafana: {error}")
 
-    return redirect("/gfconfig")
+    return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
 class GFConfigView(TemplateView):
@@ -102,57 +173,9 @@ class GFConfigView(TemplateView):
         current_configs = GFConfig.objects.all().order_by("id")
 
         # Initialize a GFConfig Form
-        config_form = GFConfigForm()
-
-        # Prepare an array of dicts with details for each GFConfig (GFConfig object,
-        # list of dashboards/forms
-        configs = []
-        for config in current_configs:
-            config_info = dict()
-            config_info["config"] = config
-            # Create Grafana class to handle this GF instance
-            grafana = Grafana(config)
-            # Get an array of all dashboards
-            current_dashboards = grafana.get_all_dashboards()
-            # Assemble a list of dicts w/: url, sensors, initialized sensor form,
-            # and dashboard name
-
-            # Retrieve missing events to pass to the context
-            all_events = list(AGEvent.objects.all())
-            existing_events = grafana.get_all_events()
-            missing_events = list(set(all_events) - set(existing_events))
-
-            # Prepare an array of dashboards & their sensors to send to the template
-            dashboards = []
-
-            for dashboard in current_dashboards:
-
-                dashboard_dict = dict()
-
-                # Get all currently used panels to initialize the form
-                existing_sensors = grafana.get_all_sensors(dashboard["title"])
-
-                # Set initial form data so that only existing sensors are checked
-                sensor_form = DashboardSensorPanelsForm(
-                    initial={"sensors": existing_sensors}
-                )
-
-                # Retrieve the URL for this dashboard or ""
-                dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
-                if dashboard_url is None:
-                    dashboard_url = ""
-
-                # Store everything in a list of dicts
-                dashboard_dict["sensor_form"] = sensor_form
-                dashboard_dict["dashboard_url"] = dashboard_url
-                dashboard_dict["sensors"] = AGSensor.objects.all()
-                dashboard_dict["name"] = dashboard["title"]
-
-                dashboards.append(dashboard_dict)
-
-            config_info["dashboards"] = dashboards
-            config_info["missing_events"] = missing_events
-            configs.append(config_info)
+        config_form = GFConfigForm(
+            initial={"gf_name": "Local", "gf_host": "http://localhost:3000"}
+        )
 
         # Pass dashboard data for each GFConfig and a GFConfig form to the template
         """
@@ -172,7 +195,7 @@ class GFConfigView(TemplateView):
             {...}
         ]
         """
-        context = {"config_form": config_form, "configs": configs}
+        context = {"config_form": config_form, "configs": current_configs}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -198,7 +221,7 @@ class GFConfigView(TemplateView):
 
             try:
                 grafana.validate_credentials()
-                config_data.gf_current = True
+                config_data.gf_current = True  # Deprecated
                 # Only save the config if credentials were validated
                 config_data.save()
 
@@ -218,50 +241,7 @@ class GFConfigView(TemplateView):
             # list of dashboards/forms
             # Retrieve all available GFConfigs
             current_configs = GFConfig.objects.all().order_by("id")
-            configs = []
-            for config in current_configs:
-                config_info = dict()
-                config_info["config"] = config
-                # Create Grafana class to handle this GF instance
-                grafana = Grafana(config)
-                # Get an array of all dashboards
-                current_dashboards = grafana.get_all_dashboards()
-                # Assemble a list of dicts w/: url, sensors, initialized sensor form,
-                # and dashboard name
 
-                # Prepare an array of dashboards & their sensors to send to the template
-                dashboards = []
-
-                for dashboard in current_dashboards:
-
-                    dashboard_dict = dict()
-
-                    # Get all currently used panels to initialize the form
-                    existing_sensors = grafana.get_all_sensors(dashboard["title"])
-
-                    # Set initial form data so that only existing sensors are checked
-                    sensor_form = DashboardSensorPanelsForm(
-                        initial={"sensors": existing_sensors}
-                    )
-
-                    # Retrieve the URL for this dashboard or ""
-                    dashboard_url = grafana.get_dashboard_url_by_name(
-                        dashboard["title"]
-                    )
-                    if dashboard_url is None:
-                        dashboard_url = ""
-
-                    # Store everything in a list of dicts
-                    dashboard_dict["sensor_form"] = sensor_form
-                    dashboard_dict["dashboard_url"] = dashboard_url
-                    dashboard_dict["sensors"] = AGSensor.objects.all()
-                    dashboard_dict["name"] = dashboard["title"]
-
-                    dashboards.append(dashboard_dict)
-
-                config_info["dashboards"] = dashboards
-                configs.append(config_info)
-
-            config_form = GFConfigForm(request.POST)
-            context = {"config_form": config_form, "configs": configs}
+            config_form = GFConfigForm()
+            context = {"config_form": config_form, "configs": current_configs}
             return render(request, self.template_name, context)
