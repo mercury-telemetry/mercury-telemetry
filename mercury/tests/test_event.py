@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType, AGMeasurement
+from ag_data.models import AGEvent, AGVenue, AGSensor, AGSensorType, AGMeasurement, AGActiveEvent
 import datetime
 
 
@@ -358,6 +358,7 @@ class TestEventView(TestCase):
             reverse(self.event_activate_url, kwargs={"event_uuid": event.uuid})
         )
 
+        self.assertEqual(AGActiveEvent.objects.first().agevent, event)
         self.assertEqual(302, response.status_code)
 
     def test_deactivate_event(self):
@@ -373,4 +374,5 @@ class TestEventView(TestCase):
             reverse(self.event_deactivate_url, kwargs={"event_uuid": event.uuid})
         )
 
+        self.assertEqual(AGActiveEvent.objects.first(), None)
         self.assertEqual(302, response.status_code)
