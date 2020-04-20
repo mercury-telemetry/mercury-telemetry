@@ -16,11 +16,13 @@ sense.clear()
 
 # initilaize time of last sent temperature
 fmt = "%Y-%m-%d %H:%M:%S"
-time_of_last_sent_temperature = datetime.now().strftime(fmt)
-time_of_last_sent_pressure = datetime.now().strftime(fmt)
-time_of_last_sent_humidity = datetime.now().strftime(fmt)
-time_of_last_sent_acceleration = datetime.now().strftime(fmt)
-time_of_last_sent_orientation = datetime.now().strftime(fmt)
+time_of_last_sent_temperature = (
+    time_of_last_sent_pressure
+) = (
+    time_of_last_sent_humidity
+) = (
+    time_of_last_sent_acceleration
+) = time_of_last_sent_orientation = datetime.now().strftime(fmt)
 
 datarate_temperature = os.environ["DATA_RATE_TEMPERATURE"]
 datarate_pressure = os.environ["DATA_RATE_PRESSURE"]
