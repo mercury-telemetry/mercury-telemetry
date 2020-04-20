@@ -1,3 +1,82 @@
+$(document).ready(function () {
+
+  // create an event handler for each sensor form
+  $('form[name="sensor_edit_form"]').submit(function(event) {
+    event.preventDefault();
+
+    var sensor_id = event.target.elements["sensor-id"].value;
+    var sensor_name = event.target.elements["sensor-name"].value;
+
+    // sensor_data_exists takes a sensor id as a parameter and returns a JSON object
+    // with the element "status", which is True if data exists for this sensor,
+    // and False otherwise.
+    $.ajax({
+        url: `/sensor_data_exists/${sensor_id}`,
+        type: "GET",
+        dataType: "json",
+
+        success: function(response) {
+
+            var data = response;
+
+            if (data["status"] == true) {
+                runUpdateWarning(event, sensor_name);
+
+            } else {
+                event.target.submit();
+            }
+        },
+
+        // run the update warning even if ajax fails (prevent user from missing the warning)
+        error: function() {
+            runUpdateWarning(event, sensor_name);
+        }
+    });
+  });
+});
+
+function runUpdateWarning(event, sensor_name){
+    var warning_id = `${sensor_name}-update-warning`;
+    warning = document.getElementById(warning_id);
+
+    // hide update button
+    var update_button_id = `${sensor_name}-submit-button`;
+    var delete_button_id = `${sensor_name}-delete-button`;
+    var cancel_button_id = `${sensor_name}-cancel-button`;
+    console.log(update_button_id);
+    update_button = document.getElementById(update_button_id);
+    delete_button = document.getElementById(delete_button_id);
+    cancel_button = document.getElementById(cancel_button_id);
+
+    update_button.style.display = "none";
+    delete_button.style.display = "none";
+    cancel_button.style.display = "none";
+
+    // show update warning
+    warning.style.display = "block";
+
+    // attach event handlers to update warning buttons
+    $("#update-continue").click(function(){
+        // submit the form
+        event.target.submit();
+    });
+    $("#update-cancel").click(function(){
+        // hide warning
+        warning.style.display = "none";
+        update_button.style.display = "block";
+        delete_button.style.display = "block";
+        cancel_button.style.display = "block";
+
+
+        // show update button
+        update_button = "block";
+    });
+    $("#update-export").click(function(){
+        // redirect
+        window.location.replace(Urls["mercury:events"]());
+    });
+}
+
 function addRow(table_name){
     var table = document.getElementById(table_name);
     var rowCount = table.rows.length;

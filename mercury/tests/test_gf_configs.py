@@ -6,17 +6,9 @@ from mercury.grafanaAPI.grafana_api import Grafana
 import os
 import datetime
 
-# default host and token, use this if user did not provide anything
-HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
-# this token has Admin level permissions
-TOKEN = (
-    "eyJrIjoic1JMTXFuVUl6dDRKbVhjRWVRNzVHSTQyN3RRNzdQcFIiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
-)
 
-# this token has viewer level permissions
-VIEWER_TOKEN = (
-    "eyJrIjoiQnJDU01tVHdPN1Q5UXNiMm9ZUXB0WEw4U25haW5EejgiLCJuIjoidmlld2VyIiwiaWQiOjF9"
-)
+# grafana host with basic auth
+HOST = "http://admin:admin@localhost:3000"
 
 
 class TestGFConfig(TestCase):
@@ -64,6 +56,10 @@ class TestGFConfig(TestCase):
         return event
 
     def setUp(self):
+        # api keys with admin and viewer level permissions
+        self.ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
+        self.VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
@@ -80,7 +76,7 @@ class TestGFConfig(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         self.gfconfig = GFConfig.objects.create(
-            gf_name="Test", gf_host=HOST, gf_token=TOKEN, gf_current=True
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
         )
         self.gfconfig.save()
         # Create fresh grafana object
@@ -156,7 +152,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": TOKEN,
+                "gf_token": self.ADMIN,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -165,7 +161,7 @@ class TestGFConfig(TestCase):
         self.assertTrue(gfconfig.count() > 0)
         self.assertTrue(gfconfig[0].gf_name == "Test Grafana Instance")
         self.assertTrue(gfconfig[0].gf_host == HOST)
-        self.assertTrue(gfconfig[0].gf_token == TOKEN)
+        self.assertTrue(gfconfig[0].gf_token == self.ADMIN)
 
     def test_config_post_fail_invalid_api_key(self):
         response = self.client.post(
@@ -190,7 +186,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": VIEWER_TOKEN,
+                "gf_token": self.VIEWER,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -206,7 +202,7 @@ class TestGFConfig(TestCase):
         GFConfig.objects.all().delete()
 
         gfconfig = GFConfig.objects.create(
-            gf_name="Test Grafana Instance", gf_host=HOST, gf_token=TOKEN
+            gf_name="Test Grafana Instance", gf_host=HOST, gf_token=self.ADMIN
         )
         gfconfig.save()
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance").first()
@@ -219,7 +215,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": TOKEN,
+                "gf_token": self.ADMIN,
             },
         )
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
@@ -232,7 +228,7 @@ class TestGFConfig(TestCase):
         gfconfig = GFConfig.objects.create(
             gf_name="Test Grafana Instance",
             gf_host=HOST,
-            gf_token=TOKEN,
+            gf_token=self.ADMIN,
             gf_current=False,
         )
         gfconfig.save()
@@ -253,7 +249,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": TOKEN,
+                "gf_token": self.ADMIN,
             },
         )
         self.assertEqual(200, response.status_code)
@@ -284,7 +280,7 @@ class TestGFConfig(TestCase):
                 "submit": "",
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
-                "gf_token": TOKEN,
+                "gf_token": self.ADMIN,
             },
         )
         self.assertEqual(200, response.status_code)
