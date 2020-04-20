@@ -62,7 +62,7 @@ class TestEventView(TestCase):
     def create_sensor(self):
 
         sensor_type = AGSensorType.objects.create(
-            name="test", format={"lefts": {"data_type": "test", "unit": "test", } ,},
+            name="test", format={"lefts": {"data_type": "test", "unit": "test", }, },
         )
 
         sensor = AGSensor.objects.create(name="test", type_id=sensor_type,)
