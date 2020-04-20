@@ -43,7 +43,7 @@ def configure_dashboard(request, gf_id=None):
         current_dashboards = grafana.get_all_dashboards()
 
     except ValueError as error:
-        messages.error(request, f"Cannot to connect to Grafana: {error}")
+        messages.error(request, f"Cannot connect to Grafana: {error}")
         existing_events = []
         current_dashboards = []
 

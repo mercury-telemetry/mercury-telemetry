@@ -14,7 +14,7 @@ DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
 
 
 class Grafana:
-    def __init__(self, gf_config=None):
+    def __init__(self, gf_config):
         """
 
         Initialize parameters needed to use the API: hostname, admin-level API token,
@@ -29,21 +29,14 @@ class Grafana:
         :param host: Grafana hostname, e.g. https://dbc291.grafana.net
         :param token: API key with admin-level permissions
         """
-        if gf_config:
-            self.hostname = gf_config.gf_host
-            self.api_token = gf_config.gf_token
-            self.database_hostname = gf_config.gf_db_host
-            self.database_name = gf_config.gf_db_name
-            self.database_username = gf_config.gf_db_username
-            self.database_password = gf_config.gf_db_pw
-        else:
-            # for test purposes
-            self.hostname = HOST
-            self.api_token = TOKEN
-            self.database_hostname = DB_HOSTNAME
-            self.database_name = DB_NAME
-            self.database_username = DB_USERNAME
-            self.database_password = DB_PASSWORD
+
+        # Initialize Grafana instance from GFConfig
+        self.hostname = gf_config.gf_host
+        self.api_token = gf_config.gf_token
+        self.database_hostname = gf_config.gf_db_host
+        self.database_name = gf_config.gf_db_name
+        self.database_username = gf_config.gf_db_username
+        self.database_password = gf_config.gf_db_pw
 
         # Grafana API endpoints constructed with hostname + url
         self.endpoints = {
