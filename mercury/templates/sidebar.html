@@ -24,20 +24,6 @@
     {% endif %}
     <br><br>
 
-    <!-- Pit Crew Display -->
-    {% if request.path == "/pitcrew/" %}
-        <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons">insert_chart_outlined</i>
-            <br>Pit Crew Display
-        </div>
-    {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:pitcrew' %}">
-            <i class="material-icons">insert_chart_outlined</i>
-            <br>Pit Crew Display
-        </a>
-    {% endif %}
-    <br><br>
-
     <!-- Manage Events -->
     {% if request.path == "/events/" %}
         <div class="grafana-current-tab sidebar-btn">
