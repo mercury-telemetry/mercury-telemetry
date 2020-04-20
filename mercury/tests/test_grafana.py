@@ -132,10 +132,12 @@ class TestGrafana(TestCase):
 
         # Create random name to be used for event and datasource
         self.event_name = self.grafana.generate_random_string(10)
+        self.updated_event_name = self.event_name + " Day Two"
         self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
         self.grafana.delete_dashboard_by_name(self.event_name)
+        self.grafana.delete_dashboard_by_name(self.updated_event_name)
         self.grafana.delete_datasource_by_name(self.datasource_name)
 
     def tearDown(self):
@@ -230,6 +232,11 @@ class TestGrafana(TestCase):
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_dashboard(self.event_name)
+
+    def test_create_grafana_dashboard_fail_empty_title(self):
+        expected_message = "Dashboard title cannot be empty"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_dashboard("")
 
     def test_validate_credentials_success(self):
         # should return True if credentials are valid
@@ -848,7 +855,7 @@ class TestGrafana(TestCase):
 
         event = self.create_venue_and_event(self.event_name)
 
-        updated_event_name = self.event_name + " Day Two"
+        updated_event_name = self.updated_event_name
 
         venue = AGVenue.objects.first()
 
