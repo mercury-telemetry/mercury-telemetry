@@ -65,12 +65,43 @@ and apply as needed. Do not apply universally */
     box-sizing: content-box;
     height: 0;
     overflow: visible;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
+
 
   h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
     margin-bottom: 0.5rem;
     text-align: center;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.75rem;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+  }
+
+  h5 {
+    font-size: 1.25rem;
+  }
+
+  h6 {
+    font-size: 1rem;
   }
 
   p {
@@ -125,9 +156,7 @@ and apply as needed. Do not apply universally */
     font-weight: bolder;
   }
 
-  small {
-    font-size: 80%;
-  }
+
 
   sub,
   sup {
@@ -203,11 +232,6 @@ a {
     border-style: none;
   }
 
-  svg {
-    overflow: hidden;
-    vertical-align: middle;
-  }
-
   table{
     border-collapse: collapse;
     border: 1px solid black;
@@ -232,13 +256,6 @@ a {
     text-align: center;
   }
 
-  caption {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    color: #858796;
-    text-align: left;
-    caption-side: bottom;
-  }
 
   label {
     display: inline-block;
@@ -278,6 +295,12 @@ a {
   select {
     word-wrap: normal;
   }
+
+  textarea {
+    overflow: auto;
+    resize: vertical;
+  }
+
 
 
 /*asterisk denotes CSS wildcard selector - This should be checked and maybe removed */
@@ -355,6 +378,19 @@ identical to the selector html, except that its specificity is higher. */
     --font-family-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.gfconfig-text-align {
+    text-align:left;
+    float: left;
+    width: 50%
+}
 
 .hide-display {
   display: none;
@@ -727,6 +763,10 @@ border: none;
 
 
 /***************** RANDOM ATTRIBUTE SELECTORS I GUESS *************/
+[hidden] {
+  display: none !important;
+  }
+
 [name="event_name"] {
 width: 70%;
 }
@@ -824,16 +864,7 @@ width: 70%;
     outline: 0 !important;
   }
 
-  hr {
-    box-sizing: content-box;
-    height: 0;
-    overflow: visible;
-  }
 
-  h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
 
   p {
     margin-top: 0;
@@ -887,9 +918,7 @@ width: 70%;
     font-weight: bolder;
   }
 
-  small {
-    font-size: 80%;
-  }
+
 
   sub,
   sup {
@@ -1216,33 +1245,9 @@ a {
     -webkit-appearance: listbox;
   }
 
-  textarea {
-    overflow: auto;
-    resize: vertical;
-  }
 
-  fieldset {
-    min-width: 0;
-    padding: 0;
-    margin: 0;
-    border: 0;
-  }
 
-  legend {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-    margin-bottom: .5rem;
-    font-size: 1.5rem;
-    line-height: inherit;
-    color: inherit;
-    white-space: normal;
-  }
 
-  progress {
-    vertical-align: baseline;
-  }
 
   [type="number"]::-webkit-inner-spin-button,
   [type="number"]::-webkit-outer-spin-button {
@@ -1263,82 +1268,6 @@ a {
     -webkit-appearance: button;
   }
 
-  output {
-    display: inline-block;
-  }
-
-  summary {
-    display: list-item;
-    cursor: pointer;
-  }
-
-  template {
-    display: none;
-  }
-
-  [hidden] {
-    display: none !important;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    margin-bottom: 0.5rem;
-    font-weight: 400;
-    line-height: 1.2;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  h2 {
-    font-size: 2rem;
-  }
-
-  h3 {
-    font-size: 1.75rem;
-  }
-
-  h4 {
-    font-size: 1.5rem;
-  }
-
-  h5 {
-    font-size: 1.25rem;
-  }
-
-  h6 {
-    font-size: 1rem;
-  }
-
-  hr {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    border: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  small,
-  .small {
-    font-size: 80%;
-    font-weight: 400;
-  }
-
-  mark,
-  .mark {
-    padding: 0.2em;
-    background-color: #fcf8e3;
-  }
 
 
-.center-image {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-}
-
-.gfconfig-text-align {
-    text-align:left;
-    float: left;
-    width: 50%
-}
+/*mark, small, template, summary, output, progress, legend, svg*/
