@@ -1,6 +1,6 @@
 import os
-from datetime import datetime
 from hardware.Utils.utils import get_logger, get_sensor_keys
+from utils import date_str_with_current_timezone
 
 # Conditional import for sense hat and emulator
 try:
@@ -57,7 +57,7 @@ class SensePi:
                 data["values"] = {}
                 data["values"][key] = sensor_data[key]
 
-            data["date"] = str(datetime.now())
+            data["date"] = date_str_with_current_timezone()
         return data
 
     def get_all(self):

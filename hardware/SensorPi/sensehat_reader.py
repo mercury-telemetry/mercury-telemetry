@@ -1,6 +1,7 @@
 from sense_hat import SenseHat
 import json
-from datetime import datetime
+from utils import date_str_with_current_timezone
+
 
 TEMPERATURE_ID = 6
 PRESSURE_ID = 7
@@ -12,7 +13,7 @@ ORIENTATION_ID = 9
 def temperature():
     sense = SenseHat()
     temperature = sense.get_temperature()
-    date = str(datetime.now())
+    date = date_str_with_current_timezone()
     data = {}
     data["sensor_id"] = TEMPERATURE_ID
     data["values"] = {"temperature": temperature}
@@ -24,7 +25,7 @@ def temperature():
 def pressure():
     sense = SenseHat()
     pressure = sense.get_pressure()
-    date = str(datetime.now())
+    date = date_str_with_current_timezone()
     data = {}
     data["sensor_id"] = PRESSURE_ID
     data["values"] = {"pressure": pressure}
@@ -36,7 +37,7 @@ def pressure():
 def humidity():
     sense = SenseHat()
     humidity = sense.get_humidity()
-    date = str(datetime.now())
+    date = date_str_with_current_timezone()
     data = {}
     data["sensor_id"] = HUMIDITY_ID
     data["values"] = {"humidity": humidity}
@@ -48,7 +49,7 @@ def humidity():
 def acceleration():
     sense = SenseHat()
     acceleration = sense.get_accelerometer_raw()
-    date = str(datetime.now())
+    date = date_str_with_current_timezone()
     data = {}
     data["sensor_id"] = ACCELERATION_ID
     data["values"] = {
@@ -64,7 +65,7 @@ def acceleration():
 def orientation():
     sense = SenseHat()
     orientation = sense.get_orientation()
-    date = str(datetime.now())
+    date = date_str_with_current_timezone()
     data = {}
     data["sensor_id"] = ORIENTATION_ID
     data["values"] = {
