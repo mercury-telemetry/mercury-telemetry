@@ -8,19 +8,10 @@ import os
 import datetime
 
 
-# default host and token, use this if user did not provide anything
-HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
+# grafana host with basic auth
+HOST = "http://admin:admin@localhost:3000"
 
-# this token has Admin level permissions
-# tokens for mercurytests
-TOKEN = (
-    "eyJrIjoic1JMTXFuVUl6dDRKbVhjRWVRNzVHSTQyN3RRNzdQcFIiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
-)
-
-# this token has viewer level permissions
-VIEWER_TOKEN = (
-    "eyJrIjoiQnJDU01tVHdPN1Q5UXNiMm9ZUXB0WEw4U25haW5EejgiLCJuIjoidmlld2VyIiwiaWQiOjF9"
-)
+# db credentials
 DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
 DB_NAME = "d76k4515q6qv"
 DB_USERNAME = "qvqhuplbiufdyq"
@@ -87,7 +78,7 @@ class TestGrafana(TestCase):
     def create_gfconfig(self):
         config = GFConfig.objects.create(
             gf_host=HOST,
-            gf_token=TOKEN,
+            gf_token=self.ADMIN,
             gf_db_host=DB_HOSTNAME,
             gf_db_name=DB_NAME,
             gf_db_username=DB_USERNAME,
@@ -118,6 +109,10 @@ class TestGrafana(TestCase):
         return event
 
     def setUp(self):
+        # api keys with admin and viewer level permissions
+        self.ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
+        self.VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
@@ -221,7 +216,7 @@ class TestGrafana(TestCase):
             self.grafana.create_dashboard(self.event_name)
 
     def test_create_grafana_dashboard_fail_permissions(self):
-        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
+        self.grafana.api_token = self.VIEWER  # API token with viewer permissions
 
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
@@ -239,7 +234,7 @@ class TestGrafana(TestCase):
             self.grafana.validate_credentials()
 
     def test_validate_credentials_fail_permissions(self):
-        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
+        self.grafana.api_token = self.VIEWER  # API token with viewer permissions
 
         expected_message = (
             "Grafana API validation failed: Access denied - " "check API permissions"
@@ -486,7 +481,7 @@ class TestGrafana(TestCase):
             self.grafana.create_postgres_datasource(self.datasource_name)
 
     def test_create_datasource_fail_permissions(self):
-        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
+        self.grafana.api_token = self.VIEWER  # API token with viewer permissions
 
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
