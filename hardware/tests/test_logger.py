@@ -5,7 +5,7 @@ from logging import INFO, ERROR, DEBUG
 from unittest import mock
 import os
 
-from ..Utils.logger import Logger
+from hardware.Utils.logger import Logger
 
 
 class LoggerTests(SimpleTestCase):

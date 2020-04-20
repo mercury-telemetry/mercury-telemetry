@@ -5,7 +5,7 @@ import mock
 from django.test import TestCase
 from rest_framework.reverse import reverse
 
-from ag_data.models import AGEvent, AGVenue
+from ag_data.models import AGEvent, AGVenue, AGActiveEvent
 
 
 def fake_venue():
@@ -74,6 +74,27 @@ class TestMeasurement(TestCase):
         response = self.post_data(data)
         self.assertEqual(400, response.status_code)
         self.assertTrue("object does not exist." in str(response.content))
+
+    def test_Measurement_POST_NO_Active_Event(self):
+        data = self.test_measurement_data.copy()
+        response = self.post_data(data)
+        self.assertEqual(404, response.status_code)
+        self.assertTrue("No active events" in str(response.content))
+
+    @mock.patch("ag_data.serializers.AGMeasurementSerializer.is_valid", fake_valid)
+    @mock.patch("ag_data.serializers.AGMeasurementSerializer.save", fake_valid)
+    @mock.patch("ag_data.serializers.AGMeasurementSerializer.data", "")
+    def test_Measurement_POST_Active_Event(self):
+        venue = fake_venue()
+        venue.save()
+        event = fake_event()
+        event.save()
+        active_event = AGActiveEvent.objects.create(agevent=event)
+        active_event.save()
+
+        data = self.test_measurement_data.copy()
+        response = self.post_data(data)
+        self.assertEqual(201, response.status_code)
 
     @mock.patch("mercury.views.measurement.fetch_event", fake_event)
     @mock.patch("ag_data.serializers.AGMeasurementSerializer.is_valid", fake_valid)
