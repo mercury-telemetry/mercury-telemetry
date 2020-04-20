@@ -170,6 +170,14 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"]["uid"], uid)
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
 
+    def test_get_dashboard_url_success(self):
+        self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(self.grafana.get_dashboard_url_by_name(self.event_name))
+
+    def test_get_dashboard_url_none(self):
+        self.assertIsNone(self.grafana.get_dashboard_url_by_name(self.event_name +
+                                                                 "foo"))
+
     def test_get_dashboard_with_uid_fail(self):
         # Create a random UID to search for
         uid = self.grafana.generate_random_string(10)
