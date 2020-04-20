@@ -5,18 +5,10 @@ import string
 import random
 from ag_data.models import AGSensor, AGEvent
 
-TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
-HOST = "https://dbc291.grafana.net"
-DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
-DB_NAME = "d76k4515q6qv"
-DB_USERNAME = "qvqhuplbiufdyq"
-DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
-
 
 class Grafana:
     def __init__(self, gf_config):
         """
-
         Initialize parameters needed to use the API: hostname, admin-level API token,
         and the following postgres credentials:
         - hostname
