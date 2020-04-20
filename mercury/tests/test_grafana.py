@@ -235,6 +235,21 @@ class TestGrafana(TestCase):
         # should return True if credentials are valid
         self.assertTrue(self.grafana.validate_credentials())
 
+    def test_update_dashboard_title_success(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(self.event_name)
+        new_name = event.name + " foo"
+        self.assertTrue(self.grafana.update_dashboard_title(event, new_name))
+
+    def test_update_dashboard_title_fail_same_name(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(self.event_name)
+        self.assertFalse(self.grafana.update_dashboard_title(event, event.name))
+
+    def test_update_dashboard_title_fail_no_dashboard(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.assertFalse(self.grafana.update_dashboard_title(event, event.name))
+
     def test_validate_credentials_fail_authorization(self):
         self.grafana.api_token = "abcde"  # invalid API token
 
