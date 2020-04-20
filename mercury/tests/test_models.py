@@ -15,6 +15,9 @@ def create_simulated_data_objects():
 
 
 class TestSensorModels(TestCase):
+    def setUp(self):
+        create_simulated_data_objects()
+
     def test_event_code_access(self):
         foo = EventCodeAccess.objects.get(event_code=TEST_EVENT_CODE, enabled=False)
         self.assertEqual(TEST_EVENT_CODE, foo.event_code)
