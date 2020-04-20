@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from ..Utils.utils import get_logger
+from hardware.Utils.utils import get_logger
 
 log = get_logger("LAN_SERVER_LOG_FILE")
 
@@ -42,7 +42,9 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
 
-def run(server_class=HTTPServer, handler_class=Server, log_file_name=None, port=None):
+def runServer(
+    server_class=HTTPServer, handler_class=Server, log_file_name=None, port=None
+):
     global log
     log = (
         get_logger("LAN_SERVER_LOG_FILE")

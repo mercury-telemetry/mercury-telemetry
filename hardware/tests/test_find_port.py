@@ -4,7 +4,7 @@ from unittest import mock
 from serial.tools.list_ports_common import ListPortInfo
 from argparse import Namespace
 
-from ..CommunicationsPi.find_port import is_usb_serial, extra_info, get_port
+from hardware.CommunicationsPi.find_port import is_usb_serial, extra_info, get_port
 
 
 class IsUsbSerialTests(SimpleTestCase):
