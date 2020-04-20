@@ -1,7 +1,14 @@
 from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
-from ag_data.models import AGEvent, AGVenue
+from ag_data.models import (
+    AGEvent,
+    AGVenue,
+    AGSensor,
+    AGSensorType,
+    AGMeasurement,
+    AGActiveEvent,
+)
 import datetime
 
 
@@ -31,6 +38,13 @@ class TestEventView(TestCase):
         "longitude": 200,
     }
 
+    test_venue_data_update = {
+        "name": "Venue 2",
+        "description": "bar",
+        "latitude": 200,
+        "longitude": 100,
+    }
+
     # Returns event
     def create_venue_and_event(self, event_name):
         venue = AGVenue.objects.create(
@@ -51,11 +65,39 @@ class TestEventView(TestCase):
 
         return event
 
+    # Returns sensor
+    def create_sensor(self):
+
+        sensor_type = AGSensorType.objects.create(
+            name="test",
+            format={"lefts": {"data_type": "test", "unit": "test",},},  # noqa
+        )
+
+        sensor = AGSensor.objects.create(name="test", type_id=sensor_type,)
+
+        return sensor
+
+    # Returns measurement
+    def create_measurement(self, event, sensor):
+
+        measurement = AGMeasurement.objects.create(
+            event_uuid=event, sensor_id=sensor, value={"lefts": 30},
+        )
+
+        return measurement
+
     def setUp(self):
         self.login_url = "mercury:EventAccess"
         self.event_url = "mercury:events"
         self.event_delete_url = "mercury:delete_event"
         self.event_update_url = "mercury:update_event"
+        self.venue_update_url = "mercury:update_venue"
+        self.event_activate_url = "mercury:activate_event"
+        self.event_deactivate_url = "mercury:deactivate_event"
+        self.event_export_csv_url = "mercury:export_csv"
+        self.event_export_all_csv_url = "mercury:export_all_csv"
+        self.event_export_json_url = "mercury:export_json"
+        self.event_export_all_json_url = "mercury:export_all_json"
 
         # Create random event name
         self.event_name = "test"
@@ -223,3 +265,124 @@ class TestEventView(TestCase):
         self.assertEquals(event.name, self.test_event_data_update["name"])
         self.assertEquals(event.venue_uuid.name, venue_name_update)
         self.assertEquals(event.description, self.test_event_data_update["description"])
+
+    def test_update_venue(self):
+
+        venue_name_update = "test name"
+        # Create a venue
+        venue = AGVenue.objects.create(
+            name=venue_name_update,
+            description=self.test_venue_data["description"],
+            latitude=self.test_venue_data["latitude"],
+            longitude=self.test_venue_data["longitude"],
+        )
+        venue.save()
+
+        # Confirm that venue was created
+        self.assertEquals(AGVenue.objects.all().count(), 1)
+
+        # Update the event
+        response = self.client.post(
+            reverse(self.venue_update_url, kwargs={"venue_uuid": venue.uuid}),
+            data={
+                "name": self.test_venue_data_update["name"],
+                "description": self.test_venue_data_update["description"],
+                "latitude": self.test_venue_data_update["latitude"],
+                "longitude": self.test_venue_data_update["longitude"],
+            },
+        )
+
+        self.assertEqual(302, response.status_code)
+
+        # Confirm that venue was updated
+        venue = AGVenue.objects.all().first()
+
+        self.assertEquals(venue.name, self.test_venue_data_update["name"])
+        self.assertEquals(venue.description, self.test_venue_data_update["description"])
+        self.assertEquals(venue.latitude, self.test_venue_data_update["latitude"])
+        self.assertEquals(venue.longitude, self.test_venue_data_update["longitude"])
+
+    def test_export_all_csv(self):
+        event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        self.create_measurement(event, sensor)
+
+        response = self.client.post(reverse(self.event_export_all_csv_url))
+
+        self.assertTrue("filename=all_events.csv" in response["Content-Disposition"])
+        self.assertEqual(200, response.status_code)
+
+    def test_export_all_json(self):
+        event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        self.create_measurement(event, sensor)
+
+        response = self.client.post(reverse(self.event_export_all_json_url))
+
+        # self.assertTrue("filename=events.zip" in response["Content-Disposition"])
+        self.assertEqual(200, response.status_code)
+
+    # def test_export_csv(self):
+    #     event = self.create_venue_and_event(self.event_name)
+    #     sensor = self.create_sensor()
+    #     measurement = self.create_measurement(event, sensor)
+
+    #     response = self.client.post(
+    #         reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
+    #     )
+
+    #     self.assertEqual(200, response.status_code)
+
+    def test_export_json(self):
+        event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        self.create_measurement(event, sensor)
+
+        response = self.client.post(
+            reverse(self.event_export_json_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertTrue('filename="test".json' in response["Content-Disposition"])
+        self.assertEqual(200, response.status_code)
+
+    def test_export_no_measurements(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(302, response.status_code)
+
+    def test_export_all_no_measurements(self):
+        self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(reverse(self.event_export_all_csv_url))
+
+        self.assertEqual(200, response.status_code)
+
+    def test_activate_event(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_activate_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(AGActiveEvent.objects.first().agevent, event)
+        self.assertEqual(302, response.status_code)
+
+    def test_deactivate_event(self):
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.post(
+            reverse(self.event_activate_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(302, response.status_code)
+
+        response = self.client.post(
+            reverse(self.event_deactivate_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEqual(AGActiveEvent.objects.first(), None)
+        self.assertEqual(302, response.status_code)
