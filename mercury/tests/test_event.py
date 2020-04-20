@@ -309,6 +309,7 @@ class TestEventView(TestCase):
 
         response = self.client.post(reverse(self.event_export_all_csv_url))
 
+        self.assertTrue("filename=all_events.csv" in response["Content-Disposition"])
         self.assertEqual(200, response.status_code)
 
     def test_export_all_json(self):
@@ -318,6 +319,7 @@ class TestEventView(TestCase):
 
         response = self.client.post(reverse(self.event_export_all_json_url))
 
+        # self.assertTrue("filename=events.zip" in response["Content-Disposition"])
         self.assertEqual(200, response.status_code)
 
     # def test_export_csv(self):
@@ -340,6 +342,7 @@ class TestEventView(TestCase):
             reverse(self.event_export_json_url, kwargs={"event_uuid": event.uuid})
         )
 
+        self.assertTrue('filename="test".json' in response["Content-Disposition"])
         self.assertEqual(200, response.status_code)
 
     def test_export_no_measurements(self):
