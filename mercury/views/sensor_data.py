@@ -1,6 +1,5 @@
 import logging
-import json
-from django.http import HttpResponse
+from django.http import JsonResponse
 from ag_data.models import AGMeasurement
 
 log = logging.getLogger(__name__)
@@ -23,4 +22,4 @@ def get(request, sensor_id=None):
         True if AGMeasurement.objects.filter(sensor_id=sensor_id).count() > 0 else False
     )
 
-    return HttpResponse(json.dumps(response))
+    return JsonResponse(response)

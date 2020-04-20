@@ -170,6 +170,15 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"]["uid"], uid)
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
 
+    def test_get_dashboard_url_success(self):
+        self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(self.grafana.get_dashboard_url_by_name(self.event_name))
+
+    def test_get_dashboard_url_none(self):
+        self.assertIsNone(
+            self.grafana.get_dashboard_url_by_name(self.event_name + "foo")
+        )
+
     def test_get_dashboard_with_uid_fail(self):
         # Create a random UID to search for
         uid = self.grafana.generate_random_string(10)
@@ -225,6 +234,21 @@ class TestGrafana(TestCase):
     def test_validate_credentials_success(self):
         # should return True if credentials are valid
         self.assertTrue(self.grafana.validate_credentials())
+
+    def test_update_dashboard_title_success(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(self.event_name)
+        new_name = event.name + " foo"
+        self.assertTrue(self.grafana.update_dashboard_title(event, new_name))
+
+    def test_update_dashboard_title_fail_same_name(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(self.event_name)
+        self.assertFalse(self.grafana.update_dashboard_title(event, event.name))
+
+    def test_update_dashboard_title_fail_no_dashboard(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.assertFalse(self.grafana.update_dashboard_title(event, event.name))
 
     def test_validate_credentials_fail_authorization(self):
         self.grafana.api_token = "abcde"  # invalid API token
@@ -506,6 +530,60 @@ class TestGrafana(TestCase):
         # the new field name is in the query)
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
 
+        self.assertIn(
+            field_names_updated[0],
+            dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
+        )
+
+    def test_update_sensor_name_and_type_updates_panel_title_and_query(self):
+        # Create a dashboard, confirm it was created
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create sensor and sensor type
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_name.lower(),
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name.lower(), type_id=sensor_type
+        )
+        sensor.save()
+
+        # Create grafana sensor panel
+        self.grafana.add_panel(sensor, event)
+
+        # New fields
+        updated_sensor_name = "bar"
+        field_names_updated = ["foo"]
+        data_types_updated = ["float"]
+        units_updated = ["km/h"]
+
+        # Post edited sensor type
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"].lower(),
+                "sensor-name-updated": updated_sensor_name,
+                "field-names": field_names_updated,
+                "data-types": data_types_updated,
+                "units": units_updated,
+            },
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        # Confirm title and query
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], updated_sensor_name,
+        )
         self.assertIn(
             field_names_updated[0],
             dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
