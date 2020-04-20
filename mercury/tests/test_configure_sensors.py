@@ -34,6 +34,14 @@ class TestConfigureSensorView(TestCase):
         "units": [unit_1, unit_2],
     }
 
+    submit_new_data = {
+        "submit_new_sensor": "",
+        "sensor-name": test_sensor["name"],
+        "field-names": test_sensor["field-names"],
+        "data-types": test_sensor["data-types"],
+        "units": test_sensor["units"],
+    }
+
     def setUp(self):
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
@@ -61,14 +69,7 @@ class TestConfigureSensorView(TestCase):
 
         # POST sensor data
         response = self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=self.submit_new_data,
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -81,14 +82,7 @@ class TestConfigureSensorView(TestCase):
 
         # POST good sensor data
         self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=self.submit_new_data,
         )
 
         # Check that AGSensor & AGSensorType object is created in db with expected params
@@ -121,14 +115,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
         # POST sensor data
         response = self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=self.submit_new_data,
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -157,14 +144,7 @@ class TestConfigureSensorView(TestCase):
         test_sensor_object.save()
         # POST sensor data
         self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=self.submit_new_data,
         )
 
         # Check that AGSensor & AGSensorType objects are not created
@@ -192,14 +172,7 @@ class TestConfigureSensorView(TestCase):
         test_type_object.save()
         # POST sensor data
         response = self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=self.submit_new_data,
         )
 
         # Check that POST redirects to sensor (same page reloads)
@@ -223,14 +196,7 @@ class TestConfigureSensorView(TestCase):
         test_type_object.save()
         # POST sensor data
         self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=self.submit_new_data,
         )
 
         # Check that AGSensor & AGSensorType objects are not created
@@ -247,16 +213,9 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": "",
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
-        )
+        modified_submit = self.submit_new_data.copy()
+        modified_submit["sensor-name"] = ""
+        response = self.client.post(reverse(self.sensor_url), data=modified_submit,)
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
@@ -269,15 +228,11 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
+        modified_submit = self.submit_new_data.copy()
+        modified_submit["sensor-name"] = ""
+
         self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": "",
-                "field-names": self.test_sensor["field-names"],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=modified_submit,
         )
 
         # Check that AGSensor & AGSensorType objects are not created
@@ -294,16 +249,9 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": "",
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
-        )
+        modified_submit = self.submit_new_data.copy()
+        modified_submit["field-names"] = ""
+        response = self.client.post(reverse(self.sensor_url), data=modified_submit,)
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
@@ -316,15 +264,10 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
+        modified_submit = self.submit_new_data.copy()
+        modified_submit["field-names"] = ""
         self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": "",
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
+            reverse(self.sensor_url), data=modified_submit,
         )
 
         # Check that AGSensor & AGSensorType objects are not created
@@ -341,16 +284,9 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        response = self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": [self.field_name_1, self.field_name_1],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
-        )
+        modified_submit = self.submit_new_data.copy()
+        modified_submit["field-names"] = ["test-field", "test-field"]
+        response = self.client.post(reverse(self.sensor_url), data=modified_submit)
 
         # Check that POST redirects to sensor (same page reloads)
         self.assertEqual(200, response.status_code)
@@ -363,16 +299,9 @@ class TestConfigureSensorView(TestCase):
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         # POST sensor data
-        self.client.post(
-            reverse(self.sensor_url),
-            data={
-                "submit_new_sensor": "",
-                "sensor-name": self.test_sensor["name"],
-                "field-names": [self.field_name_1, self.field_name_1],
-                "data-types": self.test_sensor["data-types"],
-                "units": self.test_sensor["units"],
-            },
-        )
+        modified_submit = self.submit_new_data.copy()
+        modified_submit["field-names"] = ["test-field", "test-field"]
+        self.client.post(reverse(self.sensor_url), data=modified_submit)
 
         # Check that AGSensor & AGSensorType objects are not created
         sensors = AGSensor.objects.all()
