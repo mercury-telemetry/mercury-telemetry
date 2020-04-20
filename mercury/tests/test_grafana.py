@@ -233,8 +233,10 @@ class TestGrafana(TestCase):
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_dashboard(self.event_name)
 
-    def test_create_grafana_dashboard_fail_other(self):
-        self.assertEquals(True, False)
+    def test_create_grafana_dashboard_fail_empty_title(self):
+        expected_message = "Dashboard title cannot be empty"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_dashboard("")
 
     def test_validate_credentials_success(self):
         # should return True if credentials are valid
