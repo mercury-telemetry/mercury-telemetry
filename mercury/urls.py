@@ -3,7 +3,6 @@ from .views import (
     views,
     sensor,
     events,
-    pitcrew,
     radioreceiver,
     gf_config,
     measurement,
@@ -50,7 +49,6 @@ urlpatterns = [
     path("events/export/all/json", events.export_all_event, name="export_all_json"),
     path("gps/", gps.CreateGPSView.as_view(), name="gps"),
     path("gpspanels/", gpspanels.CreateGPSPanelView.as_view(), name="gpspanels"),
-    path("pitcrew/", pitcrew.PitCrewView.as_view(), name="pitcrew"),
     path(
         "radioreceiver/<uuid:event_uuid>",
         radioreceiver.RadioReceiverView.as_view(),
