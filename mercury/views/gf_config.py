@@ -201,6 +201,34 @@ class GFConfigView(TemplateView):
     def post(self, request, *args, **kwargs):
         if "submit" in request.POST:
             DB = settings.DATABASES
+            gf_host = request.POST.get("gf_host")
+            gf_name = request.POST.get("gf_name")
+            gf_username = request.POST.get("gf_username")
+            gf_password = request.POST.get("gf_password")
+            gf_token = request.POST.get("gf_token")
+
+            # create authentication url
+            auth_http = "http://{}:{}@{}"
+            auth_https = "https://{}:{}@{}"
+
+            if not gf_token:
+                if gf_host.startswith("https"):
+                    auth_url = auth_https.format(gf_username, gf_password, gf_host[8:])
+                elif gf_host.startswith("http"):
+                    auth_url = auth_http.format(gf_username, gf_password, gf_host[7:])
+                else:
+                    auth_url = auth_http.format(gf_username, gf_password, gf_host)
+
+                try:
+                    gf_token = Grafana.create_api_key(
+                        auth_url, "mercury-auto-admin", "Admin"
+                    )
+                except ValueError as error:
+                    messages.error(
+                        request, "Failed to create API token: {}".format(error),
+                    )
+                    return redirect("/gfconfig")
+
             config_data = GFConfig(
                 gf_name=request.POST.get("gf_name"),
                 gf_host=request.POST.get("gf_host"),
