@@ -1,7 +1,6 @@
 import os
 from sense_hat import SenseHat
 import requests
-import os
 from sensehat_reader import temperature, pressure, humidity, acceleration, orientation
 from datetime import datetime
 
@@ -37,7 +36,7 @@ while 1:
     json_humidity = humidity()
     json_acceleration = acceleration()
     json_orientation = orientation()
-    
+
     tdelta = datetime.strptime(datetime.now().strftime(fmt), fmt) - datetime.strptime(
         time_of_last_sent_temperature, fmt
     )
