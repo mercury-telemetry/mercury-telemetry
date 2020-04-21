@@ -72,3 +72,40 @@ class AGMeasurement(models.Model):
 
 class AGActiveEvent(models.Model):
     agevent = models.ForeignKey(AGEvent, null=True, on_delete=models.SET_NULL)
+
+
+class ErrorLog(models.Model):
+    """Stores information about error log data,including error timestamp, error code,
+    error description and error raw data
+    """
+
+    # error declearation
+    UNKNOWN_FMT = "UNKNOWN_FORMAT"
+    MISSING_COL = "MISSING_COLUMN"
+    MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
+    INVALID_COL_NM = "INVALID_COLUMN_NAME"
+    INVALID_COL_VL = "INVALID_COLUMN_VALUE"
+    INVALID_FIELD_IN_RAW = "INVALID_FIELD_IN_RAW_READING"
+    ERROR_F_PROC_MMT = "FORMULA_PROCESS_MEASUREMENT_ERROR"
+    EXTRA_KEYVAL_IN_MMT = "EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT"
+    OTHER = "OTHER_ERROR"
+
+    ERROR_CODE_CHOICES = [
+        (UNKNOWN_FMT, "Unknown Format"),
+        (MISSING_COL, "Missing Column"),
+        (MISSING_FIELD_IN_RAW, "Missing Field In Raw Reading"),
+        (INVALID_COL_NM, "Invalid Column Name"),
+        (INVALID_COL_VL, "Invalid Column Value"),
+        (INVALID_FIELD_IN_RAW, "Invalid Field In Raw Reading"),
+        (ERROR_F_PROC_MMT, "Error When Formula Processing Measurement"),
+        (EXTRA_KEYVAL_IN_MMT, "Extraneous Key-Value Pair In Measurement"),
+        (OTHER, "Other Error"),
+    ]
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    timestamp = models.DateTimeField(default=timezone.now)
+    error_code = models.CharField(
+        max_length=100, choices=ERROR_CODE_CHOICES, default=OTHER
+    )
+    description = models.CharField(max_length=100, null=False, blank=False)
+    raw_data = models.TextField(null=False)
