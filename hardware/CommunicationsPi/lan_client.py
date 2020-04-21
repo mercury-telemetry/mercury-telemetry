@@ -18,7 +18,7 @@ class LANClient:
             self.url = lan_server_url
 
     def get_server_url_from_env(self):
-        protocol = "https" if os.environ["LAN_SERVER_HTTPS"] else "http"
+        protocol = "https" if os.environ.get("LAN_SERVER_HTTPS") else "http"
         ip = os.environ["LAN_SERVER_IP"]
         port = os.environ["LAN_PORT"]
 
@@ -34,7 +34,7 @@ class LANClient:
 
         try:
             self.logging.info("data: " + json.dumps(payload))
-            response = requests.post(self.url, data=json.dumps(payload))
+            response = requests.post(self.url, data=payload)
             response.raise_for_status()
             return response
 
@@ -46,4 +46,4 @@ class LANClient:
         except Exception as err:
             self.logging.error("error occurred: {}".format(str(err)))
             raise
-        return
+        # return unreachable return
