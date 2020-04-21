@@ -53,7 +53,7 @@ and apply as needed. Do not apply universally */
   content: counter(Serial); Display the counter
 }  */
 
-  article, aside, figcaption, figure, footer, header, hgroup, main, section {
+  article, aside, footer, header, hgroup, main, section {
     display: block;
   }
 
@@ -70,7 +70,6 @@ and apply as needed. Do not apply universally */
     border: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
-
 
   h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
@@ -109,23 +108,6 @@ and apply as needed. Do not apply universally */
     margin-bottom: 1rem;
   }
 
-  abbr[title],
-  abbr[data-original-title] {
-    text-decoration: underline;
-    -webkit-text-decoration: underline dotted;
-    text-decoration: underline dotted;
-    cursor: help;
-    border-bottom: 0;
-    -webkit-text-decoration-skip-ink: none;
-    text-decoration-skip-ink: none;
-  }
-
-  address {
-    margin-bottom: 1rem;
-    font-style: normal;
-    line-height: inherit;
-  }
-
   ol,
   dl {
     margin-top: 0;
@@ -138,51 +120,9 @@ and apply as needed. Do not apply universally */
     margin-bottom: 0;
   }
 
-  dt {
-    font-weight: 700;
-  }
-
-  dd {
-    margin-bottom: .5rem;
-    margin-left: 0;
-  }
-
-  blockquote {
-    margin: 0 0 1rem;
-  }
-
-  b,
-  strong {
+  b {
     font-weight: bolder;
   }
-
-
-
-  sub,
-  sup {
-    position: relative;
-    font-size: 75%;
-    line-height: 0;
-    vertical-align: baseline;
-  }
-
-  sub {
-    bottom: -.25em;
-  }
-
-  sup {
-    top: -.5em;
-  }
-
-
-  a .homepage {
-      color: #8f06cb;
-  }
-
-  a:hover .homepage {
-     color: #57068C;
-        text-decoration: underline;
-    }
 
 a {
     color: #4e73df;
@@ -194,6 +134,15 @@ a {
     color: #224abe;
     text-decoration: underline;
   }
+
+  a .homepage {
+      color: #8f06cb;
+  }
+
+  a:hover .homepage {
+     color: #57068C;
+        text-decoration: underline;
+    }
 
   a:not([href]):not([tabindex]) {
     color: inherit;
@@ -209,22 +158,8 @@ a {
     outline: 0;
   }
 
-  pre,
-  code,
-  kbd,
-  samp {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 1em;
-  }
-
-  pre {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    overflow: auto;
-  }
-
-  figure {
-    margin: 0 0 1rem;
+  a .homepage {
+      color: #8f06cb;
   }
 
   img {
@@ -236,13 +171,12 @@ a {
     border-collapse: collapse;
     border: 1px solid black;
     width: 100%;
-    height: 100%;
+    height: auto;
   }
 
   td {
     border: 1px solid black;
     text-align: center;
-
   }
 
   th{
@@ -255,7 +189,6 @@ a {
     border: 1px solid black;
     text-align: center;
   }
-
 
   label {
     display: inline-block;
@@ -274,7 +207,6 @@ a {
   input,
   button,
   select,
-  optgroup,
   textarea {
     margin: 0;
     font-family: inherit;
@@ -296,11 +228,35 @@ a {
     word-wrap: normal;
   }
 
+  button {
+    border-radius: 0;
+  }
+
+  button:focus {
+    outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+
+
+  select {
+    word-wrap: normal;
+  }
+
   textarea {
     overflow: auto;
     resize: vertical;
   }
-
 
 
 /*asterisk denotes CSS wildcard selector - This should be checked and maybe removed */
@@ -761,6 +717,69 @@ border: none;
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+    /* The switch - the box around the slider */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+
 
 /***************** RANDOM ATTRIBUTE SELECTORS I GUESS *************/
 [hidden] {
@@ -775,6 +794,9 @@ width: 70%;
 width: 70%;
 }
 
+[tabindex="-1"]:focus {
+    outline: 0 !important;
+  }
 
 /******************* ID SELECTOR STYLING ***********************************/
 
@@ -849,229 +871,7 @@ width: 70%;
 }
 
 
-  html {
-    font-family: sans-serif;
-    line-height: 1.15;
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
 
-  article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
-    display: block;
-  }
-
-  [tabindex="-1"]:focus {
-    outline: 0 !important;
-  }
-
-
-
-  p {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-
-  abbr[title],
-  abbr[data-original-title] {
-    text-decoration: underline;
-    -webkit-text-decoration: underline dotted;
-    text-decoration: underline dotted;
-    cursor: help;
-    border-bottom: 0;
-    -webkit-text-decoration-skip-ink: none;
-    text-decoration-skip-ink: none;
-  }
-
-  address {
-    margin-bottom: 1rem;
-    font-style: normal;
-    line-height: inherit;
-  }
-
-  ol,
-  dl {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-
-  ol ol,
-  ol ul,
-  ul ol {
-    margin-bottom: 0;
-  }
-
-  dt {
-    font-weight: 700;
-  }
-
-  dd {
-    margin-bottom: .5rem;
-    margin-left: 0;
-  }
-
-  blockquote {
-    margin: 0 0 1rem;
-  }
-
-  b,
-  strong {
-    font-weight: bolder;
-  }
-
-
-
-  sub,
-  sup {
-    position: relative;
-    font-size: 75%;
-    line-height: 0;
-    vertical-align: baseline;
-  }
-
-  sub {
-    bottom: -.25em;
-  }
-
-  sup {
-    top: -.5em;
-  }
-
-
-  a .homepage {
-      color: #8f06cb;
-  }
-
-  a:hover .homepage {
-     color: #57068C;
-        text-decoration: underline;
-    }
-
-a {
-    color: #4e73df;
-    text-decoration: none;
-    background-color: transparent;
-  }
-
-  a:hover {
-    color: #224abe;
-    text-decoration: underline;
-  }
-
-  a:not([href]):not([tabindex]) {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  a:not([href]):not([tabindex]):focus {
-    outline: 0;
-  }
-
-  pre,
-  code,
-  kbd,
-  samp {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 1em;
-  }
-
-  pre {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    overflow: auto;
-  }
-
-  figure {
-    margin: 0 0 1rem;
-  }
-
-  img {
-    vertical-align: middle;
-    border-style: none;
-  }
-
-  svg {
-    overflow: hidden;
-    vertical-align: middle;
-  }
-
-  table{
-    border-collapse: collapse;
-    border: 1px solid black;
-    width: 100%;
-    height: auto;
-  }
-
-  td {
-    border: 1px solid black;
-    text-align: center;
-  }
-
-  th{
-    border: 1px solid black;
-    width: 30px;
-    text-align: center;
-  }
-
-  tr{
-    border: 1px solid black;
-    text-align: center;
-  }
-
-
-
-  caption {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    color: #858796;
-    text-align: left;
-    caption-side: bottom;
-  }
-
-
-
-  label {
-    display: inline-block;
-    margin-bottom: 0.5rem;
-  }
-
-  button {
-    border-radius: 0;
-  }
-
-  button:focus {
-    outline: 1px dotted;
-    outline: 5px auto -webkit-focus-ring-color;
-  }
-
-  input,
-  button,
-  select,
-  optgroup,
-  textarea {
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-  }
-
-  button,
-  input {
-    overflow: visible;
-  }
-
-  button,
-  select {
-    text-transform: none;
-  }
-
-  select {
-    word-wrap: normal;
-  }
 
   .cancelbutton {
     width: 47%;
@@ -1146,68 +946,6 @@ a {
     width: 70%;
   }
 
-    /* The switch - the box around the slider */
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-  }
-
-  /* Hide default HTML checkbox */
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  /* The slider */
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-
-  input:checked + .slider {
-    background-color: #2196F3;
-  }
-
-  input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
-  }
-
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-
-  .slider.round:before {
-    border-radius: 50%;
-  }
 
 
   button,
@@ -1245,10 +983,6 @@ a {
     -webkit-appearance: listbox;
   }
 
-
-
-
-
   [type="number"]::-webkit-inner-spin-button,
   [type="number"]::-webkit-outer-spin-button {
     height: auto;
@@ -1268,6 +1002,3 @@ a {
     -webkit-appearance: button;
   }
 
-
-
-/*mark, small, template, summary, output, progress, legend, svg*/
