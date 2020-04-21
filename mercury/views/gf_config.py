@@ -53,6 +53,7 @@ def configure_dashboard(request, gf_id=None):
 
     # Retrieve missing events to pass to the context
     all_events = list(AGEvent.objects.all())
+    event_names = [event.name for event in all_events]
     missing_events = list(set(all_events) - set(existing_events))
 
     # Prepare an array of dashboards & their sensors to send to the template
@@ -60,26 +61,30 @@ def configure_dashboard(request, gf_id=None):
 
     for dashboard in current_dashboards:
 
-        dashboard_dict = dict()
+        # if this dashboard corresponds to an event
+        if dashboard["title"] in event_names:
 
-        # Get all currently used panels to initialize the form
-        existing_sensors = grafana.get_all_sensors(dashboard["title"])
+            dashboard_dict = dict()
+            # Get all currently used panels to initialize the form
+            existing_sensors = grafana.get_all_sensors(dashboard["title"])
 
-        # Set initial form data so that only existing sensors are checked
-        sensor_form = DashboardSensorPanelsForm(initial={"sensors": existing_sensors})
+            # Set initial form data so that only existing sensors are checked
+            sensor_form = DashboardSensorPanelsForm(
+                initial={"sensors": existing_sensors}
+            )
 
-        # Retrieve the URL for this dashboard or ""
-        dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
-        if dashboard_url is None:
-            dashboard_url = ""
+            # Retrieve the URL for this dashboard or ""
+            dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
+            if dashboard_url is None:
+                dashboard_url = ""
 
-        # Store everything in a list of dicts
-        dashboard_dict["sensor_form"] = sensor_form
-        dashboard_dict["dashboard_url"] = dashboard_url
-        dashboard_dict["sensors"] = AGSensor.objects.all()
-        dashboard_dict["name"] = dashboard["title"]
+            # Store everything in a list of dicts
+            dashboard_dict["sensor_form"] = sensor_form
+            dashboard_dict["dashboard_url"] = dashboard_url
+            dashboard_dict["sensors"] = AGSensor.objects.all()
+            dashboard_dict["name"] = dashboard["title"]
 
-        dashboards.append(dashboard_dict)
+            dashboards.append(dashboard_dict)
 
     config_info["dashboards"] = dashboards
     config_info["missing_events"] = missing_events
