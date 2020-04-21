@@ -13,6 +13,8 @@ class GFConfig(models.Model):
     gf_token = models.CharField(
         max_length=256
     )  # token only, without the prefix "Bearer "
+    gf_username = models.CharField(max_length=128, default="")
+    gf_password = models.CharField(max_length=128, default="")
     gf_dashboard_uid = models.CharField(max_length=64)
     gf_db_host = models.CharField(max_length=128)
     gf_db_name = models.CharField(max_length=64)

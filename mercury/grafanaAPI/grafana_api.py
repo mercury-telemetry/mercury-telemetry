@@ -44,16 +44,29 @@ class Grafana:
 
     @staticmethod
     def create_api_key(auth_url, name, role):
-        # delete keys with same name or level of permission
+        # request current keys
         url = auth_url + "/api/auth/keys"
-        rsp = requests.get(url)
+        try:
+            rsp = requests.get(url)
+        except Exception as error:
+            raise ValueError(error)
+
+        if rsp.status_code != 200:
+            raise ValueError(rsp.text)
+
+        # delete keys with the same name
         data = json.loads(rsp.text)
         for D in data:
-            if name == D["name"] or role == D["role"]:
-                requests.delete(url + "/" + str(D["id"]))
+            if name == D["name"]:
+                rsp = requests.delete(url + "/" + str(D["id"]))
+                if rsp.status_code != 200:
+                    raise ValueError(rsp.text)
 
         # create new key
         rsp = requests.post(url, data={"name": name, "role": role})
+        if rsp.status_code != 200:
+            raise ValueError(rsp.text)
+
         return json.loads(rsp.text)["key"]
 
     @staticmethod
