@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mercury', '0019_auto_20200420_0028'),
+        ("mercury", "0019_auto_20200420_0028"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='gfconfig',
-            name='gf_password',
-            field=models.CharField(default='', max_length=128),
+            model_name="gfconfig",
+            name="gf_password",
+            field=models.CharField(default="", max_length=128),
         ),
         migrations.AddField(
-            model_name='gfconfig',
-            name='gf_username',
-            field=models.CharField(default='', max_length=128),
+            model_name="gfconfig",
+            name="gf_username",
+            field=models.CharField(default="", max_length=128),
         ),
     ]
