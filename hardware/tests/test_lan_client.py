@@ -22,7 +22,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "LAN_CLIENT_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
@@ -41,7 +41,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "LAN_CLIENT_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
             },
@@ -59,7 +59,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "LAN_CLIENT_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
@@ -78,7 +78,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "NEW_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
@@ -97,7 +97,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "NEW_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
@@ -117,7 +117,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "LAN_CLIENT_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
@@ -142,7 +142,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "LAN_CLIENT_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
@@ -170,7 +170,7 @@ class LanClientTests(SimpleTestCase):
             os.environ,
             {
                 "LAN_CLIENT_LOG_FILE": "lan_client.log",
-                "LOG_DIRECTORY": "logs",
+                "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
