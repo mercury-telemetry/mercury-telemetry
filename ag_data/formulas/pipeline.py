@@ -1,4 +1,4 @@
-from ag_data.models import AGMeasurement
+from ag_data.models import AGMeasurement, AGActiveEvent
 from ag_data.formulas import formulas
 
 
@@ -24,7 +24,13 @@ class FormulaPipeline:
 
     def save_measurement(self, sensor, timestamp, measurement) -> AGMeasurement:
 
-        assert self.event is not None
+        event = self.event
+        if not event:
+            active = AGActiveEvent.objects.first()
+            if active:
+                event = active.agevent
+
+        assert event is not None
 
         formula = formulas.formula_map.get(
             sensor.type_id.processing_formula, formulas.identity
@@ -35,7 +41,10 @@ class FormulaPipeline:
 
         return AGMeasurement.objects.create(
             timestamp=timestamp,
-            event_uuid=self.event,
+            event_uuid=event,
             sensor_id=sensor,
             value={"raw": measurement, "result": result},
         )
+
+
+shared_instance = FormulaPipeline()
