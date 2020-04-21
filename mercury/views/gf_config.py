@@ -8,6 +8,7 @@ from ag_data.models import AGEvent, AGSensor
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
 from django.conf import settings
+from ..event_check import require_event_code
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -168,6 +169,7 @@ class GFConfigView(TemplateView):
 
     template_name = "gf_configs.html"
 
+    @require_event_code
     def get(self, request, *args, **kwargs):
         # Retrieve all available GFConfigs
         current_configs = GFConfig.objects.all().order_by("id")
@@ -198,13 +200,44 @@ class GFConfigView(TemplateView):
         context = {"config_form": config_form, "configs": current_configs}
         return render(request, self.template_name, context)
 
+    @require_event_code
     def post(self, request, *args, **kwargs):
         if "submit" in request.POST:
             DB = settings.DATABASES
+            gf_host = request.POST.get("gf_host")
+            gf_name = request.POST.get("gf_name")
+            gf_username = request.POST.get("gf_username")
+            gf_password = request.POST.get("gf_password")
+            gf_token = request.POST.get("gf_token")
+
+            # create authentication url
+            auth_http = "http://{}:{}@{}"
+            auth_https = "https://{}:{}@{}"
+
+            if gf_token == "":
+                if gf_host.startswith("https"):
+                    auth_url = auth_https.format(gf_username, gf_password, gf_host[8:])
+                elif gf_host.startswith("http"):
+                    auth_url = auth_http.format(gf_username, gf_password, gf_host[7:])
+                else:
+                    auth_url = auth_http.format(gf_username, gf_password, gf_host)
+
+                try:
+                    gf_token = Grafana.create_api_key(
+                        auth_url, "mercury-auto-admin", "Admin"
+                    )
+                except ValueError as error:
+                    messages.error(
+                        request, "Failed to create API token: {}".format(error),
+                    )
+                    return redirect("/gfconfig")
+
             config_data = GFConfig(
-                gf_name=request.POST.get("gf_name"),
-                gf_host=request.POST.get("gf_host"),
-                gf_token=request.POST.get("gf_token"),
+                gf_name=gf_name,
+                gf_host=gf_host,
+                gf_username=gf_username,
+                gf_password=gf_password,
+                gf_token=gf_token,
                 gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
                 gf_db_name=DB["default"]["NAME"],
                 gf_db_username=DB["default"]["USER"],
@@ -237,11 +270,5 @@ class GFConfigView(TemplateView):
             except ValueError as error:
                 messages.error(request, f"Grafana initial set up failed: {error}")
 
-            # Prepare an array of dicts with details for each GFConfig (GFConfig object,
-            # list of dashboards/forms
-            # Retrieve all available GFConfigs
-            current_configs = GFConfig.objects.all().order_by("id")
-
-            config_form = GFConfigForm()
-            context = {"config_form": config_form, "configs": current_configs}
-            return render(request, self.template_name, context)
+            messages.success(request, "Created Grafana Host: {}".format(gf_name))
+            return redirect("/gfconfig")
