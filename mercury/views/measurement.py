@@ -1,49 +1,51 @@
 import json
 
-from rest_framework import status, serializers
+from django.db import models
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ag_data.models import AGEvent
-from ag_data.serializers import AGMeasurementSerializer
+from ag_data.models import AGActiveEvent, AGSensor
+from ag_data.formulas import pipeline
+from django.core import serializers
+from django.utils.dateparse import parse_datetime
 
 
 def build_error(str):
     return json.dumps({"error": str})
 
 
-def fetch_event():
-    try:
-        events = AGEvent.objects.all()
-        event = events.first()
-    except AGEvent.DoesNotExist:
-        event = False
-
-    return event
-
-
-def add_measurement(request, event):
+def add_measurement(request):
     json_data = request.data
 
-    res = {"event_uuid": event.uuid}
-    key_map = {"timestamp": "date", "sensor_id": "sensor_id", "value": "values"}
-
-    for key, json_key in key_map.items():
-        if json_key not in json_data:
-            return Response(
-                build_error("Missing required params " + json_key),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        res[key] = json_data[json_key]
-
-    serializer = AGMeasurementSerializer(data=res)
     try:
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-    except serializers.ValidationError:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        timestamp = json_data["date"]
+        sensor_id = json_data["sensor_id"]
+        values = json_data["values"]
+    except KeyError as e:
+        return Response(
+            build_error(f"Missing required params: {e.args[0]}"),
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    timestamp = parse_datetime(timestamp)
+    if not timestamp:
+        return Response(
+            build_error("Invalid timestamp"), status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        sensor = AGSensor.objects.get(pk=sensor_id)
+    except models.ObjectDoesNotExist:
+        return Response(
+            build_error(f"No sensor for given sensor_id={sensor_id}"),
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    measurement = pipeline.shared_instance.save_measurement(sensor, timestamp, values)
+    return Response(
+        serializers.serialize("json", [measurement]), status=status.HTTP_201_CREATED,
+    )
 
 
 class MeasurementView(APIView):
@@ -61,10 +63,12 @@ class MeasurementView(APIView):
           }
           "date" : 2020-03-11T20:20+01:00
         }
-
-        TODO: fetch the active event
-        Now we use the first event in the db
         """
-        event = fetch_event()
 
-        return add_measurement(request, event)
+        active_event = AGActiveEvent.objects.first()
+        if not active_event:
+            return Response(
+                build_error("No active event"), status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return add_measurement(request)
