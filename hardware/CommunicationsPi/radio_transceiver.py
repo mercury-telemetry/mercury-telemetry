@@ -42,7 +42,7 @@ class Transceiver:
         parity = serial.PARITY_NONE
         stopbits = serial.STOPBITS_ONE
         bytesize = serial.EIGHTBITS
-        timeout = os.environ["TRANSCEIVER_TIMEOUT"]
+        timeout = int(os.environ["TRANSCEIVER_TIMEOUT"])
 
         self.logging.info("Opening serial on: " + str(self.port))
         self.serial = serial.Serial(
