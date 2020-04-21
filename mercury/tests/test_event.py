@@ -325,7 +325,7 @@ class TestEventView(TestCase):
     def test_export_csv(self):
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
-        measurement = self.create_measurement(event, sensor)
+        self.create_measurement(event, sensor)
 
         response = self.client.post(
             reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
