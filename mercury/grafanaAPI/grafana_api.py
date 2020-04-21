@@ -5,18 +5,10 @@ import string
 import random
 from ag_data.models import AGSensor, AGEvent
 
-TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
-HOST = "https://dbc291.grafana.net"
-DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
-DB_NAME = "d76k4515q6qv"
-DB_USERNAME = "qvqhuplbiufdyq"
-DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
-
 
 class Grafana:
     def __init__(self, gf_config):
         """
-
         Initialize parameters needed to use the API: hostname, admin-level API token,
         and the following postgres credentials:
         - hostname
@@ -52,16 +44,29 @@ class Grafana:
 
     @staticmethod
     def create_api_key(auth_url, name, role):
-        # delete keys with same name or level of permission
+        # request current keys
         url = auth_url + "/api/auth/keys"
-        rsp = requests.get(url)
+        try:
+            rsp = requests.get(url)
+        except Exception as error:
+            raise ValueError(error)
+
+        if rsp.status_code != 200:
+            raise ValueError(rsp.text)
+
+        # delete keys with the same name
         data = json.loads(rsp.text)
         for D in data:
-            if name == D["name"] or role == D["role"]:
-                requests.delete(url + "/" + str(D["id"]))
+            if name == D["name"]:
+                rsp = requests.delete(url + "/" + str(D["id"]))
+                if rsp.status_code != 200:
+                    raise ValueError(rsp.text)
 
         # create new key
         rsp = requests.post(url, data={"name": name, "role": role})
+        if rsp.status_code != 200:
+            raise ValueError(rsp.text)
+
         return json.loads(rsp.text)["key"]
 
     @staticmethod

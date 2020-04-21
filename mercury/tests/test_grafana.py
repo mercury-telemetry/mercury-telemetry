@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.conf import settings
 from mercury.models import EventCodeAccess, GFConfig
 from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -12,10 +13,11 @@ import datetime
 HOST = "http://admin:admin@localhost:3000"
 
 # db credentials
-DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
-DB_NAME = "d76k4515q6qv"
-DB_USERNAME = "qvqhuplbiufdyq"
-DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
+DB = settings.DATABASES
+DB_HOSTNAME = DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"])
+DB_NAME = DB["default"]["NAME"]
+DB_USERNAME = DB["default"]["USER"]
+DB_PASSWORD = DB["default"]["PASSWORD"]
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
