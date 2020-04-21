@@ -214,7 +214,7 @@ class GFConfigView(TemplateView):
             auth_http = "http://{}:{}@{}"
             auth_https = "https://{}:{}@{}"
 
-            if gf_token == "":
+            if not gf_token:
                 if gf_host.startswith("https"):
                     auth_url = auth_https.format(gf_username, gf_password, gf_host[8:])
                 elif gf_host.startswith("http"):
