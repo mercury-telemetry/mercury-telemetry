@@ -112,7 +112,7 @@ class LanClientTests(SimpleTestCase):
             self.assertEqual(l_client.url, "/url")
 
     @patch("hardware.CommunicationsPi.lan_client.requests")
-    def test_ping_server(self, mock_requests):
+    def test_ping_server(self, mock_requests=MagicMock()):
         with patch.dict(
             os.environ,
             {
@@ -125,7 +125,6 @@ class LanClientTests(SimpleTestCase):
         ):
             with LogCapture() as capture:
                 l_client = LANClient()
-                mock_requests.post = MagicMock()
 
                 payload = "{'key':'value'}"
 
