@@ -9,7 +9,7 @@ import socket
 import requests
 import os
 
-from hardware.CommunicationsPi.lan_server import Server  # , runServer
+from hardware.CommunicationsPi.lan_server import Server, runServer
 
 
 def get_free_port():
@@ -121,3 +121,50 @@ class LanServerTests(SimpleTestCase):
                         f'http://localhost:{self.mock_server_port} "POST / HTTP/1.1" 200 None',
                     ),
                 )
+
+
+class RunServerTests(SimpleTestCase):
+    def setUp(self):
+        self.temp_dir = TempDirectory()
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_run_server(self):
+        with mock.patch.dict(
+            os.environ,
+            {
+                "LAN_SERVER_LOG_FILE": "logger.txt",
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "LAN_PORT": "0000",
+            },
+        ):
+            with LogCapture() as capture:
+                mock_server = mock.MagicMock()
+                mock_server.return_value.server_forever = mock.MagicMock()
+                mock_handler = mock.MagicMock()
+
+                runServer(mock_server, mock_handler)
+
+                capture.check(
+                    ("LAN_SERVER_LOG_FILE", "INFO", "Starting server on port: 0"),
+                    ("LAN_SERVER_LOG_FILE", "INFO", "Stopping\n"),
+                )
+
+
+#     def test_interrupt(self):
+#         with mock.patch.dict(os.environ, {
+#             "LAN_SERVER_LOG_FILE": "logger.txt",
+#             "LOG_DIRECTORY": self.temp_dir.path,
+#             "LAN_PORT": "0000"
+#         }):
+#             with LogCapture() as capture:
+#                 mock_server = mock.MagicMock()
+#                 mock_server.return_value.server_forever.side_effect = KeyboardInterrupt
+#                 mock_handler = mock.MagicMock()
+
+#                 with self.assertRaises(KeyboardInterrupt):
+#                     runServer(mock_server, mock_handler)
+
+#                 capture.check(('LAN_SERVER_LOG_FILE', 'INFO', 'Starting server on port: 0'),
+#  ('LAN_SERVER_LOG_FILE', 'INFO', 'Stopping\n'))

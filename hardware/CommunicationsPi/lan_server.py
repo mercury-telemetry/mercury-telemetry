@@ -53,11 +53,6 @@ def runServer(
         if log_file_name is None
         else get_logger(log_file_name)
     )
-    log = (
-        get_logger("LAN_SERVER_LOG_FILE")
-        if log_file_name is None
-        else get_logger(log_file_name, log_file_name)
-    )
 
     port = int(os.environ["LAN_PORT"]) if port is None else port
 
