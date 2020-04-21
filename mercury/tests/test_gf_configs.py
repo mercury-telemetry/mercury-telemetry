@@ -153,11 +153,9 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
-                "gf_username": "admin",
-                "gf_password": "admin",
             },
         )
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() > 0)
@@ -175,7 +173,8 @@ class TestGFConfig(TestCase):
                 "gf_token": "abcde",
             },
         )
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, "Grafana API validation failed: Invalid API key")
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
@@ -188,11 +187,13 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.VIEWER,
-                "gf_username": "admin",
-                "gf_password": "admin",
             },
         )
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(200, response.status_code)
+        self.assertContains(
+            response,
+            "Grafana API validation failed: Access denied - check API permissions",
+        )
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
@@ -215,8 +216,6 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
-                "gf_username": "admin",
-                "gf_password": "admin",
             },
         )
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
@@ -251,11 +250,9 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
-                "gf_username": "admin",
-                "gf_password": "admin",
             },
         )
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # check that dashboard was created with same name as event
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
@@ -284,11 +281,9 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
-                "gf_username": "admin",
-                "gf_password": "admin",
             },
         )
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         # check that dashboard was created with expected panel
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)

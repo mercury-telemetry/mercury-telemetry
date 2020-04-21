@@ -41,15 +41,11 @@ class EventForm(forms.ModelForm):
 class GFConfigForm(forms.ModelForm):
     class Meta:
         model = GFConfig
-        fields = ["gf_name", "gf_host", "gf_username", "gf_password"]
-        widgets = {
-            "gf_password": forms.PasswordInput(),
-        }
+        fields = ["gf_name", "gf_host", "gf_token"]
         labels = {
             "gf_name": "Label",
             "gf_host": "Hostname",
-            "gf_username": "Username",
-            "gf_password": "Password",
+            "gf_token": "API Token",
         }
         default_data = {"gf_name": "Local", "gf_host": "http://localhost:3000"}
 
