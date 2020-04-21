@@ -15,7 +15,6 @@ class Server(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        # global log
 
         self.log.info(
             "GET request,\nPath: %s\nHeaders:\n%s\n"
@@ -26,7 +25,6 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write("GET request for {}".format(self.path).encode("utf-8"))
 
     def do_POST(self):
-        # global log
 
         content_length = int(
             self.headers["Content-Length"]
@@ -47,7 +45,6 @@ class Server(BaseHTTPRequestHandler):
 def runServer(
     server_class=HTTPServer, handler_class=Server, log_file_name=None, port=None
 ):
-    # global log
     log = (
         get_logger("LAN_SERVER_LOG_FILE")
         if log_file_name is None
