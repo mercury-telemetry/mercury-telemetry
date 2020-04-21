@@ -322,16 +322,17 @@ class TestEventView(TestCase):
         # self.assertTrue("filename=events.zip" in response["Content-Disposition"])
         self.assertEqual(200, response.status_code)
 
-    # def test_export_csv(self):
-    #     event = self.create_venue_and_event(self.event_name)
-    #     sensor = self.create_sensor()
-    #     measurement = self.create_measurement(event, sensor)
+    def test_export_csv(self):
+        event = self.create_venue_and_event(self.event_name)
+        sensor = self.create_sensor()
+        measurement = self.create_measurement(event, sensor)
 
-    #     response = self.client.post(
-    #         reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
-    #     )
+        response = self.client.post(
+            reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
+        )
 
-    #     self.assertEqual(200, response.status_code)
+        self.assertTrue('filename="test".csv' in response["Content-Disposition"])
+        self.assertEqual(200, response.status_code)
 
     def test_export_json(self):
         event = self.create_venue_and_event(self.event_name)
