@@ -457,7 +457,9 @@ class Grafana:
                 fields_query += (
                     f"value->'result'->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
                 )
-            fields_query += f"value->'result'->'{field_array[-1]}' AS \"{field_array[-1]}\""
+            fields_query += (
+                f"value->'result'->'{field_array[-1]}' AS \"{field_array[-1]}\""
+            )
 
         # Build SQL query
         panel_sql_query = f"""
