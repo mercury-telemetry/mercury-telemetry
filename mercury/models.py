@@ -16,7 +16,7 @@ class GFConfig(models.Model):
     gf_db_name = models.CharField(max_length=64)
     gf_db_username = models.CharField(max_length=64)
     gf_db_pw = models.CharField(max_length=256)
-    gf_current = models.BooleanField(default=False, blank=True)  # Deprecated
+    gf_current = models.BooleanField(default=False, blank=True)
 
 
 class EventCodeAccess(models.Model):
