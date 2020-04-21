@@ -352,7 +352,7 @@ class TestEventView(TestCase):
             reverse(self.event_export_csv_url, kwargs={"event_uuid": event.uuid})
         )
 
-        self.assertEqual(302, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_export_all_no_measurements(self):
         self.create_venue_and_event(self.event_name)
