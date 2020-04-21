@@ -247,8 +247,6 @@ a {
     line-height: inherit;
   }
 
-
-
   select {
     word-wrap: normal;
   }
@@ -611,104 +609,14 @@ text-align: center;
 border: none;
 }
 
-.simulator-btn {
-  width: 95%;
-}
+.cancelbutton {
+    width: 47%;
+    float: left;
+  }
 
-.grafana-current-tab {
-  color: var(--button-text-dark);
-  background-color: var(--light-accent);
-  border-color: var(--light-accent);
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.35rem;
-}
-
-.grafana-btn {
-  color: var(--light-text);
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.35rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.grafana-btn:hover {
-  color: var(--light-text);
-  text-decoration: none;
-}
-
-.grafana-btn-gray {
-  color: var(--light-text);
-  background-color: var(--light-background);
-  border-color: var(--light-background);
-}
-
-.grafana-btn-gray:hover {
-  color: var(--button-text-dark);
-  background-color: var(--light-accent);
-  border-color: var(--light-accent);
-}
-
-.grafana-btn-green {
-  color: var(--light-text);
-  background-color: var(--light-green);
-  border-color: var(--light-green);
-}
-
-.grafana-btn-green:hover {
-  color: var(--button-text-dark);
-  background-color: var(--green);
-  border-color: var(--green);
-}
-
-.grafana-btn-red {
-  color: var(--light-text);
-  background-color: var(--light-red);
-  border-color: var(--light-red);
-}
-
-.grafana-btn-red:hover {
-  color: var(--button-text-dark);
-  background-color: var(--red);
-  border-color: var(--red);
-}
-
-.grafana-btn-yellow {
-  color: var(--light-text);
-  background-color: var(--light-yellow);
-  border-color: var(--light-yellow);
-}
-
-.grafana-btn-yellow:hover {
-  color: var(--button-text-dark);
-  background-color: var(--yellow);
-  border-color: var(--yellow);
-}
-.grafana-btn-purple {
-  color: var(--light-text);
-  background-color: var(--light-purple);
-  border-color: var(--light-purple);
-}
-
-.grafana-btn-purple:hover {
-  color: var(--button-text-dark);
-  background-color: var(--purple);
-  border-color: var(--purple);
-}
+.submitbutton {
+    width: 47%;
+  }
 
 .index-text {
     color: var(--light-text);
@@ -798,6 +706,8 @@ width: 70%;
     outline: 0 !important;
   }
 
+
+
 /******************* ID SELECTOR STYLING ***********************************/
 
 #grafana-base {
@@ -871,80 +781,6 @@ width: 70%;
 }
 
 
-
-
-  .cancelbutton {
-    width: 47%;
-    float: left;
-  }
-
-  .sensor-list {
-    width: 100%;
-    list-style: square;
-  }
-
-  .sensor-list-field-name {
-    width: 48%;
-    display: inline-block;
-  }
-
-  .sensor-list-field-type {
-    width: 35%;
-    display: inline-block;
-  }
-
-  .sensor-list-add-field {
-    width: 13%;
-    display: inline-block;
-  }
-
-  .end-sensor-list-element {
-    width: 100%;
-  }
-
-  .end-sensor-list {
-    width: 100%;
-  }
-
-  .submitbutton {
-    width: 47%;
-  }
-
-  .sensor-list {
-    width: 100%;
-    list-style: square;
-  }
-
-  .sensor-list-field-name {
-    width: 48%;
-    display: inline-block;
-  }
-
-  .sensor-list-field-type {
-    width: 35%;
-    display: inline-block;
-  }
-
-  .sensor-list-add-field {
-    width: 13%;
-    display: inline-block;
-  }
-
-  .end-sensor-list-element {
-    width: 100%;
-  }
-
-  .end-sensor-list {
-    width: 100%;
-  }
-
-  [name="event_name"] {
-    width: 70%;
-  }
-
-  [name="event_location"] {
-    width: 70%;
-  }
 
 
 
