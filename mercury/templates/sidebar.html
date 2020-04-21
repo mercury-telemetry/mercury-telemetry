@@ -66,20 +66,6 @@
     {% endif %}
     <br><br>
 
-    <!-- Configure Grafana-->
-    {% if request.path == "/gps/" %}
-        <div class="grafana-current-tab sidebar-btn">
-            <i class="material-icons">tune</i>
-            <br>GPS Map
-        </div>
-    {% else %}
-        <a class="grafana-btn grafana-btn-gray sidebar-btn" href="{% url 'mercury:gps' %}">
-            <i class="material-icons">tune</i>
-            <br>GPS Map
-        </a>
-    {% endif %}
-    <br><br>
-
 
     <!-- Logout -->
     {% if request.session.event_code_known %}
