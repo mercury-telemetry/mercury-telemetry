@@ -17,3 +17,5 @@ mock
 requests
 matplotlib
 attr
+django-bootstrap4
+django-js-reverse

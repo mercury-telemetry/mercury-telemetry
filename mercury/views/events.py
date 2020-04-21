@@ -53,15 +53,15 @@ def update_event(request, event_uuid=None):
                         event_to_update, new_name
                     )
                     if dashboard:
-                        messages.success(request, "Grafana dashboard title " "updated")
-                    else:
-                        messages.error(
-                            request, "Grafana dashboard title not " "updated: "
+                        messages.success(
+                            request,
+                            f"{gfconfig.gf_name}: Grafana " f"dashboard title updated",
                         )
-
                 except ValueError as error:
                     messages.error(
-                        request, f"Grafana dashboard title not updated: " f"{error}"
+                        request,
+                        f"{gfconfig.gf_name}: Grafana dashboard "
+                        f"title not updated: {error} ",
                     )
 
         # update the AGEvent object
@@ -169,7 +169,7 @@ def create_event_csv(writer, response, event_object, venue_object, measurements_
                     venue_object.name,
                     sensor.name,
                     measurement.timestamp,
-                    measurement.value["reading"],
+                    measurement.value,
                 ]
             )
     else:
@@ -201,7 +201,7 @@ def create_event_json(event_object, venue_object, measurements_object):
         event_info["venue description"] = venue_object.description
 
     measurement_info = []
-    if measurements_object:
+    if len(measurements_object) > 0:
         sensor = AGSensor.objects.get(id=measurements_object[0].sensor_id.id)
         for measurement in measurements_object:
             if sensor.id != measurement.sensor_id:
@@ -209,7 +209,7 @@ def create_event_json(event_object, venue_object, measurements_object):
             temp = {
                 "sensor name": sensor.name,
                 "timestamp": str(measurement.timestamp),
-                "reading": measurement.value["reading"],
+                "values": measurement.value,
             }
             measurement_info.append(temp)
 
@@ -237,25 +237,11 @@ def deactivate_event(request, event_uuid=None):
 def export_event(request, event_uuid=None, file_format="CSV"):
     event_to_export = AGEvent.objects.get(uuid=event_uuid)
     if event_to_export:
-        response = HttpResponse(content_type="text/csv")
         filename = event_to_export.name.replace(" ", "").lower()
-        response["Content-Disposition"] = 'attachment; filename="' + filename + '".csv'
         measurement_data = AGMeasurement.objects.filter(event_uuid=event_uuid)
         if len(measurement_data) == 0:
-            return redirect("/events")
-        writer = csv.writer(response)
-        writer.writerow(
-            [
-                "S.No",
-                "Event Name",
-                "Event Date",
-                "Event Description",
-                "Venue Name",
-                "Sensor Name",
-                "Sensor Data TimeStamp",
-                "Sensor Value",
-            ]
-        )
+            measurement_data = []
+
         venue = AGVenue.objects.get(uuid=event_to_export.venue_uuid.uuid)
         if request.path.__contains__("json"):
             data = create_event_json(event_to_export, venue, measurement_data)
@@ -277,7 +263,7 @@ def export_event(request, event_uuid=None, file_format="CSV"):
                     temp = {
                         "sensor name": sensor.name,
                         "timestamp": str(measurement.timestamp),
-                        "reading": measurement.value["reading"],
+                        "reading": measurement.value,
                     }
                     measurement_info.append(temp)
 
@@ -293,11 +279,21 @@ def export_event(request, event_uuid=None, file_format="CSV"):
             response["Content-Disposition"] = (
                 'attachment; filename="' + filename + '".csv'
             )
-            if len(measurement_data) == 0:
-                return redirect("/events")
-
+            writer = csv.writer(response)
+            writer.writerow(
+                [
+                    "S.No",
+                    "Event Name",
+                    "Event Date",
+                    "Event Description",
+                    "Venue Name",
+                    "Sensor Name",
+                    "Sensor Data TimeStamp",
+                    "Sensor Value",
+                ]
+            )
             response = create_event_csv(
-                response, event_to_export, venue, measurement_data
+                writer, response, event_to_export, venue, measurement_data
             )
             return response
     else:

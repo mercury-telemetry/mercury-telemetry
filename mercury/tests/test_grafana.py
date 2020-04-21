@@ -1,39 +1,29 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.conf import settings
 from mercury.models import EventCodeAccess, GFConfig
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue
-from ag_data import simulator
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGVenue, AGActiveEvent
 from mercury.grafanaAPI.grafana_api import Grafana
 import requests
 import os
 import datetime
 
 
-# default host and token, use this if user did not provide anything
-HOST = "http://test-grafana.eba-b2r7zzze.us-east-1.elasticbeanstalk.com"
+# grafana host with basic auth
+HOST = "http://admin:admin@localhost:3000"
 
-# this token has Admin level permissions
-# tokens for mercurytests
-TOKEN = (
-    "eyJrIjoiUVN2NUVXejRLRm9mUWxkcGN4Njd5Z0c0UHJSSzltWGYiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
-)
-
-# this token has viewer level permissions
-VIEWER_TOKEN = (
-    "eyJrIjoiNm13bW1NdDdqM3cwdVF4SkRwTXBuM2VDMzVEa2FtcFoiLCJuIjoidmlld2VyIiwiaWQiOjF9"
-)
-DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
-DB_NAME = "d76k4515q6qv"
-DB_USERNAME = "qvqhuplbiufdyq"
-DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
+# db credentials
+DB = settings.DATABASES
+DB_HOSTNAME = DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"])
+DB_NAME = DB["default"]["NAME"]
+DB_USERNAME = DB["default"]["USER"]
+DB_PASSWORD = DB["default"]["PASSWORD"]
 
 
 # This test needs to have access to a test deployment of grafana, otherwise
 # we will need to wipe out the sensors each time it runs it runs
 class TestGrafana(TestCase):
     TESTCODE = "testcode"
-
-    sim = simulator.Simulator()
 
     title = "Bar"
 
@@ -43,6 +33,21 @@ class TestGrafana(TestCase):
     test_sensor_format = {
         "left_gust": {"unit": "km/h", "format": "float"},
         "right_gust": {"unit": "km/h", "format": "float"},
+    }
+
+    field_name_1 = "test-field-1"
+    field_name_2 = "test-field-2"
+    data_type_1 = "test-data-type-1"
+    data_type_2 = "test-data-type-2"
+    unit_1 = "test-unit-1"
+    unit_2 = "test-unit-2"
+
+    test_sensor = {
+        "name": test_sensor_name,
+        "processing formula": 0,
+        "field-names": [field_name_1, field_name_2],
+        "data-types": [data_type_1, data_type_2],
+        "units": [unit_1, unit_2],
     }
 
     test_sensor_format_update = {
@@ -75,7 +80,7 @@ class TestGrafana(TestCase):
     def create_gfconfig(self):
         config = GFConfig.objects.create(
             gf_host=HOST,
-            gf_token=TOKEN,
+            gf_token=self.ADMIN,
             gf_db_host=DB_HOSTNAME,
             gf_db_name=DB_NAME,
             gf_db_username=DB_USERNAME,
@@ -106,6 +111,10 @@ class TestGrafana(TestCase):
         return event
 
     def setUp(self):
+        # api keys with admin and viewer level permissions
+        self.ADMIN = Grafana.create_api_key(HOST, "admin", "Admin")
+        self.VIEWER = Grafana.create_api_key(HOST, "viewer", "Viewer")
+
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.event_url = "mercury:events"
@@ -125,10 +134,12 @@ class TestGrafana(TestCase):
 
         # Create random name to be used for event and datasource
         self.event_name = self.grafana.generate_random_string(10)
+        self.updated_event_name = self.event_name + " Day Two"
         self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
         self.grafana.delete_dashboard_by_name(self.event_name)
+        self.grafana.delete_dashboard_by_name(self.updated_event_name)
         self.grafana.delete_datasource_by_name(self.datasource_name)
 
     def tearDown(self):
@@ -162,6 +173,15 @@ class TestGrafana(TestCase):
         self.assertTrue(fetched_dashboard["dashboard"])
         self.assertTrue(fetched_dashboard["dashboard"]["uid"], uid)
         self.assertTrue(fetched_dashboard["dashboard"]["title"], self.event_name)
+
+    def test_get_dashboard_url_success(self):
+        self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(self.grafana.get_dashboard_url_by_name(self.event_name))
+
+    def test_get_dashboard_url_none(self):
+        self.assertIsNone(
+            self.grafana.get_dashboard_url_by_name(self.event_name + "foo")
+        )
 
     def test_get_dashboard_with_uid_fail(self):
         # Create a random UID to search for
@@ -209,15 +229,35 @@ class TestGrafana(TestCase):
             self.grafana.create_dashboard(self.event_name)
 
     def test_create_grafana_dashboard_fail_permissions(self):
-        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
+        self.grafana.api_token = self.VIEWER  # API token with viewer permissions
 
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_dashboard(self.event_name)
 
+    def test_create_grafana_dashboard_fail_empty_title(self):
+        expected_message = "Dashboard title cannot be empty"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_dashboard("")
+
     def test_validate_credentials_success(self):
         # should return True if credentials are valid
         self.assertTrue(self.grafana.validate_credentials())
+
+    def test_update_dashboard_title_success(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(self.event_name)
+        new_name = event.name + " foo"
+        self.assertTrue(self.grafana.update_dashboard_title(event, new_name))
+
+    def test_update_dashboard_title_fail_same_name(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(self.event_name)
+        self.assertFalse(self.grafana.update_dashboard_title(event, event.name))
+
+    def test_update_dashboard_title_fail_no_dashboard(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.assertFalse(self.grafana.update_dashboard_title(event, event.name))
 
     def test_validate_credentials_fail_authorization(self):
         self.grafana.api_token = "abcde"  # invalid API token
@@ -227,7 +267,7 @@ class TestGrafana(TestCase):
             self.grafana.validate_credentials()
 
     def test_validate_credentials_fail_permissions(self):
-        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
+        self.grafana.api_token = self.VIEWER  # API token with viewer permissions
 
         expected_message = (
             "Grafana API validation failed: Access denied - " "check API permissions"
@@ -352,27 +392,27 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard)
 
         # Create an event
-        self.create_venue_and_event(self.event_name)
+        event = self.create_venue_and_event(self.event_name)
 
-        sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
-            processing_formula=0,
-            format=self.test_sensor_format,
-        )
-        sensor_type.save()
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
 
-        # POST sensor data
+        # Create a sensor through the UI
         self.client.post(
             reverse(self.sensor_url),
             data={
                 "submit_new_sensor": "",
-                "sensor-name": self.test_sensor_name,
-                "select-sensor-type": self.test_sensor_type,
+                "sensor-name": self.test_sensor["name"],
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
             },
         )
 
+        self.assertEquals(AGSensor.objects.count(), 1)
+
         # Fetch the dashboard again
-        dashboard = self.grafana.get_dashboard_by_name(dashboard["slug"])
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
         self.assertTrue(dashboard)
 
         # Confirm that a panel was added to the dashboard with the expected title
@@ -384,7 +424,178 @@ class TestGrafana(TestCase):
         # Note: converting test_sensor_name to lowercase because currently
         # sensor names are automatically capitalized when they are created
         self.assertEquals(
-            dashboard["dashboard"]["panels"][0]["title"], self.test_sensor_name.lower()
+            dashboard["dashboard"]["panels"][0]["title"],
+            self.test_sensor["name"].lower(),
+        )
+
+    def test_update_sensor_name_updates_panel_title(self):
+        # Create a dashboard
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event, create a sensor
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create AGSensorType object for foreign key reference
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor["name"].lower(),
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        sensor_type.save()
+
+        # Create AG Sensor Object
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor["name"].lower(), type_id=sensor_type
+        )
+        sensor.save()
+
+        # Add the sensor panel to the dashboard
+        self.grafana.add_panel(sensor, event)
+
+        updated_test_sensor_name = "foo"
+
+        # Post Edited Name
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"].lower(),
+                "sensor-name-updated": updated_test_sensor_name,
+                "field-names": self.test_sensor["field-names"],
+                "data-types": self.test_sensor["data-types"],
+                "units": self.test_sensor["units"],
+            },
+        )
+
+        # Check that AGSensor object has new name
+        sensor = AGSensor.objects.all()[0]
+        self.assertEqual(sensor.name, updated_test_sensor_name)
+
+        # Check that sensor name was updated
+        sensor = AGSensor.objects.all()[0]
+        self.assertEquals(sensor.name, updated_test_sensor_name)
+
+        # Confirm that Grafana panel title was updated
+        # Confirm that a panel was added to the dashboard with the expected title
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], updated_test_sensor_name,
+        )
+
+    def test_update_sensor_type_updates_panel_query(self):
+        # Create a dashboard, confirm it was created
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create sensor and sensor type
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_name.lower(),
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name.lower(), type_id=sensor_type
+        )
+        sensor.save()
+
+        # Create grafana sensor panel
+        self.grafana.add_panel(sensor, event)
+
+        # New fields
+        field_names_updated = ["foo"]
+        data_types_updated = ["float"]
+        units_updated = ["km/h"]
+
+        # Post edited sensor type
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"].lower(),
+                "sensor-name-updated": self.test_sensor["name"].lower(),
+                "field-names": field_names_updated,
+                "data-types": data_types_updated,
+                "units": units_updated,
+            },
+        )
+
+        # Confirm that a new Grafana panel was created with a query containing all of
+        # the current field names (not checking the full syntax of the query, just that
+        # the new field name is in the query)
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        self.assertIn(
+            field_names_updated[0],
+            dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
+        )
+
+    def test_update_sensor_name_and_type_updates_panel_title_and_query(self):
+        # Create a dashboard, confirm it was created
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Create sensor and sensor type
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_name.lower(),
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name.lower(), type_id=sensor_type
+        )
+        sensor.save()
+
+        # Create grafana sensor panel
+        self.grafana.add_panel(sensor, event)
+
+        # New fields
+        updated_sensor_name = "bar"
+        field_names_updated = ["foo"]
+        data_types_updated = ["float"]
+        units_updated = ["km/h"]
+
+        # Post edited sensor type
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "edit_sensor": "",
+                "sensor-name": self.test_sensor["name"].lower(),
+                "sensor-name-updated": updated_sensor_name,
+                "field-names": field_names_updated,
+                "data-types": data_types_updated,
+                "units": units_updated,
+            },
+        )
+
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+
+        # Confirm title and query
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], updated_sensor_name,
+        )
+        self.assertIn(
+            field_names_updated[0],
+            dashboard["dashboard"]["panels"][0]["targets"][0]["rawSql"],
         )
 
     def test_delete_sensor_deletes_panel_in_dashboard(self):
@@ -396,7 +607,7 @@ class TestGrafana(TestCase):
         event = self.create_venue_and_event(self.event_name)
 
         sensor_type = AGSensorType.objects.create(
-            name=self.test_sensor_type,
+            name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
         )
@@ -411,7 +622,7 @@ class TestGrafana(TestCase):
 
         # Delete sensor
         self.client.post(
-            reverse(self.delete_sensor_url, kwargs={"sensor_id": sensor.id}),
+            reverse(self.delete_sensor_url, kwargs={"sensor_name": sensor.name}),
             follow=True,
         )
 
@@ -473,7 +684,7 @@ class TestGrafana(TestCase):
             self.grafana.create_postgres_datasource(self.datasource_name)
 
     def test_create_datasource_fail_permissions(self):
-        self.grafana.api_token = VIEWER_TOKEN  # API token with viewer permissions
+        self.grafana.api_token = self.VIEWER  # API token with viewer permissions
 
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
@@ -646,7 +857,7 @@ class TestGrafana(TestCase):
 
         event = self.create_venue_and_event(self.event_name)
 
-        updated_event_name = self.event_name + " Day Two"
+        updated_event_name = self.updated_event_name
 
         venue = AGVenue.objects.first()
 

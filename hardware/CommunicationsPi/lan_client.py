@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from requests.exceptions import HTTPError
-from ..Utils.utils import get_logger
+from hardware.Utils.utils import get_logger
 
 
 class LANClient:
@@ -18,9 +18,14 @@ class LANClient:
             self.url = lan_server_url
 
     def get_server_url_from_env(self):
+        protocol = "https" if os.environ.get("LAN_SERVER_HTTPS") else "http"
         ip = os.environ["LAN_SERVER_IP"]
         port = os.environ["LAN_PORT"]
-        return "http://{}:{}".format(ip, port)
+
+        url = "{}://{}".format(protocol, ip)
+        url += ":{}".format(port) if port else ""
+
+        return url
 
     # Function to ping the LAN server
     # Accepts payload as a python dictionary
@@ -41,4 +46,4 @@ class LANClient:
         except Exception as err:
             self.logging.error("error occurred: {}".format(str(err)))
             raise
-        return
+        # return unreachable return

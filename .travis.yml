@@ -22,12 +22,16 @@ jobs:
       services:
         - xvfb
         - postgresql
+        - docker
 
       before_install:
         - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
         - mkdir geckodriver
         - tar -xzf geckodriver-v0.26.0-linux64.tar.gz -C geckodriver
         - export PATH=$PATH:$PWD/geckodriver
+        - docker pull grafana/grafana
+        - docker run -d -p 3000:3000 grafana/grafana
+        - docker ps -a
 
       install:
         - pip install --upgrade pip
@@ -52,9 +56,9 @@ jobs:
 
     # run the hardware tests
     - language: bash
-      
+
       # python: '3.6'
-      
+
       services:
           - docker
 

@@ -1,3 +1,11 @@
+<!-- Bootstrap messages (please don't delete this Ray) -->
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
@@ -44,7 +52,6 @@
                     <table class="table table-bordered table-striped mb-0">
                         <thead>
                         <tr bgcolor="#e0efdf">
-                            <th>Sr. No.</th>
                             <th>NAME</th>
                             <th>Event Active</th>
                             <th>LOCATION</th>
@@ -56,7 +63,6 @@
                         <tbody>
                         {% for item in events %}
                             <tr>
-                                <td></td>
                                 <td>{{ item.name }}</td>
 
                                 {% if  item == active_event %}
@@ -94,10 +100,6 @@
                     <div>There are no events to show.</div>
             {% endif %}
         </div>
-
-        {% for message in messages %}
-        <p class="error"> {{ message }} </p>
-        {% endfor %}
 
         <!-- All Venues -->
         <div id="all-venues" class="mt-50 hide-display">
