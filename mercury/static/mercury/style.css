@@ -5,9 +5,7 @@
 
     Failure to keep the CSS document well-structure will bring seven years of
     bad luck where code you write will fail randomly and silently leading
-    to unimaginable side-effects and a slow descent into madness...
-    */
-
+    to unimaginable side-effects and a slow descent into madness...    */
 /******************* HTML LEVEL TAG STYLING ************************************/
 
 html {
@@ -43,23 +41,6 @@ li{
 }
 
 tr:nth-child(even) {background-color: #f2f2f2;}
-/*Commenting this out because it breaks appearance of several tables
-If desiring to use this styling, create a class (.counter) or id (#counter)
-and apply as needed. Do not apply universally */
-
-/*tr td:first-child:before  TODO
-{
-  counter-increment: Serial;      Increment the Serial counter
-  content: counter(Serial); Display the counter
-}  */
-
-  article, aside, footer, header, hgroup, main, section {
-    display: block;
-  }
-
-  [tabindex="-1"]:focus {
-    outline: 0 !important;
-  }
 
   hr {
     box-sizing: content-box;
@@ -255,7 +236,6 @@ a {
     overflow: auto;
     resize: vertical;
   }
-
 
 /*asterisk denotes CSS wildcard selector - This should be checked and maybe removed */
   *,
@@ -688,8 +668,7 @@ border: none;
     transform: translateX(26px);
   }
 
-
-/***************** RANDOM ATTRIBUTE SELECTORS I GUESS *************/
+/***************** RANDOM ATTRIBUTE SELECTORS *************/
 [hidden] {
   display: none !important;
   }
@@ -705,8 +684,6 @@ width: 70%;
 [tabindex="-1"]:focus {
     outline: 0 !important;
   }
-
-
 
 /******************* ID SELECTOR STYLING ***********************************/
 
@@ -779,62 +756,3 @@ width: 70%;
 #grafana-text-box:hover {
   background-color: var(--light-background);
 }
-
-
-
-
-
-  button,
-  [type="button"],
-  [type="reset"],
-  [type="submit"] {
-    -webkit-appearance: button;
-  }
-
-  button:not(:disabled),
-  [type="button"]:not(:disabled),
-  [type="reset"]:not(:disabled),
-  [type="submit"]:not(:disabled) {
-    cursor: pointer;
-  }
-
-  button::-moz-focus-inner,
-  [type="button"]::-moz-focus-inner,
-  [type="reset"]::-moz-focus-inner,
-  [type="submit"]::-moz-focus-inner {
-    padding: 0;
-    border-style: none;
-  }
-
-  input[type="radio"],
-  input[type="checkbox"] {
-    box-sizing: border-box;
-    padding: 0;
-  }
-
-  input[type="date"],
-  input[type="time"],
-  input[type="datetime-local"],
-  input[type="month"] {
-    -webkit-appearance: listbox;
-  }
-
-  [type="number"]::-webkit-inner-spin-button,
-  [type="number"]::-webkit-outer-spin-button {
-    height: auto;
-  }
-
-  [type="search"] {
-    outline-offset: -2px;
-    -webkit-appearance: none;
-  }
-
-  [type="search"]::-webkit-search-decoration {
-    -webkit-appearance: none;
-  }
-
-  ::-webkit-file-upload-button {
-    font: inherit;
-    -webkit-appearance: button;
-  }
-
