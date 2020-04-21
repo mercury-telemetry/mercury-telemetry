@@ -14,13 +14,6 @@
             <h1>NYU Motorsports Telemetry</h1>
             <p style="text-align: left; margin: 25px;"> Telemetry platform for monitoring <a href="https://www.nyutandonmotorsports.com/" target="_blank" style="color: var(--light-text); text-decoration: underline;">NYU Tandon's Motorsports</a> BAJA SAE competition vehicle. This platform supports visualization of data from vehicle sensors along with several auxiliary features.</p>
 
-            <a href="{% url 'mercury:pitcrew' %}">
-                <div class="index-text" id="grafana-text-box">
-                    <h3>Pit Crew Display</h3>
-                    View and configure pit crew display
-                </div>
-            </a>
-
             <br>
             <a href="{% url 'mercury:events' %}">
                 <div class="index-text" id="grafana-text-box">
@@ -42,15 +35,6 @@
                 <div class="index-text" id="grafana-text-box">
                     <h3>Configure Grafana</h3>
                     Add or change Grafana hosts.
-                </div>
-            </a>
-
-
-            <br>
-            <a href="{% url 'mercury:gps' %}">
-                <div class="index-text" id="grafana-text-box">
-                    <h3>GPS Map</h3>
-                    View GPS coordinates of the vehicle as a heat map for different sensors.
                 </div>
             </a>
         </div>

@@ -376,7 +376,7 @@ class Grafana:
         elif "Invalid API key" in message:
             raise ValueError("Invalid API key")
         else:
-            raise ValueError(f"Create_postgres_datasource() failed: {message}")
+            raise ValueError(f"Grafana datasource creation failed: {message}")
 
     def delete_datasource_by_name(self, name):
         """
