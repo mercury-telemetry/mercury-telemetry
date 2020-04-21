@@ -1,6 +1,6 @@
 from sense_hat import SenseHat
 import json
-from utils import date_str_with_current_timezone
+from hardware.Utils.utils import date_str_with_current_timezone
 
 
 TEMPERATURE_ID = 6

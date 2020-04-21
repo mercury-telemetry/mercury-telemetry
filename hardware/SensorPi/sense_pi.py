@@ -1,6 +1,9 @@
 import os
-from hardware.Utils.utils import get_logger, get_sensor_keys
-from utils import date_str_with_current_timezone
+from hardware.Utils.utils import (
+    get_logger,
+    get_sensor_keys,
+    date_str_with_current_timezone,
+)
 
 # Conditional import for sense hat and emulator
 try:

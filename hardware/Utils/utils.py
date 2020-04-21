@@ -1,5 +1,7 @@
 import os
 import json
+from datetime import datetime, timezone
+
 from .logger import Logger
 
 SENSOR_KEYS = {
@@ -25,3 +27,7 @@ def get_logger(key, file_name=None):
         file_name = key
     logger = Logger(name=key, filename=os.environ[file_name])
     return logger
+
+
+def date_str_with_current_timezone():
+    return datetime.now(timezone.utc).astimezone().isoformat()
