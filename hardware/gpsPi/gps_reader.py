@@ -1,6 +1,9 @@
 import os
 import serial
 from ..Utils.utils import get_logger
+from hardware.Utils.utils import date_str_with_current_timezone
+
+GPS_ID = 10
 
 
 class GPSReader:
@@ -37,8 +40,19 @@ class GPSReader:
             if longitude_dir == "W":
                 longitude_decimal = longitude_decimal * -1
 
-            self.logging.info("latitude_decimal: " + latitude_decimal)
-            self.logging.info("longitude_decimal: " + longitude_decimal)
+            self.logging.info("latitude_decimal: " + str(latitude_decimal))
+            self.logging.info("longitude_decimal: " + str(longitude_decimal))
+
+            data = {}
+            data["sensor_id"] = GPS_ID
+            data["values"] = {
+                "latitude": latitude_decimal,
+                "longitude": longitude_decimal,
+            }
+            data["date"] = date_str_with_current_timezone()
+            return data
+        else:
+            return None
 
             # print(latitude_decimal)
             # print(longitude_decimal)
