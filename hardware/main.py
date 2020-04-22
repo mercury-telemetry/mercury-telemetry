@@ -29,7 +29,7 @@ else:
             data = [temp, pres, hum, acc, orie, coords, all]
         else:
             data = [temp, pres, hum, acc, orie, all]
-            
+
         for i in data:
             print(i)
             try:
