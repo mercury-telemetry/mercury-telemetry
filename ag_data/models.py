@@ -79,7 +79,7 @@ class ErrorLog(models.Model):
     error description and error raw data
     """
 
-    # error declearation
+    # error declaration
     UNKNOWN_FMT = "UNKNOWN_FORMAT"
     MISSING_COL = "MISSING_COLUMN"
     MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
