@@ -16,9 +16,11 @@
 
 <body>
     {% include 'sidebar.html' %}
-    <div id="grafana-base"> <!-- app default background -->
-        <h1> Configure Sensors </h1> <br><br><br>
-
+    <div class="topbar-container">
+        <h1> Configure Sensors </h1> 
+        <p>Here you can add new sensors as well as modify your existing sensors.</p>
+        <br>
+    
         {% for message in messages %}
             <p class="error"> {{ message }} </p>
         {% endfor %}
