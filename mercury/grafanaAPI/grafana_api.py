@@ -36,7 +36,7 @@ class Grafana:
             "dashboard_uid": os.path.join(self.hostname, "api/dashboards/uid"),
             "datasources": os.path.join(self.hostname, "api/datasources"),
             "datasource_name": os.path.join(self.hostname, "api/datasources/name"),
-            "search": os.path.join(self.hostname, "api/search?")
+            "search": os.path.join(self.hostname, "api/search?"),
         }
 
         # Default panel sizes
@@ -326,8 +326,9 @@ class Grafana:
         """
         headers = {"Content-Type": "application/json"}
         response = requests.get(
-            url=self.endpoints["search"], auth=("api_key", self.api_token),
-            headers=headers
+            url=self.endpoints["search"],
+            auth=("api_key", self.api_token),
+            headers=headers,
         )
 
         dashboards = response.json()
@@ -444,8 +445,9 @@ class Grafana:
 
         headers = {"Content-Type": "application/json"}
         response = requests.get(
-            url=self.endpoints["datasources"], auth=("api_key", self.api_token),
-            headers=headers
+            url=self.endpoints["datasources"],
+            auth=("api_key", self.api_token),
+            headers=headers,
         )
 
         datasources = response.json()

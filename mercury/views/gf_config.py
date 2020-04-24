@@ -23,7 +23,22 @@ def update_config(request, gf_id=None):
 
 
 def delete_config(request, gf_id=None):
-    GFConfig.objects.get(id=gf_id).delete()
+    config = GFConfig.objects.get(id=gf_id)
+
+    # Create Grafana class to handle this GF instance
+    grafana = Grafana(config)
+
+    try:
+        grafana.validate_credentials()
+        grafana.delete_all_datasources()
+        grafana.delete_all_dashboards()
+    except ValueError as error:
+        messages.error(request, f"Grafana instance not deleted: {error}")
+    else:
+        messages.success(request, f"Grafana instance deleted successfully")
+
+    config.delete()
+
     return redirect("/gfconfig")
 
 
@@ -253,8 +268,6 @@ class GFConfigView(TemplateView):
             grafana = Grafana(config_data)
 
             try:
-                grafana.delete_all_dashboards()
-                grafana.delete_all_datasources()
                 grafana.validate_credentials()
                 grafana.create_postgres_datasource()
                 config_data.gf_current = True  # Deprecated
