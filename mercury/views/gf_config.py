@@ -282,6 +282,10 @@ class GFConfigView(TemplateView):
                 try:
                     grafana.validate_credentials()
                     grafana.create_postgres_datasource()
+                except ValueError as error:
+                    messages.error(request, error)
+                try:
+
                     config_data.gf_current = True  # Deprecated
                     # Only save the config if credentials were validated
                     config_data.save()
