@@ -996,7 +996,7 @@ class Grafana:
                         "1m",
                     ]
                 },
-                "refresh": "0.5s",
+                "refresh": "5s",
             }
         }
 
