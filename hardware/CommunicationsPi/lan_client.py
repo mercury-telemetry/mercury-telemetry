@@ -33,7 +33,7 @@ class LANClient:
         self.logging.info("Pinging")
 
         try:
-            self.logging.info("data: " + json.dumps(payload))
+            self.logging.info("data: " + payload)
             response = requests.post(self.url, data=payload)
             response.raise_for_status()
             return response
@@ -46,4 +46,3 @@ class LANClient:
         except Exception as err:
             self.logging.error("error occurred: {}".format(str(err)))
             raise
-        # return unreachable return
