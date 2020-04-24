@@ -87,16 +87,16 @@ class TestGFConfig(TestCase):
         self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
-        self.grafana.delete_dashboard_by_name(self.event_name)
-        self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_datasources()
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
         self.grafana = Grafana(self.gfconfig)
 
         # Clear all of the created dashboards
-        self.grafana.delete_dashboard_by_name(self.event_name)
-        self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_datasources()
 
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))

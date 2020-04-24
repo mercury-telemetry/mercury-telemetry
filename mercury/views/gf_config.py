@@ -253,12 +253,10 @@ class GFConfigView(TemplateView):
             grafana = Grafana(config_data)
 
             try:
-                grafana.create_postgres_datasource()
-            except ValueError as error:
-                messages.error(request, f"Datasource couldn't be created. {error}")
-
-            try:
+                grafana.delete_all_dashboards()
+                grafana.delete_all_datasources()
                 grafana.validate_credentials()
+                grafana.create_postgres_datasource()
                 config_data.gf_current = True  # Deprecated
                 # Only save the config if credentials were validated
                 config_data.save()

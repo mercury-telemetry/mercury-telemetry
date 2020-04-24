@@ -36,6 +36,7 @@ class Grafana:
             "dashboard_uid": os.path.join(self.hostname, "api/dashboards/uid"),
             "datasources": os.path.join(self.hostname, "api/datasources"),
             "datasource_name": os.path.join(self.hostname, "api/datasources/name"),
+            "search": os.path.join(self.hostname, "api/search?")
         }
 
         # Default panel sizes
@@ -317,6 +318,29 @@ class Grafana:
         else:
             return False
 
+    def delete_all_dashboards(self):
+        """
+        Deletes all dashboards associated with the current grafana instance.
+        :return: Returns true if all dashboards were found and deleted. Returns
+        false if no dashboards were found.
+        """
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=self.endpoints["search"], auth=("api_key", self.api_token),
+            headers=headers
+        )
+
+        dashboards = response.json()
+
+        deleted = True
+        if len(dashboards) > 0:
+            for dashboard in dashboards:
+                deleted = deleted and self.delete_dashboard(dashboard["uid"])
+            # Only return True if there were dashboards to delete and all were deleted
+            return deleted
+        else:
+            return False
+
     def create_postgres_datasource(self, title="Datasource"):
         """
         Creates a new postgres datasource with the provided credentials:
@@ -364,7 +388,11 @@ class Grafana:
 
         datasource = response.json()
 
-        message = datasource.get("message")
+        if isinstance(datasource, dict):
+            message = datasource.get("message")
+        else:
+            message = None
+
         if message is None:
             raise ValueError("Response contains no message")
         if "Datasource added" in message:
@@ -376,7 +404,7 @@ class Grafana:
         elif "Invalid API key" in message:
             raise ValueError("Invalid API key")
         else:
-            raise ValueError(f"Grafana datasource creation failed: {message}")
+            raise ValueError(f"Datasource not created: {message}")
 
     def delete_datasource_by_name(self, name):
         """
@@ -384,6 +412,11 @@ class Grafana:
         :param name: Name of the database to delete
         :return: Returns True if datasource was deleted, False otherwise
         """
+        try:
+            self.validate_credentials()
+        except ValueError as error:
+            raise ValueError(f"Datasource deletion failed: {error}")
+
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.endpoints["datasource_name"], name)
         response = requests.delete(
@@ -396,6 +429,34 @@ class Grafana:
             else:
                 return False
         except (KeyError, TypeError):
+            return False
+
+    def delete_all_datasources(self):
+        """
+        Deletes all dashboards associated with the current grafana instance.
+        :return: Returns true if all dashboards were found and deleted. Returns
+        false if no dashboards were found.
+        """
+        try:
+            self.validate_credentials()
+        except ValueError as error:
+            raise ValueError(f"Datasource deletion failed: {error}")
+
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=self.endpoints["datasources"], auth=("api_key", self.api_token),
+            headers=headers
+        )
+
+        datasources = response.json()
+
+        deleted = True
+        if len(datasources) > 0:
+            for datasource in datasources:
+                deleted = deleted and self.delete_datasource_by_name(datasource["name"])
+            # Only return True if there were dashboards to delete and all were deleted
+            return deleted
+        else:
             return False
 
     def update_dashboard_title(self, event, title):
