@@ -17,7 +17,7 @@ Heroku (master): [https://spring2020-cs-gy-9223-prod.herokuapp.com/](https://spr
 # First time repo setup
 1. From the root of the repo, run `scripts/setup.sh`. Activate your virtualenv first.
 2. To run the server, run `python manage.py runserver`. You should now be able to view the site at http://127.0.0.1:8000/
-3. To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) 
+3. To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) In case you are on windows, please also refer to the wiki on the topic by going [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Setting-up-SymmetricDS-on-Windows) Windows support is still not streamlined but this should be enough to get you started. In case you want to help us make this better please refer below as to how you can contribute to the project. 
 
 
 # HOWTO Contribute to this repo
