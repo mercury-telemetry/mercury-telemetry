@@ -230,61 +230,73 @@ class GFConfigView(TemplateView):
             gf_password = request.POST.get("gf_password")
             gf_token = request.POST.get("gf_token")
 
-            # create authentication url
-            auth_http = "http://{}:{}@{}"
-            auth_https = "https://{}:{}@{}"
+            # check whether gf_host already in use
+            matching_hosts = GFConfig.objects.filter(gf_host=gf_host)
+            if len(matching_hosts):
+                messages.error(
+                    request, "Hostname {} already in use".format(gf_host),
+                )
+            else:
 
-            if not gf_token:
-                if gf_host.startswith("https"):
-                    auth_url = auth_https.format(gf_username, gf_password, gf_host[8:])
-                elif gf_host.startswith("http"):
-                    auth_url = auth_http.format(gf_username, gf_password, gf_host[7:])
-                else:
-                    auth_url = auth_http.format(gf_username, gf_password, gf_host)
+                # create authentication url
+                auth_http = "http://{}:{}@{}"
+                auth_https = "https://{}:{}@{}"
+
+                if not gf_token:
+                    if gf_host.startswith("https"):
+                        auth_url = auth_https.format(
+                            gf_username, gf_password, gf_host[8:]
+                        )
+                    elif gf_host.startswith("http"):
+                        auth_url = auth_http.format(
+                            gf_username, gf_password, gf_host[7:]
+                        )
+                    else:
+                        auth_url = auth_http.format(gf_username, gf_password, gf_host)
+
+                    try:
+                        gf_token = Grafana.create_api_key(
+                            auth_url, "mercury-auto-admin", "Admin"
+                        )
+                    except ValueError as error:
+                        messages.error(
+                            request, "Failed to create API token: {}".format(error),
+                        )
+                        return redirect("/gfconfig")
+
+                config_data = GFConfig(
+                    gf_name=gf_name,
+                    gf_host=gf_host,
+                    gf_username=gf_username,
+                    gf_password=gf_password,
+                    gf_token=gf_token,
+                    gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
+                    gf_db_name=DB["default"]["NAME"],
+                    gf_db_username=DB["default"]["USER"],
+                    gf_db_pw=DB["default"]["PASSWORD"],
+                )
+
+                # Create Grafana instance with host and token
+                grafana = Grafana(config_data)
 
                 try:
-                    gf_token = Grafana.create_api_key(
-                        auth_url, "mercury-auto-admin", "Admin"
-                    )
+                    grafana.validate_credentials()
+                    grafana.create_postgres_datasource()
+                    config_data.gf_current = True  # Deprecated
+                    # Only save the config if credentials were validated
+                    config_data.save()
+
+                    # If any events exist, add a dashboard for each event
+                    # If any sensors exist, add them to each event dashboard
+                    events = AGEvent.objects.all()
+                    sensors = AGSensor.objects.all()
+                    for event in events:
+                        grafana.create_dashboard(event.name)
+                        for sensor in sensors:
+                            grafana.add_panel(sensor, event)
+
                 except ValueError as error:
-                    messages.error(
-                        request, "Failed to create API token: {}".format(error),
-                    )
-                    return redirect("/gfconfig")
+                    messages.error(request, f"Grafana initial set up failed: {error}")
 
-            config_data = GFConfig(
-                gf_name=gf_name,
-                gf_host=gf_host,
-                gf_username=gf_username,
-                gf_password=gf_password,
-                gf_token=gf_token,
-                gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
-                gf_db_name=DB["default"]["NAME"],
-                gf_db_username=DB["default"]["USER"],
-                gf_db_pw=DB["default"]["PASSWORD"],
-            )
-
-            # Create Grafana instance with host and token
-            grafana = Grafana(config_data)
-
-            try:
-                grafana.validate_credentials()
-                grafana.create_postgres_datasource()
-                config_data.gf_current = True  # Deprecated
-                # Only save the config if credentials were validated
-                config_data.save()
-
-                # If any events exist, add a dashboard for each event
-                # If any sensors exist, add them to each event dashboard
-                events = AGEvent.objects.all()
-                sensors = AGSensor.objects.all()
-                for event in events:
-                    grafana.create_dashboard(event.name)
-                    for sensor in sensors:
-                        grafana.add_panel(sensor, event)
-
-            except ValueError as error:
-                messages.error(request, f"Grafana initial set up failed: {error}")
-
-            messages.success(request, "Created Grafana Host: {}".format(gf_name))
+                messages.success(request, "Created Grafana Host: {}".format(gf_name))
             return redirect("/gfconfig")
