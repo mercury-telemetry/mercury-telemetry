@@ -31,11 +31,15 @@ class Transceiver:
                 ),
                 {},
             )
-            self.port_vid = port_info.vid if 'vid' in port_info else None
-            self.port_pid = port_info.pid if 'pid' in port_info else None
-            self.port_vendor = port_info.manufacturer if 'manufacturer' in port_info else None
-            self.port_intf = port_info.interface if 'interface' in port_info else None
-            self.port_serial_number = port_info.serial_number if 'serial_number' in port_info else None
+            self.port_vid = port_info.vid if "vid" in port_info else None
+            self.port_pid = port_info.pid if "pid" in port_info else None
+            self.port_vendor = (
+                port_info.manufacturer if "manufacturer" in port_info else None
+            )
+            self.port_intf = port_info.interface if "interface" in port_info else None
+            self.port_serial_number = (
+                port_info.serial_number if "serial_number" in port_info else None
+            )
             self.find_port()
 
         baudrate = os.environ["TRANSCEIVER_BAUDRATE"]

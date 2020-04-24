@@ -27,9 +27,9 @@ class CommPi(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
     def send_data(self, payload):
-        if os.environ.get('ENABLE_INTERNET_TRANSMISSION'):
-            print('transmit via internet')
-        if os.environ.get('ENABLE_RADIO_TRANSMISSION'):
-            print('transmit via radio')
+        if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
+            print("transmit via internet")
+        if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
+            print("transmit via radio")
             self.transceiver.send(payload)
         return

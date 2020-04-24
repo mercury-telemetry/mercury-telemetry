@@ -5,15 +5,13 @@ from hardware.CommunicationsPi.comm_pi import CommPi
 from hardware.CommunicationsPi.lan_server import runServer
 from hardware.CommunicationsPi.lan_client import LANClient
 from hardware.SensorPi.sense_pi import SensePi
-from hardware.Utils.utils import (
-        get_sensor_keys,
-)
+from hardware.Utils.utils import get_sensor_keys
 
 
 if os.environ["HARDWARE_TYPE"] == "commPi":
     print("CommunicationsPi")
     runServer(handler_class=CommPi)
-elif os.environ['HARDWARE_TYPE'] == "sensePi":
+elif os.environ["HARDWARE_TYPE"] == "sensePi":
     print("SensePi")
     sensor_keys = get_sensor_keys()
     sensor_ids = {}
