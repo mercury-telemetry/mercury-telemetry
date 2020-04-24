@@ -53,7 +53,7 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
 else:
     print("Local Django Server")
     transceiver = Transceiver()
-    url = os.environ.get('DJANGO_SERVER_API_ENDPOINT')
+    url = os.environ.get("DJANGO_SERVER_API_ENDPOINT")
     if url:
         client = LANClient(lan_server_url=url)
         while True:
@@ -62,4 +62,4 @@ else:
                 print(data)
                 client.ping_lan_server(json.loads(data))
     else:
-        print('DJANGO_SERVER_API_ENDPOINT not set')
+        print("DJANGO_SERVER_API_ENDPOINT not set")
