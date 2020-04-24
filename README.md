@@ -17,7 +17,7 @@ Heroku (master): [https://spring2020-cs-gy-9223-prod.herokuapp.com/](https://spr
 # First time repo setup
 1. From the root of the repo, run `scripts/setup.sh`. Activate your virtualenv first.
 2. To run the server, run `python manage.py runserver`.
-
+3. To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) 
 You should now be able to view the site at http://127.0.0.1:8000/
 
 # HOWTO Contribute to this repo
