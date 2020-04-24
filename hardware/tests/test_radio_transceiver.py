@@ -22,7 +22,7 @@ class TransceiverTests(SimpleTestCase):
         self.parity = serial.PARITY_NONE
         self.stopbits = serial.STOPBITS_ONE
         self.bytesize = serial.EIGHTBITS
-        self.timeout = "1"
+        self.timeout = 1
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -100,7 +100,7 @@ class TransceiverTests(SimpleTestCase):
                 "RADIO_TRANSMITTER_PORT": "",
                 "LOG_FILE": "logger.txt",
                 "TRANSCEIVER_BAUDRATE": "9600",
-                "TRANSCEIVER_TIMEOUT": 1,
+                "TRANSCEIVER_TIMEOUT": "1",
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
@@ -314,7 +314,6 @@ class TransceiverTests(SimpleTestCase):
             self.assertTrue(transciever.logging is not None)
             self.assertTrue(transciever.logging.name == "LOG_FILE")
             self.assertIsInstance(transciever.logging, Logger)
-
             self.assertTrue(transciever.port == "usb2")
             self.assertTrue(transciever.port_vid == "foo2")
             self.assertTrue(transciever.port_pid == "baz")
