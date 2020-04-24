@@ -861,7 +861,7 @@ class Grafana:
             "bars": False,
             "dashLength": 10,
             "dashes": False,
-            "datasource": "Datasource",
+            "datasource": "",  # set as default
             "fill": 1,
             "fillGradient": 0,
             "gridPos": {"h": 9, "w": 12, "x": x, "y": y},
