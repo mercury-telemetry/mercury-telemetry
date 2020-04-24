@@ -10,10 +10,10 @@ from hardware.Utils.utils import (
 )
 
 
-if os.environ["PI_TYPE"] == "commPi":
+if os.environ["HARDWARE_TYPE"] == "commPi":
     print("CommunicationsPi")
     runServer(handler_class=CommPi)
-else:
+elif os.environ['HARDWARE_TYPE'] == "sensePi":
     print("SensePi")
     sensor_keys = get_sensor_keys()
     sensor_ids = {}
@@ -43,3 +43,5 @@ else:
                 print("error occurred: {}".format(str(err)))
                 raise
             time.sleep(1)
+else:
+    print("Local Django Server")
