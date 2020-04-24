@@ -7,6 +7,7 @@ from hardware.CommunicationsPi.lan_server import runServer
 from hardware.CommunicationsPi.lan_client import LANClient
 from hardware.SensorPi.sense_pi import SensePi
 from hardware.Utils.utils import get_sensor_keys
+from hardware.gpsPi.gps_reader import GPSReader
 
 
 if os.environ["HARDWARE_TYPE"] == "commPi":
@@ -22,6 +23,7 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
     sensor_ids[sensor_keys["ACCELERATION"]] = 5
     sensor_ids[sensor_keys["ORIENTATION"]] = 6
     sensePi = SensePi(sensor_ids=sensor_ids)
+    gpsPi = GPSReader()
     client = LANClient()
 
     while True:
@@ -31,8 +33,13 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
         acc = sensePi.get_acceleration()
         orie = sensePi.get_orientation()
         all = sensePi.get_all()
+        coords = gpsPi.get_geolocation()
 
-        data = [temp, pres, hum, acc, orie, all]
+        if coords is not None:
+            data = [temp, pres, hum, acc, orie, coords, all]
+        else:
+            data = [temp, pres, hum, acc, orie, all]
+
         for i in data:
             payload = json.dumps(i)
             print(payload)
