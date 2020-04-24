@@ -133,7 +133,7 @@ class LanClientTests(SimpleTestCase):
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(
                     ("LAN_CLIENT_LOG_FILE", "INFO", "Pinging"),
-                    ("LAN_CLIENT_LOG_FILE", "INFO", f"data: {json.dumps(payload)}"),
+                    ("LAN_CLIENT_LOG_FILE", "INFO", f"data: { payload }"),
                 )
 
     @patch("hardware.CommunicationsPi.lan_client.requests")

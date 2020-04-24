@@ -100,7 +100,7 @@ class TransceiverTests(SimpleTestCase):
                 "RADIO_TRANSMITTER_PORT": "",
                 "LOG_FILE": "logger.txt",
                 "TRANSCEIVER_BAUDRATE": "9600",
-                "TRANSCEIVER_TIMEOUT": "1",
+                "TRANSCEIVER_TIMEOUT": 1,
             },
         ):
             transciever = Transceiver(log_file_name="LOG_FILE")
