@@ -2,6 +2,7 @@ import os
 import time
 import json
 
+from hardware.CommunicationsPi.radio_transceiver import Transceiver
 from hardware.CommunicationsPi.comm_pi import CommPi
 from hardware.CommunicationsPi.lan_server import runServer
 from hardware.CommunicationsPi.lan_client import LANClient
@@ -51,3 +52,14 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
             time.sleep(1)
 else:
     print("Local Django Server")
+    transceiver = Transceiver()
+    url = os.environ.get('DJANGO_SERVER_API_ENDPOINT')
+    if url:
+        client = LANClient(lan_server_url=url)
+        while True:
+            data = transceiver.listen()
+            if data:
+                print(data)
+                client.ping_lan_server(json.loads(data))
+    else:
+        print('DJANGO_SERVER_API_ENDPOINT not set')
