@@ -69,8 +69,9 @@ class LoggerTests(SimpleTestCase):
         """
         Tests the .info method
         """
-        with mock.patch.dict(os.environ, {"LOG_DIRECTORY": self.temp_dir.path,
-        "SHOW_LOGS": "True"}):
+        with mock.patch.dict(
+            os.environ, {"LOG_DIRECTORY": self.temp_dir.path, "SHOW_LOGS": "True"}
+        ):
             with LogCapture() as capture:
                 logger = Logger(name="test_logger", filename="logger.txt")
                 logger.info("test message")
