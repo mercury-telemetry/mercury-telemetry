@@ -232,7 +232,7 @@ class Grafana:
                         "1m",
                     ]
                 },
-                "refresh": "0.5s",
+                "refresh": "1s",
             },
             "folderId": 0,
             "overwrite": False,
@@ -507,22 +507,43 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Event dashboard {event.name} not updated: {error}")
 
+    # If the type of the panel is map, refer to the first field as lat and the
+    # second as lon (required for trackmap to visualize)
     def create_panel_query(self, sensor, event):
         field_dict = sensor.type_id.format
         field_array = []
         for field in field_dict:
             field_array.append(field)
+        panel_type = sensor.type_id.graph_type
 
         # Build fields portion of SELECT query (select each field)
         fields_query = ""
-        if len(field_array):
-            for i in range(0, len(field_array) - 1):
-                fields_query += (
-                    f"value->'result'->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+
+        if panel_type == "map":
+            if len(field_array) != 2:
+                raise ValueError(
+                    "Map panels must have 2 fields: latitude and "
+                    "longitude. Please check the sensor fields."
                 )
-            fields_query += (
-                f"value->'result'->'{field_array[-1]}' AS \"{field_array[-1]}\""
-            )
+            else:
+                fields_query += (
+                    f"CAST(value->'result'->'{field_array[0]}' AS float) AS \""
+                    f'lat",\n\t'
+                )
+                fields_query += (
+                    f"CAST(value->'result'->'{field_array[1]}' AS float) AS \"" f'lon"'
+                )
+        else:
+            if len(field_array):
+                for i in range(0, len(field_array) - 1):
+                    fields_query += (
+                        f"CAST(value->'result'->'{field_array[i]}' AS float) AS \""
+                        f'{field_array[i]}",\n\t'
+                    )
+                fields_query += (
+                    f"CAST(value->'result'->'{field_array[-1]}' AS float) AS \""
+                    f'{field_array[-1]}"'
+                )
 
         # Build SQL query
         panel_sql_query = f"""
@@ -554,12 +575,13 @@ class Grafana:
         will be added to dashboard.
         """
 
-        # Retrieve id, title, and fields from AGSensor object
+        # Retrieve id, title, and fields, and graph type from AGSensor object
         title = sensor.name
         field_dict = sensor.type_id.format
         field_array = []
         for field in field_dict:
             field_array.append(field)
+        panel_type = sensor.type_id.graph_type
 
         # Find dashboard uid for event
         dashboard_info = self.get_dashboard_by_name(event.name)
@@ -593,11 +615,14 @@ class Grafana:
             new_panel_id = panels[-1]["id"] + 1
 
         # Build SQL query
-        panel_sql_query = self.create_panel_query(sensor, event)
+        try:
+            panel_sql_query = self.create_panel_query(sensor, event)
+        except ValueError as error:
+            raise ValueError(f"Sensor panel not added: {error}")
 
         # Build a panel dict for the new panel
         panel = self.create_panel_dict(
-            new_panel_id, field_array, panel_sql_query, title, x, y
+            new_panel_id, field_array, panel_sql_query, title, x, y, panel_type
         )
 
         # Add new panel to list of panels
@@ -678,16 +703,38 @@ class Grafana:
         if not panels:
             return False
 
+        title = new_sensor.name
+        field_dict = new_sensor.type_id.format
+        field_array = []
+        for field in field_dict:
+            field_array.append(field)
+        panel_type = new_sensor.type_id.graph_type
+
         # Find the target panel and update it
+        new_panels = []
         for panel in panels:
             if panel["title"] == current_sensor_name:
-                panel["title"] = new_sensor.name
-                panel["targets"][0]["rawSql"] = self.create_panel_query(
-                    new_sensor, event
-                )
+                query = self.create_panel_query(new_sensor, event)
+                try:
+                    panel = self.create_panel_dict(
+                        panel["id"],
+                        field_array,
+                        query,
+                        title,
+                        panel["gridPos"]["x"],
+                        panel["gridPos"]["y"],
+                        panel_type,
+                    )
+                    new_panels.append(panel)
+                except (ValueError, KeyError) as error:
+                    raise ValueError(error)
+            else:
+                new_panels.append(panel)
 
         # Create updated dashboard dict with updated list of panels
-        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
+        updated_dashboard = self.create_dashboard_update_dict(
+            dashboard_info, new_panels
+        )
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
@@ -841,7 +888,9 @@ class Grafana:
         return sensors
 
     # Helper method for add_panel
-    def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
+    def create_panel_dict(
+        self, panel_id, fields, panel_sql_query, title, x, y, panel_type="graph"
+    ):
         """
         Creates a panel dict which can be added to an updated dashboard dict and
         posted to the Create/Update Dashboard API endpoint
@@ -892,7 +941,7 @@ class Grafana:
             "steppedLine": False,
             "targets": [
                 {
-                    "format": "table",
+                    "format": "time_series",
                     "group": [],
                     "metricColumn": f"value->'{first_field}'",  # handle this
                     "rawQuery": True,
@@ -913,7 +962,7 @@ class Grafana:
             "timeShift": None,
             "title": title,
             "tooltip": {"shared": None, "sort": 0, "value_type": "individual"},
-            "type": "graph",
+            "type": panel_type,
             "xaxis": {
                 "buckets": None,
                 "mode": "time",
@@ -941,6 +990,19 @@ class Grafana:
             ],
             "yaxis": {"align": False, "alignLevel": None},
         }
+
+        if panel_type == "map":
+            panel["type"] = "pr0ps-trackmap-panel"
+            panel["autoZoom"] = True
+            panel["lineColor"] = "red"
+            panel["maxDataPoints"] = 500
+            panel["pointColor"] = "royalBlue"
+        elif panel_type == "gauge":
+            panel["type"] = "gauge"
+            panel["options"]["fieldOptions"] = {
+                "calcs": ["last"],
+            }
+
         return panel
 
     # Helper method for add_panel

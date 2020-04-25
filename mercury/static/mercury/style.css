@@ -320,6 +320,11 @@ identical to the selector html, except that its specificity is higher. */
   width: 50%;
 }
 
+.graph-image {
+ width: 200px;
+ height: 200px;
+}
+
 .gfconfig-text-align {
     text-align:left;
     float: left;

@@ -99,7 +99,14 @@ class CreateSensorView(TemplateView):
     def get(self, request, *args, **kwargs):
         sensors = AGSensor.objects.all()
         sensor_types = AGSensorType.objects.all()
-        context = {"sensors": sensors, "sensor_types": sensor_types}
+
+        graph_types = AGSensorType.GRAPH_CHOICES
+
+        context = {
+            "sensors": sensors,
+            "sensor_types": sensor_types,
+            "graph_types": graph_types,
+        }
         return render(request, self.template_name, context)
 
     @require_event_code
@@ -109,6 +116,7 @@ class CreateSensorView(TemplateView):
         field_types = request.POST.getlist("data-types")
         field_units = request.POST.getlist("units")
         sensor_name, field_names = remove_whitespace_caps(sensor_name, field_names)
+        graph_type = request.POST.get("sensor-graph-type")
 
         if "edit_sensor" in request.POST:
             new_name = request.POST.get("sensor-name-updated")
@@ -117,6 +125,14 @@ class CreateSensorView(TemplateView):
             if new_name == sensor_name:
                 new = False
             valid, request = validate_inputs(new_name, field_names, request, new)
+            if graph_type == "map" and len(field_names) != 2:
+                messages.error(
+                    request,
+                    "Map panels must have exactly 2 fields for "
+                    "latitude and longitude GPS coordinates. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
             new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
                 sensor_to_update = AGSensor.objects.get(name=sensor_name)
@@ -124,9 +140,11 @@ class CreateSensorView(TemplateView):
 
                 sensor_type_to_update = AGSensorType.objects.get(name=sensor_name)
                 prev_format = sensor_type_to_update.format
+                prev_graph_type = sensor_type_to_update.graph_type
                 sensor_to_update.name = new_name
                 sensor_type_to_update.name = new_name
                 sensor_type_to_update.format = new_format
+                sensor_type_to_update.graph_type = graph_type
                 sensor_to_update.save()
                 sensor_type_to_update.save()
 
@@ -136,24 +154,9 @@ class CreateSensorView(TemplateView):
 
                 name_changed = True if new_name != prev_name else False
                 format_changed = True if new_format != prev_format else False
+                graph_type_changed = True if graph_type != prev_graph_type else False
 
-                if name_changed and format_changed:
-                    for gfconfig in gfconfigs:
-                        grafana = Grafana(gfconfig)
-
-                        for event in events:
-                            # Update sensor panel in each event dashboard
-                            # instance
-                            try:
-                                grafana.update_panel_sensor(
-                                    event, prev_name, sensor_to_update
-                                )
-                            except ValueError as error:
-                                messages.error(request, error)
-                    messages.success(
-                        request, f"Grafana panels updated based on sensor " f"changes"
-                    )
-                elif name_changed:
+                if name_changed:
                     for gfconfig in gfconfigs:
                         grafana = Grafana(gfconfig)
 
@@ -167,9 +170,12 @@ class CreateSensorView(TemplateView):
                     messages.success(
                         request, f"Grafana panels updated based on sensor " f"changes"
                     )
-                elif format_changed:
-                    # Delete any existing measurement data for the sensor
-                    AGMeasurement.objects.filter(sensor_id=sensor_to_update.id).delete()
+                elif format_changed or graph_type_changed:
+                    if format_changed:
+                        # Delete any existing measurement data for the sensor
+                        AGMeasurement.objects.filter(
+                            sensor_id=sensor_to_update.id
+                        ).delete()
 
                     for gfconfig in gfconfigs:
                         grafana = Grafana(gfconfig)
@@ -183,10 +189,11 @@ class CreateSensorView(TemplateView):
                                 )
                             except ValueError as error:
                                 messages.error(request, error)
-
-                    messages.success(
-                        request, f"Grafana panels updated based on sensor " f"changes"
-                    )
+                            else:
+                                messages.success(
+                                    request,
+                                    f"Grafana panels updated based on sensor changes",
+                                )
                 else:
                     messages.error(request, f"No changes detected - no updates made")
 
@@ -197,6 +204,7 @@ class CreateSensorView(TemplateView):
             sensor_format = generate_sensor_format(
                 field_names, field_types, field_units
             )
+            graph_type = request.POST.get("sensor-graph-type")
             if valid:
                 """1) The structure of the models (database API) is confusing and we hide
                  the confusing details from the user. 2) Note that we have to first
@@ -206,7 +214,10 @@ class CreateSensorView(TemplateView):
                  sensors from sensor types will likely cause bad things to happen...
                  """
                 new_type = AGSensorType.objects.create(
-                    name=sensor_name, processing_formula=0, format=sensor_format
+                    name=sensor_name,
+                    processing_formula=0,
+                    format=sensor_format,
+                    graph_type=graph_type,
                 )
                 new_type.save()
 
@@ -233,7 +244,8 @@ class CreateSensorView(TemplateView):
                     for gfconfig in gfconfigs:
                         # Grafana instance using current GFConfig
                         grafana = Grafana(gfconfig)
-                        # Add the Sensor Panel to the Active Event's dashboard
+
+                        # Add the Sensor Panel to the Active Event
                         try:
                             grafana.add_panel(new_sensor, active_event)
                         except ValueError as error:
@@ -241,12 +253,19 @@ class CreateSensorView(TemplateView):
                                 request,
                                 f"Failed to add panel to active dashboard: {error}",
                             )
+                        else:
+                            messages.success(
+                                request,
+                                "Sensor panel added to Grafana for the active event",
+                            )
 
         # gather sensors and sensor types (which should be the same) and render them
         types = AGSensorType.objects.all()
         sensors = AGSensor.objects.all()
+        graph_types = AGSensorType.GRAPH_CHOICES
         context = {
             "sensor_types": types,
             "sensors": sensors,
+            "graph_types": graph_types,
         }
         return render(request, self.template_name, context)
