@@ -50,3 +50,15 @@ class CommPiTests(SimpleTestCase):
             url = f"http://localhost:{self.mock_server_port}/"
             requests.post(url, data={"key": "value"}, headers={"Content-Length": "15"})
             mock_transceiver.return_value.send.assert_called()
+
+    @mock.patch("builtins.print")
+    @mock.patch("hardware.CommunicationsPi.comm_pi.Transceiver")
+    def test_post_radio_with_internet(self, mock_transceiver=mock.MagicMock(), mock_print=mock.MagicMock()):
+        with patch.dict(
+            os.environ, {"ENABLE_INTERNET_TRANSMISSION": "True"},
+        ):
+            mock_transceiver.return_value.send = mock.MagicMock()
+            url = f"http://localhost:{self.mock_server_port}/"
+            requests.post(url, data={"key": "value"}, headers={"Content-Length": "15"})
+            mock_transceiver.return_value.send.assert_not_called()
+            self.assertTrue(mock_print.mock_calls == [mock.call("transmit via internet")])
