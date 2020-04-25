@@ -9,7 +9,7 @@ from hardware.CommunicationsPi.web_client import WebClient
 from hardware.Utils.logger import Logger
 
 
-class LanClientTests(SimpleTestCase):
+class WebClientTests(SimpleTestCase):
     def setUp(self):
         self.temp_dir = TempDirectory()
 
