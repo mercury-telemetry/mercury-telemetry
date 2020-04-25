@@ -1,9 +1,11 @@
 from django.test import SimpleTestCase
+import os
 
 # from json.decoder import JSONDecodeError
 from http.server import HTTPServer
 
 from unittest import mock
+from unittest.mock import patch
 
 import threading
 import socket
@@ -40,9 +42,11 @@ class CommPiTests(SimpleTestCase):
         self.assertTrue(response.headers.get("Content-Type") == "text/html")
 
     @mock.patch("hardware.CommunicationsPi.comm_pi.Transceiver")
-    def test_post(self, mock_transceiver=mock.MagicMock()):
-
-        mock_transceiver.return_value.send = mock.MagicMock()
-        url = f"http://localhost:{self.mock_server_port}/"
-        requests.post(url, data={"key": "value"}, headers={"Content-Length": "15"})
-        mock_transceiver.return_value.send.assert_called()
+    def test_post_radio(self, mock_transceiver=mock.MagicMock()):
+        with patch.dict(
+            os.environ, {"ENABLE_RADIO_TRANSMISSION": "True"},
+        ):
+            mock_transceiver.return_value.send = mock.MagicMock()
+            url = f"http://localhost:{self.mock_server_port}/"
+            requests.post(url, data={"key": "value"}, headers={"Content-Length": "15"})
+            mock_transceiver.return_value.send.assert_called()

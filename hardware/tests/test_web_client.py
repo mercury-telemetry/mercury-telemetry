@@ -4,13 +4,12 @@ from testfixtures import TempDirectory, LogCapture
 from requests.exceptions import HTTPError
 
 import os
-import json
 
-from hardware.CommunicationsPi.lan_client import LANClient
+from hardware.CommunicationsPi.web_client import WebClient
 from hardware.Utils.logger import Logger
 
 
-class LanClientTests(SimpleTestCase):
+class WebClientTests(SimpleTestCase):
     def setUp(self):
         self.temp_dir = TempDirectory()
 
@@ -21,17 +20,17 @@ class LanClientTests(SimpleTestCase):
         with patch.dict(
             os.environ,
             {
-                "LAN_CLIENT_LOG_FILE": "lan_client.log",
+                "WEB_CLIENT_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
             },
         ):
-            l_client = LANClient()
+            l_client = WebClient()
 
             self.assertTrue(l_client.logging is not None)
-            self.assertTrue(l_client.logging.name == "LAN_CLIENT_LOG_FILE")
+            self.assertTrue(l_client.logging.name == "WEB_CLIENT_LOG_FILE")
             self.assertIsInstance(l_client.logging, Logger)
 
             self.assertEqual(l_client.url, "https://0.0.0.0:0")
@@ -40,16 +39,16 @@ class LanClientTests(SimpleTestCase):
         with patch.dict(
             os.environ,
             {
-                "LAN_CLIENT_LOG_FILE": "lan_client.log",
+                "WEB_CLIENT_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
             },
         ):
-            l_client = LANClient()
+            l_client = WebClient()
 
             self.assertTrue(l_client.logging is not None)
-            self.assertTrue(l_client.logging.name == "LAN_CLIENT_LOG_FILE")
+            self.assertTrue(l_client.logging.name == "WEB_CLIENT_LOG_FILE")
             self.assertIsInstance(l_client.logging, Logger)
 
             self.assertEqual(l_client.url, "http://0.0.0.0:0")
@@ -58,17 +57,17 @@ class LanClientTests(SimpleTestCase):
         with patch.dict(
             os.environ,
             {
-                "LAN_CLIENT_LOG_FILE": "lan_client.log",
+                "WEB_CLIENT_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
             },
         ):
-            l_client = LANClient(lan_server_url="/url")
+            l_client = WebClient(server_url="/url")
 
             self.assertTrue(l_client.logging is not None)
-            self.assertTrue(l_client.logging.name == "LAN_CLIENT_LOG_FILE")
+            self.assertTrue(l_client.logging.name == "WEB_CLIENT_LOG_FILE")
             self.assertIsInstance(l_client.logging, Logger)
 
             self.assertEqual(l_client.url, "/url")
@@ -77,14 +76,14 @@ class LanClientTests(SimpleTestCase):
         with patch.dict(
             os.environ,
             {
-                "NEW_LOG_FILE": "lan_client.log",
+                "NEW_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
             },
         ):
-            l_client = LANClient(log_file_name="NEW_LOG_FILE")
+            l_client = WebClient(log_file_name="NEW_LOG_FILE")
 
             self.assertTrue(l_client.logging is not None)
             self.assertTrue(l_client.logging.name == "NEW_LOG_FILE")
@@ -96,14 +95,14 @@ class LanClientTests(SimpleTestCase):
         with patch.dict(
             os.environ,
             {
-                "NEW_LOG_FILE": "lan_client.log",
+                "NEW_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
                 "LAN_PORT": "0",
             },
         ):
-            l_client = LANClient(log_file_name="NEW_LOG_FILE", lan_server_url="/url")
+            l_client = WebClient(log_file_name="NEW_LOG_FILE", server_url="/url")
 
             self.assertTrue(l_client.logging is not None)
             self.assertTrue(l_client.logging.name == "NEW_LOG_FILE")
@@ -111,12 +110,12 @@ class LanClientTests(SimpleTestCase):
 
             self.assertEqual(l_client.url, "/url")
 
-    @patch("hardware.CommunicationsPi.lan_client.requests")
+    @patch("hardware.CommunicationsPi.web_client.requests")
     def test_ping_server(self, mock_requests=MagicMock()):
         with patch.dict(
             os.environ,
             {
-                "LAN_CLIENT_LOG_FILE": "lan_client.log",
+                "WEB_CLIENT_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
@@ -124,7 +123,7 @@ class LanClientTests(SimpleTestCase):
             },
         ):
             with LogCapture() as capture:
-                l_client = LANClient()
+                l_client = WebClient()
 
                 payload = "{'key':'value'}"
 
@@ -132,16 +131,16 @@ class LanClientTests(SimpleTestCase):
 
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(
-                    ("LAN_CLIENT_LOG_FILE", "INFO", "Pinging"),
-                    ("LAN_CLIENT_LOG_FILE", "INFO", f"data: {json.dumps(payload)}"),
+                    ("WEB_CLIENT_LOG_FILE", "INFO", "Pinging"),
+                    ("WEB_CLIENT_LOG_FILE", "INFO", f"data: { payload }"),
                 )
 
-    @patch("hardware.CommunicationsPi.lan_client.requests")
+    @patch("hardware.CommunicationsPi.web_client.requests")
     def test_ping_server_raise_http_ex(self, mock_requests=MagicMock()):
         with patch.dict(
             os.environ,
             {
-                "LAN_CLIENT_LOG_FILE": "lan_client.log",
+                "WEB_CLIENT_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
@@ -149,7 +148,7 @@ class LanClientTests(SimpleTestCase):
             },
         ):
             with LogCapture() as capture:
-                l_client = LANClient()
+                l_client = WebClient()
                 mock_requests.post.side_effect = HTTPError("HTTPError")
 
                 payload = "{'key':'value'}"
@@ -159,17 +158,17 @@ class LanClientTests(SimpleTestCase):
 
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(
-                    ("LAN_CLIENT_LOG_FILE", "INFO", "Pinging"),
-                    ("LAN_CLIENT_LOG_FILE", "INFO", f"data: {json.dumps(payload)}"),
-                    ("LAN_CLIENT_LOG_FILE", "ERROR", "HTTP error occurred: HTTPError"),
+                    ("WEB_CLIENT_LOG_FILE", "INFO", "Pinging"),
+                    ("WEB_CLIENT_LOG_FILE", "INFO", f"data: { payload }"),
+                    ("WEB_CLIENT_LOG_FILE", "ERROR", "HTTP error occurred: HTTPError"),
                 )
 
-    @patch("hardware.CommunicationsPi.lan_client.requests")
+    @patch("hardware.CommunicationsPi.web_client.requests")
     def test_ping_server_raise_ex(self, mock_requests=MagicMock()):
         with patch.dict(
             os.environ,
             {
-                "LAN_CLIENT_LOG_FILE": "lan_client.log",
+                "WEB_CLIENT_LOG_FILE": "web_client.log",
                 "LOG_DIRECTORY": self.temp_dir.path,
                 "LAN_SERVER_HTTPS": "True",
                 "LAN_SERVER_IP": "0.0.0.0",
@@ -177,7 +176,7 @@ class LanClientTests(SimpleTestCase):
             },
         ):
             with LogCapture() as capture:
-                l_client = LANClient()
+                l_client = WebClient()
                 mock_requests.post.side_effect = Exception("Exception")
 
                 payload = "{'key':'value'}"
@@ -187,7 +186,7 @@ class LanClientTests(SimpleTestCase):
 
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(
-                    ("LAN_CLIENT_LOG_FILE", "INFO", "Pinging"),
-                    ("LAN_CLIENT_LOG_FILE", "INFO", f"data: {json.dumps(payload)}"),
-                    ("LAN_CLIENT_LOG_FILE", "ERROR", "error occurred: Exception"),
+                    ("WEB_CLIENT_LOG_FILE", "INFO", "Pinging"),
+                    ("WEB_CLIENT_LOG_FILE", "INFO", f"data: { payload }"),
+                    ("WEB_CLIENT_LOG_FILE", "ERROR", "error occurred: Exception"),
                 )

@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 from dotenv import load_dotenv
 
@@ -10,20 +11,30 @@ if os.path.isfile(dotenv_file):  # pragma: no cover
 else:
     print("dotenv_file was not a file")
 
+from hardware.CommunicationsPi.radio_transceiver import Transceiver  # noqa: E402
 from hardware.CommunicationsPi.comm_pi import CommPi  # noqa: E402
 from hardware.CommunicationsPi.lan_server import runServer  # noqa: E402
-from hardware.CommunicationsPi.lan_client import LANClient  # noqa: E402
+from hardware.CommunicationsPi.web_client import WebClient  # noqa: E402
 from hardware.SensorPi.sense_pi import SensePi  # noqa: E402
+from hardware.Utils.utils import get_sensor_keys  # noqa: E402
 from hardware.gpsPi.gps_reader import GPSReader  # noqa: E402
 
-if os.environ["PI_TYPE"] == "commPi":
+
+if os.environ["HARDWARE_TYPE"] == "commPi":
     print("CommunicationsPi")
     runServer(handler_class=CommPi)
-else:
+elif os.environ["HARDWARE_TYPE"] == "sensePi":
     print("SensePi")
-    sensePi = SensePi()
+    sensor_keys = get_sensor_keys()
+    sensor_ids = {}
+    sensor_ids[sensor_keys["TEMPERATURE"]] = 2
+    sensor_ids[sensor_keys["PRESSURE"]] = 3
+    sensor_ids[sensor_keys["HUMIDITY"]] = 4
+    sensor_ids[sensor_keys["ACCELERATION"]] = 5
+    sensor_ids[sensor_keys["ORIENTATION"]] = 6
+    sensePi = SensePi(sensor_ids=sensor_ids)
     gpsPi = GPSReader()
-    client = LANClient()
+    client = WebClient()
 
     while True:
         print("while true")
@@ -41,10 +52,24 @@ else:
             data = [temp, pres, hum, acc, orie, all]
 
         for i in data:
-            print(i)
+            payload = json.dumps(i)
+            print(payload)
             try:
-                client.ping_lan_server(i)
+                client.ping_lan_server(payload)
             except Exception as err:
                 print("error occurred: {}".format(str(err)))
                 raise
             time.sleep(1)
+else:
+    print("Local Django Server")
+    transceiver = Transceiver()
+    url = os.environ.get("DJANGO_SERVER_API_ENDPOINT")
+    if url:
+        client = WebClient(server_url=url)
+        while True:
+            data = transceiver.listen()
+            if data:
+                print(data)
+                client.ping_lan_server(json.loads(data))
+    else:
+        print("DJANGO_SERVER_API_ENDPOINT not set")
