@@ -62,18 +62,18 @@ jobs:
       services:
           - docker
 
-      before_script:
+      install:
         - docker pull nyumotorsportstelemetryorg/mercury || true
-        
-      script:
         # prepare qemu for arm emulation on x64 hardware
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         # build image
-        # - docker build -t gcivil-nyu-org/spring2020-cs-gy-9223-class .
         - docker build --pull --cache-from nyumotorsportstelemetryorg/mercury --tag nyumotorsportstelemetryorg/mercury .
-        # basic help world test to see if it's working
-        - docker run nyumotorsportstelemetryorg/mercury grep -q "Hello, Docker!" hello.txt
-        # - black --check --exclude "migrations/" hardware
+        - docker run -d --name test_pi nyumotorsportstelemetryorg/mercury
+        
+      script:
+        # insure that the server started up as expected
+        - docker ps -a
+        - docker ps | grep -q test_pi
       
       after_script:
         - docker images
