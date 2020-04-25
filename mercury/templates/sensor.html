@@ -159,7 +159,7 @@
     
                             <tbody>
                                 {% for field_name, unit_and_format in sensor.type_id.format.items %}
-                                <tr id="sensor-fields-table-{{field_name}}" class="sensor-fields-table-tr">
+                                <tr id="{{ sensor.name }}-fields-table-{{field_name}}" class="sensor-fields-table-tr">
                                         <td class="sensor-fields-table-td">
                                             <input type="text" id="field-name-{{ field_name}}" name="field-names" value="{{ field_name }}" required/> </input>
                                         </td>
@@ -187,7 +187,7 @@
                                         </td>
 
                                         <td class="sensor-fields-table-td">
-                                            <button type="button" onclick="deleteRow('{{ sensor.name }}-fields-table-edit', 'sensor-fields-table-{{field_name}}')" class="grafana-btn grafana-btn-red">X</button>
+                                            <button type="button" onclick="deleteRow('{{ sensor.name }}-fields-table-edit', '{{ sensor.name }}-fields-table-{{field_name}}')" class="grafana-btn grafana-btn-red" name="delete-button">X</button>
                                         </td>
                                 </tr>
                                 {% endfor %}
