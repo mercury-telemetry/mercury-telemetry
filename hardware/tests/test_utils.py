@@ -11,11 +11,22 @@ from hardware.Utils.utils import (
     get_logger,
     get_serial_stream,
     date_str_with_current_timezone,
+    get_sensor_keys,
 )
 from hardware.Utils.logger import Logger
 
 
 class UtilsTests(SimpleTestCase):
+
+    SENSOR_KEYS = {
+        "ALL": "all",
+        "TEMPERATURE": "temperature",
+        "PRESSURE": "pressure",
+        "HUMIDITY": "humidity",
+        "ACCELERATION": "acceleration",
+        "ORIENTATION": "orientation",
+    }
+
     def test_get_logger(self):
 
         with TempDirectory() as temp_dir:
@@ -48,3 +59,6 @@ class UtilsTests(SimpleTestCase):
         date = dateutil.parser.isoparse(s)
         self.assertTrue("T" in s)
         self.assertAlmostEqual(date.timestamp(), datetime.now().timestamp(), places=1)
+
+    def test_get_sensor_keys(self):
+        self.assertDictEqual(get_sensor_keys(), UtilsTests.SENSOR_KEYS)
