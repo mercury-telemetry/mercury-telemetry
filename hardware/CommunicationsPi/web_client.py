@@ -7,7 +7,7 @@ from hardware.Utils.utils import get_logger
 class WebClient:
     def __init__(self, log_file_name=None, server_url=None):
         if log_file_name is None:
-            self.logging = get_logger("LAN_CLIENT_LOG_FILE")
+            self.logging = get_logger("WEB_CLIENT_LOG_FILE")
         else:
             self.logging = get_logger(log_file_name, log_file_name)
 
