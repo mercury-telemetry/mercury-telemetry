@@ -14,11 +14,9 @@ RUN mkdir ~/Downloads
 RUN mkdir hardware
 
 # copy setup scripts
-# COPY ./hardware hardware/
 COPY ./hardware/setup/raspberrypi-common.sh .
 
 # run setup
-# RUN bash ./hardware/setup/raspberrypi-common.sh
 RUN bash ./raspberrypi-common.sh
 
 COPY ./hardware/pi_requirements.txt .
@@ -27,5 +25,4 @@ RUN sudo pip3 install -r pi_requirements.txt
 
 COPY ./hardware hardware/
 
-# RUN echo "Hello, Docker!" > hello.txt
 CMD [ "python3", "-m", "hardware.main" ]
