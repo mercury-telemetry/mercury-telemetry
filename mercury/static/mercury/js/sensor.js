@@ -83,11 +83,10 @@ function addRow(table_name){
     var colCount = table.rows[0].cells.length;
     var newRow = table.insertRow(rowCount-1);
     var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ":" + today.getMilliseconds();
-    var dateTime = date+' '+time;
+    var time = today.getHours() + today.getMinutes() + today.getSeconds() + today.getMilliseconds();
+    var newID = time * Math.random() * 1610612741; // large prime number
     newRow.className = "sensor-fields-table-tr"
-    newRow.id = "sensor-fields-table-tr-".concat(dateTime) // need it to be unique so we can delete it if needed
+    newRow.id = "sensor-fields-table-tr-".concat(newID) // need it to be unique so we can delete it if needed
     for(var i=0; i<colCount; i++){
         var newCell = newRow.insertCell(i);
         if (i < 3) {
