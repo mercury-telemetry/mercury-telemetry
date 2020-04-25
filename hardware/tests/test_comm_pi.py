@@ -1,5 +1,6 @@
 from django.test import SimpleTestCase
-import  os
+import os
+
 # from json.decoder import JSONDecodeError
 from http.server import HTTPServer
 

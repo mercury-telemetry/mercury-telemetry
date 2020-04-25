@@ -4,7 +4,6 @@ from testfixtures import TempDirectory, LogCapture
 from requests.exceptions import HTTPError
 
 import os
-import json
 
 from hardware.CommunicationsPi.lan_client import LANClient
 from hardware.Utils.logger import Logger
