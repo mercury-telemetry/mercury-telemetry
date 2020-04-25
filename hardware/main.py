@@ -1,11 +1,20 @@
 import os
 import time
 
-from hardware.CommunicationsPi.comm_pi import CommPi
-from hardware.CommunicationsPi.lan_server import runServer
-from hardware.CommunicationsPi.lan_client import LANClient
-from hardware.SensorPi.sense_pi import SensePi
-from hardware.gpsPi.gps_reader import GPSReader
+from dotenv import load_dotenv
+
+PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+dotenv_file = os.path.join(PI_DIR, "hardware/env")
+if os.path.isfile(dotenv_file):  # pragma: no cover
+    load_dotenv(dotenv_path=dotenv_file)
+else:
+    print("dotenv_file was not a file")
+
+from hardware.CommunicationsPi.comm_pi import CommPi  # noqa: E402
+from hardware.CommunicationsPi.lan_server import runServer  # noqa: E402
+from hardware.CommunicationsPi.lan_client import LANClient  # noqa: E402
+from hardware.SensorPi.sense_pi import SensePi  # noqa: E402
+from hardware.gpsPi.gps_reader import GPSReader  # noqa: E402
 
 if os.environ["PI_TYPE"] == "commPi":
     print("CommunicationsPi")
@@ -17,6 +26,7 @@ else:
     client = LANClient()
 
     while True:
+        print("while true")
         temp = sensePi.get_temperature()
         pres = sensePi.get_pressure()
         hum = sensePi.get_humidity()
