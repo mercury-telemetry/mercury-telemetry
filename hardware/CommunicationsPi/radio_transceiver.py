@@ -31,14 +31,16 @@ class Transceiver:
                 ),
                 {},
             )
-            self.port_vid = port_info.vid if "vid" in port_info else None
-            self.port_pid = port_info.pid if "pid" in port_info else None
+            self.port_vid = port_info.vid if hasattr(port_info, "vid") else None
+            self.port_pid = port_info.pid if hasattr(port_info, "pid") else None
             self.port_vendor = (
-                port_info.manufacturer if "manufacturer" in port_info else None
+                port_info.manufacturer if hasattr(port_info, "manufacturer") else None
             )
-            self.port_intf = port_info.interface if "interface" in port_info else None
+            self.port_intf = (
+                port_info.interface if hasattr(port_info, "interface") else None
+            )
             self.port_serial_number = (
-                port_info.serial_number if "serial_number" in port_info else None
+                port_info.serial_number if hasattr(port_info, "serial_number") else None
             )
             self.find_port()
 
