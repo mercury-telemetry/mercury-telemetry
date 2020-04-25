@@ -5,7 +5,7 @@ import json
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
 from hardware.CommunicationsPi.comm_pi import CommPi
 from hardware.CommunicationsPi.lan_server import runServer
-from hardware.CommunicationsPi.lan_client import LANClient
+from hardware.CommunicationsPi.web_client import WebClient
 from hardware.SensorPi.sense_pi import SensePi
 from hardware.Utils.utils import get_sensor_keys
 from hardware.gpsPi.gps_reader import GPSReader
@@ -25,7 +25,7 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
     sensor_ids[sensor_keys["ORIENTATION"]] = 6
     sensePi = SensePi(sensor_ids=sensor_ids)
     gpsPi = GPSReader()
-    client = LANClient()
+    client = WebClient()
 
     while True:
         temp = sensePi.get_temperature()
@@ -55,7 +55,7 @@ else:
     transceiver = Transceiver()
     url = os.environ.get("DJANGO_SERVER_API_ENDPOINT")
     if url:
-        client = LANClient(lan_server_url=url)
+        client = WebClient(server_url=url)
         while True:
             data = transceiver.listen()
             if data:
