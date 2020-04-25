@@ -27,6 +27,13 @@
 
         {% if configs %}
             <h2>Existing Grafana Hosts</h2>
+            <p>
+
+            Access and manage your Grafana dashboards directly from here.
+
+            To view and update the dashboards for a new instance, follow the <em>
+            Show Dashboards </em> link for that instance in the table below:
+
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
                 <table class="table table-bordered table-striped mb-0">
                     <thead>
@@ -55,6 +62,9 @@
 
         <div class="mt-50">
             <h2>Add Grafana Host</h2>
+            <p>Add a new Grafana instance. We will create
+            Grafana dashboards for all of your current events and populate the
+            dashboards with your sensors. </p>
             {% if config_form %}
                 <form method="POST" action="" id="GFConfigForm">
                     {% csrf_token %} {% load crispy_forms_tags %} {{ config_form|crispy }}
