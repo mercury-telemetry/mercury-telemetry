@@ -25,10 +25,10 @@ def add_measurement(request):
         sensor_id = json_data["sensor_id"]
         values = json_data["values"]
     except KeyError as e:
-        record.error_record(
-            raw_data=json_data, 
+        record.save_error(
+            raw_data=json.dumps(json_data),
             error_code=record.ERROR_CODE["MISSING_COL"],
-            error_description=f"Missing column: {e.args[0]}"
+            error_description=f"Missing column: {e.args[0]}",
         )
         return Response(
             build_error(f"Missing required params: {e.args[0]}"),
@@ -37,10 +37,10 @@ def add_measurement(request):
 
     timestamp = parse_datetime(timestamp)
     if not timestamp:
-        record.error_record(
-            raw_data=json_data, 
+        record.save_error(
+            raw_data=json.dumps(json_data),
             error_code=record.ERROR_CODE["INVALID_COL_VL"],
-            error_description="Invalid timestamp in json_data"
+            error_description="Invalid timestamp in json_data",
         )
         return Response(
             build_error("Invalid timestamp"), status=status.HTTP_400_BAD_REQUEST
@@ -49,10 +49,10 @@ def add_measurement(request):
     try:
         sensor = AGSensor.objects.get(pk=sensor_id)
     except models.ObjectDoesNotExist:
-        record.error_record(
-            raw_data=json_data,
+        record.save_error(
+            raw_data=json.dumps(json_data),
             error_code=record.ERROR_CODE["INVALID_COL_VL"],
-            error_description=f"Sensor_id:{sensor_id} unknown"
+            error_description=f"Sensor_id:{sensor_id} unknown",
         )
         return Response(
             build_error(f"No sensor for given sensor_id={sensor_id}"),
@@ -84,9 +84,8 @@ class MeasurementView(APIView):
 
         active_event = AGActiveEvent.objects.first()
         if not active_event:
-            # TODO: record incoming data to errorlog table with no active event
-            record.error_record(
-                raw_data=str(request.data),
+            record.save_error(
+                raw_data=request.data,
                 error_code=record.ERROR_CODE["NO_ACT_EVENT"],
                 error_description="Currently no active event",
             )
