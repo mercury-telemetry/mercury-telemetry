@@ -8,7 +8,7 @@ from ag_data.models import AGEvent, AGSensor
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
 from django.conf import settings
-from ..event_check import require_event_code
+from ..event_check import require_event_code, require_event_code_function
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
@@ -16,12 +16,14 @@ log.setLevel(logging.ERROR)
 
 # Deprecated
 # Sets the GFConfig's current status to True
+@require_event_code_function
 def update_config(request, gf_id=None):
     GFConfig.objects.all().update(gf_current=False)
     GFConfig.objects.filter(id=gf_id).update(gf_current=True)
     return redirect("/gfconfig")
 
 
+@require_event_code_function
 def delete_config(request, gf_id=None):
     config = GFConfig.objects.get(id=gf_id)
 
@@ -42,6 +44,7 @@ def delete_config(request, gf_id=None):
     return redirect("/gfconfig")
 
 
+@require_event_code_function
 def configure_dashboard(request, gf_id=None):
     config = GFConfig.objects.get(id=gf_id)
 
@@ -108,6 +111,7 @@ def configure_dashboard(request, gf_id=None):
     return render(request, "gf_dashboards.html", context)
 
 
+@require_event_code_function
 def update_dashboard(request, gf_id=None):
     gfconfig = GFConfig.objects.filter(id=gf_id).first()
 
@@ -132,6 +136,7 @@ def update_dashboard(request, gf_id=None):
     return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
+@require_event_code_function
 def reset_dashboard(request, gf_id=None):
     gfconfig = GFConfig.objects.filter(id=gf_id).first()
 
@@ -150,6 +155,7 @@ def reset_dashboard(request, gf_id=None):
     return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
+@require_event_code_function
 def delete_dashboard(request, gf_id=None):
     gfconfig = GFConfig.objects.filter(id=gf_id).first()
 
@@ -169,6 +175,7 @@ def delete_dashboard(request, gf_id=None):
     return redirect("/gfconfig/configure/{}".format(gf_id))
 
 
+@require_event_code_function
 def create_dashboard(request, gf_id=None):
     gfconfig = GFConfig.objects.filter(id=gf_id).first()
     event_name = request.POST.get("selected_event_name")

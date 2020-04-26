@@ -107,10 +107,16 @@ class TestGFConfig(TestCase):
         return response, session
 
     def test_config_view_get_success(self):
-        response, session = self._get_with_event_code(self.config_url, self.TESTCODE)
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        response = self.client.get(reverse(self.config_url))
         self.assertEqual(200, response.status_code)
 
     def test_config_view_get_existing_dashboard_displayed(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         venue = AGVenue.objects.create(
             name=self.test_venue_data["name"],
             description=self.test_venue_data["description"],
@@ -150,6 +156,8 @@ class TestGFConfig(TestCase):
     def test_config_post_success(self):
         # Delete GFConfig used for the tests (will interfere otherwise)
         self.gfconfig.delete()
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
         response = self.client.post(
             reverse(self.config_url),
@@ -177,6 +185,9 @@ class TestGFConfig(TestCase):
         self.assertTrue(gfconfig[0].gf_token == self.ADMIN)
 
     def test_config_post_fail_invalid_api_key(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         response = self.client.post(
             reverse(self.config_url),
             data={
@@ -192,6 +203,9 @@ class TestGFConfig(TestCase):
         self.assertTrue(gfconfig.count() == 0)
 
     def test_config_post_fail_insufficient_permissions(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         response = self.client.post(
             reverse(self.config_url),
             data={
@@ -209,6 +223,9 @@ class TestGFConfig(TestCase):
         self.assertTrue(gfconfig.count() == 0)
 
     def test_delete_config(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         GFConfig.objects.all().delete()
 
         gfconfig = GFConfig.objects.create(
@@ -235,6 +252,9 @@ class TestGFConfig(TestCase):
 
     # test that GFConfig.gf_current can be set to True using the update view
     def test_update_config(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         GFConfig.objects.all().delete()
 
         gfconfig = GFConfig.objects.create(
@@ -253,6 +273,9 @@ class TestGFConfig(TestCase):
         self.assertEquals(gfconfig.gf_current, True)
 
     def test_config_post_event_exists_dashboard_created(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         self.create_venue_and_event(self.event_name)
 
         # Delete GFConfig used for the test (will interfere otherwise)
@@ -283,6 +306,9 @@ class TestGFConfig(TestCase):
         self.assertEquals(dashboard["dashboard"]["title"], self.event_name)
 
     def test_config_post_event_exists_dashboard_created_with_sensor(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         # Create a sensor type and sensor
         sensor_type = AGSensorType.objects.create(
             name=self.test_sensor_type,
@@ -334,6 +360,9 @@ class TestGFConfig(TestCase):
         self.assertEquals(panel["title"], self.test_sensor_name)
 
     def test_update_dashboard_panels_remove_all_single_gfconfig(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         # Create an event
         event = self.create_venue_and_event(self.event_name)
 
@@ -378,6 +407,9 @@ class TestGFConfig(TestCase):
         self.assertEquals(panels, [])
 
     def test_update_dashboard_panels_keep_all_panels_single_gfconfig(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         self.create_venue_and_event(self.event_name)
 
         # create a dashboard
@@ -422,6 +454,9 @@ class TestGFConfig(TestCase):
         self.assertEquals(len(panels), 1)
 
     def test_update_dashboard_panels_keep_subset_of_panels_single_gfconfig(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         self.create_venue_and_event(self.event_name)
 
         # create a dashboard
@@ -473,6 +508,9 @@ class TestGFConfig(TestCase):
             self.assertEquals(panels[i]["title"], sensors[i].name)
 
     def test_reset_dashboard_panels_single_gfconfig(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         # update dashboard with a subset of panels, then restore all panels by using
         # reset
         self.create_venue_and_event(self.event_name)
@@ -551,6 +589,9 @@ class TestGFConfig(TestCase):
             self.assertEquals(panels[i]["title"], sensor.name)
 
     def test_delete_dashboard_single_gfconfig(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         # update dashboard with a subset of panels, then restore all panels by using
         # reset
         self.create_venue_and_event(self.event_name)
@@ -574,6 +615,9 @@ class TestGFConfig(TestCase):
     # User can post to a create_dashboard view in GFConfig in order to add an event
     # dashboard to Grafana
     def test_add_event_dashboard_through_gfconfig_view(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         # Create an event
         self.create_venue_and_event(self.event_name)
 
@@ -588,6 +632,9 @@ class TestGFConfig(TestCase):
         self.assertTrue(dashboard)
 
     def test_add_event_dashboard_through_gfconfig_sensor_panels_added(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
         # Create an event
         self.create_venue_and_event(self.event_name)
 
