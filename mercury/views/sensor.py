@@ -168,7 +168,7 @@ class CreateSensorView(TemplateView):
                             except ValueError as error:
                                 messages.error(request, error)
                     messages.success(
-                        request, f"Grafana panels updated based on sensor " f"changes"
+                        request, f"Grafana panels updated based on sensor changes"
                     )
                 elif format_changed or graph_type_changed:
                     if format_changed:
@@ -189,11 +189,9 @@ class CreateSensorView(TemplateView):
                                 )
                             except ValueError as error:
                                 messages.error(request, error)
-                            else:
-                                messages.success(
-                                    request,
-                                    f"Grafana panels updated based on sensor changes",
-                                )
+                    messages.success(
+                        request, f"Grafana panels updated based on sensor changes"
+                    )
                 else:
                     messages.error(request, f"No changes detected - no updates made")
 
