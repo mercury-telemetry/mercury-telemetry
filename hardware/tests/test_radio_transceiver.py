@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 from serial.tools.list_ports_common import ListPortInfo
 
 import os
+import json
 import serial
 
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
@@ -21,7 +22,7 @@ class TransceiverTests(SimpleTestCase):
         self.parity = serial.PARITY_NONE
         self.stopbits = serial.STOPBITS_ONE
         self.bytesize = serial.EIGHTBITS
-        self.timeout = "1"
+        self.timeout = 1
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -313,7 +314,6 @@ class TransceiverTests(SimpleTestCase):
             self.assertTrue(transciever.logging is not None)
             self.assertTrue(transciever.logging.name == "LOG_FILE")
             self.assertIsInstance(transciever.logging, Logger)
-
             self.assertTrue(transciever.port == "usb2")
             self.assertTrue(transciever.port_vid == "foo2")
             self.assertTrue(transciever.port_pid == "baz")
@@ -686,4 +686,50 @@ class TransceiverTests(SimpleTestCase):
                     ("LOG_FILE", "INFO", "Port device found: usb"),
                     ("LOG_FILE", "INFO", "Opening serial on: usb"),
                     ("LOG_FILE", "ERROR", "<class 'json.decoder.JSONDecodeError'>"),
+                )
+
+    @patch.object(json, "loads")
+    @patch("serial.Serial")
+    @patch("serial.tools.list_ports.comports")
+    def test_listen_exception(self, mock_port_list, mock_serial, mock_json):
+        """
+        tests the listen method with invalid input
+        """
+        port = ListPortInfo()
+        port.vid = "vid"
+        port.pid = "pid"
+        port.manufacturer = "Microsoft"
+        port.serial_number = "456"
+        port.interface = "usb"
+        port.device = "usb"
+
+        mock_json.side_effect = Exception("ex")
+
+        mock_port_list.return_value = [port]
+
+        test_input = "{'value': 'value'}"
+        with patch.dict(
+            os.environ,
+            {
+                "LOG_DIRECTORY": self.temp_dir.path,
+                "RADIO_TRANSMITTER_PORT": "usb",
+                "LOG_FILE": "logger.txt",
+                "TRANSCEIVER_BAUDRATE": "9600",
+                "TRANSCEIVER_TIMEOUT": "1",
+            },
+        ):
+            with LogCapture() as capture:
+                transceiver = Transceiver(log_file_name="LOG_FILE")
+
+                mock_receiver = MagicMock()
+                mock_receiver.readline.return_value.decode.return_value = test_input
+                transceiver.serial = mock_receiver
+
+                with self.assertRaises(Exception):
+                    transceiver.listen()
+
+                capture.check(
+                    ("LOG_FILE", "INFO", "Port device found: usb"),
+                    ("LOG_FILE", "INFO", "Opening serial on: usb"),
+                    ("LOG_FILE", "ERROR", "error occurred: ex"),
                 )
