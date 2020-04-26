@@ -30,7 +30,7 @@ class Logger(object):
         self.logger.addHandler(self.console_logger)
 
         # show logs on screen
-        self.showLogsOnScreen = show_logs
+        self.showLogsOnScreen = show_logs or os.environ.get("SHOW_LOGS")
 
     def get_logger_file(self, file_name):
         d = os.environ["LOG_DIRECTORY"]
