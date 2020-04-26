@@ -156,7 +156,7 @@ class CreateSensorView(TemplateView):
                 format_changed = True if new_format != prev_format else False
                 graph_type_changed = True if graph_type != prev_graph_type else False
 
-                if name_changed:
+                if name_changed and not (format_changed or graph_type_changed):
                     for gfconfig in gfconfigs:
                         grafana = Grafana(gfconfig)
 

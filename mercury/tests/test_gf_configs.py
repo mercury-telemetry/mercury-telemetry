@@ -20,6 +20,7 @@ class TestGFConfig(TestCase):
         "left_gust": {"unit": "km/h", "format": "float"},
         "right_gust": {"unit": "km/h", "format": "float"},
     }
+    test_sensor_graph_type = "graph"
 
     test_event_data = {
         "name": "Sunny Day Test Drive",
@@ -106,7 +107,7 @@ class TestGFConfig(TestCase):
         return response, session
 
     def test_config_view_get_success(self):
-        response = self.client.get(reverse(self.config_url))
+        response, session = self._get_with_event_code(self.config_url, self.TESTCODE)
         self.assertEqual(200, response.status_code)
 
     def test_config_view_get_existing_dashboard_displayed(self):
@@ -122,6 +123,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -146,6 +148,9 @@ class TestGFConfig(TestCase):
         self.assertContains(response, sensor.name)
 
     def test_config_post_success(self):
+        # Delete GFConfig used for the tests (will interfere otherwise)
+        self.gfconfig.delete()
+
         response = self.client.post(
             reverse(self.config_url),
             data={
@@ -158,6 +163,12 @@ class TestGFConfig(TestCase):
             },
         )
         self.assertEqual(302, response.status_code)
+
+        # Restore GFConfig instance used for the tests
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
+        )
+        self.gfconfig.save()
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() > 0)
@@ -244,6 +255,9 @@ class TestGFConfig(TestCase):
     def test_config_post_event_exists_dashboard_created(self):
         self.create_venue_and_event(self.event_name)
 
+        # Delete GFConfig used for the test (will interfere otherwise)
+        self.gfconfig.delete()
+
         response = self.client.post(
             reverse(self.config_url),
             data={
@@ -256,6 +270,12 @@ class TestGFConfig(TestCase):
             },
         )
         self.assertEqual(302, response.status_code)
+
+        # Restore GFConfig instance used for the tests
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
+        )
+        self.gfconfig.save()
 
         # check that dashboard was created with same name as event
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
@@ -268,6 +288,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -276,6 +297,9 @@ class TestGFConfig(TestCase):
         sensor.save()
 
         self.create_venue_and_event(self.event_name)
+
+        # Delete GFConfig used for the test (will interfere otherwise)
+        self.gfconfig.delete()
 
         response = self.client.post(
             reverse(self.config_url),
@@ -289,6 +313,12 @@ class TestGFConfig(TestCase):
             },
         )
         self.assertEqual(302, response.status_code)
+
+        # Restore GFConfig instance used for the tests
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
+        )
+        self.gfconfig.save()
 
         # check that dashboard was created with expected panel
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
@@ -316,6 +346,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -358,6 +389,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -401,6 +433,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -453,6 +486,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -562,6 +596,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(

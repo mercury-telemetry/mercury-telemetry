@@ -34,6 +34,7 @@ class TestGrafana(TestCase):
         "left_gust": {"unit": "km/h", "format": "float"},
         "right_gust": {"unit": "km/h", "format": "float"},
     }
+    test_sensor_graph_type = "graph"
 
     field_name_1 = "test-field-1"
     field_name_2 = "test-field-2"
@@ -325,6 +326,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -361,6 +363,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -405,6 +408,7 @@ class TestGrafana(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -443,6 +447,7 @@ class TestGrafana(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -467,6 +472,7 @@ class TestGrafana(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -504,6 +510,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name.lower(),
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -530,6 +537,7 @@ class TestGrafana(TestCase):
                 "field-names": field_names_updated,
                 "data-types": data_types_updated,
                 "units": units_updated,
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -556,6 +564,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name.lower(),
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -583,6 +592,7 @@ class TestGrafana(TestCase):
                 "field-names": field_names_updated,
                 "data-types": data_types_updated,
                 "units": units_updated,
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -609,6 +619,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -647,6 +658,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -769,6 +781,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
