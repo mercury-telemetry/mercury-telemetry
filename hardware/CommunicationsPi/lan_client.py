@@ -34,7 +34,7 @@ class LANClient:
 
         try:
             self.logging.info("data: " + json.dumps(payload))
-            response = requests.post(self.url, data=payload)
+            response = requests.post(self.url, json=payload)
             response.raise_for_status()
             return response
 

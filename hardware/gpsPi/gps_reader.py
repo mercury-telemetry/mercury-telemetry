@@ -1,9 +1,9 @@
 import os
 import serial
-from ..Utils.utils import get_logger
-from hardware.Utils.utils import date_str_with_current_timezone
+from hardware.Utils.utils import get_logger
+from datetime import datetime, timezone
 
-GPS_ID = 10
+GPS_ID = 1
 
 
 class GPSReader:
@@ -16,14 +16,16 @@ class GPSReader:
             self.logging = get_logger(log_file_name, log_file_name)
 
     def get_geolocation(self):
-        while self.gps.inWaiting() == 0:
+        gps_raw = serial.Serial('/dev/serial0', 9600)
+        while gps_raw.inWaiting() == 0:
             pass
 
-        nmeaSentence = self.gps.readline().split(",")
+        nmeaSentence = str(gps_raw.readline()).split(",")
+        print(nmeaSentence)
         nmeaType = nmeaSentence[0]
 
         # Added additional check to verify if nmeaSentence has valid data
-        if nmeaType == "$GPRMC" and nmeaSentence[2] == "A":
+        if nmeaType == "b'$GPRMC" and nmeaSentence[2] == "A":
             latitude_hours = float(nmeaSentence[3][0:2])
             latitude_minutes = float(nmeaSentence[3][2:])
             longitude_hours = float(nmeaSentence[5][0:3])
@@ -49,7 +51,7 @@ class GPSReader:
                 "latitude": latitude_decimal,
                 "longitude": longitude_decimal,
             }
-            data["date"] = date_str_with_current_timezone()
+            data["date"] = datetime.now(timezone.utc).astimezone().isoformat()
             return data
         else:
             return None
