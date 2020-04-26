@@ -12,6 +12,7 @@ delete from sym_node_host;
 delete from sym_node_identity;
 delete from sym_node_security;
 delete from sym_node;
+delete from sym_conflict;
 
 ------------------------------------------------------------------------------
 -- Channels
@@ -72,3 +73,16 @@ values('all_mercury_table_trigger','group0_to_1', 100, current_timestamp, curren
 insert into sym_trigger_router
 (trigger_id,router_id,initial_load_order,last_update_time,create_time)
 values('all_mercury_table_trigger','group1_to_0', 100, current_timestamp, current_timestamp);
+
+insert into sym_conflict
+(conflict_id,source_node_group_id,target_node_group_id,detect_type,resolve_type,ping_back,create_time,last_update_time)
+values('conflict_1','group0','group1','USE_PK_DATA','FALLBACK','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_2','group1','group0','USE_PK_DATA','FALLBACK','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_3','group0','group1','USE_OLD_DATA','FALLBACK','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_4','group1','group0','USE_OLD_DATA','FALLBACK','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_5','group0','group1','USE_CHANGED_DATA','FALLBACK','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_6','group1','group0','USE_CHANGED_DATA','FALLBACK','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_7','group0','group1','USE_TIMESTAMP','NEWER_WINS','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_8','group1','group0','USE_TIMESTAMP','NEWER_WINS','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_9','group0','group1','USE_VERSION','NEWER_WINS','SINGLE_ROW',current_timestamp , current_timestamp),
+('conflict_10','group1','group0','USE_VERSION','NEWER_WINS','SINGLE_ROW',current_timestamp , current_timestamp);
