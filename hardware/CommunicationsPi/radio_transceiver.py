@@ -31,18 +31,24 @@ class Transceiver:
                 ),
                 {},
             )
-            self.port_vid = port_info.vid
-            self.port_pid = port_info.pid
-            self.port_vendor = port_info.manufacturer
-            self.port_intf = port_info.interface
-            self.port_serial_number = port_info.serial_number
+            self.port_vid = port_info.vid if hasattr(port_info, "vid") else None
+            self.port_pid = port_info.pid if hasattr(port_info, "pid") else None
+            self.port_vendor = (
+                port_info.manufacturer if hasattr(port_info, "manufacturer") else None
+            )
+            self.port_intf = (
+                port_info.interface if hasattr(port_info, "interface") else None
+            )
+            self.port_serial_number = (
+                port_info.serial_number if hasattr(port_info, "serial_number") else None
+            )
             self.find_port()
 
         baudrate = os.environ["TRANSCEIVER_BAUDRATE"]
         parity = serial.PARITY_NONE
         stopbits = serial.STOPBITS_ONE
         bytesize = serial.EIGHTBITS
-        timeout = os.environ["TRANSCEIVER_TIMEOUT"]
+        timeout = int(os.environ["TRANSCEIVER_TIMEOUT"])
 
         self.logging.info("Opening serial on: " + str(self.port))
         self.serial = serial.Serial(

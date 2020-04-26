@@ -1,0 +1,29 @@
+# ignore everything
+*
+
+# except the hardware directory
+!hardware
+
+# things we want to ignore in the file directory
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/.env
+**/pip-log.txt
+**/pip-delete-this-directory.txt
+**/.tox
+**/.coverage
+**/.coveragerc
+**/.coverage.*
+**/.cache
+**/nosetests.xml
+**/coverage.xml
+**/*,cover
+**/*.log
+
+# things we want to specifically include
+!pi_requirements.txt
+!Dockerfile
+
