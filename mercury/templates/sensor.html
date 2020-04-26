@@ -16,9 +16,11 @@
 
 <body>
     {% include 'sidebar.html' %}
-    <div id="grafana-base"> <!-- app default background -->
-        <h1> Configure Sensors </h1> <br><br><br>
-
+    <div class="topbar-container">
+        <h1> Configure Sensors </h1> 
+        <p>Here you can add new sensors as well as modify your existing sensors.</p>
+        <br>
+    
         {% for message in messages %}
             <p class="error"> {{ message }} </p>
         {% endfor %}
@@ -35,15 +37,16 @@
 
                     <table id="new-sensor-table" class="sensor-fields-table">
                         <thead>
-                            <tr class="sensor-fields-table-td">
+                            <tr class="sensor-fields-table-tr">
                                 <th class="sensor-fields-table-th"><b> <u>Field Name </u></b></th>
                                 <th class="sensor-fields-table-th"><b> <u>Field Data Type </u></b></th>
                                 <th class="sensor-fields-table-th"><b> <u>Unit</u></b></th>
+                                <th class="sensor-fields-table-th"><b> <u>Action </u></b></th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <tr class="sensor-fields-table-td">
+                            <tr id="sensor-fields-table-td-FIRST" class="sensor-fields-table-td">
 
                                 <td class="sensor-fields-table-td"> <input type="text" id="field-name" name="field-names" required/> </td>
 
@@ -56,6 +59,11 @@
                                 </td>
 
                                 <td class="sensor-fields-table-td"> <input type="text" id="units" name="units"/> </td>
+
+                                <td class="sensor-fields-table-td">
+                                    <button type="button" onclick="deleteRow('new-sensor-table', 'sensor-fields-table-td-FIRST')" class="grafana-btn grafana-btn-red">X</button>
+                                </td>
+
                             </tr>
 
                             <tr class="sensor-fields-table-tr">
@@ -153,12 +161,12 @@
     
                             <tbody>
                                 {% for field_name, unit_and_format in sensor.type_id.format.items %}
-                                <tr class="sensor-fields-table-tr">
+                                <tr id="{{ sensor.name }}-fields-table-{{field_name}}" class="sensor-fields-table-tr">
                                         <td class="sensor-fields-table-td">
-                                            <input type="text" id="field-name" name="field-names" value="{{ field_name }}" required/> </input>
+                                            <input type="text" id="field-name-{{ field_name}}" name="field-names" value="{{ field_name }}" required/> </input>
                                         </td>
                                         <td class="sensor-fields-table-td">
-                                            <select id="data-types" name="data-types"/>
+                                            <select id="data-types-{{unit_and_format.data_type}}" name="data-types"/>
                                             {% if unit_and_format.data_type == "Numeric" %}
                                                 <option selected="selected"> Numeric </option>
                                                 <option> Character </option>
@@ -177,11 +185,11 @@
                                             </select>
                                         </td>
                                         <td class="sensor-fields-table-td">
-                                            <input type="text" id="units" name="units" value="{{unit_and_format.unit}}"/></input>
+                                            <input type="text" id="units-{{unit_and_format.unit}}" name="units" value="{{unit_and_format.unit}}"/></input>
                                         </td>
 
                                         <td class="sensor-fields-table-td">
-                                            <button type="button" onclick="deleteRow('{{ sensor.name }}-fields-table-edit','{{forloop.counter}}')" class="grafana-btn grafana-btn-red">X</button>
+                                            <button type="button" onclick="deleteRow('{{ sensor.name }}-fields-table-edit', '{{ sensor.name }}-fields-table-{{field_name}}')" class="grafana-btn grafana-btn-red" name="delete-button">X</button>
                                         </td>
                                 </tr>
                                 {% endfor %}
