@@ -78,6 +78,40 @@
                     </table> <br>
 
 
+                    <div class="inline-box">
+                        <label for="sensor-graph-type"> <b>Graph type:</b> </label>
+                    <select type="text"  id="sensor-graph-type"
+                            name="sensor-graph-type" required>
+                        {% for graph, graph_display in graph_types %}
+                            <option value="{{ graph }}"
+                            {% if graph == "graph" %} selected="selected"{% endif %}>
+                            {{ graph_display }}
+                            </option>
+
+                        {% endfor %}
+                    </select>
+                    </div> <br>
+
+                <!-- Show graph options -->
+
+                <div id="graph" style="display:block;">
+                    <img id="graph-type-image" class="graph-image"
+                         src="{% static 'mercury/graph.png' %}">
+                    <span>Graph (a simple line graph)</span>
+                </div>
+
+                <div id="map" style="display:none;">
+                    <img id="graph-type-image-map" class="graph-image"
+                         src="{% static 'mercury/map.png' %}">
+                    <span>Map (for GPS sensors)</span>
+                </div>
+
+                <div id="gauge" style="display:none;">
+                <img id="graph-type-image-gauge" class="graph-image"
+                     src="{% static 'mercury/gauge.png' %}">
+                <span> Gauge (for individual readings)</span>
+                </div>
+
                 <br>
 
                 <button type="submit" name="submit_new_sensor" class="grafana-btn grafana-btn-green"> Add New Sensor </button>
@@ -99,9 +133,20 @@
                                     class="grafana-btn-block grafana-btn-green"
                                     style="display:none;">
                                 Update Sensor </button>
-                            <form method="POST" action="delete_sensor/{{ sensor.name }}">
+                            <form method="POST"
+                                  action="delete_sensor/{{ sensor.name }}"
+                                  name="delete-sensor-form">
                                 {% csrf_token %}
-                                <button type="submit" id="{{ sensor.name }}-delete-button" class="grafana-btn-block grafana-btn-red" style="display:none;"> Delete Sensor </button>
+                                <button type="submit"
+                                        id="{{ sensor.name }}-delete-button"
+                                        name="delete-sensor-button"
+                                        class="grafana-btn-block
+                                        grafana-btn-red" style="display:none;">
+                                    Delete Sensor </button>
+                                <input type="hidden" name="sensor-id"
+                                value="{{sensor.id}}"/>
+                                <input type="hidden" name="sensor-name"
+                                value="{{sensor.name}}"/>
                             </form>
                         </div>
                     </div>
@@ -132,9 +177,51 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+
+                        <div class="inline-box">
+                            <p> Graph Type:
+                                {{ sensor.type_id.graph_type|capfirst }}
+                            </p>
+                        </div> <br>
+
+                        <!-- Show graph options -->
+
+                        <div
+                             {% if sensor.type_id.graph_type == "graph" %}
+                                style="display:block;"
+                             {% else %}
+                                style="display:none;"
+                             {% endif %}>
+                            <img id="graph-type-image" class="graph-image"
+                                 src="{% static 'mercury/graph.png' %}">
+                            <span>Graph (a simple line graph)</span>
+                        </div>
+
+                        <div
+                            {% if sensor.type_id.graph_type == "map" %}
+                                style="display:block;"
+                            {% else %}
+                                style="display:none;"
+                            {% endif %}
+                            >
+                            <img id="graph-type-image-map" class="graph-image"
+                                 src="{% static 'mercury/map.png' %}">
+                            <span>Map (for GPS sensors)</span>
+                        </div>
+
+                        <div
+                        {% if sensor.type_id.graph_type == "gauge" %}
+                                style="display:block;"
+                            {% else %}
+                                style="display:none;"
+                            {% endif %}
+                        >
+                        <img id="graph-type-image-gauge" class="graph-image"
+                             src="{% static 'mercury/gauge.png' %}">
+                        <span> Gauge (for individual readings)</span>
+                        </div>
+
                     </div>
-
-
 
                     <form method="POST"
                     id="{{ sensor.name }}-form"
@@ -206,6 +293,58 @@
                             </tbody>
                         </table>
 
+                        <div class="inline-box">
+                            <label for="sensor-graph-type"> <b>Graph type:</b> </label>
+                            <select type="text"
+                                    id="sensor-graph-type-edit_{{ sensor.id }}"
+                                    name="sensor-graph-type" required>
+                                {% for graph, graph_display in graph_types %}
+                                    <option value="{{ graph }}"
+                                    {% if graph == sensor.type_id.graph_type %}
+                                            selected="selected"
+                                            {% endif %}>
+                                    {{ graph_display }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div> <br>
+
+                        <div id="graph{{ sensor.id }}"
+                             {% if sensor.type_id.graph_type == "graph" %}
+                                style="display:block;"
+                             {% else %}
+                                style="display:none;"
+                             {% endif %}
+                        >
+                            <img id="graph-type-image" class="graph-image"
+                                 src="{% static 'mercury/graph.png' %}">
+                            <span>Graph (a simple line graph)</span>
+                        </div>
+
+                        <div id="map{{ sensor.id }}"
+                            {% if sensor.type_id.graph_type == "map" %}
+                                style="display:block;"
+                            {% else %}
+                                style="display:none;"
+                            {% endif %}
+                        >
+                            <img id="graph-type-image-map" class="graph-image"
+                                 src="{% static 'mercury/map.png' %}">
+                            <span>Map (for GPS sensors)</span>
+                        </div>
+
+                        <div id="gauge{{ sensor.id }}"
+                        {% if sensor.type_id.graph_type == "gauge" %}
+                                style="display:block;"
+                            {% else %}
+                                style="display:none;"
+                            {% endif %}
+                        >
+                        <img id="graph-type-image-gauge" class="graph-image"
+                             src="{% static 'mercury/gauge.png' %}">
+                        <span> Gauge (for individual readings)</span>
+                        </div>
+
                         <input type="hidden" name="sensor-id"
                                value="{{sensor.id}}"/>
                         <input type="hidden" name="sensor-name"
@@ -214,19 +353,40 @@
                         used to trigger edit sensor in sensors.py -->
                     </form>
 
-                    <div id="{{ sensor.name }}-update-warning"
+                    <div id="{{ sensor.id }}-update-warning"
                          class="error" style="display: none;">
                         <h5>Updating the sensor fields will delete existing measurement
                             data.
                         </h5>
-                        <button type="button" id="update-continue"
+                        <button type="button" id="{{ sensor.id }}-update-continue"
                                 class="grafana-btn-green">
                             Update anyway
                         </button>
-                        <button type="button" id="update-export" class="grafana-btn-yellow">
+                        <button type="button" id="{{ sensor.id }}-update-export"
+                                class="grafana-btn-yellow">
                             Export the existing data first
                         </button>
-                        <button type="button" id="update-cancel"
+                        <button type="button"
+                                id="{{ sensor.id }}-update-cancel"
+                                class="grafana-btn-red">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <div id="{{ sensor.id }}-delete-warning"
+                         class="error" style="display: none;">
+                        <h5>Deleting this sensor will delete its measurement data.
+                        </h5>
+                        <button type="button" id="{{ sensor.id }}-delete-continue"
+                                class="grafana-btn-green">
+                            Delete anyway
+                        </button>
+                        <button type="button" id="{{ sensor.id }}-delete-export"
+                                class="grafana-btn-yellow">
+                            Export the existing data first
+                        </button>
+                        <button type="button"
+                                id="{{ sensor.id }}-delete-cancel"
                                 class="grafana-btn-red">
                             Cancel
                         </button>
