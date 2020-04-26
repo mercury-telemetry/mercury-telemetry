@@ -1,7 +1,7 @@
 import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-from ..event_check import require_event_code
+from ..event_check import require_event_code, require_event_code_function
 from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent, AGMeasurement
 from mercury.models import GFConfig
 from django.contrib import messages
@@ -46,6 +46,7 @@ def validate_inputs(sensor_name, field_names, request, new=False):
     return form_valid, request
 
 
+@require_event_code_function
 def delete_sensor(request, sensor_name):
     """This deletes a sensor from the database based on a button click"""
     sensor_to_delete = AGSensor.objects.get(name=sensor_name)
