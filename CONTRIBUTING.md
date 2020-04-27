@@ -1,5 +1,3 @@
-This file contains information regarding how to contribute to this project. To be updated.
-
 # Contributing guidelines
 Overview will be added
 
