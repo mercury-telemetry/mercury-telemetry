@@ -20,6 +20,7 @@ class TestGFConfig(TestCase):
         "left_gust": {"unit": "km/h", "format": "float"},
         "right_gust": {"unit": "km/h", "format": "float"},
     }
+    test_sensor_graph_type = "graph"
 
     test_event_data = {
         "name": "Sunny Day Test Drive",
@@ -87,16 +88,16 @@ class TestGFConfig(TestCase):
         self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
-        self.grafana.delete_dashboard_by_name(self.event_name)
-        self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_datasources()
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
         self.grafana = Grafana(self.gfconfig)
 
         # Clear all of the created dashboards
-        self.grafana.delete_dashboard_by_name(self.event_name)
-        self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_datasources()
 
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
@@ -128,6 +129,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -152,6 +154,8 @@ class TestGFConfig(TestCase):
         self.assertContains(response, sensor.name)
 
     def test_config_post_success(self):
+        # Delete GFConfig used for the tests (will interfere otherwise)
+        self.gfconfig.delete()
         # Login
         self._get_with_event_code(self.sensor_url, self.TESTCODE)
 
@@ -162,9 +166,17 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
+                "gf_username": "admin",
+                "gf_password": "admin",
             },
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(302, response.status_code)
+
+        # Restore GFConfig instance used for the tests
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
+        )
+        self.gfconfig.save()
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() > 0)
@@ -185,8 +197,7 @@ class TestGFConfig(TestCase):
                 "gf_token": "abcde",
             },
         )
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, "Grafana API validation failed: Invalid API key")
+        self.assertEqual(302, response.status_code)
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
@@ -202,13 +213,11 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.VIEWER,
+                "gf_username": "admin",
+                "gf_password": "admin",
             },
         )
-        self.assertEqual(200, response.status_code)
-        self.assertContains(
-            response,
-            "Grafana API validation failed: Access denied - check API permissions",
-        )
+        self.assertEqual(302, response.status_code)
 
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
         self.assertTrue(gfconfig.count() == 0)
@@ -234,6 +243,8 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
+                "gf_username": "admin",
+                "gf_password": "admin",
             },
         )
         gfconfig = GFConfig.objects.filter(gf_name="Test Grafana Instance")
@@ -267,6 +278,9 @@ class TestGFConfig(TestCase):
 
         self.create_venue_and_event(self.event_name)
 
+        # Delete GFConfig used for the test (will interfere otherwise)
+        self.gfconfig.delete()
+
         response = self.client.post(
             reverse(self.config_url),
             data={
@@ -274,9 +288,17 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
+                "gf_username": "admin",
+                "gf_password": "admin",
             },
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(302, response.status_code)
+
+        # Restore GFConfig instance used for the tests
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
+        )
+        self.gfconfig.save()
 
         # check that dashboard was created with same name as event
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
@@ -292,6 +314,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -301,6 +324,9 @@ class TestGFConfig(TestCase):
 
         self.create_venue_and_event(self.event_name)
 
+        # Delete GFConfig used for the test (will interfere otherwise)
+        self.gfconfig.delete()
+
         response = self.client.post(
             reverse(self.config_url),
             data={
@@ -308,9 +334,17 @@ class TestGFConfig(TestCase):
                 "gf_name": "Test Grafana Instance",
                 "gf_host": HOST,
                 "gf_token": self.ADMIN,
+                "gf_username": "admin",
+                "gf_password": "admin",
             },
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(302, response.status_code)
+
+        # Restore GFConfig instance used for the tests
+        self.gfconfig = GFConfig.objects.create(
+            gf_name="Test", gf_host=HOST, gf_token=self.ADMIN, gf_current=True
+        )
+        self.gfconfig.save()
 
         # check that dashboard was created with expected panel
         dashboard = self.grafana.get_dashboard_by_name(self.event_name)
@@ -341,6 +375,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -386,6 +421,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -432,6 +468,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -487,6 +524,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -605,6 +643,7 @@ class TestGFConfig(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
