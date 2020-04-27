@@ -13,12 +13,13 @@ from ag_data.models import AGMeasurement, AGEvent, AGVenue, AGSensor, AGActiveEv
 from mercury.forms import EventForm, VenueForm
 from mercury.grafanaAPI.grafana_api import Grafana
 from mercury.models import GFConfig
-from ..event_check import require_event_code
+from ..event_check import require_event_code, require_event_code_function
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 
+@require_event_code_function
 def update_venue(request, venue_uuid=None):
     venue_to_update = AGVenue.objects.get(uuid=venue_uuid)
     if venue_to_update:
@@ -31,6 +32,7 @@ def update_venue(request, venue_uuid=None):
     return redirect("/events")
 
 
+@require_event_code_function
 def update_event(request, event_uuid=None):
     event_to_update = AGEvent.objects.get(uuid=event_uuid)
     if event_to_update:
@@ -75,6 +77,7 @@ def update_event(request, event_uuid=None):
     return redirect("/events")
 
 
+@require_event_code_function
 def delete_event(request, event_uuid=None):
     event_to_delete = AGEvent.objects.get(uuid=event_uuid)
 
@@ -100,6 +103,7 @@ def delete_event(request, event_uuid=None):
     return redirect("/events")
 
 
+@require_event_code_function
 def export_all_event(request):
     if request.path.__contains__("json"):
         events = AGEvent.objects.all().order_by("uuid")
@@ -218,6 +222,7 @@ def create_event_json(event_object, venue_object, measurements_object):
     return data
 
 
+@require_event_code_function
 def activate_event(request, event_uuid=None):
     event_to_activate = AGEvent.objects.get(uuid=event_uuid)
     if event_to_activate is not None:
@@ -227,6 +232,7 @@ def activate_event(request, event_uuid=None):
     return redirect("/events")
 
 
+@require_event_code_function
 def deactivate_event(request, event_uuid=None):
     event_to_deactivate = AGEvent.objects.get(uuid=event_uuid)
     if event_to_deactivate is not None:
@@ -234,6 +240,7 @@ def deactivate_event(request, event_uuid=None):
     return redirect("/events")
 
 
+@require_event_code_function
 def export_event(request, event_uuid=None, file_format="CSV"):
     event_to_export = AGEvent.objects.get(uuid=event_uuid)
     if event_to_export:

@@ -217,6 +217,9 @@ class TestEventView(TestCase):
         self.assertEqual(event.description, self.test_event_data["description"])
 
     def test_delete_event(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         # Create an event
         event = self.create_venue_and_event(self.event_name)
 
@@ -232,6 +235,9 @@ class TestEventView(TestCase):
         self.assertEquals(AGEvent.objects.all().count(), 0)
 
     def test_update_event(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         # Create an event
         event = self.create_venue_and_event(self.event_name)
 
@@ -267,6 +273,8 @@ class TestEventView(TestCase):
         self.assertEquals(event.description, self.test_event_data_update["description"])
 
     def test_update_venue(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
 
         venue_name_update = "test name"
         # Create a venue
@@ -303,6 +311,9 @@ class TestEventView(TestCase):
         self.assertEquals(venue.longitude, self.test_venue_data_update["longitude"])
 
     def test_export_all_csv(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
         self.create_measurement(event, sensor)
@@ -313,6 +324,9 @@ class TestEventView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_export_all_json(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
         self.create_measurement(event, sensor)
@@ -323,6 +337,9 @@ class TestEventView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_export_csv(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
         self.create_measurement(event, sensor)
@@ -335,6 +352,9 @@ class TestEventView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_export_json(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
         sensor = self.create_sensor()
         self.create_measurement(event, sensor)
@@ -347,6 +367,9 @@ class TestEventView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_export_no_measurements(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
 
         response = self.client.post(
@@ -356,6 +379,9 @@ class TestEventView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_export_all_no_measurements(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         self.create_venue_and_event(self.event_name)
 
         response = self.client.post(reverse(self.event_export_all_csv_url))
@@ -363,6 +389,9 @@ class TestEventView(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_activate_event(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
 
         response = self.client.post(
@@ -373,6 +402,9 @@ class TestEventView(TestCase):
         self.assertEqual(302, response.status_code)
 
     def test_deactivate_event(self):
+        # Login
+        self._get_with_event_code(self.event_url, self.TESTCODE)
+
         event = self.create_venue_and_event(self.event_name)
 
         response = self.client.post(

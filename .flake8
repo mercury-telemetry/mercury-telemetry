@@ -3,5 +3,6 @@ max-line-length = 119
 exclude =
     .git,
     __pycache__,
-    venv
+    venv,
+    pi_venv
     **/migrations
