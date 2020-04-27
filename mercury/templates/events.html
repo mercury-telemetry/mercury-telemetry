@@ -22,7 +22,8 @@
     {% include 'sidebar.html' %}
     <div class="topbar-container">
         <h1>Events</h1>
-        <p>Events page to add a new event, update existing event, export data of events</p>
+        <p>Here you can manage your venues and events as well as export data from Mercury.</p>
+        <br>
         <div>
             <input class="grafana-btn grafana-btn-green" type="submit" onclick="toggleEventButton('all_events');" value="All Events">
             <input class="grafana-btn grafana-btn-green" type="submit" onclick="toggleEventButton('all_venues');" value="All Venues">
@@ -52,20 +53,17 @@
                     <table class="table table-bordered table-striped mb-0">
                         <thead>
                         <tr bgcolor="#e0efdf">
-                            <th>Sr. No.</th>
                             <th>NAME</th>
                             <th>Event Active</th>
                             <th>LOCATION</th>
                             <th>DATE</th>
                             <th>DESCRIPTION</th>
-                            <th>Event ID</th>
                             <th>ACTIONS</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for item in events %}
                             <tr>
-                                <td></td>
                                 <td>{{ item.name }}</td>
 
                                 {% if  item == active_event %}
@@ -87,7 +85,6 @@
                                 <td>{{ item.venue_uuid.name }}</td>
                                 <td>{{ item.date }}</td>
                                 <td>{{ item.description }}</td>
-                                <td>{{ item.uuid }}</td>
                                 <td>
                                     <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/csv">Export CSV</a>
                                     <br><br>
@@ -147,7 +144,7 @@
                     {% csrf_token %} {% load crispy_forms_tags %} {{ event_form|crispy }}
                     <br>
                     <div>
-                        <input class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit-event" value="Submit">
+                        <input class="submitbutton grafana-btn grafana-btn-green" type="submit" name="submit-event" value="Submit">
                     </div>
                     <br> <br>
                 </form>
@@ -163,7 +160,7 @@
                     {% csrf_token %} {% load crispy_forms_tags %} {{ venue_form|crispy }}
                     <br>
                     <div>
-                        <input class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit-venue" value="Submit">
+                        <input class="submitbutton grafana-btn grafana-btn-green" type="submit" name="submit-venue" value="Submit">
                     </div>
                     <br> <br>
                 </form>

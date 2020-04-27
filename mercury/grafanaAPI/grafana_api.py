@@ -5,18 +5,10 @@ import string
 import random
 from ag_data.models import AGSensor, AGEvent
 
-TOKEN = "eyJrIjoiRTQ0cmNGcXRybkZlUUNZWmRvdFI0UlMwdFVYVUt3bzgiLCJuIjoia2V5IiwiaWQiOjF9"
-HOST = "https://dbc291.grafana.net"
-DB_HOSTNAME = "ec2-35-168-54-239.compute-1.amazonaws.com:5432"
-DB_NAME = "d76k4515q6qv"
-DB_USERNAME = "qvqhuplbiufdyq"
-DB_PASSWORD = "f45a1cfe8458ff9236ead8a7943eba31dcef761471e0d6d62b043b4e3d2e10e5"
-
 
 class Grafana:
-    def __init__(self, gf_config=None):
+    def __init__(self, gf_config):
         """
-
         Initialize parameters needed to use the API: hostname, admin-level API token,
         and the following postgres credentials:
         - hostname
@@ -29,21 +21,14 @@ class Grafana:
         :param host: Grafana hostname, e.g. https://dbc291.grafana.net
         :param token: API key with admin-level permissions
         """
-        if gf_config:
-            self.hostname = gf_config.gf_host
-            self.api_token = gf_config.gf_token
-            self.database_hostname = gf_config.gf_db_host
-            self.database_name = gf_config.gf_db_name
-            self.database_username = gf_config.gf_db_username
-            self.database_password = gf_config.gf_db_pw
-        else:
-            # for test purposes
-            self.hostname = HOST
-            self.api_token = TOKEN
-            self.database_hostname = DB_HOSTNAME
-            self.database_name = DB_NAME
-            self.database_username = DB_USERNAME
-            self.database_password = DB_PASSWORD
+
+        # Initialize Grafana instance from GFConfig
+        self.hostname = gf_config.gf_host
+        self.api_token = gf_config.gf_token
+        self.database_hostname = gf_config.gf_db_host
+        self.database_name = gf_config.gf_db_name
+        self.database_username = gf_config.gf_db_username
+        self.database_password = gf_config.gf_db_pw
 
         # Grafana API endpoints constructed with hostname + url
         self.endpoints = {
@@ -378,7 +363,7 @@ class Grafana:
         elif "Invalid API key" in message:
             raise ValueError("Invalid API key")
         else:
-            raise ValueError(f"Create_postgres_datasource() failed: {message}")
+            raise ValueError(f"Grafana datasource creation failed: {message}")
 
     def delete_datasource_by_name(self, name):
         """
@@ -457,9 +442,11 @@ class Grafana:
         if len(field_array):
             for i in range(0, len(field_array) - 1):
                 fields_query += (
-                    f"value->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+                    f"value->'result'->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
                 )
-            fields_query += f"value->'{field_array[-1]}' AS \"{field_array[-1]}\""
+            fields_query += (
+                f"value->'result'->'{field_array[-1]}' AS \"{field_array[-1]}\""
+            )
 
         # Build SQL query
         panel_sql_query = f"""
@@ -935,7 +922,7 @@ class Grafana:
                         "1m",
                     ]
                 },
-                "refresh": "0.5s",
+                "refresh": "5s",
             }
         }
 

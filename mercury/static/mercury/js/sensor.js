@@ -13,10 +13,11 @@ $(document).ready(function () {
     $.ajax({
         url: `/sensor_data_exists/${sensor_id}`,
         type: "GET",
+        dataType: "json",
 
         success: function(response) {
 
-            var data = JSON.parse(response);
+            var data = response;
 
             if (data["status"] == true) {
                 runUpdateWarning(event, sensor_name);
@@ -38,7 +39,6 @@ function runUpdateWarning(event, sensor_name){
     var warning_id = `${sensor_name}-update-warning`;
     warning = document.getElementById(warning_id);
 
-    console.log('hide modify/update/delete buttons');
     // hide update button
     var update_button_id = `${sensor_name}-submit-button`;
     var delete_button_id = `${sensor_name}-delete-button`;
@@ -82,19 +82,31 @@ function addRow(table_name){
     var rowCount = table.rows.length;
     var colCount = table.rows[0].cells.length;
     var newRow = table.insertRow(rowCount-1);
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ":" + today.getMilliseconds();
+    var dateTime = date+' '+time;
     newRow.className = "sensor-fields-table-tr"
+    newRow.id = "sensor-fields-table-tr-".concat(dateTime) // need it to be unique so we can delete it if needed
     for(var i=0; i<colCount; i++){
         var newCell = newRow.insertCell(i);
+        if (i < 3) {
         /* set new cell to be same as cell in first data (non-header) row */
         newCell.innerHTML = table.rows[1].cells[i].innerHTML
         newCell.className = "sensor-fields-table-td"
+        }
+        else {
+            newCell.innerHTML = "<button type=\"button\" onclick=\"deleteRow('" + table_name + "', '" + newRow.id + "')\" class=\"grafana-btn grafana-btn-red\">X</button>"
+            newCell.className = "sensor-fields-table-td"
+        }
     }
 }
 
-function deleteRow(table_name, row) {
+function deleteRow(table_name, rowid) {
     var table = document.getElementById(table_name);
     if (table.rows.length > 3) {
-        table.deleteRow(row);
+        var row = document.getElementById(rowid);
+        row.parentNode.removeChild(row);
     }
 }
 

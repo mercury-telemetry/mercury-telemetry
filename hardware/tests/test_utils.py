@@ -4,8 +4,14 @@ from unittest import mock
 from testfixtures import TempDirectory
 from logging import INFO
 import os
+from datetime import datetime
+import dateutil.parser
 
-from hardware.Utils.utils import get_logger, get_serial_stream
+from hardware.Utils.utils import (
+    get_logger,
+    get_serial_stream,
+    date_str_with_current_timezone,
+)
 from hardware.Utils.logger import Logger
 
 
@@ -36,3 +42,9 @@ class UtilsTests(SimpleTestCase):
             stream,
             b'{"id": 5, "value": {"value_a_name": 15.0, "value_b_name": 26.5, "value_c_name": 13.3}}\n',
         )
+
+    def test_date_str_with_current_timezone(self):
+        s = date_str_with_current_timezone()
+        date = dateutil.parser.isoparse(s)
+        self.assertTrue("T" in s)
+        self.assertAlmostEqual(date.timestamp(), datetime.now().timestamp(), places=1)
