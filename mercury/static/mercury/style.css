@@ -327,7 +327,6 @@ identical to the selector html, except that its specificity is higher. */
 
 .help-image {
  width: 100%;
- height: 100%;
 }
 
 .help-section {
@@ -339,7 +338,20 @@ ol.help-list > li {
 }
 
 ul.help-list > li {
-    list-style-type: disc;
+  list-style-type: disc;
+}
+
+.help-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border: 5px solid;
+}
+
+.left-allign {
+  text-align: left!important;
+  align: left!important;
 }
 
 .gfconfig-text-align {
