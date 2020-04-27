@@ -13,7 +13,7 @@ function __success {
     echo -e $GREEN"[OK] "$*$RESET
 }
 function __assert_exist {
-    if command -v $1 > /dev/null; then
+    if command -v "$1" > /dev/null; then
         __success $1
     else
         __error "[ERR] "$1
@@ -25,7 +25,7 @@ function __assert_exist {
 }
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $SCRIPT_DIR/..
+cd "$SCRIPT_DIR/.."
 
 if [[ -z $VIRTUAL_ENV ]]; then
   printf $RED
@@ -43,7 +43,7 @@ __assert_exist psql "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-cla
 
 ENV_SAMPLE=$SCRIPT_DIR/env.sample
 if [[ ! -f ".env" ]]; then
-  cp $ENV_SAMPLE .env
+  cp "$ENV_SAMPLE" .env
   __success "Copy .env at the project root"
 elif diff .env scripts/env.sample > /dev/null; then
   __success "Skip copying .env"
@@ -52,7 +52,7 @@ else
     read -n 1 -p "You already have '.env'. Do you want to overwrite it? (yN)" yn
     echo -e $RESET
     case $yn in
-          y ) cp $ENV_SAMPLE .env ;;
+          y ) cp "$ENV_SAMPLE" .env ;;
           q ) exit 0 ;;
     esac
 fi
