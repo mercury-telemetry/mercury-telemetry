@@ -1,8 +1,8 @@
 # Contributing guidelines
-Overview will be added
+This document contains everything you need in order to contribute to our project. We welcome everyone to collaborate and help us improve our product. In addition to all the information present in this document, make sure to take a look at our [Wiki.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki)
 
 ## Code of Conduct
-Link to code of conduct
+You can access our code of conduct [here](). 
 
 ## Contributor Workflow
 1. Make a feature branch `git checkout -b <new_branch_name>`. Then, make your changes
@@ -17,7 +17,7 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 2. Give the description of the issue that you want to resolve in the pull request message. Include the relevant issue number if applicable.
 3. Wait for the maintainers to review your pull request and do the changes if requested.
 
-### Guidelines for PR
+#### Guidelines for making a PR
 * Keep each PR focused. While it might seem convenient, do not combine several unrelated fixes together. It can cause confusion to the maintainers. Feel free to create new branches to keep each PR focused.
 
 * If your PR is a bug fix, please also include a test that demonstrates the problem, or modifies an existing test that wasn't catching that problem already. Of course, it's not a requirement, so proceed anyway if you can't figure out how to write a test, but do try. Without having a test your fix could be lost down the road. By supplying a test, you're ensuring that your projects won't break in the future.
