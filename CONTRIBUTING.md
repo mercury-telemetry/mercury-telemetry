@@ -17,7 +17,17 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 2. Give the description of the issue that you want to resolve in the pull request message. Include the relevant issue number if applicable.
 3. Wait for the maintainers to review your pull request and do the changes if requested.
 
-Guidelines will be added soon
+### Guidelines for PR
+* Keep each PR focused. While it might seem convenient, do not combine several unrelated fixes together. It can cause confusion to the maintainers. Feel free to create new branches to keep each PR focused.
+
+* If your PR is a bug fix, please also include a test that demonstrates the problem, or modifies an existing test that wasn't catching that problem already. Of course, it's not a requirement, so proceed anyway if you can't figure out how to write a test, but do try. Without having a test your fix could be lost down the road. By supplying a test, you're ensuring that your projects won't break in the future.
+
+* Do this for PRs that implement new features as well. Without having a test case validating this new feature, it'd be very easy for that new feature to break in the future. A test case ensures that the feature will not break. 
+
+* In case you're submitting a PR for a UI related issue, it is recommended (This is not a must but a ***very*** nice to have) if you add a screenshot of your change or a link to a deployment (heroku is fine) where it can be tested out along with your PR. It will make the review process a lot faster. 
+
+* Please use the appropriate tags for your PR. 
+
 ## Asking Questions
 Details will be added soon
 
