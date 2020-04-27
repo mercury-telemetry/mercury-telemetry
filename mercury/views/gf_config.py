@@ -25,7 +25,22 @@ def update_config(request, gf_id=None):
 
 @require_event_code_function
 def delete_config(request, gf_id=None):
-    GFConfig.objects.get(id=gf_id).delete()
+    config = GFConfig.objects.get(id=gf_id)
+
+    # Create Grafana class to handle this GF instance
+    grafana = Grafana(config)
+
+    try:
+        grafana.validate_credentials()
+        grafana.delete_all_datasources()
+        grafana.delete_all_dashboards()
+    except ValueError as error:
+        messages.error(request, f"Grafana instance not deleted: {error}")
+    else:
+        messages.success(request, f"Grafana instance deleted successfully")
+
+    config.delete()
+
     return redirect("/gfconfig")
 
 
@@ -56,6 +71,7 @@ def configure_dashboard(request, gf_id=None):
 
     # Retrieve missing events to pass to the context
     all_events = list(AGEvent.objects.all())
+    event_names = [event.name for event in all_events]
     missing_events = list(set(all_events) - set(existing_events))
 
     # Prepare an array of dashboards & their sensors to send to the template
@@ -63,26 +79,30 @@ def configure_dashboard(request, gf_id=None):
 
     for dashboard in current_dashboards:
 
-        dashboard_dict = dict()
+        # if this dashboard corresponds to an event
+        if dashboard["title"] in event_names:
 
-        # Get all currently used panels to initialize the form
-        existing_sensors = grafana.get_all_sensors(dashboard["title"])
+            dashboard_dict = dict()
+            # Get all currently used panels to initialize the form
+            existing_sensors = grafana.get_all_sensors(dashboard["title"])
 
-        # Set initial form data so that only existing sensors are checked
-        sensor_form = DashboardSensorPanelsForm(initial={"sensors": existing_sensors})
+            # Set initial form data so that only existing sensors are checked
+            sensor_form = DashboardSensorPanelsForm(
+                initial={"sensors": existing_sensors}
+            )
 
-        # Retrieve the URL for this dashboard or ""
-        dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
-        if dashboard_url is None:
-            dashboard_url = ""
+            # Retrieve the URL for this dashboard or ""
+            dashboard_url = grafana.get_dashboard_url_by_name(dashboard["title"])
+            if dashboard_url is None:
+                dashboard_url = ""
 
-        # Store everything in a list of dicts
-        dashboard_dict["sensor_form"] = sensor_form
-        dashboard_dict["dashboard_url"] = dashboard_url
-        dashboard_dict["sensors"] = AGSensor.objects.all()
-        dashboard_dict["name"] = dashboard["title"]
+            # Store everything in a list of dicts
+            dashboard_dict["sensor_form"] = sensor_form
+            dashboard_dict["dashboard_url"] = dashboard_url
+            dashboard_dict["sensors"] = AGSensor.objects.all()
+            dashboard_dict["name"] = dashboard["title"]
 
-        dashboards.append(dashboard_dict)
+            dashboards.append(dashboard_dict)
 
     config_info["dashboards"] = dashboards
     config_info["missing_events"] = missing_events
@@ -103,9 +123,12 @@ def update_dashboard(request, gf_id=None):
         for sensor in sensors:
             sensor = AGSensor.objects.filter(id=sensor).first()
             sensor_objects.append(sensor)
-        grafana.update_dashboard_panels(dashboard_name, sensor_objects)
-        msg = "Successfully updated dashboard: {}".format(dashboard_name)
-        messages.success(request, msg)
+        try:
+            grafana.update_dashboard_panels(dashboard_name, sensor_objects)
+            msg = "Successfully updated dashboard: {}".format(dashboard_name)
+            messages.success(request, msg)
+        except ValueError as error:
+            messages.error(request, error)
     else:
         messages.error(
             request, "Unable to update dashboard, Grafana instance not found"
@@ -121,9 +144,12 @@ def reset_dashboard(request, gf_id=None):
         grafana = Grafana(gfconfig)
         dashboard_name = request.POST.get("dashboard_name")
         sensors = AGSensor.objects.all()
-        grafana.update_dashboard_panels(dashboard_name, sensors)
-        msg = "Successfully reset dashboard: {}".format(dashboard_name)
-        messages.success(request, msg)
+        try:
+            grafana.update_dashboard_panels(dashboard_name, sensors)
+            msg = "Successfully reset dashboard: {}".format(dashboard_name)
+            messages.success(request, msg)
+        except ValueError as error:
+            messages.error(request, error)
     else:
         messages.error(request, "Unable to reset dashboard, Grafana instance not found")
     return redirect("/gfconfig/configure/{}".format(gf_id))
@@ -211,47 +237,83 @@ class GFConfigView(TemplateView):
     def post(self, request, *args, **kwargs):
         if "submit" in request.POST:
             DB = settings.DATABASES
-            config_data = GFConfig(
-                gf_name=request.POST.get("gf_name"),
-                gf_host=request.POST.get("gf_host"),
-                gf_token=request.POST.get("gf_token"),
-                gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
-                gf_db_name=DB["default"]["NAME"],
-                gf_db_username=DB["default"]["USER"],
-                gf_db_pw=DB["default"]["PASSWORD"],
-            )
+            gf_host = request.POST.get("gf_host")
+            gf_name = request.POST.get("gf_name")
+            gf_username = request.POST.get("gf_username")
+            gf_password = request.POST.get("gf_password")
+            gf_token = request.POST.get("gf_token")
 
-            # Create Grafana instance with host and token
-            grafana = Grafana(config_data)
+            # check whether gf_host already in use
+            matching_hosts = GFConfig.objects.filter(gf_host=gf_host)
+            if len(matching_hosts):
+                messages.error(
+                    request, "Hostname {} already in use".format(gf_host),
+                )
+            else:
 
-            try:
-                grafana.create_postgres_datasource()
-            except ValueError as error:
-                messages.error(request, f"Datasource couldn't be created. {error}")
+                # create authentication url
+                auth_http = "http://{}:{}@{}"
+                auth_https = "https://{}:{}@{}"
 
-            try:
-                grafana.validate_credentials()
-                config_data.gf_current = True  # Deprecated
-                # Only save the config if credentials were validated
-                config_data.save()
+                if not gf_token:
+                    if gf_host.startswith("https"):
+                        auth_url = auth_https.format(
+                            gf_username, gf_password, gf_host[8:]
+                        )
+                    elif gf_host.startswith("http"):
+                        auth_url = auth_http.format(
+                            gf_username, gf_password, gf_host[7:]
+                        )
+                    else:
+                        auth_url = auth_http.format(gf_username, gf_password, gf_host)
 
-                # If any events exist, add a dashboard for each event
-                # If any sensors exist, add them to each event dashboard
-                events = AGEvent.objects.all()
-                sensors = AGSensor.objects.all()
-                for event in events:
-                    grafana.create_dashboard(event.name)
-                    for sensor in sensors:
-                        grafana.add_panel(sensor, event)
+                    try:
+                        gf_token = Grafana.create_api_key(
+                            auth_url, "mercury-auto-admin", "Admin"
+                        )
+                    except ValueError as error:
+                        messages.error(
+                            request, "Failed to create API token: {}".format(error),
+                        )
+                        return redirect("/gfconfig")
 
-            except ValueError as error:
-                messages.error(request, f"Grafana initial set up failed: {error}")
+                config_data = GFConfig(
+                    gf_name=gf_name,
+                    gf_host=gf_host,
+                    gf_username=gf_username,
+                    gf_password=gf_password,
+                    gf_token=gf_token,
+                    gf_db_host=DB["default"]["HOST"] + ":" + str(DB["default"]["PORT"]),
+                    gf_db_name=DB["default"]["NAME"],
+                    gf_db_username=DB["default"]["USER"],
+                    gf_db_pw=DB["default"]["PASSWORD"],
+                )
 
-            # Prepare an array of dicts with details for each GFConfig (GFConfig object,
-            # list of dashboards/forms
-            # Retrieve all available GFConfigs
-            current_configs = GFConfig.objects.all().order_by("id")
+                # Create Grafana instance with host and token
+                grafana = Grafana(config_data)
 
-            config_form = GFConfigForm()
-            context = {"config_form": config_form, "configs": current_configs}
-            return render(request, self.template_name, context)
+                try:
+                    grafana.validate_credentials()
+                    grafana.create_postgres_datasource()
+                except ValueError as error:
+                    messages.error(request, error)
+                try:
+
+                    config_data.gf_current = True  # Deprecated
+                    # Only save the config if credentials were validated
+                    config_data.save()
+
+                    # If any events exist, add a dashboard for each event
+                    # If any sensors exist, add them to each event dashboard
+                    events = AGEvent.objects.all()
+                    sensors = AGSensor.objects.all()
+                    for event in events:
+                        grafana.create_dashboard(event.name)
+                        for sensor in sensors:
+                            grafana.add_panel(sensor, event)
+
+                except ValueError as error:
+                    messages.error(request, f"Grafana initial set up failed: {error}")
+
+                messages.success(request, "Created Grafana Host: {}".format(gf_name))
+            return redirect("/gfconfig")

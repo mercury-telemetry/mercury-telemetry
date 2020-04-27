@@ -18,6 +18,7 @@ class TestConfigureSensorView(TestCase):
     data_type_2 = "test-data-type-2"
     unit_1 = "test-unit-1"
     unit_2 = "test-unit-2"
+    graph_type = "graph"
 
     updated_test_sensor_name = "updated-live-feed"
     updated_field_name_1 = "updated-test-field-1"
@@ -33,6 +34,7 @@ class TestConfigureSensorView(TestCase):
         "field-names": [field_name_1, field_name_2],
         "data-types": [data_type_1, data_type_2],
         "units": [unit_1, unit_2],
+        "graph-type": graph_type,
     }
 
     submit_new_data = {
@@ -41,6 +43,7 @@ class TestConfigureSensorView(TestCase):
         "field-names": test_sensor["field-names"],
         "data-types": test_sensor["data-types"],
         "units": test_sensor["units"],
+        "sensor-graph-type": test_sensor["graph-type"],
     }
 
     def setUp(self):
@@ -107,6 +110,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -136,6 +140,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -169,6 +174,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
         # POST sensor data
@@ -193,6 +199,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
         # POST sensor data
@@ -326,6 +333,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -345,6 +353,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -363,6 +372,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -382,6 +392,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -401,6 +412,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -420,6 +432,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -439,6 +452,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -458,6 +472,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": [self.field_name_1, self.updated_field_name_1],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -476,6 +491,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -495,6 +511,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": [self.field_name_1, self.updated_field_name_1],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -515,6 +532,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -534,6 +552,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": [self.data_type_1, self.updated_data_type_2],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -552,6 +571,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -571,6 +591,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": [self.data_type_1, self.updated_data_type_2],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -591,6 +612,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -610,6 +632,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": [self.unit_1, self.updated_unit_2],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
@@ -628,6 +651,7 @@ class TestConfigureSensorView(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.graph_type,
         )
         test_type_object.save()
 
@@ -647,6 +671,7 @@ class TestConfigureSensorView(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": [self.unit_1, self.updated_unit_2],
+                "sensor-graph-type": self.graph_type,
             },
         )
 
