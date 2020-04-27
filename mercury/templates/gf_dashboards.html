@@ -12,6 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Configure Dashboards</title>
+    </head>
         <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
@@ -19,27 +20,46 @@
     </head>
 
     <body>
-    {% include 'sidebar.html' %}
-    <div class="topbar-container">
-
         <!-- View Existing Dashboards -->
         <div>
             <div>
-            <h3> <a target="_blank" href="{{ config.config.gf_host }}/dashboards"/> 
-            {{ config.config.gf_name }} Event Dashboards</a></h3>
-            
+            <h3>
+            Grafana Event Dashboards: {{ config.config.gf_name }}
+            </a></h3>
+
+            <p>View all of your Grafana dashboards for the {{ config.config.gf_name }}
+            instance
+             <a target="_blank"
+            href="{{ config.config.gf_host }}/dashboards"/>here.</a>  </p>
+            Manage all of your Grafana dashboards from here. If there are no
+            dashboards and no option to add dashboards, make sure to add an event.
+            Choose which panels to include in the dashboard, or reset the dashboard
+            to its original state using Update Panels and Delete Panels. Delete
+            Dashboard will delete the dashboard from Grafana.
+
             {% if config.dashboards %}
 
                 {% for dashboard in config.dashboards %}
 
                     <div class="panel" name="{{ dashboard.name }}">
 
-                        <h4 class="gfconfig-text-align"> Event:
-                        <a target="_blank" href="{{ dashboard.dashboard_url }}">
-                        {{ dashboard.name }}</a>
+                        <h4 class="gfconfig-text-align"> Event: {{ dashboard.name }}
+                        <a class="gfconfig-text-align" target="_blank"
+                        href="{{ dashboard.dashboard_url }}">
+                       View Dashboard in Grafana</a>
                         </h4>
 
+
                         <br>
+
+                        <div>
+                        <input form="delete_{{ dashboard.name }}_{{ config.config.id }}"
+                        class="submitbutton simulator-btn
+                        grafana-btn
+                        grafana-btn-red gfconfig-text-align" type="submit"
+                        name="submit-delete-dashboard"
+                        value="Delete Dashboard">
+                        </div>
 
                         <form class="gfconfig-text-align" method="POST"
                         action="update_dashboard/{{ config.config.id }}"
@@ -50,6 +70,18 @@
 
                             <input type="hidden" name="dashboard_name"
                                 value="{{ dashboard.name }}">
+
+                         <input form="update_{{ dashboard.name }}_{{ config.config.id }}"
+                            class="submitbutton simulator-btn grafana-btn
+                            grafana-btn-green gfconfig-text-align" type="submit"
+                            name="submit-update-sensors"
+                            value="Update Panels">
+
+                            <input form="reset_{{ dashboard.name }}_{{ config.config.id }}" class="submitbutton simulator-btn
+                            grafana-btn
+                            grafana-btn-blue gfconfig-text-align" type="submit"
+                            name="submit-reset-dashboard"
+                            value="Reset Panels">
                         </form>
 
                         <form class="gfconfig-text-align" method="POST"
@@ -70,27 +102,7 @@
                         </form>
 
                         <br>
-                            <div>
-                                <input form="reset_{{ dashboard.name }}_{{ config.config.id }}" class="submitbutton simulator-btn
-                                grafana-btn
-                                grafana-btn-blue gfconfig-text-align" type="submit"
-                                name="submit-reset-dashboard"
-                                value="Reset Sensor Panels">
 
-                                <input form="delete_{{ dashboard.name }}_{{ config.config.id }}"
-                                class="submitbutton simulator-btn
-                                grafana-btn
-                                grafana-btn-red gfconfig-text-align" type="submit"
-                                name="submit-delete-dashboard"
-                                value="Delete Dashboard">
-
-                                <input form="update_{{ dashboard.name }}_{{ config.config.id }}"
-                                class="submitbutton simulator-btn grafana-btn
-                                grafana-btn-green gfconfig-text-align" type="submit"
-                                name="submit-update-sensors"
-                                value="Update Sensor Panels">
-
-                            </div>
                             <br> <br>
                     </div>
                 {% endfor %}
@@ -139,5 +151,4 @@
             </div>
         </div>
     </body>
-    </div>
 </html>
