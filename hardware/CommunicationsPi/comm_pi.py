@@ -1,3 +1,4 @@
+import os
 from http.server import BaseHTTPRequestHandler
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
 
@@ -25,5 +26,9 @@ class CommPi(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
     def send_data(self, payload):
-        self.transceiver.send(payload)
+        if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
+            print("transmit via internet")
+        if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
+            print("transmit via radio")
+            self.transceiver.send(payload)
         return

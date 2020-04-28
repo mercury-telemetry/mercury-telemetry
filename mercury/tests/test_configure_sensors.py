@@ -9,6 +9,7 @@ class TestConfigureSensorView(TestCase):
 
     login_url = "mercury:EventAccess"
     sensor_url = "mercury:sensor"
+    delete_sensor_url = "mercury:delete_sensor"
 
     test_sensor_name = "live-feed"
     field_name_1 = "test-field-1"
@@ -653,3 +654,36 @@ class TestConfigureSensorView(TestCase):
         sensor_type = AGSensorType.objects.all()[0]
         field = sensor_type.format[self.field_name_2]
         self.assertEqual(field["unit"], self.updated_unit_2)
+
+    def test_configure_sensor_valid_POST_delete_sensor(self):
+        # Login
+        self._get_with_event_code(self.sensor_url, self.TESTCODE)
+
+        # Create AGSensorType object for foreign key reference
+        test_type_object = AGSensorType.objects.create(
+            name=self.test_sensor["name"],
+            processing_formula=0,
+            format={
+                self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
+                self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
+            },
+        )
+        test_type_object.save()
+
+        # Create AG Sensor Object
+        test_sensor_object = AGSensor.objects.create(
+            name=self.test_sensor["name"], type_id=test_type_object
+        )
+        test_sensor_object.save()
+
+        self.client.post(
+            reverse(
+                self.delete_sensor_url, kwargs={"sensor_name": self.test_sensor["name"]}
+            )
+        )
+
+        sensors = AGSensor.objects.all()
+        sensor_types = AGSensorType.objects.all()
+
+        self.assertEqual(0, sensors.count())
+        self.assertEqual(0, sensor_types.count())
