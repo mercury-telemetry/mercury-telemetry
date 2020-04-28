@@ -842,4 +842,10 @@ iframe[name="show-dashboards-iframe"] {
 
 .help-text {
     align-text:left;
+    font-size: 20;
+}
+
+.help-header {
+    align-text:left;
+    font-size: 30;
 }
