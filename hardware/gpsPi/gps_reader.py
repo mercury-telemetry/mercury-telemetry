@@ -16,15 +16,13 @@ class GPSReader:
             self.logging = get_logger(log_file_name, log_file_name)
 
     def get_geolocation(self):
-        gps_raw = serial.Serial('/dev/serial0', 9600)
-        while gps_raw.inWaiting() == 0:
+        while self.gps.inWaiting() == 0:
             pass
-
-        nmeaSentence = str(gps_raw.readline()).split(",")
+        nmeaSentence = str(self.gps.readline()).split(",")
         print(nmeaSentence)
         nmeaType = nmeaSentence[0]
 
-        # Added additional check to verify if nmeaSentence has valid data
+        # verify if nmeaSentence type and valid data
         if nmeaType == "b'$GPRMC" and nmeaSentence[2] == "A":
             latitude_hours = float(nmeaSentence[3][0:2])
             latitude_minutes = float(nmeaSentence[3][2:])
@@ -55,7 +53,3 @@ class GPSReader:
             return data
         else:
             return None
-
-            # print(latitude_decimal)
-            # print(longitude_decimal)
-            # print("")
