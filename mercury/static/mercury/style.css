@@ -313,6 +313,30 @@ identical to the selector html, except that its specificity is higher. */
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
+.not-found {
+    position: relative;
+    text-align: left;
+}
+
+.not-found-text{
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    top: 5%;
+    left: 5%;
+}
+
+.forbidden-text{
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    top: 5%;
+    left: 5%;
+}
+
+
 .center-image {
   display: block;
   margin-left: auto;
