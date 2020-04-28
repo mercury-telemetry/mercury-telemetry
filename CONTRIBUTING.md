@@ -40,7 +40,7 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
   
 ## Pull request process and guidelines
 1. Check that there are no conflicts and your request passes Travis build as well as coveralls requirements. Check the log if any of the 3 checks fail.
-2. Give the description of the issue that you want to resolve in the pull request message. Include the relevant issue number if applicable.
+2. Give the description of the issue that you want to resolve in the pull request message and fill the Pull Request template accordingly. Include the relevant issue number if applicable. If PR template is not followed to describe and define a PR, it will not be reviewed.
 3. Wait for the maintainers to review your pull request and do the changes if requested.
 
 #### Guidelines for making a PR
@@ -56,7 +56,3 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 
 ## Asking Questions
 A way to communicate with the developer/maintainer team will be updated soon. 
-
-
-
-
