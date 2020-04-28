@@ -49,4 +49,5 @@ function resetButtons(){
     $('#existing-gf-hosts').addClass('hide-display');
     $('#add-gf-host').addClass('hide-display');
     $('#help-gf-config').addClass('hide-display');
+    $('#update-gf-config').addClass('hide-display');
 }

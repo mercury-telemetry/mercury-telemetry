@@ -27,7 +27,6 @@
         <!--Configs Table -->
         <div>
 
-        {% if configs %}
             <div>
                 <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('existing-gf-hosts');"
@@ -41,6 +40,7 @@
                 <br><br>
             </div>
 
+            {% if configs %}
             <div id="existing-gf-hosts" class="mt-50 ">
 
                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -91,8 +91,9 @@
 
                 </div>
 
-                {% endif %}
+            
             </div>
+            {% endif %}
 
 
         <div id="add-gf-host" class="mt-50 hide-display">
@@ -113,6 +114,7 @@
             {% endif %}
         </div>
 
+        {% if configs %}
         <div id="update-gf-config" class="mt-50 hide-display">
             <h2>Update Grafana Login</h2>
             <p>Update username and password for an existing Grafana instance.</p>
@@ -129,6 +131,7 @@
                 </form>
             {% endif %}
         </div>
+        {% endif %}
 
         <div id="help-gf-config" class="mt-50 help-section hide-display">
             <p class="help-text">

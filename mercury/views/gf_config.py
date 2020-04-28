@@ -269,7 +269,7 @@ class GFConfigView(TemplateView):
                 request, "Hostname {} already in use".format(gf_host),
             )
             return redirect("/gfconfig")
-       
+
         # a test is calling this with known gf_token
         if not gf_token:
             auth_url = make_auth_url(gf_host, gf_username, gf_password)
@@ -282,13 +282,11 @@ class GFConfigView(TemplateView):
                     request, "Failed to create API token: {}".format(error),
                 )
                 return redirect("/gfconfig")
-        
+
             # the user is submitting an update form
             if "update-config" in request.POST:
                 existing_host.update(
-                    gf_username=gf_username,
-                    gf_password=gf_password,
-                    gf_token=gf_token,
+                    gf_username=gf_username, gf_password=gf_password, gf_token=gf_token,
                 )
                 messages.success(request, "Updated Grafana host: {}".format(gf_host))
                 return redirect("/gfconfig")
