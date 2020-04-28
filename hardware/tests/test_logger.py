@@ -64,6 +64,22 @@ class LoggerTests(SimpleTestCase):
 
                 capture.check(("test_logger", "INFO", "test message"))
 
+    @mock.patch("builtins.print")
+    def test_info_message_with_print(self, mock_print=mock.MagicMock()):
+        """
+        Tests the .info method
+        """
+        with mock.patch.dict(
+            os.environ, {"LOG_DIRECTORY": self.temp_dir.path, "SHOW_LOGS": "True"}
+        ):
+            with LogCapture() as capture:
+                logger = Logger(name="test_logger", filename="logger.txt")
+                logger.info("test message")
+
+                self.assertTrue(mock_print.mock_calls == [mock.call("test message")])
+
+                capture.check(("test_logger", "INFO", "test message"))
+
     def test_message_failure(self):
         """
         makes sure that nothing is logged during initialization
