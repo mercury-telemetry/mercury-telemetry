@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-import uuid
 from django.utils import timezone
+from .SingletonModel import SingletonModel
+import uuid
 
 
 class AGVenue(models.Model):
@@ -70,7 +71,7 @@ class AGMeasurement(models.Model):
     value = JSONField()
 
 
-class AGActiveEvent(models.Model):
+class AGActiveEvent(SingletonModel):
     agevent = models.ForeignKey(AGEvent, null=True, on_delete=models.SET_NULL)
 
 
