@@ -63,7 +63,9 @@
                                 <td><button  name="show-dashboards"
                                         id="{{ item.id }}">Show Dashboards</button>
                                                          </td>
-                                <td><a href="delete/{{ item.id }}">Delete</a></td>
+                                <td><a id="delete_{{ item.uuid }}" name="delete-event"
+                                       href="delete/{{ item.id }}">Delete
+                                </a></td>
                             </tr>
                         {%  endfor %}
                         </tbody>
