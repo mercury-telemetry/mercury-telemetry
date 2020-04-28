@@ -27,7 +27,6 @@
         <!--Configs Table -->
         <div>
 
-        {% if configs %}
             <div>
                 <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('existing-gf-hosts');"
@@ -35,10 +34,13 @@
                 <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('add-gf-host');" value="Add Grafana Host">
                 <input class="grafana-btn grafana-btn-green" type="submit"
+                onclick="toggleButton('update-gf-config');" value="Update Grafana Login">
+                <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('help-gf-config');" value="Help">
                 <br><br>
             </div>
 
+            {% if configs %}
             <div id="existing-gf-hosts" class="mt-50 ">
 
                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -91,8 +93,9 @@
 
                 </div>
 
-                {% endif %}
+            
             </div>
+            {% endif %}
 
 
         <div id="add-gf-host" class="mt-50 hide-display">
@@ -112,6 +115,25 @@
                 </form>
             {% endif %}
         </div>
+
+        {% if configs %}
+        <div id="update-gf-config" class="mt-50 hide-display">
+            <h2>Update Grafana Login</h2>
+            <p>Update username and password for an existing Grafana instance.</p>
+            {% if config_form_update %}
+                <form method="POST" action="" id="GFConfigFormUpdate">
+                    {% csrf_token %} {% load crispy_forms_tags %} {{ config_form_update|crispy }}
+                    <br>
+                    <div>
+                        <input type="hidden" name="update-config" value="1">
+                        <input
+                        class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
+                    </div>
+                    <br> <br>
+                </form>
+            {% endif %}
+        </div>
+        {% endif %}
 
         <div id="help-gf-config" class="mt-50 help-section hide-display">
             <p class="help-text">
