@@ -321,12 +321,15 @@ identical to the selector html, except that its specificity is higher. */
 }
 
 .graph-image {
- width: 200px;
- height: 200px;
+    height: 200px;
 }
 
-.help-image {
- width: 100%;
+.graph-image-help {
+    height: 20%;
+}
+
+.graph-image-help:hover {
+    height: 40%
 }
 
 .help-section {
@@ -807,4 +810,12 @@ width: 70%;
 
 #grafana-text-box:hover {
   background-color: var(--light-background);
+}
+
+iframe[name="show-dashboards-iframe"] {
+    border:none;
+}
+
+.help-text {
+    align-text:left;
 }

@@ -23,13 +23,11 @@
     {% include 'sidebar.html' %}
     <div class="topbar-container">
         <h1>Configure Grafana</h1>
-        <p>Here you can add and modify Grafana hosts. </p>
+
         <!--Configs Table -->
         <div>
 
         {% if configs %}
-            <h2>Existing Grafana Hosts</h2>
-
             <div>
                 <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('existing-gf-hosts');"
@@ -41,13 +39,7 @@
                 <br><br>
             </div>
 
-            <div id="existing-gf-hosts" class="mt-50">
-                <p>
-
-                Access and manage your Grafana dashboards directly from here.
-
-                To view and update the dashboards for a grafana host, click <em>
-                Show Dashboards </em> next to that host in the table below: </p>
+            <div id="existing-gf-hosts" class="mt-50 ">
 
                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
                     <table class="table table-bordered table-striped mb-0">
@@ -56,7 +48,7 @@
                             <th>Label</th>
                             <th>Grafana Host</th>
                             <th>Event Dashboards</th>
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
 
@@ -119,29 +111,48 @@
             {% endif %}
         </div>
 
-        <div id="help-gf-config" class="mt-50 hide-display help-section">
+        <div id="help-gf-config" class="mt-50 help-section hide-display">
+            <p class="help-text">
+                Access and manage your Grafana dashboards directly from here.
 
-        <h1>Help</h1>
-
-            <h2> Grafana/Mercury Integration </h2>
-            <p>
-                Grafana is a time-series visualization tool. Mercury is integrated
-                directly with Grafana, so:
-                <ul class="help-list">
+                Mercury is integrated
+                directly with the Grafana time-series visualization tool, so:
+                <ul class="help-text help-list help-section">
                     <li>Each time you create an event in Mercury, a
                         dashboard will be created in Grafana with sensor panels
                         for all of your sensors at that time.</li>
                     <li>Sensor panels may be displayed as: </li>
                         <ul class="help-list">
-                            <li><b>Time-series</b>: sensor value(s) vs. time
+                            <li><b>Time-series</b>:  <br>
+                                <figure>
+                                    <img class="graph-image-help"
+                                    src="{% static 'mercury/graph.png' %}">
+                                    <figcaption>
+                                        temperature vs. time
+                                    </figcaption>
+                                </figure>
                             </li>
-                            <li><b>Gauge</b>: a single value <em>(most recent)</em> </li>
-                            <li><b>Map</b>: a TrackMap panel for displaying GPS data
-                                <em>(longitude/latitude)</em></li>
+                            <li><b>Gauge</b>: <br>
+                                <figure>
+                                    <img class="graph-image-help"
+                                    src="{% static 'mercury/gauge.png' %}">
+                                    <figcaption>a single value
+                                        <em>(the most recent value recorded)</em>
+                                    </figcaption>
+                                </figure>
+                            </li>
+                            <li><b>Map</b>: <br>
+                                <figure>
+                                    <img class="graph-image-help"
+                                     src="{% static 'mercury/map.png' %}">
+                                    <figcaption><b>TrackMap</b> panel for displaying GPS <em>(latitude/longitude)</em>
+                                        data</figcaption>
+                                </figure>
+                            </li>
                         </ul>
-                    <li>As you add, remove, and update your sensors in Mercury, you
-                        will see the changes reflected in Grafana. </li>
-                    <li></li>
+                    <li>As you add, remove, and update your sensors and events in
+                        Mercury, you will see the changes in Grafana. </li>
+        </ul>
 
             <h3>Contents</h3>
             <ol class="help-list">
@@ -160,35 +171,32 @@
                     </ol>
             </ol>
 
-            <h4 id="InstallGrafana">Install Grafana</h4>
+            <ol class="help-list">
 
-            <p>You can install Grafana on your local machine or host Grafana. <br>
-            Options for hosting include:
-                <ul class="help-list">
-                    <li> GrafanaCloud Hosted Grafana: Hosting is done
-                directly by Grafana. (Note: For free accounts, there is a limit of 5
-                dashboards.)</li>
-                    <li>Deploy Grafana in a docker container using a hosting service like
-                    AWS Elastic Beanstalk or Heroku.</li>
-                </ul>
-            </p>
+                <li>
+                    <h4 class="help-section" id="InstallGrafana">Install Grafana</h4>
+                    <p>You can install Grafana on your local machine or host Grafana. <br>
+                    Options for hosting include:
+                        <ul class="help-list">
+                            <li> <b> GrafanaCloud Hosted Grafana </b>: Hosting is done
+                        directly by Grafana. (Note: For free accounts, there is a limit of 5
+                        dashboards.)</li>
+                            <li>Deploy Grafana in a docker container using a hosting service like
+                                <b>AWS Elastic Beanstalk </b> or <b>Heroku</b>.</li>
+                        </ul>
+                    </p>
 
-            <!-- Move Grafana installation guide here -->
+                    <!-- Move Grafana installation guide here -->
+                </li>
 
-
-
-        <h3 id="AddGrafanaHost">Add a Grafana Host</h3>
+                <li>
+                    <h3 id="AddGrafanaHost">Add a Grafana Host</h3>
 
             <ol class="help-list">
                 <li >Go to the <input disabled class="grafana-btn-green-help"
                                      type="button"
                        value="Add Grafana Host"> tab.</li>
-                <li>Fill out the form:</li>
-
-                <img id="graph-type-image-map" class="help-image"
-                         src="{% static 'mercury/add_grafana_host.png' %}"
-
-                >
+                <li>Fill out the Add Grafana Host form <b>(Fig 1)</b>:</li>
 
                     <ul class="help-list">
                         <li>
@@ -212,24 +220,129 @@
                                      type="button"
                        value="Submit"></li>
 
+
+
                 <li>Once we validate your Grafana details, we will:
                     <ul class="help-list">
                         <li>Create an Event Dashboard for each of your events. </li>
                         <li>Fill each dashboard with Sensor Panels.</li>
                     </ul>
                 </li>
+
+                <figure>
+                    <img id="graph-type-image-map" class="help-image"
+                         src="{% static 'mercury/add_grafana_host.png' %}"
+                    >
+                    <figcaption>
+                        Fig 1. Add Grafana Host form
+                    </figcaption>
+                </figure>
             </ol>
 
+                </li>
 
-        <h3 id="ManageGrafanaHosts">Manage Grafana Host</h3>
+                <li>
+
+                    <h3 id="ManageGrafanaHosts">Manage Grafana Hosts</h3>
+
+        <ol class="help-list">
+            <li>Go to <input disabled class="grafana-btn-green-help"
+            type="button" value="Existing Grafana Hosts"> to view all
+                of your configured Grafana instances <b>(Fig 2a)</b> </li>
+
+            <ul class="help-list">
+                <li>
+                    Choose <button style="color:black;" disabled>Show Dashboards</button>
+                    to view and manage the dashboards and panels for a host <b>(Fig
+                    2b)</b>
+                </li>
+                <li>
+                    <a href="#">Delete</a>: Deletes the GFConfig. <em> Wipes the
+                    Grafana instance of all dashboards and datasources. </em>
+                </li>
+            </ul>
+
+            <figure>
+                <img src="{% static 'mercury/existing_gf_hosts.png' %}"
+                 class="help-image">
+                <figcaption>
+                    Fig 2a. Grafana host table - displays all of the active grafana
+                    instances.
+                </figcaption>
+            </figure>
+
+            <li>
+                View and manage the dashboards and panels for a host <b>(Fig 2b)</b>:
+            </li>
+            <ol class="help-list">
+
+                <li>
+                    <input disabled class="grafana-btn-red-help" type="submit"
+                        value="Delete Dashboard">: Deletes the entire dashboard from Grafana.
+                    <em>(Once you delete a dashboard, you can create it again)</em>.
+                </li>
+                <li>
+                    <input disabled class="grafana-btn-green-help"
+                           type="submit" value="Update Panels">: For choosing which
+                    sensor panels to display in the dashboard. Choose from the Sensor
+                    Panels list. All of the panels will be restored to their default
+                    settings.
+                </li>
+                <li>
+                    <input disabled class="grafana-btn-yellow-help" type="submit"
+                            value="Reset Panels">: Reset the dashboard to include all of
+                    the currently available sensors. All of the panels will be
+                    restored to their default settings.
+                </li>
+                <li>
+                    <a href="#">View Dashboard in Grafana</a>: View and edit the
+                    dashboard in your Grafana instance.
+                </li>
+
+            </ol>
+
+            <figure>
+                <img src="{% static 'mercury/view_grafana_host.png' %}"
+                 class="help-image">
+                <figcaption>x
+                    Fig 2b. The <b>Local</b> Grafana instance has one event, <b>Baja</b>.
+                    The Baja dashboard has 3 sensor panels: GPS, temperature, and speed.
+                </figcaption>
+            </figure>
+
+            <li>
+
+                Add an Event Dashboard to Grafana <b>(Fig 3)</b>
+                <ol class="help-list">
+                    <li>Create an Event.</li>
+                    <li>Go to <input disabled class="grafana-btn-green-help"
+            type="button" value="Existing Grafana Hosts"> --> <button
+                    style="color:black;" disabled>Show Dashboards</button> for the
+                        Grafana host.</li>
+                    <li>
+                        Select an event from the dropdown and <input
+                        disabled class="grafana-btn-green-help" type="submit"
+                        value="Add Dashboard for this Event">
+                    </li>
+                </ol>
+                <figure>
+                    <img src="{% static 'mercury/add_dashboard.png' %}"
+                         class="help-image">
+                    <figcaption>
+                        Fig 3. Create Dashboard form for the Baja event.
+                    </figcaption>
+                </figure>
+
+            </li>
+
+        </ol>
+
+                </li>
+
+            </ol>
 
         </div>
 
-            <input disabled
-                   class="grafana-btn grafana-btn-green-help"
-                   type="button" value="Add Grafana Host">
-                <input class="grafana-btn grafana-btn-green-help" type="submit"
-                onclick="toggleButton('help-gf-config');" value="Help">
 
     </div>
     </body>
