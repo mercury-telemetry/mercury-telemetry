@@ -56,7 +56,9 @@ class AGSensor(models.Model):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last_serial = AGSensor.objects.all().aggregate(models.Max('serial'))["serial__max"]
+            last_serial = AGSensor.objects.all().aggregate(models.Max("serial"))[
+                "serial__max"
+            ]
 
             if last_serial is not None:
                 self.serial = last_serial + 1
