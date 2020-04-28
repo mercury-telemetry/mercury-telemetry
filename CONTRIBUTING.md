@@ -2,8 +2,7 @@
 This document contains everything you need in order to contribute to our project. We welcome everyone to collaborate and help us improve our product. In addition to all the information present in this document, make sure to take a look at our [Wiki.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki)
 
 ## Code of Conduct
-You can access our code of conduct [here](). 
-
+You can access our code of conduct [here - link to be added](). 
 
 ## Reporting Bugs
 This section guides you through reporting an issue. Following these guidelines will help maintainers to understand your issue and in case you are reporting a bug, reproduce the behavior.
@@ -27,7 +26,7 @@ You can contribute in the following two ways:
    1. Make a feature branch `git checkout -b <new_branch_name>`. Then, make your changes
    2. Ensure that you include tests that exercise not only your feature, but also any other code that might be impacted. This is very important.
    3. Check you are using consistent style by running `scripts/check.sh` and make any recommended changes (such as running black to re-format). Then run your tests with `python manage.py test` and fix errors. 
-   4. Add files you changed using `git add -A`. Then commit your changes with `git commit -m "<what_this_commit_does>"`.
+   4. Add the files you changed to the project. One way of doing this is by using `git add -A` and then commiting your changes with `git commit -m "<what_this_commit_does>"`.
 Please keep in mind that your commits should be [atomic](https://en.wikipedia.org/wiki/Atomic_commit#Atomic_commit_convention) and the diffs should be easy to read/understand. This will help in improving the maintainability of our project.
    5. Push your branch to the origin fork with `git push origin <new_branch_name>` of the branch you made locally.
 
@@ -37,7 +36,7 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 
   2. **Reviewing Pull Requests**: Another useful way to contribute to our project is to review other peoples PR. Having feedback from multiple people is really helpful and since this project was made as part of a graduate course and is not a product of a company, it would be a massive help to have volunteers helping us improve and maintain this project.
 
-  3. **Providing support**: The easiest thing you can do to help us move forward is to simply provide support to other people having difficulties with implementing our project. You can do that by replying to issues on Github, chatting with other community members on our [Slack channel.]()
+  3. **Providing support**: The easiest thing you can do to help us move forward is to simply provide support to other people having difficulties with implementing our project. You can do that by replying to issues on Github, or chatting with other community members on our [method to communicate - to be added soon]()
   
 ## Pull request process and guidelines
 1. Check that there are no conflicts and your request passes Travis build as well as coveralls requirements. Check the log if any of the 3 checks fail.
@@ -56,7 +55,7 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 * Please use the appropriate tags for your PR. 
 
 ## Asking Questions
-Details will be added soon
+A way to communicate with the developer/maintainer team will be updated soon. 
 
 
 
