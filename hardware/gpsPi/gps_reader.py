@@ -19,7 +19,7 @@ class GPSReader:
         while self.gps.inWaiting() == 0:
             pass
         nmeaSentence = str(self.gps.readline()).split(",")
-        print(nmeaSentence)
+        # print(nmeaSentence)
         nmeaType = nmeaSentence[0]
 
         # verify if nmeaSentence type and valid data
