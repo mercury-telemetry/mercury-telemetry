@@ -23,19 +23,15 @@
         <!-- View Existing Dashboards -->
         <div>
             <div>
-            <h3>
-            Grafana Event Dashboards: {{ config.config.gf_name }}
-            </a></h3>
+            <h2>
+            {{ config.config.gf_name }}
+            </a></h2>
 
-            <p>View all of your Grafana dashboards for the {{ config.config.gf_name }}
+            <h4>View Grafana dashboards for the {{ config.config.gf_name }}
             instance
              <a target="_blank"
-            href="{{ config.config.gf_host }}/dashboards"/>here.</a>  </p>
-            Manage all of your Grafana dashboards from here. If there are no
-            dashboards and no option to add dashboards, make sure to add an event.
-            Choose which panels to include in the dashboard, or reset the dashboard
-            to its original state using Update Panels and Delete Panels. Delete
-            Dashboard will delete the dashboard from Grafana.
+            href="{{ config.config.gf_host }}/dashboards"/>here.</a> </h4>
+
 
             {% if config.dashboards %}
 
@@ -51,15 +47,6 @@
 
 
                         <br>
-
-                        <div>
-                        <input form="delete_{{ dashboard.name }}_{{ config.config.id }}"
-                        class="submitbutton simulator-btn
-                        grafana-btn
-                        grafana-btn-red gfconfig-text-align" type="submit"
-                        name="submit-delete-dashboard"
-                        value="Delete Dashboard">
-                        </div>
 
                         <form class="gfconfig-text-align" method="POST"
                         action="update_dashboard/{{ config.config.id }}"
@@ -79,10 +66,19 @@
 
                             <input form="reset_{{ dashboard.name }}_{{ config.config.id }}" class="submitbutton simulator-btn
                             grafana-btn
-                            grafana-btn-blue gfconfig-text-align" type="submit"
+                            grafana-btn-yellow gfconfig-text-align" type="submit"
                             name="submit-reset-dashboard"
                             value="Reset Panels">
                         </form>
+
+                         <div>
+                        <input form="delete_{{ dashboard.name }}_{{ config.config.id }}"
+                        class="submitbutton simulator-btn
+                        grafana-btn
+                        grafana-btn-red gfconfig-text-align" type="submit"
+                        name="submit-delete-dashboard"
+                        value="Delete Dashboard">
+                        </div>
 
                         <form class="gfconfig-text-align" method="POST"
                         action="reset_dashboard/{{ config.config.id }}"
@@ -109,7 +105,7 @@
 
                 {% else %}
 
-                <p> No dashboards yet. </p>
+                <h5> <em>No dashboards yet... </em> </h5>
 
                 {% endif %}
 
