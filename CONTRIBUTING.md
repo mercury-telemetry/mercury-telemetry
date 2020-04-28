@@ -4,6 +4,23 @@ This document contains everything you need in order to contribute to our project
 ## Code of Conduct
 You can access our code of conduct [here](). 
 
+
+## Reporting Issues
+This section guides you through reporting an issue. Following these guidelines will help maintainers to understand your issue and in case you are reporting a bug, reproduce the behavior.
+
+#### For reporting bugs:
+* Check the [Wiki.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki) and make sure you followed all the steps to install and configure our application accurately. 
+
+* Search to see if the problem has already been reported. If it has and is still open, add a comment to the existing issue instead of opening a new one.
+
+* Create an issue on master repository and provide the following information by filling in the template.
+
+  1. Use a clear and descriptive title for the issue to identify the problem.
+  2. If reporting as bug, describe the exact steps which reproduce the problem in as many details as possible.
+  3. If reporting as bug, describe the behavior you observed after following the steps and point out what exactly is the problem with that behavior. Include screenshots if possible.
+
+ *Note: If you find a closed issue that is same as your issue, and you have followed the setup steps accurately, open a new issue and include a link to the original issue in the body of your new one.*
+
 ## Contributor Workflow
 1. Make a feature branch `git checkout -b <new_branch_name>`. Then, make your changes
 2. Ensure that you include tests that exercise not only your feature, but also any other code that might be impacted. This is very important.
@@ -31,8 +48,6 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 ## Asking Questions
 Details will be added soon
 
-## Reporting Issues
-Details will be added soon
 
 
 
