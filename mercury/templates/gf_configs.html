@@ -37,6 +37,8 @@
                 <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('add-gf-host');" value="Add Grafana Host">
                 <input class="grafana-btn grafana-btn-green" type="submit"
+                onclick="toggleButton('update-gf-config');" value="Update Grafana Login">
+                <input class="grafana-btn grafana-btn-green" type="submit"
                 onclick="toggleButton('help-gf-config');" value="Help">
                 <br><br>
             </div>
@@ -111,6 +113,23 @@
                     {% csrf_token %} {% load crispy_forms_tags %} {{ config_form|crispy }}
                     <br>
                     <div>
+                        <input
+                        class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
+                    </div>
+                    <br> <br>
+                </form>
+            {% endif %}
+        </div>
+
+        <div id="update-gf-config" class="mt-50 hide-display">
+            <h2>Update Grafana Login</h2>
+            <p>Update username and password for an existing Grafana instance.</p>
+            {% if config_form_update %}
+                <form method="POST" action="" id="GFConfigFormUpdate">
+                    {% csrf_token %} {% load crispy_forms_tags %} {{ config_form_update|crispy }}
+                    <br>
+                    <div>
+                        <input type="hidden" name="update-config" value="1">
                         <input
                         class="submitbutton simulator-btn grafana-btn grafana-btn-green" type="submit" name="submit" value="Submit">
                     </div>

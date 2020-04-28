@@ -5,6 +5,8 @@ function toggleButton(button_name){
         $('#existing-gf-hosts').removeClass("hide-display");
     } else if (button_name == "add-gf-host"){
         $('#add-gf-host').removeClass("hide-display");
+    } else if (button_name == "update-gf-config"){
+        $('#update-gf-config').removeClass("hide-display");
     } else if (button_name == "help-gf-config"){
         $('#help-gf-config').removeClass("hide-display");
     }
