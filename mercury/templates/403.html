@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Intruder Alert</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+  <link rel="preload" href="{% static 'mercury/ricky_bobby.jpg' %}"> <!--Photo by Vicky Sim on Unsplash-->
+
+</head>
+<body>
+  <div class="not-found">
+    <div class="forbidden-text"
+      <p>I don't think you are supposed to be here...</p>
+    <p> Return to the home page <a href="{% url 'mercury:index' %}">here</a></p>
+    </div>
+  <img class="not-found-img" src="{% static 'mercury/ricky_bobby.jpg' %}" width="40%">
+  </div>
+</body>
+</html>
+
+
