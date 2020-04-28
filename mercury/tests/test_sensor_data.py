@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from mercury.models import EventCodeAccess
 from ag_data.models import AGSensor, AGSensorType, AGMeasurement, AGEvent, AGVenue
-import datetime
+import datetime, uuid
 
 
 class TestSensorDataExistsView(TestCase):
@@ -83,14 +83,14 @@ class TestSensorDataExistsView(TestCase):
         )
         sensor.save()
 
-        kwargs = {"sensor_id": sensor.id}
+        kwargs = {"sensor_id": sensor.uuid}
         self._get_with_event_code(self.sensor_data_exists_url, self.TESTCODE, kwargs)
 
         # Create an event and venue
         self.create_venue_and_event(self.event_name)
 
         response = self.client.get(
-            reverse(self.sensor_data_exists_url, kwargs={"sensor_id": sensor.id})
+            reverse(self.sensor_data_exists_url, kwargs={"sensor_id": sensor.uuid})
         )
 
         self.assertEquals(response.json()["status"], False)
@@ -108,7 +108,7 @@ class TestSensorDataExistsView(TestCase):
         )
         sensor.save()
 
-        kwargs = {"sensor_id": sensor.id}
+        kwargs = {"sensor_id": sensor.uuid}
         self._get_with_event_code(self.sensor_data_exists_url, self.TESTCODE, kwargs)
 
         # Create an event and venue
@@ -123,13 +123,13 @@ class TestSensorDataExistsView(TestCase):
         data.save()
 
         response = self.client.get(
-            reverse(self.sensor_data_exists_url, kwargs={"sensor_id": sensor.id})
+            reverse(self.sensor_data_exists_url, kwargs={"sensor_id": sensor.uuid})
         )
 
         self.assertEquals(response.json()["status"], True)
 
     def test_sensor_data_sensor_id_not_found(self):
-        bad_id = 20
+        bad_id = uuid.uuid4()
 
         kwargs = {"sensor_id": bad_id}
         response, session = self._get_with_event_code(

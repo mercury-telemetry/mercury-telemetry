@@ -39,7 +39,7 @@ class AGSensorType(models.Model):
     and related formula for different types of sensors.
     """
 
-    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=1024, blank=True)
     processing_formula = models.IntegerField(default=0, null=False)
     format = JSONField()
@@ -49,9 +49,19 @@ class AGSensor(models.Model):
     """Stores the information about sensors including name and type id.
     """
 
-    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    serial = models.IntegerField(unique=True, default=1)
     name = models.CharField(max_length=1024, blank=True)
     type_id = models.ForeignKey(AGSensorType, null=False, on_delete=models.PROTECT)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            last_serial = AGSensor.objects.all().aggregate(models.Max('serial'))["serial__max"]
+
+            if last_serial is not None:
+                self.serial = last_serial + 1
+
+        super(AGSensor, self).save(*args, **kwargs)
 
 
 class AGMeasurement(models.Model):

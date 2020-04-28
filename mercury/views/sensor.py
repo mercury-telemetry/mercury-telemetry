@@ -170,7 +170,7 @@ class CreateSensorView(TemplateView):
                     )
                 elif format_changed:
                     # Delete any existing measurement data for the sensor
-                    AGMeasurement.objects.filter(sensor_id=sensor_to_update.id).delete()
+                    AGMeasurement.objects.filter(sensor_id=sensor_to_update.uuid).delete()
 
                     for gfconfig in gfconfigs:
                         grafana = Grafana(gfconfig)
