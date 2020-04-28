@@ -4,6 +4,7 @@ import time
 from hardware.CommunicationsPi.comm_pi import CommPi
 from hardware.CommunicationsPi.lan_server import runServer
 from hardware.CommunicationsPi.lan_client import LANClient
+from hardware.SensorPi.sense_pi import SensePi
 from hardware.gpsPi.gps_reader import GPSReader
 
 gps = GPSReader()
