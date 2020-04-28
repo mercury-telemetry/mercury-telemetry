@@ -91,7 +91,7 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):  # pragma: no cover
     dotenv.load_dotenv(dotenv_file)
-    DEBUG = True
+    DEBUG = False
 
 if "TRAVIS" in os.environ:  # pragma: no cover
     DEBUG = True
@@ -113,7 +113,7 @@ elif "DB" in os.environ and os.environ["DB"] == "postgres":  # pragma: nocover
             "USER": os.environ.get("DB_USER", "postgres"),
             "PASSWORD": os.environ.get("DB_PASSWORD", ""),
             "HOST": os.environ.get("DB_HOST", "localhost"),
-            "PORT": os.environ.get("DB_PORT", ""),
+            "PORT": os.environ.get("DB_PORT", "5432"),
         }
     }
 else:  # pragma: no cover

@@ -8,12 +8,6 @@
 [![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class.svg?branch=master&service=github)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class)
 [![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-class/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-class?branch=master&service=github)
 
-# Team Project repo
-
-Heroku (master): [https://spring2020-cs-gy-9223-prod.herokuapp.com/](https://spring2020-cs-gy-9223-prod.herokuapp.com/)
-
-*It's not automaticaly deployed for the time being. Please reach out to Dan Gopstein (dg2514@nyu.edu) or Yonguk Jeong (yj1679@nyu.edu) for access to the heroku instance.
-
 # First time repo setup
 1. From the root of the repo, run `scripts/setup.sh`. Activate your virtualenv first.
 2. To run the server, run `python manage.py runserver`.
