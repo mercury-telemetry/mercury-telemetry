@@ -15,6 +15,7 @@
         <link rel="icon" href="{% static 'mercury/motorsports_logo.png' %}">
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+        <script src="{% static "mercury/js/gf_config.js" %}"></script>
         <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
     </head>
 
@@ -28,34 +29,83 @@
 
         {% if configs %}
             <h2>Existing Grafana Hosts</h2>
-            <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                <table class="table table-bordered table-striped mb-0">
-                    <thead>
-                    <tr bgcolor="#e0efdf">
-                        <th>Name</th>
-                        <th>Host</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in configs %}
-                        <tr>
-                            <th>{{ item.gf_name }}</th>
-                            <td><a target="_blank" href="{{ item.gf_host }}">
-                            {{ item.gf_host }}</a></td>
-                            <td><a href="configure/{{ item.id }}">Configure</a></td>
-                            <td><a href="delete/{{ item.id }}">Delete</a></td>
-                        </tr>
-                    {%  endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-        </div>
 
-        <div class="mt-50">
+            <div>
+                <input class="grafana-btn grafana-btn-green" type="submit"
+                onclick="toggleButton('existing-gf-hosts');"
+                       value="Existing Grafana Hosts">
+                <input class="grafana-btn grafana-btn-green" type="submit"
+                onclick="toggleButton('add-gf-host');" value="Add Grafana Host">
+                <input class="grafana-btn grafana-btn-green" type="submit"
+                onclick="toggleButton('help-gf-config');" value="Help">
+                <br><br>
+            </div>
+
+            <div id="existing-gf-hosts" class="mt-50">
+                <p>
+
+                Access and manage your Grafana dashboards directly from here.
+
+                To view and update the dashboards for a grafana host, click <em>
+                Show Dashboards </em> next to that host in the table below: </p>
+
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-bordered table-striped mb-0">
+                        <thead>
+                        <tr bgcolor="#e0efdf">
+                            <th>Label</th>
+                            <th>Grafana Host</th>
+                            <th>Event Dashboards</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+
+                        <!--href="configure/{{ item.id }}"
+                                        target="page"-->
+                        <tbody>
+                        {% for item in configs %}
+                            <tr>
+                                <th>{{ item.gf_name }}</th>
+                                <td><a target="_blank" href="{{ item.gf_host }}">
+                                {{ item.gf_host }}</a></td>
+                                <td><button  name="show-dashboards"
+                                        id="{{ item.id }}">Show Dashboards</button>
+                                                         </td>
+                                <td><a href="delete/{{ item.id }}">Delete</a></td>
+                            </tr>
+                        {%  endfor %}
+                        </tbody>
+                    </table>
+
+
+
+
+                </div>
+
+                <div>
+
+                    {% for item in configs %}
+                    <iframe
+                        id="dashboard_{{ item.id }}"
+                        class="hide-display"
+                        src="configure/{{ item.id }}"
+                        name="show-dashboards-iframe"
+                        width="100%"
+                        height="100%"
+                    ></iframe>
+                    {%  endfor %}
+
+                </div>
+
+                {% endif %}
+            </div>
+
+
+        <div id="add-gf-host" class="mt-50 hide-display">
             <h2>Add Grafana Host</h2>
+            <p>Add a new Grafana host. We will create
+            Grafana dashboards for all of your current events and populate the
+            dashboards with your sensors. </p>
             {% if config_form %}
                 <form method="POST" action="" id="GFConfigForm">
                     {% csrf_token %} {% load crispy_forms_tags %} {{ config_form|crispy }}
@@ -68,6 +118,118 @@
                 </form>
             {% endif %}
         </div>
+
+        <div id="help-gf-config" class="mt-50 hide-display help-section">
+
+        <h1>Help</h1>
+
+            <h2> Grafana/Mercury Integration </h2>
+            <p>
+                Grafana is a time-series visualization tool. Mercury is integrated
+                directly with Grafana, so:
+                <ul class="help-list">
+                    <li>Each time you create an event in Mercury, a
+                        dashboard will be created in Grafana with sensor panels
+                        for all of your sensors at that time.</li>
+                    <li>Sensor panels may be displayed as: </li>
+                        <ul class="help-list">
+                            <li><b>Time-series</b>: sensor value(s) vs. time
+                            </li>
+                            <li><b>Gauge</b>: a single value <em>(most recent)</em> </li>
+                            <li><b>Map</b>: a TrackMap panel for displaying GPS data
+                                <em>(longitude/latitude)</em></li>
+                        </ul>
+                    <li>As you add, remove, and update your sensors in Mercury, you
+                        will see the changes reflected in Grafana. </li>
+                    <li></li>
+
+            <h3>Contents</h3>
+            <ol class="help-list">
+                <li><a href="#InstallGrafana"> Install Grafana</a></li>
+                <li><a href="#AddGrafanaHost">Add a Grafana Host to Mercury</a></li>
+                <li><a href="#ManageGrafanaHosts">Manage Grafana Hosts from
+                    Mercury</a></li>
+                    <ol class="help-list">
+                        <li><a href="#AddEventDashboard">Add event dashboard</a></li>
+                        <li><a href="#RemoveEventDashboard">Remove event dashboard</a></li>
+                        <li><a href="#ResetEventDashboard">Reset event dashboard</a></li>
+                        <li><a href="#AddSensorPanel">Add sensor panel</a></li>
+                        <li><a href="#RemoveSensorPanel">Remove sensor panel</a></li>
+                        <li><a href="#ResetSensorPanel">Reset sensor panel</a></li>
+                        <li><a href="#GraphTypes">Graph types</a></li>
+                    </ol>
+            </ol>
+
+            <h4 id="InstallGrafana">Install Grafana</h4>
+
+            <p>You can install Grafana on your local machine or host Grafana. <br>
+            Options for hosting include:
+                <ul class="help-list">
+                    <li> GrafanaCloud Hosted Grafana: Hosting is done
+                directly by Grafana. (Note: For free accounts, there is a limit of 5
+                dashboards.)</li>
+                    <li>Deploy Grafana in a docker container using a hosting service like
+                    AWS Elastic Beanstalk or Heroku.</li>
+                </ul>
+            </p>
+
+            <!-- Move Grafana installation guide here -->
+
+
+
+        <h3 id="AddGrafanaHost">Add a Grafana Host</h3>
+
+            <ol class="help-list">
+                <li >Go to the <input disabled class="grafana-btn-green-help"
+                                     type="button"
+                       value="Add Grafana Host"> tab.</li>
+                <li>Fill out the form:</li>
+
+                <img id="graph-type-image-map" class="help-image"
+                         src="{% static 'mercury/add_grafana_host.png' %}"
+
+                >
+
+                    <ul class="help-list">
+                        <li>
+                            <b>Label</b>: A name for this grafana host <em>(e.g. Local,
+                            Remote).</em>
+                        </li>
+                        <li>
+                            <b>Hostname</b>: The Grafana hostname for this host (e.g.
+                            http://localhost:3000, http://abc123.grafana.net).
+                        </li>
+                        <li>
+                            <b>Username</b>: Your Grafana username. <em> (Grafana's
+                            default username is admin.)</em>
+                        </li>
+                        <li>
+                            <b>Username</b>: Your Grafana password. <em> (Grafana's
+                            default password is admin.)</em>
+                        </li>
+                    </ul>
+                <li>Hit <input disabled class="grafana-btn-green-help"
+                                     type="button"
+                       value="Submit"></li>
+
+                <li>Once we validate your Grafana details, we will:
+                    <ul class="help-list">
+                        <li>Create an Event Dashboard for each of your events. </li>
+                        <li>Fill each dashboard with Sensor Panels.</li>
+                    </ul>
+                </li>
+            </ol>
+
+
+        <h3 id="ManageGrafanaHosts">Manage Grafana Host</h3>
+
+        </div>
+
+            <input disabled
+                   class="grafana-btn grafana-btn-green-help"
+                   type="button" value="Add Grafana Host">
+                <input class="grafana-btn grafana-btn-green-help" type="submit"
+                onclick="toggleButton('help-gf-config');" value="Help">
 
     </div>
     </body>
