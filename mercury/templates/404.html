@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>This ain't it...</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
+  <link rel="preload" href="{% static 'mercury/rusted-truck-vicky-sim-unsplash.jpg' %}"> <!--Photo by Vicky Sim on Unsplash-->
+
+</head>
+<body>
+  <div class="not-found">
+    <div class="not-found-text"
+      <p>I think you took a wrong turn...</p>
+    <p> Return to the home page <a href="{% url 'mercury:index' %}">here</a></p>
+    </div>
+  <img class="not-found-img" src="{% static 'mercury/rusted-truck-vicky-sim-unsplash.jpg' %}" width="80%">
+  </div>
+</body>
+</html>
+
+
