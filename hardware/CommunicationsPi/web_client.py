@@ -32,7 +32,7 @@ class WebClient:
         self.logging.info("Pinging")
 
         try:
-            self.logging.info("data: " + payload)
+            self.logging.info("data: " + str(payload))
             if isJson:
                 response = requests.post(self.url, json=payload)
                 response.raise_for_status()
