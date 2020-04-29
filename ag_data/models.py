@@ -44,6 +44,17 @@ class AGSensorType(models.Model):
     processing_formula = models.IntegerField(default=0, null=False)
     format = JSONField()
 
+    # Graph type for visualization in Grafana
+    GRAPH = "graph"
+    MAP = "map"
+    GAUGE = "gauge"
+    GRAPH_CHOICES = (
+        (GRAPH, "Graph"),
+        (MAP, "Map"),
+        (GAUGE, "Gauge"),
+    )
+    graph_type = models.CharField(max_length=20, choices=GRAPH_CHOICES, default=GRAPH,)
+
 
 class AGSensor(models.Model):
     """Stores the information about sensors including name and type id.
