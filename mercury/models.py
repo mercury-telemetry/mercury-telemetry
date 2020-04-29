@@ -20,6 +20,9 @@ class GFConfig(models.Model):
     gf_db_pw = models.CharField(max_length=256)
     gf_current = models.BooleanField(default=False, blank=True)
 
+    def __str__(self):
+        return self.gf_host
+
 
 class EventCodeAccess(models.Model):
     """This model stores the information about events. When an event is

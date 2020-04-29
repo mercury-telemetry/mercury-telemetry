@@ -54,6 +54,26 @@ class GFConfigForm(forms.ModelForm):
         default_data = {"gf_name": "Local", "gf_host": "http://localhost:3000"}
 
 
+class GFConfigFormUpdate(forms.ModelForm):
+    class Meta:
+        model = GFConfig
+        fields = ["gf_host", "gf_username", "gf_password"]
+        labels = {
+            "gf_username": "Username",
+            "gf_password": "Password",
+        }
+        widgets = {
+            "gf_password": forms.PasswordInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["gf_host"] = forms.ModelChoiceField(
+            queryset=GFConfig.objects.all(), to_field_name="gf_host", empty_label=None,
+        )
+        self.fields["gf_host"].label = "Hostname"
+
+
 class CustomModelChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return "%s" % (obj.name)

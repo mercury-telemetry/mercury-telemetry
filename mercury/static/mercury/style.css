@@ -313,6 +313,30 @@ identical to the selector html, except that its specificity is higher. */
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
+.not-found {
+    position: relative;
+    text-align: left;
+}
+
+.not-found-text{
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    top: 5%;
+    left: 5%;
+}
+
+.forbidden-text{
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    top: 5%;
+    left: 5%;
+}
+
+
 .center-image {
   display: block;
   margin-left: auto;
@@ -348,7 +372,7 @@ ul.help-list > li {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 100%;
+  width: 70%;
   border: 5px solid;
 }
 
@@ -818,4 +842,10 @@ iframe[name="show-dashboards-iframe"] {
 
 .help-text {
     align-text:left;
+    font-size: 20;
+}
+
+.help-header {
+    align-text:left;
+    font-size: 30;
 }
