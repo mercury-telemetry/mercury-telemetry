@@ -8,7 +8,7 @@ class CommPi(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.transceiver = Transceiver()
 
-        apiUrl = os.environ.get('REMOTE_SERVER_API_ENDPOINT')
+        apiUrl = os.environ.get("REMOTE_SERVER_API_ENDPOINT")
         self.web_client = WebClient(server_url=apiUrl)
         super().__init__(*args, **kwargs)
 
