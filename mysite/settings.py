@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "ee@v))dd&_+-29rp@nmpl0jnqccj@us-u!nrd1+n9n#*r2^rrf"
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = [
     "nyu-mercury.herokuapp.com",
     "nyu-mercury-prod.herokuapp.com",
