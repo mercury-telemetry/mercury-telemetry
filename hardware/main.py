@@ -3,9 +3,9 @@ import time
 import json
 
 from dotenv import load_dotenv
-from hardware.Utils.utils import get_logger
+from hardware.Utils.logger import Logger
 
-logger = get_logger("main_log", "main_log")
+logger = Logger(name="main_log", filename="main_log")
 logger.info("Started hardware main.py")
 
 PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
