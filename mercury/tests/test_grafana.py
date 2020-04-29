@@ -34,6 +34,7 @@ class TestGrafana(TestCase):
         "left_gust": {"unit": "km/h", "format": "float"},
         "right_gust": {"unit": "km/h", "format": "float"},
     }
+    test_sensor_graph_type = "graph"
 
     field_name_1 = "test-field-1"
     field_name_2 = "test-field-2"
@@ -138,17 +139,16 @@ class TestGrafana(TestCase):
         self.datasource_name = self.grafana.generate_random_string(10)
 
         # Clear existing dashboard and datasource
-        self.grafana.delete_dashboard_by_name(self.event_name)
-        self.grafana.delete_dashboard_by_name(self.updated_event_name)
-        self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_datasources()
 
     def tearDown(self):
         # Create fresh grafana instance (in case test invalidated any tokens, etc.)
         self.grafana = Grafana(self.config)
 
         # Clear all of the created dashboards
-        self.grafana.delete_dashboard_by_name(self.event_name)
-        self.grafana.delete_datasource_by_name(self.datasource_name)
+        self.grafana.delete_all_dashboards()
+        self.grafana.delete_all_datasources()
 
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
@@ -326,6 +326,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -362,6 +363,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -406,6 +408,7 @@ class TestGrafana(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -444,6 +447,7 @@ class TestGrafana(TestCase):
                 self.field_name_1: {"data_type": self.data_type_1, "unit": self.unit_1},
                 self.field_name_2: {"data_type": self.data_type_2, "unit": self.unit_2},
             },
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -468,6 +472,7 @@ class TestGrafana(TestCase):
                 "field-names": self.test_sensor["field-names"],
                 "data-types": self.test_sensor["data-types"],
                 "units": self.test_sensor["units"],
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -505,6 +510,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name.lower(),
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -531,6 +537,7 @@ class TestGrafana(TestCase):
                 "field-names": field_names_updated,
                 "data-types": data_types_updated,
                 "units": units_updated,
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -557,6 +564,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name.lower(),
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -584,6 +592,7 @@ class TestGrafana(TestCase):
                 "field-names": field_names_updated,
                 "data-types": data_types_updated,
                 "units": units_updated,
+                "sensor-graph-type": self.test_sensor_graph_type,
             },
         )
 
@@ -610,6 +619,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_name,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
 
@@ -648,6 +658,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
@@ -689,6 +700,11 @@ class TestGrafana(TestCase):
         expected_message = "Access denied - check API permissions"
         with self.assertRaisesMessage(ValueError, expected_message):
             self.grafana.create_postgres_datasource(self.datasource_name)
+
+    def test_create_datasource_fail_empty_string(self):
+        expected_message = "Response contains no message"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_postgres_datasource("")
 
     def test_delete_postgres_datasource(self):
         # create the datasource
@@ -765,6 +781,7 @@ class TestGrafana(TestCase):
             name=self.test_sensor_type,
             processing_formula=0,
             format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
         )
         sensor_type.save()
         sensor = AGSensor.objects.create(
