@@ -111,7 +111,7 @@ class WebClientTests(SimpleTestCase):
             self.assertEqual(l_client.url, "/url")
 
     @patch("hardware.CommunicationsPi.web_client.requests")
-    def test_ping_server(self, mock_requests=MagicMock()):
+    def test_send_payload(self, mock_requests=MagicMock()):
         with patch.dict(
             os.environ,
             {
@@ -127,7 +127,7 @@ class WebClientTests(SimpleTestCase):
 
                 payload = "{'key':'value'}"
 
-                l_client.ping_lan_server(payload)
+                l_client.send(payload)
 
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(
@@ -154,7 +154,7 @@ class WebClientTests(SimpleTestCase):
                 payload = "{'key':'value'}"
 
                 with self.assertRaises(HTTPError):
-                    l_client.ping_lan_server(payload)
+                    l_client.send(payload)
 
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(
@@ -182,7 +182,7 @@ class WebClientTests(SimpleTestCase):
                 payload = "{'key':'value'}"
 
                 with self.assertRaises(Exception):
-                    l_client.ping_lan_server(payload)
+                    l_client.send(payload)
 
                 mock_requests.post.assert_called_with("https://0.0.0.0:0", data=payload)
                 capture.check(

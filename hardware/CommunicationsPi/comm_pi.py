@@ -1,11 +1,13 @@
 import os
 from http.server import BaseHTTPRequestHandler
+from hardware.CommunicationsPi.web_client import WebClient
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
 
 
 class CommPi(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.transceiver = Transceiver()
+        self.web_client = WebClient(server_url=os.environ.get('DJANGO_SERVER_API_ENDPOINT'))
         super().__init__(*args, **kwargs)
 
     def _set_response(self):
@@ -28,6 +30,7 @@ class CommPi(BaseHTTPRequestHandler):
     def send_data(self, payload):
         if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
             print("transmit via internet")
+            self.web_client.send(payload)
         if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
             print("transmit via radio")
             self.transceiver.send(payload)

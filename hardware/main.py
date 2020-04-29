@@ -55,7 +55,7 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
             payload = json.dumps(i)
             print(payload)
             try:
-                client.ping_lan_server(payload)
+                client.send(payload)
             except Exception as err:
                 print("error occurred: {}".format(str(err)))
                 raise
@@ -70,6 +70,6 @@ else:
             data = transceiver.listen()
             if data:
                 print(data)
-                client.ping_lan_server(json.loads(data))
+                client.send(json.loads(data), True)
     else:
         print("DJANGO_SERVER_API_ENDPOINT not set")
