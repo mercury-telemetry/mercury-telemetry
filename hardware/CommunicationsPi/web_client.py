@@ -35,10 +35,12 @@ class WebClient:
             self.logging.info("data: " + payload)
             if isJson:
                 response = requests.post(self.url, json=payload)
+                response.raise_for_status()
+                return response
             else:
                 response = requests.post(self.url, data=payload)
-            response.raise_for_status()
-            return response
+                response.raise_for_status()
+                return response
 
         except HTTPError as http_err:
             self.logging.error("HTTP error occurred: {}".format(str(http_err)))
