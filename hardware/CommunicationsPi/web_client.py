@@ -1,21 +1,20 @@
 import os
-import json
 import requests
 from requests.exceptions import HTTPError
 from hardware.Utils.utils import get_logger
 
 
-class LANClient:
-    def __init__(self, log_file_name=None, lan_server_url=None):
+class WebClient:
+    def __init__(self, log_file_name=None, server_url=None):
         if log_file_name is None:
-            self.logging = get_logger("LAN_CLIENT_LOG_FILE")
+            self.logging = get_logger("WEB_CLIENT_LOG_FILE")
         else:
             self.logging = get_logger(log_file_name, log_file_name)
 
-        if lan_server_url is None:
+        if server_url is None:
             self.url = self.get_server_url_from_env()
         else:
-            self.url = lan_server_url
+            self.url = server_url
 
     def get_server_url_from_env(self):
         protocol = "https" if os.environ.get("LAN_SERVER_HTTPS") else "http"
@@ -33,8 +32,8 @@ class LANClient:
         self.logging.info("Pinging")
 
         try:
-            self.logging.info("data: " + json.dumps(payload))
-            response = requests.post(self.url, json=payload)
+            self.logging.info("data: " + payload)
+            response = requests.post(self.url, data=payload)
             response.raise_for_status()
             return response
 
@@ -46,4 +45,3 @@ class LANClient:
         except Exception as err:
             self.logging.error("error occurred: {}".format(str(err)))
             raise
-        # return unreachable return

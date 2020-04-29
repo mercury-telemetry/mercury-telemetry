@@ -13,6 +13,8 @@ function toggleEventButton(button_name){
         $('#create-venue').removeClass("hide-display");
     } else if (button_name == "update_venue"){
         $('#update-venue').removeClass("hide-display");
+    } else if (button_name == "help-events"){
+        $('#help-events').removeClass("hide-display");
     }
 }
 
@@ -23,4 +25,5 @@ function resetEventButtons(){
     $('#update-event').addClass('hide-display')
     $('#update-venue').addClass('hide-display')
     $('#create-venue').addClass('hide-display')
+    $('#help-events').addClass('hide-display')
 }

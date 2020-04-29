@@ -60,10 +60,11 @@ postgres://<username>:<password>@<url>
 ```
 db.user=<username>
 db.password=<password>
-db.url=jdbc:postgresql://<url>?sslmode=require
+db.url=jdbc:postgresql://<url>?sslmode=require&stringtype=unspecified
 ```
 
-Please make sure your db.url starts with `jdbc:postgresql://` and you appended `?sslmode=require` at the end.
+Please make sure your db.url starts with `jdbc:postgresql://` and you appended `?sslmode=require&stringtype=unspecified` at the end.
+To synchronize json fields, you should set `stringtype=unspecified`. Otherwise postgres assumes `varchar` by default. [Link](https://jdbc.postgresql.org/documentation/head/connect.html)
 
 For example, given the following output,
 ```
@@ -77,7 +78,7 @@ Your `engine1.properties` should be like:
 ```
 db.user=abcdeabcdefghi
 db.password=11d804e1c01111a9c111114fcc528753829a314c30cc51938f4192979102c12
-db.url=jdbc:postgresql://ec2-1-000-00-000.compute-2.amazonaws.com:5432/948f928kjfjv827?sslmode=require
+db.url=jdbc:postgresql://ec2-1-000-00-000.compute-2.amazonaws.com:5432/948f928kjfjv827?sslmode=require&stringtype=unspecified
 ```
 
 ### Step 3
