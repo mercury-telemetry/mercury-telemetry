@@ -320,6 +320,40 @@ identical to the selector html, except that its specificity is higher. */
   width: 50%;
 }
 
+.graph-image {
+ width: 200px;
+ height: 200px;
+}
+
+.help-image {
+ width: 100%;
+}
+
+.help-section {
+    text-align: left;
+}
+
+ol.help-list > li {
+    list-style-type: decimal;
+}
+
+ul.help-list > li {
+  list-style-type: disc;
+}
+
+.help-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border: 5px solid;
+}
+
+.left-allign {
+  text-align: left!important;
+  align: left!important;
+}
+
 .gfconfig-text-align {
     text-align:left;
     float: left;
@@ -526,6 +560,12 @@ identical to the selector html, except that its specificity is higher. */
   border-color: var(--light-green);
 }
 
+.grafana-btn-green-help {
+  color: var(--light-text);
+  background-color: var(--light-green);
+  border-color: var(--light-green);
+}
+
 .grafana-btn-green:hover {
   color: var(--button-text-dark);
   background-color: var(--green);
@@ -538,6 +578,12 @@ identical to the selector html, except that its specificity is higher. */
   border-color: var(--light-red);
 }
 
+.grafana-btn-red-help {
+  color: var(--light-text);
+  background-color: var(--light-red);
+  border-color: var(--light-red);
+}
+
 .grafana-btn-red:hover {
   color: var(--button-text-dark);
   background-color: var(--red);
@@ -545,6 +591,12 @@ identical to the selector html, except that its specificity is higher. */
 }
 
 .grafana-btn-yellow {
+  color: var(--light-text);
+  background-color: var(--light-yellow);
+  border-color: var(--light-yellow);
+}
+
+.grafana-btn-yellow-help {
   color: var(--light-text);
   background-color: var(--light-yellow);
   border-color: var(--light-yellow);

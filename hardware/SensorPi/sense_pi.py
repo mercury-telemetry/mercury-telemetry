@@ -7,7 +7,7 @@ from hardware.Utils.utils import (
 
 # Conditional import for sense hat and emulator
 try:
-    if not os.environ["EMULATE_SENSE_HAT"]:
+    if not os.environ.get("EMULATE_SENSE_HAT"):
         from sense_hat import SenseHat
     else:
         raise ImportError("Import emulator")
