@@ -25,3 +25,4 @@ _Put an `x` in the boxes that apply_
 - [ ] Mention new programs/binaries if any must be installed along with this change
 - [ ] Mention new environment variables if any have been added to hardware/env file
 - [ ] Test coverage should not drop more than 3%
+- [ ] Any new required python modules are added to the requirements.txt
