@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-import uuid
 from django.utils import timezone
+import uuid
 
 
 class AGVenue(models.Model):
@@ -82,7 +82,29 @@ class AGMeasurement(models.Model):
 
 
 class AGActiveEvent(models.Model):
+    """Stores the currently Active event which must refer to one of the instance in AGEvent table
+    """
+
     agevent = models.ForeignKey(AGEvent, null=True, on_delete=models.SET_NULL)
+
+    def save(self, *args, **kwargs):
+        # check if the inserted event is valid
+        if not AGEvent.objects.filter(pk=self.pk).exists():
+            pass
+
+        # Make sure there's at most one record in table.
+        objs = AGActiveEvent.objects.all()
+        if len(objs) == 1:
+            obj = objs[0]
+            if obj.pk == self.pk:
+                pass
+            else:
+                AGActiveEvent.objects.all().delete()
+                super(AGActiveEvent, self).save(*args, **kwargs)
+        elif len(objs) == 0:
+            super(AGActiveEvent, self).save(*args, **kwargs)
+        else:
+            pass
 
 
 class ErrorLog(models.Model):
