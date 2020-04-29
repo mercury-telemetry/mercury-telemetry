@@ -90,7 +90,7 @@ class ErrorLog(models.Model):
     error description and error raw data
     """
 
-    # error declearation
+    # error declaration
     UNKNOWN_FMT = "UNKNOWN_FORMAT"
     MISSING_COL = "MISSING_COLUMN"
     MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
@@ -99,6 +99,7 @@ class ErrorLog(models.Model):
     INVALID_FIELD_IN_RAW = "INVALID_FIELD_IN_RAW_READING"
     ERROR_F_PROC_MMT = "FORMULA_PROCESS_MEASUREMENT_ERROR"
     EXTRA_KEYVAL_IN_MMT = "EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT"
+    NO_ACT_EVENT = "NO_ACTIVE_EVENT"
     OTHER = "OTHER_ERROR"
 
     ERROR_CODE_CHOICES = [
@@ -110,6 +111,7 @@ class ErrorLog(models.Model):
         (INVALID_FIELD_IN_RAW, "Invalid Field In Raw Reading"),
         (ERROR_F_PROC_MMT, "Error When Formula Processing Measurement"),
         (EXTRA_KEYVAL_IN_MMT, "Extraneous Key-Value Pair In Measurement"),
+        (NO_ACT_EVENT, "No active event"),
         (OTHER, "Other Error"),
     ]
 
