@@ -36,6 +36,7 @@ class Grafana:
             "dashboard_uid": os.path.join(self.hostname, "api/dashboards/uid"),
             "datasources": os.path.join(self.hostname, "api/datasources"),
             "datasource_name": os.path.join(self.hostname, "api/datasources/name"),
+            "search": os.path.join(self.hostname, "api/search?"),
         }
 
         # Default panel sizes
@@ -44,16 +45,29 @@ class Grafana:
 
     @staticmethod
     def create_api_key(auth_url, name, role):
-        # delete keys with same name or level of permission
+        # request current keys
         url = auth_url + "/api/auth/keys"
-        rsp = requests.get(url)
+        try:
+            rsp = requests.get(url)
+        except Exception as error:
+            raise ValueError(error)
+
+        if rsp.status_code != 200:
+            raise ValueError(rsp.text)
+
+        # delete keys with the same name
         data = json.loads(rsp.text)
         for D in data:
-            if name == D["name"] or role == D["role"]:
-                requests.delete(url + "/" + str(D["id"]))
+            if name == D["name"]:
+                rsp = requests.delete(url + "/" + str(D["id"]))
+                if rsp.status_code != 200:
+                    raise ValueError(rsp.text)
 
         # create new key
         rsp = requests.post(url, data={"name": name, "role": role})
+        if rsp.status_code != 200:
+            raise ValueError(rsp.text)
+
         return json.loads(rsp.text)["key"]
 
     @staticmethod
@@ -218,7 +232,7 @@ class Grafana:
                         "1m",
                     ]
                 },
-                "refresh": "0.5s",
+                "refresh": "1s",
             },
             "folderId": 0,
             "overwrite": False,
@@ -304,6 +318,30 @@ class Grafana:
         else:
             return False
 
+    def delete_all_dashboards(self):
+        """
+        Deletes all dashboards associated with the current grafana instance.
+        :return: Returns true if all dashboards were found and deleted. Returns
+        false if no dashboards were found.
+        """
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=self.endpoints["search"],
+            auth=("api_key", self.api_token),
+            headers=headers,
+        )
+
+        dashboards = response.json()
+
+        deleted = True
+        if len(dashboards) > 0:
+            for dashboard in dashboards:
+                deleted = deleted and self.delete_dashboard(dashboard["uid"])
+            # Only return True if there were dashboards to delete and all were deleted
+            return deleted
+        else:
+            return False
+
     def create_postgres_datasource(self, title="Datasource"):
         """
         Creates a new postgres datasource with the provided credentials:
@@ -351,7 +389,11 @@ class Grafana:
 
         datasource = response.json()
 
-        message = datasource.get("message")
+        if isinstance(datasource, dict):
+            message = datasource.get("message")
+        else:
+            message = None
+
         if message is None:
             raise ValueError("Response contains no message")
         if "Datasource added" in message:
@@ -363,7 +405,7 @@ class Grafana:
         elif "Invalid API key" in message:
             raise ValueError("Invalid API key")
         else:
-            raise ValueError(f"Grafana datasource creation failed: {message}")
+            raise ValueError(f"Datasource not created: {message}")
 
     def delete_datasource_by_name(self, name):
         """
@@ -371,6 +413,11 @@ class Grafana:
         :param name: Name of the database to delete
         :return: Returns True if datasource was deleted, False otherwise
         """
+        try:
+            self.validate_credentials()
+        except ValueError as error:
+            raise ValueError(f"Datasource deletion failed: {error}")
+
         headers = {"Content-Type": "application/json"}
         endpoint = os.path.join(self.endpoints["datasource_name"], name)
         response = requests.delete(
@@ -383,6 +430,35 @@ class Grafana:
             else:
                 return False
         except (KeyError, TypeError):
+            return False
+
+    def delete_all_datasources(self):
+        """
+        Deletes all dashboards associated with the current grafana instance.
+        :return: Returns true if all dashboards were found and deleted. Returns
+        false if no dashboards were found.
+        """
+        try:
+            self.validate_credentials()
+        except ValueError as error:
+            raise ValueError(f"Datasource deletion failed: {error}")
+
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(
+            url=self.endpoints["datasources"],
+            auth=("api_key", self.api_token),
+            headers=headers,
+        )
+
+        datasources = response.json()
+
+        deleted = True
+        if len(datasources) > 0:
+            for datasource in datasources:
+                deleted = deleted and self.delete_datasource_by_name(datasource["name"])
+            # Only return True if there were dashboards to delete and all were deleted
+            return deleted
+        else:
             return False
 
     def update_dashboard_title(self, event, title):
@@ -431,22 +507,43 @@ class Grafana:
         except KeyError as error:
             raise ValueError(f"Event dashboard {event.name} not updated: {error}")
 
+    # If the type of the panel is map, refer to the first field as lat and the
+    # second as lon (required for trackmap to visualize)
     def create_panel_query(self, sensor, event):
         field_dict = sensor.type_id.format
         field_array = []
         for field in field_dict:
             field_array.append(field)
+        panel_type = sensor.type_id.graph_type
 
         # Build fields portion of SELECT query (select each field)
         fields_query = ""
-        if len(field_array):
-            for i in range(0, len(field_array) - 1):
-                fields_query += (
-                    f"value->'result'->'{field_array[i]}' AS \"{field_array[i]}\",\n\t"
+
+        if panel_type == "map":
+            if len(field_array) != 2:
+                raise ValueError(
+                    "Map panels must have 2 fields: latitude and "
+                    "longitude. Please check the sensor fields."
                 )
-            fields_query += (
-                f"value->'result'->'{field_array[-1]}' AS \"{field_array[-1]}\""
-            )
+            else:
+                fields_query += (
+                    f"CAST(value->'result'->'{field_array[0]}' AS float) AS \""
+                    f'lat",\n\t'
+                )
+                fields_query += (
+                    f"CAST(value->'result'->'{field_array[1]}' AS float) AS \"" f'lon"'
+                )
+        else:
+            if len(field_array):
+                for i in range(0, len(field_array) - 1):
+                    fields_query += (
+                        f"CAST(value->'result'->'{field_array[i]}' AS float) AS \""
+                        f'{field_array[i]}",\n\t'
+                    )
+                fields_query += (
+                    f"CAST(value->'result'->'{field_array[-1]}' AS float) AS \""
+                    f'{field_array[-1]}"'
+                )
 
         # Build SQL query
         panel_sql_query = f"""
@@ -478,12 +575,13 @@ class Grafana:
         will be added to dashboard.
         """
 
-        # Retrieve id, title, and fields from AGSensor object
+        # Retrieve id, title, and fields, and graph type from AGSensor object
         title = sensor.name
         field_dict = sensor.type_id.format
         field_array = []
         for field in field_dict:
             field_array.append(field)
+        panel_type = sensor.type_id.graph_type
 
         # Find dashboard uid for event
         dashboard_info = self.get_dashboard_by_name(event.name)
@@ -517,11 +615,14 @@ class Grafana:
             new_panel_id = panels[-1]["id"] + 1
 
         # Build SQL query
-        panel_sql_query = self.create_panel_query(sensor, event)
+        try:
+            panel_sql_query = self.create_panel_query(sensor, event)
+        except ValueError as error:
+            raise ValueError(f"Sensor panel not added: {error}")
 
         # Build a panel dict for the new panel
         panel = self.create_panel_dict(
-            new_panel_id, field_array, panel_sql_query, title, x, y
+            new_panel_id, field_array, panel_sql_query, title, x, y, panel_type
         )
 
         # Add new panel to list of panels
@@ -602,16 +703,38 @@ class Grafana:
         if not panels:
             return False
 
+        title = new_sensor.name
+        field_dict = new_sensor.type_id.format
+        field_array = []
+        for field in field_dict:
+            field_array.append(field)
+        panel_type = new_sensor.type_id.graph_type
+
         # Find the target panel and update it
+        new_panels = []
         for panel in panels:
             if panel["title"] == current_sensor_name:
-                panel["title"] = new_sensor.name
-                panel["targets"][0]["rawSql"] = self.create_panel_query(
-                    new_sensor, event
-                )
+                query = self.create_panel_query(new_sensor, event)
+                try:
+                    panel = self.create_panel_dict(
+                        panel["id"],
+                        field_array,
+                        query,
+                        title,
+                        panel["gridPos"]["x"],
+                        panel["gridPos"]["y"],
+                        panel_type,
+                    )
+                    new_panels.append(panel)
+                except (ValueError, KeyError) as error:
+                    raise ValueError(error)
+            else:
+                new_panels.append(panel)
 
         # Create updated dashboard dict with updated list of panels
-        updated_dashboard = self.create_dashboard_update_dict(dashboard_info, panels)
+        updated_dashboard = self.create_dashboard_update_dict(
+            dashboard_info, new_panels
+        )
 
         # POST updated dashboard
         headers = {"Content-Type": "application/json"}
@@ -765,7 +888,9 @@ class Grafana:
         return sensors
 
     # Helper method for add_panel
-    def create_panel_dict(self, panel_id, fields, panel_sql_query, title, x, y):
+    def create_panel_dict(
+        self, panel_id, fields, panel_sql_query, title, x, y, panel_type="graph"
+    ):
         """
         Creates a panel dict which can be added to an updated dashboard dict and
         posted to the Create/Update Dashboard API endpoint
@@ -787,7 +912,7 @@ class Grafana:
             "bars": False,
             "dashLength": 10,
             "dashes": False,
-            "datasource": "Datasource",
+            "datasource": "",  # set as default
             "fill": 1,
             "fillGradient": 0,
             "gridPos": {"h": 9, "w": 12, "x": x, "y": y},
@@ -816,7 +941,7 @@ class Grafana:
             "steppedLine": False,
             "targets": [
                 {
-                    "format": "table",
+                    "format": "time_series",
                     "group": [],
                     "metricColumn": f"value->'{first_field}'",  # handle this
                     "rawQuery": True,
@@ -837,7 +962,7 @@ class Grafana:
             "timeShift": None,
             "title": title,
             "tooltip": {"shared": None, "sort": 0, "value_type": "individual"},
-            "type": "graph",
+            "type": panel_type,
             "xaxis": {
                 "buckets": None,
                 "mode": "time",
@@ -865,6 +990,19 @@ class Grafana:
             ],
             "yaxis": {"align": False, "alignLevel": None},
         }
+
+        if panel_type == "map":
+            panel["type"] = "pr0ps-trackmap-panel"
+            panel["autoZoom"] = True
+            panel["lineColor"] = "red"
+            panel["maxDataPoints"] = 500
+            panel["pointColor"] = "royalBlue"
+        elif panel_type == "gauge":
+            panel["type"] = "gauge"
+            panel["options"]["fieldOptions"] = {
+                "calcs": ["last"],
+            }
+
         return panel
 
     # Helper method for add_panel
@@ -922,7 +1060,7 @@ class Grafana:
                         "1m",
                     ]
                 },
-                "refresh": "5s",
+                "refresh": "1s",
             }
         }
 
