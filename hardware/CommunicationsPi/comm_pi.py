@@ -7,7 +7,9 @@ from hardware.CommunicationsPi.radio_transceiver import Transceiver
 class CommPi(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.transceiver = Transceiver()
-        self.web_client = WebClient(server_url=os.environ.get('DJANGO_SERVER_API_ENDPOINT'))
+
+        apiUrl = os.environ.get('REMOTE_SERVER_API_ENDPOINT')
+        self.web_client = WebClient(server_url=apiUrl)
         super().__init__(*args, **kwargs)
 
     def _set_response(self):
