@@ -139,3 +139,4 @@ db.sqlite3
 
 # Vim temporary files
 *.swp
+*logs
