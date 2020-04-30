@@ -167,4 +167,6 @@ LOGOUT_REDIRECT_URL = "/"
 if "OPTIONS" in DATABASES["default"]:
     del DATABASES["default"]["OPTIONS"]["sslmode"]  # pragma: no cover
 
-GITHUB_DOCS_ROOT = "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/docs"
+GITHUB_DOCS_ROOT = (
+    "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/docs"
+)

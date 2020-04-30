@@ -7,7 +7,6 @@ from mercury.models import GFConfig
 from ag_data.models import AGEvent, AGSensor
 from mercury.grafanaAPI.grafana_api import Grafana
 from django.contrib import messages
-from django.conf import settings
 from ..event_check import require_event_code, require_event_code_function
 import os
 from django.conf import settings
@@ -229,8 +228,9 @@ class GFConfigView(TemplateView):
         )
         config_form_update = GFConfigFormUpdate()
 
-        configure_grafana_github_url = os.path.join(GITHUB_DOCS_ROOT,
-                                                    CONFIGURE_GRAFANA_HELP_DOC)
+        configure_grafana_github_url = os.path.join(
+            GITHUB_DOCS_ROOT, CONFIGURE_GRAFANA_HELP_DOC
+        )
 
         # Pass dashboard data for each GFConfig and a GFConfig form to the template
         """
@@ -254,7 +254,7 @@ class GFConfigView(TemplateView):
             "config_form": config_form,
             "configs": current_configs,
             "config_form_update": config_form_update,
-            "configure_grafana_github_url": configure_grafana_github_url
+            "configure_grafana_github_url": configure_grafana_github_url,
         }
         return render(request, self.template_name, context)
 

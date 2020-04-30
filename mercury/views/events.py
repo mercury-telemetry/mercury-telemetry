@@ -23,6 +23,7 @@ log.setLevel(logging.ERROR)
 GITHUB_DOCS_ROOT = settings.GITHUB_DOCS_ROOT
 CONFIGURE_EVENTS_HELP_DOC = "configure_events.md"
 
+
 @require_event_code_function
 def update_venue(request, venue_uuid=None):
     venue_to_update = AGVenue.objects.get(uuid=venue_uuid)
@@ -327,8 +328,9 @@ class CreateEventsView(TemplateView):
         if len(active_event_object) > 0:
             active_event = active_event_object[0].agevent
 
-        configure_events_github_url = os.path.join(GITHUB_DOCS_ROOT,
-                                                    CONFIGURE_EVENTS_HELP_DOC)
+        configure_events_github_url = os.path.join(
+            GITHUB_DOCS_ROOT, CONFIGURE_EVENTS_HELP_DOC
+        )
 
         context = {
             "event_form": event_form,
@@ -403,14 +405,15 @@ class CreateEventsView(TemplateView):
         event_form = EventForm()
         venue_form = VenueForm()
 
-        configure_events_github_url = os.path.join(GITHUB_DOCS_ROOT,
-                                                   CONFIGURE_EVENTS_HELP_DOC)
+        configure_events_github_url = os.path.join(
+            GITHUB_DOCS_ROOT, CONFIGURE_EVENTS_HELP_DOC
+        )
 
         context = {
             "event_form": event_form,
             "venue_form": venue_form,
             "events": events,
             "venues": venues,
-            "configure_events_github_url": configure_events_github_url
+            "configure_events_github_url": configure_events_github_url,
         }
         return render(request, self.template_name, context)
