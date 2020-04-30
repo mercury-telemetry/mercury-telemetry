@@ -21,3 +21,6 @@ else
   append_to_file "$cmd"
   append_to_file ")"
 fi
+
+sudo sudo systemctl status rc-local
+sudo systemctl daemon-reload
