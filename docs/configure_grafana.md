@@ -108,13 +108,6 @@ Sensor panels may be displayed as:
 - Map:
 <img src="imgs/map.png" width="500"/>
 
-hello 
-
-
-
-hello
-
-
 > TrackMap panel for displaying GPS (latitude/longitude)
 data. 
 
