@@ -63,7 +63,7 @@ class GPSPiTests(SimpleTestCase):
 
         mock_port.return_value.inWaiting.return_value = 1
         mock_port.return_value.readline.return_value = (
-            "$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77"
+            "b'$GPRMC,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77"
         )
         mock_date.return_value = "example date"
 
@@ -78,7 +78,7 @@ class GPSPiTests(SimpleTestCase):
         ):
 
             expected_data = {}
-            expected_data["sensor_id"] = 10
+            expected_data["sensor_id"] = 1
             expected_data["values"] = {
                 "latitude": 40.71023666666667,
                 "longitude": -74.00694666666666,
@@ -97,7 +97,7 @@ class GPSPiTests(SimpleTestCase):
 
         mock_port.return_value.inWaiting.return_value = 1
         mock_port.return_value.readline.return_value = (
-            "$GPGGA,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77"
+            "b'$GPGGA,194509.000,A,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77"
         )
 
         with patch.dict(
@@ -124,7 +124,7 @@ class GPSPiTests(SimpleTestCase):
 
         mock_port.return_value.inWaiting.return_value = 1
         mock_port.return_value.readline.return_value = (
-            "$GPRMC,194509.000,V,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77"
+            "b'$GPRMC,194509.000,V,4042.6142,N,07400.4168,W,2.03,221.11,160412,,,A*77"
         )
 
         with patch.dict(
