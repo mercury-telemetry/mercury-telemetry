@@ -1,5 +1,5 @@
-# import sys
 import os
+import time
 import logging
 
 from logging import INFO
@@ -31,12 +31,14 @@ class Logger(object):
 
         # show logs on screen
         self.showLogsOnScreen = show_logs or os.environ.get("SHOW_LOGS")
+        self.logger.info(self.showLogsOnScreen + " " + os.environ.get("SHOW_LOGS"))
 
-    def get_logger_file(self, file_name):
+    def get_logger_file(self, filename):
         d = os.environ["LOG_DIRECTORY"]
+        filename += "-" + str(time.strftime("%Y%m%d-%H%M%S")) + ".log"
         if not os.path.exists(d):
             os.makedirs(d)
-        return d + "/" + file_name
+        return d + "/" + filename
 
     def info(self, msg, extra=None):
         self.printData(msg)
