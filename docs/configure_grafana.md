@@ -87,15 +87,13 @@ you will see an option to add a dashboard (Fig 3).
 #### Graph Types
 Sensor panels may be displayed as:
 - Time-series: 
-
-![Graph sensor](imgs/graph.png)
+<img src="imgs/graph.png" width="500"/>
     - This is the default graph type for sensor panels. 
     - This graph type is appropriate sensor types with any number of fields (1
     +). Each field will be graphed as a separate line with a different color.
 
 - Gauge:
-
-![Gauge sensor](imgs/gauge.png)
+<img src="imgs/gauge.png" width="500"/>
     - Used to display the **current** value of a sensor. 
     - Note: This gauge will display the
      most recent value in the current time range you are viewing in the Grafana UI
@@ -108,12 +106,11 @@ Sensor panels may be displayed as:
     - This graph type can only be used for sensor types with a **single
     value**.
 - Map:
-
-![Map sensor](imgs/map.png)
+<img src="imgs/map.png" width="500"/>
 
 hello 
 
-<img src="imgs/map.png" width="48"/>
+
 
 hello
 
