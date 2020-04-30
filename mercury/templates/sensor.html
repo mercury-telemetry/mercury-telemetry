@@ -1,7 +1,3 @@
-{% load bootstrap4 %}
-{# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -97,21 +93,29 @@
                 <!-- Show graph options -->
 
                 <div id="graph" style="display:block;">
-                    <img id="graph-type-image" class="graph-image"
+                    <figure>
+                        <img id="graph-type-image" class="graph-image"
                          src="{% static 'mercury/graph.png' %}">
-                    <span>Graph (a simple line graph)</span>
+                        <figcaption>Graph (a simple line graph)</figcaption>
+                    </figure>
+
                 </div>
 
                 <div id="map" style="display:none;">
-                    <img id="graph-type-image-map" class="graph-image"
+                    <figure>
+                        <img id="graph-type-image-map" class="graph-image"
                          src="{% static 'mercury/map.png' %}">
-                    <span>Map (for GPS sensors)</span>
+                        <figcaption>Map (for GPS sensors)</figcaption>
+                    </figure>
+
                 </div>
 
                 <div id="gauge" style="display:none;">
-                <img id="graph-type-image-gauge" class="graph-image"
-                     src="{% static 'mercury/gauge.png' %}">
-                <span> Gauge (for individual readings)</span>
+                    <figure>
+                        <img id="graph-type-image-gauge" class="graph-image"
+                         src="{% static 'mercury/gauge.png' %}">
+                        <figcaption> Gauge (for individual readings) </figcaption>
+                    </figure>
                 </div>
 
                 <br>
@@ -194,9 +198,12 @@
                              {% else %}
                                 style="display:none;"
                              {% endif %}>
-                            <img id="graph-type-image" class="graph-image"
+                            <figure>
+                                <img id="graph-type-image" class="graph-image"
                                  src="{% static 'mercury/graph.png' %}">
-                            <span>Graph (a simple line graph)</span>
+                                <figcaption>Graph (a simple line graph)</figcaption>
+                            </figure>
+
                         </div>
 
                         <div
@@ -206,9 +213,12 @@
                                 style="display:none;"
                             {% endif %}
                             >
-                            <img id="graph-type-image-map" class="graph-image"
+                            <figure>
+                                <img id="graph-type-image-map" class="graph-image"
                                  src="{% static 'mercury/map.png' %}">
-                            <span>Map (for GPS sensors)</span>
+                                <figcaption>Map (for GPS sensors)</figcaption>
+                            </figure>
+
                         </div>
 
                         <div
@@ -218,9 +228,12 @@
                                 style="display:none;"
                             {% endif %}
                         >
-                        <img id="graph-type-image-gauge" class="graph-image"
+                        <figure>
+                            <img id="graph-type-image-gauge" class="graph-image"
                              src="{% static 'mercury/gauge.png' %}">
-                        <span> Gauge (for individual readings)</span>
+                            <figcaption> Gauge (for individual readings)</figcaption>
+                        </figure>
+
                         </div>
 
                     </div>
@@ -318,9 +331,12 @@
                                 style="display:none;"
                              {% endif %}
                         >
-                            <img id="graph-type-image" class="graph-image"
+                            <figure>
+                                <img id="graph-type-image" class="graph-image"
                                  src="{% static 'mercury/graph.png' %}">
-                            <span>Graph (a simple line graph)</span>
+                                <figcaption>Graph (a simple line graph)</figcaption>
+                            </figure>
+
                         </div>
 
                         <div id="map{{ sensor.id }}"
@@ -330,9 +346,12 @@
                                 style="display:none;"
                             {% endif %}
                         >
-                            <img id="graph-type-image-map" class="graph-image"
+                            <figure>
+                                <img id="graph-type-image-map" class="graph-image"
                                  src="{% static 'mercury/map.png' %}">
-                            <span>Map (for GPS sensors)</span>
+                                <figcaption>Map (for GPS sensors)</figcaption>
+                            </figure>
+
                         </div>
 
                         <div id="gauge{{ sensor.id }}"
@@ -342,9 +361,12 @@
                                 style="display:none;"
                             {% endif %}
                         >
-                        <img id="graph-type-image-gauge" class="graph-image"
+                        <figure>
+                            <img id="graph-type-image-gauge" class="graph-image"
                              src="{% static 'mercury/gauge.png' %}">
-                        <span> Gauge (for individual readings)</span>
+                            <figcaption> Gauge (for individual readings) </figcaption>
+                        </figure>
+
                         </div>
 
                         <input type="hidden" name="sensor-id"
