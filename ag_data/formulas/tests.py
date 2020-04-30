@@ -87,9 +87,6 @@ class FormulaPipelineTests(TestCase):
         sensor_type = AGSensorType.objects.filter(processing_formula=formula_id).first()
         sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type)
 
-        backup_ag_active_event = AGActiveEvent.objects.all()
-        backup_event = self.pipeline.event
-
         AGActiveEvent.objects.all().delete()
         self.pipeline.event = None
 
@@ -110,10 +107,6 @@ class FormulaPipelineTests(TestCase):
                 raw_data=str(error_data),
             )
         )
-
-        for act_event_obj in backup_ag_active_event:
-            act_event_obj.save()
-        self.pipeline.event = backup_event
 
 
 class FormulaTests(TestCase):
