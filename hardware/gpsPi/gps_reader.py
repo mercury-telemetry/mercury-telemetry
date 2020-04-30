@@ -1,7 +1,6 @@
 import os
 import serial
-from hardware.Utils.utils import get_logger
-from datetime import datetime, timezone
+from hardware.Utils.utils import get_logger, date_str_with_current_timezone
 
 GPS_ID = 1
 
@@ -49,7 +48,7 @@ class GPSReader:
                 "latitude": latitude_decimal,
                 "longitude": longitude_decimal,
             }
-            data["date"] = datetime.now(timezone.utc).astimezone().isoformat()
+            data["date"] = date_str_with_current_timezone()
             return data
         else:
             return None

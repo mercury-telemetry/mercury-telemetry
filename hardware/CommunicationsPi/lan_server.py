@@ -55,7 +55,9 @@ def runServer(
 
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
+
     log.info("Starting server on port: " + str(port))
+
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
