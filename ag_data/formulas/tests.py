@@ -93,12 +93,10 @@ class FormulaPipelineTests(TestCase):
         AGActiveEvent.objects.all().delete()
         self.pipeline.event = None
 
-        self.assertRaises(
-            TypeError,
+        with self.assertRaisesMessage(Exception, "No active event"):
             self.pipeline.save_measurement(
                 sensor, self.timestamp, {"volumetricFlow": 2.0}
-            ),
-        )
+            )
 
         error_data = {
             "sensor": sensor,
