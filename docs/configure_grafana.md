@@ -87,12 +87,14 @@ you will see an option to add a dashboard (Fig 3).
 #### Graph Types
 Sensor panels may be displayed as:
 - Time-series: 
+
 ![Graph sensor](imgs/graph.png)
     - This is the default graph type for sensor panels. 
     - This graph type is appropriate sensor types with any number of fields (1
     +). Each field will be graphed as a separate line with a different color.
 
 - Gauge:
+
 ![Gauge sensor](imgs/gauge.png)
     - Used to display the **current** value of a sensor. 
     - Note: This gauge will display the
@@ -106,7 +108,16 @@ Sensor panels may be displayed as:
     - This graph type can only be used for sensor types with a **single
     value**.
 - Map:
+
 ![Map sensor](imgs/map.png)
+
+hello 
+
+<img src="imgs/map.png" width="48"/>
+
+hello
+
+
 > TrackMap panel for displaying GPS (latitude/longitude)
 data. 
 
