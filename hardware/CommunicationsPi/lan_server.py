@@ -15,7 +15,6 @@ class Server(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-
         self.log.info(
             "GET request,\nPath: %s\nHeaders:\n%s\n"
             + str(self.path)

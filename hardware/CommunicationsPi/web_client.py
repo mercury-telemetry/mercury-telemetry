@@ -28,12 +28,12 @@ class WebClient:
 
     # Function to ping the LAN server
     # Accepts payload as a python dictionary
-    def send(self, payload, isJson=False):
+    def send(self, payload, is_json=False):
         self.logging.info("Pinging")
 
         try:
             self.logging.info("data: " + str(payload))
-            if isJson:
+            if is_json:
                 response = requests.post(self.url, json=payload)
                 response.raise_for_status()
                 return response
