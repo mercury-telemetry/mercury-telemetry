@@ -7,6 +7,7 @@ from hardware.Utils.logger import Logger
 
 logger = Logger(name="main.log", filename="main.log")
 logger.info("Started hardware main.py")
+logger.info("env " + os.environ.get('ENABLE_INTERNET_TRANSMISSION') + " " + os.environ.get("ENABLE_RADIO_TRANSMISSION"))
 
 PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 dotenv_file = os.path.join(PI_DIR, "hardware/env")
@@ -15,6 +16,8 @@ if os.path.isfile(dotenv_file):  # pragma: no cover
 else:
     print("dotenv_file was not a file")
     logger.info("dotenv_file was not a file")
+
+logger.info("env " + os.environ.get('ENABLE_INTERNET_TRANSMISSION') + " " + os.environ.get("ENABLE_RADIO_TRANSMISSION"))
 
 from hardware.CommunicationsPi.radio_transceiver import Transceiver  # noqa: E402
 from hardware.CommunicationsPi.comm_pi import CommPi  # noqa: E402
