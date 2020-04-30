@@ -47,20 +47,21 @@ class FormulaPipeline:
                     value={"raw": measurement, "result": result},
                 )
             else:
-                raise TypeError
+                raise TypeError("Event is None")
 
-        except TypeError:
-            # Currently no active event, error should be recorded
-            data = {
-                "sensor": sensor,
-                "timestamp": timestamp,
-                "measurement": measurement,
-            }
-            record.save_error(
-                raw_data=str(data),
-                error_code=record.ERROR_CODE["NO_ACT_EVENT"],
-                error_description="Currently no active event",
-            )
+        except TypeError as e:
+            if "Event is None" in e.args:
+                # Currently no active event, error should be recorded
+                data = {
+                    "sensor": sensor,
+                    "timestamp": timestamp,
+                    "measurement": measurement,
+                }
+                record.save_error(
+                    raw_data=str(data),
+                    error_code=record.ERROR_CODE["NO_ACT_EVENT"],
+                    error_description="Currently no active event",
+                )
 
 
 shared_instance = FormulaPipeline()
