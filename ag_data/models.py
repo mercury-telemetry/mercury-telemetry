@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-import uuid
 from django.utils import timezone
+import uuid
 
 
 class AGVenue(models.Model):
@@ -82,7 +82,29 @@ class AGMeasurement(models.Model):
 
 
 class AGActiveEvent(models.Model):
+    """Stores the currently Active event which must refer to one of the instance in AGEvent table
+    """
+
     agevent = models.ForeignKey(AGEvent, null=True, on_delete=models.SET_NULL)
+
+    def save(self, *args, **kwargs):
+        # check if the inserted event is valid
+        if not AGEvent.objects.filter(pk=self.pk).exists():
+            pass
+
+        # Make sure there's at most one record in table.
+        objs = AGActiveEvent.objects.all()
+        if len(objs) == 1:
+            obj = objs[0]
+            if obj.pk == self.pk:
+                pass
+            else:
+                AGActiveEvent.objects.all().delete()
+                super(AGActiveEvent, self).save(*args, **kwargs)
+        elif len(objs) == 0:
+            super(AGActiveEvent, self).save(*args, **kwargs)
+        else:
+            pass
 
 
 class ErrorLog(models.Model):
@@ -90,7 +112,7 @@ class ErrorLog(models.Model):
     error description and error raw data
     """
 
-    # error declearation
+    # error declaration
     UNKNOWN_FMT = "UNKNOWN_FORMAT"
     MISSING_COL = "MISSING_COLUMN"
     MISSING_FIELD_IN_RAW = "MISSING_FIELD_IN_RAW_READING"
@@ -99,6 +121,7 @@ class ErrorLog(models.Model):
     INVALID_FIELD_IN_RAW = "INVALID_FIELD_IN_RAW_READING"
     ERROR_F_PROC_MMT = "FORMULA_PROCESS_MEASUREMENT_ERROR"
     EXTRA_KEYVAL_IN_MMT = "EXTRANEOUS_KEY_VALUE_PAIR_IN_MEASUREMENT"
+    NO_ACT_EVENT = "NO_ACTIVE_EVENT"
     OTHER = "OTHER_ERROR"
 
     ERROR_CODE_CHOICES = [
@@ -110,6 +133,7 @@ class ErrorLog(models.Model):
         (INVALID_FIELD_IN_RAW, "Invalid Field In Raw Reading"),
         (ERROR_F_PROC_MMT, "Error When Formula Processing Measurement"),
         (EXTRA_KEYVAL_IN_MMT, "Extraneous Key-Value Pair In Measurement"),
+        (NO_ACT_EVENT, "No active event"),
         (OTHER, "Other Error"),
     ]
 

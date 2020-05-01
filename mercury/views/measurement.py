@@ -10,6 +10,8 @@ from ag_data.formulas import pipeline
 from django.core import serializers
 from django.utils.dateparse import parse_datetime
 
+from ag_data.error_record import record
+
 
 def build_error(str):
     return json.dumps({"error": str})
@@ -23,6 +25,11 @@ def add_measurement(request):
         sensor_id = json_data["sensor_id"]
         values = json_data["values"]
     except KeyError as e:
+        record.save_error(
+            raw_data=json.dumps(json_data),
+            error_code=record.ERROR_CODE["MISSING_COL"],
+            error_description=f"Missing column: {e.args[0]}",
+        )
         return Response(
             build_error(f"Missing required params: {e.args[0]}"),
             status=status.HTTP_400_BAD_REQUEST,
@@ -30,6 +37,11 @@ def add_measurement(request):
 
     timestamp = parse_datetime(timestamp)
     if not timestamp:
+        record.save_error(
+            raw_data=json.dumps(json_data),
+            error_code=record.ERROR_CODE["INVALID_COL_VL"],
+            error_description="Invalid timestamp in json_data",
+        )
         return Response(
             build_error("Invalid timestamp"), status=status.HTTP_400_BAD_REQUEST
         )
@@ -37,6 +49,11 @@ def add_measurement(request):
     try:
         sensor = AGSensor.objects.get(pk=sensor_id)
     except models.ObjectDoesNotExist:
+        record.save_error(
+            raw_data=json.dumps(json_data),
+            error_code=record.ERROR_CODE["INVALID_COL_VL"],
+            error_description=f"Sensor_id:{sensor_id} unknown",
+        )
         return Response(
             build_error(f"No sensor for given sensor_id={sensor_id}"),
             status=status.HTTP_400_BAD_REQUEST,
@@ -67,6 +84,11 @@ class MeasurementView(APIView):
 
         active_event = AGActiveEvent.objects.first()
         if not active_event:
+            record.save_error(
+                raw_data=request.data,
+                error_code=record.ERROR_CODE["NO_ACT_EVENT"],
+                error_description="Currently no active event",
+            )
             return Response(
                 build_error("No active event"), status=status.HTTP_400_BAD_REQUEST,
             )

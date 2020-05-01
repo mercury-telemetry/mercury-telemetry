@@ -45,7 +45,11 @@ insert into sym_node_group_link (source_node_group_id, target_node_group_id, dat
 
 insert into sym_trigger
 (trigger_id,source_table_name,channel_id,last_update_time,create_time)
-values('all_mercury_table_trigger','ag_*','main_channel',current_timestamp,current_timestamp);
+values('ag_table_trigger','ag_*','main_channel',current_timestamp,current_timestamp);
+
+insert into sym_trigger
+(trigger_id,source_table_name,channel_id,last_update_time,create_time)
+values('mercury_table_trigger','mercury_*','main_channel',current_timestamp,current_timestamp);
 
 ------------------------------------------------------------------------------
 -- Routers
@@ -67,8 +71,16 @@ values('group1_to_0', 'group1', 'group0', 'default',current_timestamp, current_t
 
 insert into sym_trigger_router
 (trigger_id,router_id,initial_load_order,last_update_time,create_time)
-values('all_mercury_table_trigger','group0_to_1', 100, current_timestamp, current_timestamp);
+values('mercury_table_trigger','group0_to_1', 100, current_timestamp, current_timestamp);
 
 insert into sym_trigger_router
 (trigger_id,router_id,initial_load_order,last_update_time,create_time)
-values('all_mercury_table_trigger','group1_to_0', 100, current_timestamp, current_timestamp);
+values('mercury_table_trigger','group1_to_0', 100, current_timestamp, current_timestamp);
+
+insert into sym_trigger_router
+(trigger_id,router_id,initial_load_order,last_update_time,create_time)
+values('ag_table_trigger','group0_to_1', 100, current_timestamp, current_timestamp);
+
+insert into sym_trigger_router
+(trigger_id,router_id,initial_load_order,last_update_time,create_time)
+values('ag_table_trigger','group1_to_0', 100, current_timestamp, current_timestamp);
