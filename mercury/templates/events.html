@@ -15,6 +15,7 @@
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'mercury/style.css' %}">
         <script src="{% static "mercury/js/jquery-3.4.1.js" %}"></script>
+        <script src="{% static 'mercury/js/reverse.js' %}"></script>
         <script src="{% static "mercury/js/events.js" %}"></script>
     </head>
     <body>
@@ -63,6 +64,8 @@
                         </thead>
                         <tbody>
                         {% for item in events %}
+                            <form id="{{ item.uuid }}-delete-form" action="delete/{{ item.uuid }}"></form>
+
                             <tr>
                                 <td>{{ item.name }}</td>
 
@@ -90,12 +93,39 @@
                                     <br><br>
                                     <a class="grafana-btn grafana-btn-green" href="export/{{ item.uuid }}/json">Export JSON</a>
                                     <br><br>
-                                    <a class="grafana-btn grafana-btn-red" href="delete/{{ item.uuid }}">Delete</a>
+                                    <button type="submit"
+                                    form="{{ item.uuid }}-delete-form"
+                                    id="{{ item.uuid }}" name="delete-event"
+                                    class="grafana-btn grafana-btn-red"
+                                    href="delete/{{ item.uuid }}">Delete</a>
                                 </td>
                             </tr>
                         {%  endfor %}
                         </tbody>
                     </table>
+
+                    {% for event in events %}
+                    <div id="{{ event.uuid }}-warning"
+                         class="error hide-display">
+                        <h5>Deleting the event will delete existing measurement
+                            data.
+                        </h5>
+                        <button form="delete-event-form"
+                        type="button" id="{{ event.uuid }}-warning-continue"
+                        class="grafana-btn-green">
+                            Delete anyway
+                        </button>
+                        <button type="button" id="{{ event.uuid }}-warning-export"
+                                class="grafana-btn-yellow">
+                            Export the existing data first
+                        </button>
+                        <button type="button"
+                                id="{{ event.uuid }}-warning-cancel"
+                                class="grafana-btn-red">
+                            Cancel
+                        </button>
+                    </div>
+                    {% endfor %}
                 </div>
             {% else %}
                     <div>There are no events to show.</div>

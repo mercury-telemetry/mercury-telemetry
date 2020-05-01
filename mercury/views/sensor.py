@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code, require_event_code_function
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent, AGMeasurement
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGMeasurement
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -232,22 +232,18 @@ class CreateSensorView(TemplateView):
                 # instances
                 gfconfigs = GFConfig.objects.all()
 
-                # Retrieve the active event
-                active_events_ref = AGActiveEvent.objects.first()
-                active_event = None
+                # Retrieve the events
+                events = AGEvent.objects.all()
 
-                if isinstance(active_events_ref, AGActiveEvent):
-                    active_event = active_events_ref.agevent
-
-                if isinstance(active_event, AGEvent):
+                for event in events:
                     # Add panel to each grafana instance
                     for gfconfig in gfconfigs:
                         # Grafana instance using current GFConfig
                         grafana = Grafana(gfconfig)
 
-                        # Add the Sensor Panel to the Active Event
+                        # Add the Sensor Panel to each event
                         try:
-                            grafana.add_panel(new_sensor, active_event)
+                            grafana.add_panel(new_sensor, event)
                         except ValueError as error:
                             messages.error(
                                 request,

@@ -23,6 +23,10 @@ urlpatterns = [
         "sensor_data_exists/<uuid:sensor_id>",
         sensor_data.get,
         name="sensor_data_exists",
+    path(
+        "event_data_exists/<uuid:event_uuid>",
+        sensor_data.event_data_exists,
+        name="event_data_exists",
     ),
     path("events/", events.CreateEventsView.as_view(), name="events"),
     path("events/delete/<uuid:event_uuid>", events.delete_event, name="delete_event"),
