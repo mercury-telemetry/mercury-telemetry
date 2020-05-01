@@ -21,7 +21,7 @@ urlpatterns = [
     ),
     path(
         "sensor_data_exists/<uuid:sensor_id>",
-        sensor_data.get,
+        sensor_data.sensor_data_exists,
         name="sensor_data_exists",
     ),
     path(
