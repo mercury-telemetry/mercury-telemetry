@@ -3,27 +3,56 @@ language: python
 jobs:
   include:
       - name: "Python 3.8 on Bionic Linux"
+
         os: linux
         dist: bionic
+
         python: 3.8
+        
         services:
           - xvfb
           - docker
           - postgresql
         addons:
           firefox: latest
+
         before_install:
           - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
           - mkdir geckodriver
           - tar -xzf geckodriver-v0.26.0-linux64.tar.gz -C geckodriver
           - export PATH=$PATH:$PWD/geckodriver
+
           - docker pull grafana/grafana
           - docker run -d -p 3000:3000 grafana/grafana
           - docker ps -a
+        
+        install:
+          - pip3 install --upgrade pip
+          - pip3 install -r requirements.txt
+          - pip3 install -r test-requirements.txt
+        
+        
+        before_script:
+          - psql -c 'create database mercury;' -U postgres
+          - python3 manage.py migrate
+          - python3 manage.py collectstatic --noinput
+        
+        script:
+          - black --check --diff .
+          - flake8 . # modify .flake8 env file to update flake8 configuration
+          - coverage run manage.py test # modify .coveragerc env file to update test configuration
+        
+        after_script:
+          - coveralls
+          - cat geckodriver.log
+
       - name: "Python 3.7 on macOS"
+
         os: osx
         osx_image: xcode11.3
+
         language: shell
+
         addons:
           homebrew:
             packages:
@@ -32,32 +61,74 @@ jobs:
             casks:
               - firefox
             update: true
+
         before_install:
           - brew services start grafana
+
           # The following lines set up PostgreSQL on macOS worker
           - export PG_DATA=$(brew --prefix)/var/postgres
           - pg_ctl -w start -l postgres.log --pgdata ${PG_DATA}
           - createuser -s postgres
           - cat postgres.log
+        
+        install:
+          - pip3 install --upgrade pip
+          - pip3 install -r requirements.txt
+          - pip3 install -r test-requirements.txt
+        
+        
+        before_script:
+          - psql -c 'create database mercury;' -U postgres
+          - python3 manage.py migrate
+          - python3 manage.py collectstatic --noinput
+        
+        script:
+          - black --check --diff .
+          - flake8 . # modify .flake8 env file to update flake8 configuration
+          - coverage run manage.py test # modify .coveragerc env file to update test configuration
+        
+        after_script:
+          - coveralls
+          - cat geckodriver.log
+      
+      - name: "Onboard software tests for R-Pi"
+      
+        language: shell
 
+        services:
+            - docker
+            - postgresql
 
+        env:
+          global:
+            - REGISTRY_USER=nyutelemetryrobot
+            # REGISTRY_PASS=...
+            - secure: "tzd1LpQ4MzCHB2FMSDjJec0hEi9SLrZHnILvNb1pj7P/agnFtUduC37aCcGSyrecfC4VF84wQNMYfndWn0L+M5XG1VWUuHcRYxJF7/F9ytkT91ZbZaUzaUy1m29up4C+jQdvYL4bR5WAMn330/SZiWF1Qr9N2DsLqGj4oYHOD6eOK9P1skmYK2CU5i1tjcjz0OOn2rxdGKTPxOwSg+8/OINYLVMkcK0iTAvPMXqR9UQjZqNmD+Z60HWEBF2xZuGXFXQ43sOilXrEY9FxrnQEFVeAJ5KzK9YSX38rJdTWasc0BFkyjSagFUCD9tvdQTc6+NOK4U7MLDCWJsMVwYnbV2tTmEA5bjPgocRsyX2+uBhEuSUW1RKP2MWtq0EmyYwnDHgpIWsuqnZlshtoA+ZEa7TcQsZqjjPqC6hBxVU32dVJDsUSwOLZ+xO+eyfb203az6PXldbetl48D5UN+qDRWlyr2T++IaZAGJHBNzkCMeyOURVhFnIxkFMEKB075PkKWf2M9cmN4hB3UTCNmo820Wpw1Cn2j/shMZ4KgKtnCXFDchGEpLzyUzdLeBZple5bPOGuw9xWUCn+V04kDewO0m/53DUz8xu+7bG7QFi4cFhqguPGge35ULnWPYgi+NkAW3BO1eAj8wgYB1gfZ10YNAjG4XYyaIrgTFh3h+SNwgk="
 
-install:
-  - pip3 install --upgrade pip
-  - pip3 install -r requirements.txt
-  - pip3 install -r test-requirements.txt
+        install:
+          - docker pull nyumotorsportstelemetryorg/mercury || true
 
+          # prepare qemu for arm emulation on x64 hardware
+          - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
-before_script:
-  - psql -c 'create database mercury;' -U postgres
-  - python3 manage.py migrate
-  - python3 manage.py collectstatic --noinput
+          # build image
+          - docker build --pull --cache-from nyumotorsportstelemetryorg/mercury --tag nyumotorsportstelemetryorg/mercury .
 
-script:
-  - black --check --diff .
-  - flake8 . # modify .flake8 env file to update flake8 configuration
-  - coverage run manage.py test # modify .coveragerc env file to update test configuration
-
-after_script:
-  - coveralls
-  - cat geckodriver.log
+          - docker run -d --name test_pi nyumotorsportstelemetryorg/mercury
+          
+        script:
+          # ensure that the server started up as expected
+          - docker ps -a
+          - docker ps | grep -q test_pi
+        
+        after_script:
+          - docker images
+        
+        before_deploy:
+          - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+        
+        deploy:
+          provider: script
+          script: docker push nyumotorsportstelemetryorg/mercury
+          on:
+            branch: master
