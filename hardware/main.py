@@ -80,6 +80,6 @@ else:
             data = transceiver.listen()
             if data:
                 print(data)
-                client.send(json.loads(data), True)
+                client.send(data, True)
     else:
         print("DJANGO_SERVER_API_ENDPOINT not set")

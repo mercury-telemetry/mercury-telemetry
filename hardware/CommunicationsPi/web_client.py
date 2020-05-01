@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from requests.exceptions import HTTPError
 from hardware.Utils.utils import get_logger
@@ -34,7 +35,10 @@ class WebClient:
         try:
             self.logging.info("data: " + str(payload))
             if is_json:
+                print('json', payload)
+                payload = json.dumps(payload)
                 response = requests.post(self.url, json=payload)
+                (response.text)
                 response.raise_for_status()
                 return response
             else:

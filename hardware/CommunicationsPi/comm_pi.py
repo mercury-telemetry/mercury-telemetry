@@ -1,4 +1,5 @@
 import os
+import json
 from http.server import BaseHTTPRequestHandler
 from hardware.CommunicationsPi.web_client import WebClient
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
@@ -7,10 +8,10 @@ from hardware.Utils.utils import get_logger
 
 class CommPi(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
+        if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
             self.transceiver = Transceiver()
 
-        if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
+        if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
             apiUrl = os.environ.get("REMOTE_SERVER_API_ENDPOINT")
             self.web_client = WebClient(server_url=apiUrl)
         self.logging = get_logger("COMM_PI_LOG_FILE")
@@ -36,9 +37,10 @@ class CommPi(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
     def send_data(self, payload):
+        self.logging.info("send_data called, payload: " + str(payload))
         if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
             self.logging.info("transmit via internet")
-            self.web_client.send(payload)
+            self.web_client.send(payload, is_json=True)
         if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
             self.logging.info("transmit via radio")
             self.transceiver.send(payload)
