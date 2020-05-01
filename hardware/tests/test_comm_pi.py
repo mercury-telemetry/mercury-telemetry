@@ -28,9 +28,6 @@ class CommPiTests(SimpleTestCase):
         self.mock_server = HTTPServer(
             (self.mock_server_url, self.mock_server_port), CommPi
         )
-
-        print(f"url: {self.mock_server_url}" + f"port: {self.mock_server_port}")
-
         self.mock_server_thread = threading.Thread(
             target=self.mock_server.serve_forever
         )
