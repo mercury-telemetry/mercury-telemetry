@@ -1,5 +1,4 @@
 import os
-import json
 from http.server import BaseHTTPRequestHandler
 from hardware.CommunicationsPi.web_client import WebClient
 from hardware.CommunicationsPi.radio_transceiver import Transceiver

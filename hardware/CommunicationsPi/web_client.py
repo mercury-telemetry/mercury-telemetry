@@ -35,7 +35,7 @@ class WebClient:
         try:
             self.logging.info("data: " + str(payload))
             if is_json:
-                print('json', payload)
+                print("json", payload)
                 payload = json.dumps(payload)
                 response = requests.post(self.url, json=payload)
                 (response.text)
