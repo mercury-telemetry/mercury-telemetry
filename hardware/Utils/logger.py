@@ -31,7 +31,6 @@ class Logger(object):
 
         # show logs on screen
         self.showLogsOnScreen = show_logs or os.environ.get("SHOW_LOGS")
-        self.logger.info(self.showLogsOnScreen + " " + os.environ.get("SHOW_LOGS"))
 
     def get_logger_file(self, filename):
         d = os.environ["LOG_DIRECTORY"]
