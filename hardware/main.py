@@ -45,9 +45,10 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
         orie = sensePi.get_orientation()
         all = sensePi.get_all()
         coords = gpsPi.get_geolocation()
+        speed = gpsPi.get_speed_mph()
 
         if coords is not None:
-            data = [temp, pres, hum, acc, orie, coords, all]
+            data = [temp, pres, hum, acc, orie, coords, speed, all]
         else:
             data = [temp, pres, hum, acc, orie, all]
 
