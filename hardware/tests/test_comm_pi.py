@@ -77,6 +77,7 @@ class CommPiTests(SimpleTestCase):
                 "ENABLE_INTERNET_TRANSMISSION": "True",
                 "COMM_PI_LOG_FILE": "comm.log",
                 "LOG_DIRECTORY": "logs",
+                "ENABLE_RADIO_TRANSMISSION": ""
             },
         ):
             payload = '{"key": "value"}'
