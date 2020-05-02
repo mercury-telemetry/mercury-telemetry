@@ -134,6 +134,13 @@ class CreateSensorView(TemplateView):
                     "the sensor fields or change the Graph Type.",
                 )
                 valid = False
+            if graph_type == "gauge" and len(field_names) != 1:
+                messages.error(
+                    request,
+                    "Gauge panels must have exactly 1 field. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
             new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
                 sensor_to_update = AGSensor.objects.get(name=sensor_name)
@@ -204,6 +211,22 @@ class CreateSensorView(TemplateView):
                 field_names, field_types, field_units
             )
             graph_type = request.POST.get("sensor-graph-type")
+            if graph_type == "map" and len(field_names) != 2:
+                messages.error(
+                    request,
+                    "Map panels must have exactly 2 fields for "
+                    "latitude and longitude GPS coordinates. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
+            if graph_type == "gauge" and len(field_names) != 1:
+                messages.error(
+                    request,
+                    "Gauge panels must have exactly 1 field. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
+
             if valid:
                 """1) The structure of the models (database API) is confusing and we hide
                  the confusing details from the user. 2) Note that we have to first
