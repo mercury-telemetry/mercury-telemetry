@@ -150,6 +150,11 @@ class TestGrafana(TestCase):
         self.grafana.delete_all_dashboards()
         self.grafana.delete_all_datasources()
 
+    def test_create_api_key(self):
+        key = self.grafana.create_api_key(HOST, "admin2", "Admin")
+        self.assertTrue(key is not None and len(key) > 0)
+        self.assertTrue(self.grafana.validate_credentials())
+
     def _get_with_event_code(self, url, event_code):
         self.client.get(reverse(self.login_url))
         self.client.post(reverse(self.login_url), data={"eventcode": event_code})
