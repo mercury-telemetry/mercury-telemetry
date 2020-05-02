@@ -1,7 +1,6 @@
 from django.test import SimpleTestCase
 import os
-
-# from json.decoder import JSONDecodeError
+import json
 from http.server import HTTPServer
 
 from unittest import mock
@@ -59,10 +58,12 @@ class CommPiTests(SimpleTestCase):
                 "LOG_DIRECTORY": "logs",
             },
         ):
+            payload = '{"key": "value"}'
+            payload = json.loads(payload)
             mock_transceiver.return_value.send = mock.MagicMock()
             mock_client.return_value.send = mock.MagicMock()
             url = f"http://{self.mock_server_url}:{self.mock_server_port}/"
-            requests.post(url, data={"key": "value"}, headers={"Content-Length": "15"})
+            requests.post(url, json=payload)
             mock_transceiver.return_value.send.assert_called()
 
     @mock.patch("hardware.CommunicationsPi.comm_pi.WebClient")
@@ -78,9 +79,11 @@ class CommPiTests(SimpleTestCase):
                 "LOG_DIRECTORY": "logs",
             },
         ):
+            payload = '{"key": "value"}'
+            payload = json.loads(payload)
             mock_transceiver.return_value.send = mock.MagicMock()
             mock_client.return_value.send = mock.MagicMock()
             url = f"http://{self.mock_server_url}:{self.mock_server_port}/"
-            requests.post(url, data={"key": "value"}, headers={"Content-Length": "15"})
+            requests.post(url, json=payload)
             mock_transceiver.return_value.send.assert_not_called()
-            mock_client.return_value.send.assert_called_with("key=value", is_json=True)
+            mock_client.return_value.send.assert_called_with(payload)
