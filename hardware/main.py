@@ -7,12 +7,6 @@ from hardware.Utils.logger import Logger
 
 logger = Logger(name="main.log", filename="main.log")
 logger.info("Started hardware main.py")
-logger.info(
-    "env "
-    + os.environ.get("ENABLE_INTERNET_TRANSMISSION")
-    + " "
-    + os.environ.get("ENABLE_RADIO_TRANSMISSION")
-)
 
 PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 dotenv_file = os.path.join(PI_DIR, "hardware/env")
@@ -21,13 +15,6 @@ if os.path.isfile(dotenv_file):  # pragma: no cover
 else:
     print("dotenv_file was not a file")
     logger.info("dotenv_file was not a file")
-
-logger.info(
-    "env "
-    + os.environ.get("ENABLE_INTERNET_TRANSMISSION")
-    + " "
-    + os.environ.get("ENABLE_RADIO_TRANSMISSION")
-)
 
 from hardware.CommunicationsPi.radio_transceiver import Transceiver  # noqa: E402
 from hardware.CommunicationsPi.comm_pi import CommPi  # noqa: E402
@@ -67,12 +54,13 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
         coords = gpsPi.get_geolocation()
 
         if coords is not None:
-            data = [temp, pres, hum, acc, orie, coords, all]
+            dataArr = [temp, pres, hum, acc, orie, coords, all]
         else:
-            data = [temp, pres, hum, acc, orie, all]
+            dataArr = [temp, pres, hum, acc, orie, all]
 
-        for i in data:
-            payload = json.dumps(i)
+        for payload in dataArr:
+            payload = json.dumps(payload)
+            payload = json.loads(payload)
             print(payload)
             try:
                 client.send(payload)
@@ -89,7 +77,8 @@ else:
         while True:
             data = transceiver.listen()
             if data:
-                print(data)
-                client.send(data, True)
+                print(data, type(data))
+                payload = json.loads(data)
+                client.send(payload)
     else:
         print("DJANGO_SERVER_API_ENDPOINT not set")

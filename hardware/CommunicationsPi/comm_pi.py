@@ -1,4 +1,5 @@
 import os
+import json
 from http.server import BaseHTTPRequestHandler
 from hardware.CommunicationsPi.web_client import WebClient
 from hardware.CommunicationsPi.radio_transceiver import Transceiver
@@ -33,14 +34,20 @@ class CommPi(BaseHTTPRequestHandler):
         self.send_data(str(post_data.decode("utf-8")))
         self._set_response()
         self.logging.info("POST request for {}".format(self.path).encode("utf-8"))
+
         self.wfile.write("POST request for {}".format(self.path).encode("utf-8"))
 
     def send_data(self, payload):
         self.logging.info("send_data called, payload: " + str(payload))
-        if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
-            self.logging.info("transmit via internet")
-            self.web_client.send(payload, is_json=True)
-        if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
-            self.logging.info("transmit via radio")
-            self.transceiver.send(payload)
+        try:
+            if os.environ.get("ENABLE_INTERNET_TRANSMISSION"):
+                self.logging.info("transmit via internet")
+                payload = json.loads(payload)
+                self.web_client.send(payload)
+            if os.environ.get("ENABLE_RADIO_TRANSMISSION"):
+                self.logging.info("transmit via radio")
+                self.transceiver.send(payload)
+        except Exception as err:
+            self.logging.error("error occurred: {}".format(str(err)))
+            raise
         return
