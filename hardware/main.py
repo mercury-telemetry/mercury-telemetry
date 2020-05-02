@@ -12,7 +12,7 @@ PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 dotenv_file = os.path.join(PI_DIR, "hardware/env")
 if os.path.isfile(dotenv_file):  # pragma: no cover
     load_dotenv(dotenv_path=dotenv_file)
-else:
+else:  # pragma: no cover
     print("dotenv_file was not a file")
     logger.info("dotenv_file was not a file")
 

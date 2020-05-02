@@ -227,6 +227,73 @@ class HardwareTests(SimpleTestCase):
         mock_gps.assert_called_once()  # assert init
         mock_web.assert_called_once()  # assert init
 
+    def test_handle_local(
+        self,
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        mock_url = "localhost"
+        with patch.dict(os.environ, {"DJANGO_SERVER_API_ENDPOINT": mock_url}):
+
+            str_data = '{"key": "value"}'
+            mock_trans.return_value.listen.return_value = str_data
+
+            send_data_mock = MagicMock()
+            mock_web.return_value.ping_lan_server = send_data_mock
+            mock_web.return_value.ping_lan_server.side_effect = ErrorAfter(0)
+
+            with self.assertRaises(CallableExhausted):
+                main.handleLocal()
+
+            mock_trans.assert_called_once()  # assert init
+            mock_web.assert_called_with(server_url=mock_url)  # assert init
+            self.assertEquals(1, send_data_mock.call_count)
+            send_data_mock.assert_has_calls(
+                [call(json.loads(str_data))], any_order=True
+            )
+
+    @patch("builtins.print")
+    def test_handle_local_no_url(
+        self,
+        mock_print=MagicMock(),
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        with patch.dict(os.environ, {"DJANGO_SERVER_API_ENDPOINT": ""}):
+
+            main.handleLocal()
+
+            mock_trans.assert_called_once()
+            mock_print.assert_has_calls([call("DJANGO_SERVER_API_ENDPOINT not set")])
+
+    def test_handle_local_no_data(
+        self,
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        mock_url = "localhost"
+        with patch.dict(os.environ, {"DJANGO_SERVER_API_ENDPOINT": mock_url}):
+
+            str_data = None
+            mock_trans.return_value.listen.return_value = str_data
+            mock_trans.return_value.listen.side_effect = ErrorAfter(1)
+
+            send_data_mock = MagicMock()
+            mock_web.return_value.ping_lan_server = send_data_mock
+
+            with self.assertRaises(CallableExhausted):
+                main.handleLocal()
+
+            mock_trans.assert_called_once()  # assert init
+            mock_web.assert_called_with(server_url=mock_url)  # assert init
+            send_data_mock.assert_not_called()
+
 
 class ErrorAfter(object):
     """
