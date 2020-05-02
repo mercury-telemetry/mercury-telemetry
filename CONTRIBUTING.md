@@ -2,7 +2,9 @@
 This document contains everything you need in order to contribute to our project. We welcome everyone to collaborate and help us improve our product. In addition to all the information present in this document, make sure to take a look at our [Wiki.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki)
 
 ## Code of Conduct
-You can access our code of conduct [here - link to be added](). 
+You can access our code of conduct [here - add link to our code of conduct](). 
+
+Note: This project comes under the [MIT license. - add link to our license file]() 
 
 ## Reporting Bugs
 This section guides you through reporting an issue. Following these guidelines will help maintainers to understand your issue and in case you are reporting a bug, reproduce the behavior.
@@ -23,12 +25,11 @@ This section guides you through reporting an issue. Following these guidelines w
 You can contribute in the following two ways:
 
 ### 1. Workflow for contributing code
-   1. Make a feature branch `git checkout -b <new_branch_name>`. Then, make your changes
+   1. Make a fork of this project. Then, make your changes in your fork.
    2. Ensure that you include tests that exercise not only your feature, but also any other code that might be impacted. This is very important.
    3. Check you are using consistent style by running `scripts/check.sh` and make any recommended changes (such as running black to re-format). Then run your tests with `python manage.py test` and fix errors. 
-   4. Add the files you changed to the project. One way of doing this is by using `git add -A` and then committing your changes with `git commit -m "<what_this_commit_does>"`.
-Please keep in mind that your commits should be [atomic](https://en.wikipedia.org/wiki/Atomic_commit#Atomic_commit_convention) and the diffs should be easy to read/understand. This will help in improving the maintainability of our project.
-   5. Push your branch to the origin fork. If on command line, you can use the command `git push origin <new_branch_name>` with name of the branch you made locally.
+   4. Add the files you changed to our project by creating a Pull Request from your fork. [Refer here](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) if you want to know more about how this works.
+   5. Please keep in mind that your commits should be [atomic](https://en.wikipedia.org/wiki/Atomic_commit#Atomic_commit_convention) and the diffs should be easy to read/understand. This will help in improving the maintainability of our project.
 
 ### 2. Contributing your time in other ways
 
@@ -55,4 +56,4 @@ Please keep in mind that your commits should be [atomic](https://en.wikipedia.or
 * Please use the appropriate tags for your PR. 
 
 ## Asking Questions
-A way to communicate with the developer/maintainer team will be updated soon. 
+We are planning to make a Google Group for this project. Stay tuned for the link. 
