@@ -67,6 +67,7 @@ class TestSensorDataExistsView(TestCase):
         self.login_url = "mercury:EventAccess"
         self.sensor_url = "mercury:sensor"
         self.sensor_data_exists_url = "mercury:sensor_data_exists"
+        self.event_data_exists_url = "mercury:event_data_exists"
         test_code = EventCodeAccess(event_code="testcode", enabled=True)
         test_code.save()
 
@@ -134,6 +135,74 @@ class TestSensorDataExistsView(TestCase):
         kwargs = {"sensor_id": bad_id}
         response, session = self._get_with_event_code(
             self.sensor_data_exists_url, self.TESTCODE, kwargs
+        )
+
+        self.assertEquals(response.json()["status"], False)
+
+    def test_event_data_exists_no_measurements(self):
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        kwargs = {"sensor_id": sensor.id}
+        self._get_with_event_code(self.sensor_data_exists_url, self.TESTCODE, kwargs)
+
+        # Create an event and venue
+        event = self.create_venue_and_event(self.event_name)
+
+        response = self.client.get(
+            reverse(self.event_data_exists_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEquals(response.json()["status"], False)
+
+    def test_event_data_exists_measurement_exists(self):
+        # Create a sensor type and sensor
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        kwargs = {"sensor_id": sensor.id}
+        self._get_with_event_code(self.sensor_data_exists_url, self.TESTCODE, kwargs)
+
+        # Create an event and venue
+        event = self.create_venue_and_event(self.event_name)
+
+        data = AGMeasurement.objects.create(
+            event_uuid=event,
+            sensor_id=sensor,
+            timestamp=datetime.datetime(2020, 2, 2, 20, 21, 22),
+            value={"left_gust": 10, "right_gust": 10},
+        )
+        data.save()
+
+        response = self.client.get(
+            reverse(self.event_data_exists_url, kwargs={"event_uuid": event.uuid})
+        )
+
+        self.assertEquals(response.json()["status"], True)
+
+    def test_event_data_event_uuid_not_found(self):
+        bad_id = "ade30a1f-d1df-4970-b02f-234a6187e3a5"
+
+        kwargs = {"event_uuid": bad_id}
+        response, session = self._get_with_event_code(
+            self.event_data_exists_url, self.TESTCODE, kwargs
         )
 
         self.assertEquals(response.json()["status"], False)

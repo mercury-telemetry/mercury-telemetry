@@ -534,6 +534,12 @@ class Grafana:
                     f"CAST(value->'result'->'{field_array[1]}' AS float) AS \"" f'lon"'
                 )
         else:
+            if panel_type == "gauge":
+                if len(field_array) != 1:
+                    raise ValueError(
+                        "Gauge panels must have 1 field. Please check the sensor "
+                        "fields."
+                    )
             if len(field_array):
                 for i in range(0, len(field_array) - 1):
                     fields_query += (
