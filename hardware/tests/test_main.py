@@ -31,3 +31,42 @@ class HardwareTests(SimpleTestCase):
         with patch.dict(os.environ, {"HARDWARE_TYPE": "commPi"}):
             main.main()
             com_mock.assert_called_once()
+
+    @patch("hardware.main.handleSense")
+    def test_main_sense_pi(
+        self,
+        sense_mock=MagicMock(),
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        with patch.dict(os.environ, {"HARDWARE_TYPE": "sensePi"}):
+            main.main()
+            sense_mock.assert_called_once()
+
+    @patch("hardware.main.handleGps")
+    def test_main_gps_pi(
+        self,
+        gps_mock=MagicMock(),
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        with patch.dict(os.environ, {"HARDWARE_TYPE": "gpsPi"}):
+            main.main()
+            gps_mock.assert_called_once()
+
+    @patch("hardware.main.handleLocal")
+    def test_main_local(
+        self,
+        local_mock=MagicMock(),
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        with patch.dict(os.environ, {"HARDWARE_TYPE": ""}):
+            main.main()
+            local_mock.assert_called_once()
