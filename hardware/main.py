@@ -129,5 +129,5 @@ def handleLocal():
         print("DJANGO_SERVER_API_ENDPOINT not set")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

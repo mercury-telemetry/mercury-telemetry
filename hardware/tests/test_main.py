@@ -12,7 +12,7 @@ sys.modules[
 sys.modules["sense_emu"] = MagicMock()
 
 from hardware import main  # noqa : E402
-
+from hardware.CommunicationsPi.comm_pi import CommPi
 
 @patch("hardware.main.Transceiver")
 @patch("hardware.main.WebClient")
@@ -70,3 +70,15 @@ class HardwareTests(SimpleTestCase):
         with patch.dict(os.environ, {"HARDWARE_TYPE": ""}):
             main.main()
             local_mock.assert_called_once()
+
+    @patch("hardware.main.runServer")
+    def test_handle_comm(
+        self,
+        server_mock=MagicMock(),
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        main.handleComm()
+        server_mock.assert_called_once_with(handler_class=CommPi)
