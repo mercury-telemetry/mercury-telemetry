@@ -94,6 +94,9 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
+        # allow the time.sleep method to be called 5 times before throwing an error
+        # this allows us to check that the data is being sent, but prevents it from
+        # iterating forever
         sleep_mock.side_effect = ErrorAfter(5)
 
         expected_sensor_keys = {
@@ -179,6 +182,51 @@ class HardwareTests(SimpleTestCase):
         mock_sense.assert_called_with(sensor_ids=expected_sensor_keys)  # assert init
         mock_web.assert_called()  # assert init
 
+    @patch("time.sleep")
+    def test_handle_gps(
+        self,
+        sleep_mock=MagicMock(),
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        sleep_mock.side_effect = ErrorAfter(0)
+
+        gps_data = {"key": "gps"}
+
+        mock_gps.return_value.get_geolocation.return_value = gps_data
+
+        send_data_mock = MagicMock()
+        mock_web.return_value.ping_lan_server = send_data_mock
+
+        with self.assertRaises(CallableExhausted):
+            main.handleGps()
+
+        mock_gps.assert_called_once()  # assert init
+        mock_web.assert_called_once()  # assert init
+        self.assertEquals(1, send_data_mock.call_count)
+        send_data_mock.assert_has_calls([call(json.dumps(gps_data))], any_order=True)
+
+    def test_handle_gps_with_exception(
+        self,
+        mock_gps=MagicMock(),
+        mock_sense=MagicMock(),
+        mock_web=MagicMock(),
+        mock_trans=MagicMock(),
+    ):
+        gps_data = {"key": "gps"}
+
+        mock_gps.return_value.get_geolocation.return_value = gps_data
+
+        mock_web.return_value.ping_lan_server.side_effect = Exception("ex")
+
+        with self.assertRaises(Exception):
+            main.handleGps()
+
+        mock_gps.assert_called_once()  # assert init
+        mock_web.assert_called_once()  # assert init
+
 
 class ErrorAfter(object):
     """
@@ -194,7 +242,6 @@ class ErrorAfter(object):
         self.calls += 1
         if self.calls > self.limit:
             raise CallableExhausted()
-        # self.__call__(*args, **kwargs)
 
 
 class CallableExhausted(Exception):
