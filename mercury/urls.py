@@ -20,7 +20,7 @@ urlpatterns = [
         name="delete_sensor",
     ),
     path(
-        "sensor_data_exists/<int:sensor_id>",
+        "sensor_data_exists/<uuid:sensor_id>",
         sensor_data.sensor_data_exists,
         name="sensor_data_exists",
     ),

@@ -18,7 +18,7 @@ class TestMeasurement(TestCase):
             "date": "2020-03-11T19:20:00",
         }
         cls.sensor_type = AGSensorType.objects.first()
-        AGSensor.objects.create(id=1, name="test sensor", type_id=cls.sensor_type)
+        AGSensor.objects.create(serial=1, name="test sensor", type_id=cls.sensor_type)
         AGActiveEvent.objects.create(agevent=AGEvent.objects.first())
 
     def setUp(self):
