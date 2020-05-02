@@ -109,12 +109,17 @@ def delete_event(request, event_uuid=None):
 
 
 @require_event_code_function
-def export_all_event(request):
+def export_all_event(request, sensor_id=None):
     if request.path.__contains__("json"):
         events = AGEvent.objects.all().order_by("uuid")
         filenames = []
         for event in events:
-            measurement_data = AGMeasurement.objects.filter(event_uuid=event.uuid)
+            if sensor_id is None:
+                measurement_data = AGMeasurement.objects.filter(event_uuid=event.uuid)
+            else:
+                measurement_data = AGMeasurement.objects.filter(
+                    event_uuid=event.uuid, sensor_id=sensor_id
+                )
             venue = AGVenue.objects.get(uuid=event.venue_uuid.uuid)
             temp = create_event_json(event, venue, measurement_data)
             json_object = json.dumps(temp)
@@ -151,7 +156,12 @@ def export_all_event(request):
             ]
         )
         for event in events:
-            measurement_data = AGMeasurement.objects.filter(event_uuid=event.uuid)
+            if sensor_id is None:
+                measurement_data = AGMeasurement.objects.filter(event_uuid=event.uuid)
+            else:
+                measurement_data = AGMeasurement.objects.filter(
+                    event_uuid=event.uuid, sensor_id=sensor_id
+                )
             if len(measurement_data) == 0:
                 measurement_data = []
             venue = AGVenue.objects.get(uuid=event.venue_uuid.uuid)
