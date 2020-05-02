@@ -25,13 +25,35 @@ from hardware.Utils.utils import get_sensor_keys  # noqa: E402
 from hardware.gpsPi.gps_reader import GPSReader  # noqa: E402
 
 
-if os.environ["HARDWARE_TYPE"] == "commPi":
-    print("CommunicationsPi")
-    logger.info("CommunicationsPi")
+def main():
+    if os.environ["HARDWARE_TYPE"] == "commPi":
+        logger.info("CommunicationsPi")
+        handleComm()
+    elif os.environ["HARDWARE_TYPE"] == "sensePi":
+        logger.info("SensePi")
+        handleSense()
+    elif os.environ["HARDWARE_TYPE"] == "gpsPi":
+        logger.info("gpsPi")
+        handleGps()
+    else:
+        logger.info("Local Django Server")
+        handleLocal()
+
+
+def handleComm():
+    """
+    Starts up the CommunicationsPi server and starts listening for
+    traffic
+    """
     runServer(handler_class=CommPi)
-elif os.environ["HARDWARE_TYPE"] == "sensePi":
-    print("SensePi")
-    logger.info("SensePi")
+
+
+def handleSense():
+    """
+    Starts up the SensorPi runtime, begins listening for SenseHat input,
+    establishing a connection to a local CommPi via LAN, and sending data
+    for transmission to the CommPi
+    """
     sensor_keys = get_sensor_keys()
     sensor_ids = {}
     sensor_ids[sensor_keys["TEMPERATURE"]] = 2
@@ -40,7 +62,7 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
     sensor_ids[sensor_keys["ACCELERATION"]] = 5
     sensor_ids[sensor_keys["ORIENTATION"]] = 6
     sensePi = SensePi(sensor_ids=sensor_ids)
-    gpsPi = GPSReader()
+
     client = WebClient()
 
     while True:
@@ -51,13 +73,8 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
         acc = sensePi.get_acceleration()
         orie = sensePi.get_orientation()
         all = sensePi.get_all()
-        coords = gpsPi.get_geolocation()
-        speed = gpsPi.get_speed_mph()
 
-        if coords is not None:
-            dataArr = [temp, pres, hum, acc, orie, coords, speed, all]
-        else:
-            dataArr = [temp, pres, hum, acc, orie, all]
+        data = [temp, pres, hum, acc, orie, all]
 
         for payload in dataArr:
             payload = json.dumps(payload)
@@ -69,8 +86,35 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
                 print("error occurred: {}".format(str(err)))
                 raise
             time.sleep(1)
-else:
-    print("Local Django Server")
+
+
+def handleGps():
+    """
+    Starts up the GPSPi runtime, begins listening for GPS Hat input,
+    establishing a connection to a local CommPi via LAN, and sending data
+    for transmission to the CommPi
+    """
+    gpsPi = GPSReader()
+    client = WebClient()
+
+    while True:
+        print("gps loop")
+        coords = gpsPi.get_geolocation()
+        if coords is not None:
+            payload = json.dumps(coords)
+            try:
+                client.ping_lan_server(payload)
+            except Exception as err:
+                print("Error transmitting gps data: {}".format(str(err)))
+                raise
+            time.sleep(1)
+
+
+def handleLocal():
+    """
+    starts listening on the defined serial port and passing
+    received data along to the web client when received
+    """
     transceiver = Transceiver()
     url = os.environ.get("DJANGO_SERVER_API_ENDPOINT")
     if url:
@@ -83,3 +127,7 @@ else:
                 client.send(payload)
     else:
         print("DJANGO_SERVER_API_ENDPOINT not set")
+
+
+if __name__ == "__main__":
+    main()
