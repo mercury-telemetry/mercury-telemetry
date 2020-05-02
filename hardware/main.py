@@ -100,14 +100,17 @@ def handleGps():
     while True:
         print("gps loop")
         coords = gpsPi.get_geolocation()
+        speed = gpsPi.get_speed_mph()
         if coords is not None:
-            payload = json.dumps(coords)
-            try:
-                client.ping_lan_server(payload)
-            except Exception as err:
-                print("Error transmitting gps data: {}".format(str(err)))
-                raise
-            time.sleep(1)
+            data = [coords, speed]
+            for i in data:
+                payload = json.dumps(i)
+                try:
+                    client.ping_lan_server(payload)
+                except Exception as err:
+                    print("Error transmitting gps data: {}".format(str(err)))
+                    raise
+                time.sleep(1)
 
 
 def handleLocal():

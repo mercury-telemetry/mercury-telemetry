@@ -191,11 +191,13 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
-        sleep_mock.side_effect = ErrorAfter(0)
+        sleep_mock.side_effect = ErrorAfter(1)
 
         gps_data = {"key": "gps"}
+        speed_data = {"key": "speed"}
 
         mock_gps.return_value.get_geolocation.return_value = gps_data
+        mock_gps.return_value.get_speed_mph.return_value = speed_data
 
         send_data_mock = MagicMock()
         mock_web.return_value.ping_lan_server = send_data_mock
@@ -205,8 +207,10 @@ class HardwareTests(SimpleTestCase):
 
         mock_gps.assert_called_once()  # assert init
         mock_web.assert_called_once()  # assert init
-        self.assertEquals(1, send_data_mock.call_count)
-        send_data_mock.assert_has_calls([call(json.dumps(gps_data))], any_order=True)
+        self.assertEquals(2, send_data_mock.call_count)
+        send_data_mock.assert_has_calls(
+            [call(json.dumps(gps_data)), call(json.dumps(speed_data))], any_order=True
+        )
 
     def test_handle_gps_with_exception(
         self,
