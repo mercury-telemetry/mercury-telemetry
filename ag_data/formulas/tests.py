@@ -1,8 +1,16 @@
 from django.test import TestCase
 
 from ag_data.formulas.pipeline import FormulaPipeline
-from ag_data.models import AGEvent, AGVenue, AGSensorType, AGSensor
+from ag_data.models import (
+    AGEvent,
+    AGVenue,
+    AGSensorType,
+    AGSensor,
+    AGActiveEvent,
+    ErrorLog,
+)
 from ag_data.formulas import formulas
+from ag_data.error_record import record
 
 import datetime
 
@@ -15,6 +23,14 @@ def get_formula_id(f):
 
 class FormulaPipelineTests(TestCase):
     fixtures = ["sample.json"]
+
+    def assert_error(self, error_code, description, raw_data):
+        foo = ErrorLog.objects.first()
+        return (
+            (foo.error_code == error_code)
+            and (foo.raw_data == raw_data)
+            and (foo.description == description)
+        )
 
     def setUp(self):
         self.venue = AGVenue.objects.first()
@@ -65,6 +81,32 @@ class FormulaPipelineTests(TestCase):
         self.assertEqual(result.timestamp, self.timestamp)
         self.assertEqual(result.event_uuid, self.event)
         self.assertEqual(result.sensor_id, sensor)
+
+    def test_no_event(self):
+        formula_id = get_formula_id(formulas.flow_sensor)
+        sensor_type = AGSensorType.objects.filter(processing_formula=formula_id).first()
+        sensor = AGSensor.objects.create(name="Test Sensor", type_id=sensor_type)
+
+        AGActiveEvent.objects.all().delete()
+        self.pipeline.event = None
+
+        with self.assertRaisesMessage(Exception, "No active event"):
+            self.pipeline.save_measurement(
+                sensor, self.timestamp, {"volumetricFlow": 2.0}
+            )
+
+        error_data = {
+            "sensor": sensor,
+            "timestamp": self.timestamp,
+            "measurement": {"volumetricFlow": 2.0},
+        }
+        self.assertTrue(
+            self.assert_error(
+                error_code=record.ERROR_CODE["NO_ACT_EVENT"],
+                description="Currently no active event",
+                raw_data=str(error_data),
+            )
+        )
 
 
 class FormulaTests(TestCase):

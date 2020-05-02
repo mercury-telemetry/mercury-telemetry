@@ -908,3 +908,7 @@ class TestGrafana(TestCase):
         dashboard = self.grafana.get_dashboard_by_name(updated_event_name)
         self.assertTrue(dashboard)
         self.assertEquals(dashboard["dashboard"]["title"], updated_event_name)
+
+    def test_get_all_dashboards(self):
+        self.grafana.create_dashboard("hello")
+        print(self.grafana.get_all_dashboards())

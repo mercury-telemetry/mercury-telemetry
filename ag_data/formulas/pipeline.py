@@ -1,5 +1,6 @@
 from ag_data.models import AGMeasurement, AGActiveEvent
 from ag_data.formulas import formulas
+from ag_data.error_record import record
 
 
 def preprocess(sensor, formula, timestamp, measurement):
@@ -29,8 +30,18 @@ class FormulaPipeline:
             active = AGActiveEvent.objects.first()
             if active:
                 event = active.agevent
-
-        assert event is not None
+            else:
+                data = {
+                    "sensor": sensor,
+                    "timestamp": timestamp,
+                    "measurement": measurement,
+                }
+                record.save_error(
+                    raw_data=str(data),
+                    error_code=record.ERROR_CODE["NO_ACT_EVENT"],
+                    error_description="Currently no active event",
+                )
+                raise Exception("No active event")
 
         formula = formulas.formula_map.get(
             sensor.type_id.processing_formula, formulas.identity

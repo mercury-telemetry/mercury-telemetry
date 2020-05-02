@@ -14,9 +14,6 @@ def event_data_exists(request, event_uuid=None):
 
     response = dict()
 
-    if not event_uuid:
-        response["status"] = False
-
     response["status"] = (
         True
         if AGMeasurement.objects.filter(event_uuid=event_uuid).count() > 0
@@ -33,9 +30,6 @@ def sensor_data_exists(request, sensor_id=None):
     """
 
     response = dict()
-
-    if not sensor_id:
-        response["status"] = False
 
     response["status"] = (
         True if AGMeasurement.objects.filter(sensor_id=sensor_id).count() > 0 else False
