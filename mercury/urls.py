@@ -25,12 +25,12 @@ urlpatterns = [
         name="sensor_data_exists",
     ),
     path(
-        "sensor/export/<int:sensor_id>/csv",
+        "sensor/export/<uuid:sensor_id>/csv",
         events.export_all_event,
         name="export_all_csv",
     ),
     path(
-        "sensor/export/<int:sensor_id>/json",
+        "sensor/export/<uuid:sensor_id>/json",
         events.export_all_event,
         name="export_all_json",
     ),

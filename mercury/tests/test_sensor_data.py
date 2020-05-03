@@ -153,7 +153,7 @@ class TestSensorDataExistsView(TestCase):
         )
         sensor.save()
 
-        kwargs = {"sensor_id": sensor.id}
+        kwargs = {"sensor_id": sensor.uuid}
         self._get_with_event_code(self.sensor_data_exists_url, self.TESTCODE, kwargs)
 
         # Create an event and venue
@@ -178,7 +178,7 @@ class TestSensorDataExistsView(TestCase):
         )
         sensor.save()
 
-        kwargs = {"sensor_id": sensor.id}
+        kwargs = {"sensor_id": sensor.uuid}
         self._get_with_event_code(self.sensor_data_exists_url, self.TESTCODE, kwargs)
 
         # Create an event and venue
