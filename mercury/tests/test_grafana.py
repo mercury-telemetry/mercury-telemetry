@@ -38,8 +38,8 @@ class TestGrafana(TestCase):
 
     field_name_1 = "test-field-1"
     field_name_2 = "test-field-2"
-    data_type_1 = "test-data-type-1"
-    data_type_2 = "test-data-type-2"
+    data_type_1 = "float"
+    data_type_2 = "float"
     unit_1 = "test-unit-1"
     unit_2 = "test-unit-2"
 
@@ -49,6 +49,24 @@ class TestGrafana(TestCase):
         "field-names": [field_name_1, field_name_2],
         "data-types": [data_type_1, data_type_2],
         "units": [unit_1, unit_2],
+    }
+
+    test_map = {
+        "name": "foo",
+        "processing formula": 0,
+        "field-names": ["latitude", "longitude"],
+        "data-types": ["float", "float"],
+        "units": ["", ""],
+        "graph_type": "map",
+    }
+
+    test_gauge = {
+        "name": "foo",
+        "processing formula": 0,
+        "field-names": ["temperature"],
+        "data-types": ["float"],
+        "units": [""],
+        "graph_type": "gauge",
     }
 
     test_sensor_format_update = {
@@ -667,9 +685,9 @@ class TestGrafana(TestCase):
             follow=True,
         )
 
-        messages = list(response.context['messages'])
+        messages = list(response.context["messages"])
         self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), 'foo not found')
+        self.assertEqual(str(messages[0]), "foo not found")
 
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
         # Create an event
@@ -934,3 +952,183 @@ class TestGrafana(TestCase):
     def test_get_all_dashboards(self):
         self.grafana.create_dashboard("hello")
         print(self.grafana.get_all_dashboards())
+
+    def test_create_map_sensor(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
+
+        # Create a sensor through the UI
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit_new_sensor": "",
+                "sensor-name": self.test_map["name"],
+                "field-names": self.test_map["field-names"],
+                "data-types": self.test_map["data-types"],
+                "units": self.test_map["units"],
+                "sensor-graph-type": self.test_map["graph_type"],
+            },
+        )
+
+        self.assertEquals(AGSensor.objects.count(), 1)
+
+        # Fetch the dashboard again
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Confirm that a panel was added to the dashboard with the expected title
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+
+        # Note: converting test_sensor_name to lowercase because currently
+        # sensor names are automatically capitalized when they are created
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"], self.test_map["name"].lower(),
+        )
+
+        # Check that the sensor panel type is a TrackMap panel
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["type"], "pr0ps-trackmap-panel",
+        )
+
+    def test_create_gauge_sensor(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
+
+        # Create a sensor through the UI
+        self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit_new_sensor": "",
+                "sensor-name": self.test_gauge["name"],
+                "field-names": self.test_gauge["field-names"],
+                "data-types": self.test_gauge["data-types"],
+                "units": self.test_gauge["units"],
+                "sensor-graph-type": self.test_gauge["graph_type"],
+            },
+        )
+
+        self.assertEquals(AGSensor.objects.count(), 1)
+
+        # Fetch the dashboard again
+        dashboard = self.grafana.get_dashboard_by_name(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Confirm that a panel was added to the dashboard with the expected title
+        self.assertTrue(dashboard)
+        self.assertTrue(dashboard["dashboard"])
+        self.assertTrue(dashboard["dashboard"]["panels"])
+        self.assertTrue(len(dashboard["dashboard"]["panels"]) == 1)
+
+        # Note: converting test_sensor_name to lowercase because currently
+        # sensor names are automatically capitalized when they are created
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["title"],
+            self.test_gauge["name"].lower(),
+        )
+
+        # Check that the sensor panel type is a TrackMap panel
+        self.assertEquals(
+            dashboard["dashboard"]["panels"][0]["type"], "gauge",
+        )
+
+    def test_create_map_sensor_fails_insufficient_fields(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
+
+        bad_map = self.test_map.copy()
+
+        # this map has only 1 field, should be rejected
+        bad_map["field-names"] = ["temp"]
+        bad_map["data-types"] = ["float"]
+        bad_map["units"] = [""]
+
+        # Create a sensor through the UI
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit_new_sensor": "",
+                "sensor-name": bad_map["name"],
+                "field-names": bad_map["field-names"],
+                "data-types": bad_map["data-types"],
+                "units": bad_map["units"],
+                "sensor-graph-type": bad_map["graph_type"],
+            },
+        )
+
+        self.assertEquals(AGSensor.objects.count(), 0)
+
+        expected_message = (
+            "Map panels must have exactly 2 fields for latitude and "
+            "longitude GPS coordinates. Update the sensor fields or "
+            "change the Graph Type."
+        )
+
+        messages = list(response.context["messages"])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), expected_message)
+
+    def test_create_gauge_sensor_fails_too_many_fields(self):
+        # Create a dashboard, confirm it was created and retrieve its UID
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        # Create an event
+        event = self.create_venue_and_event(self.event_name)
+
+        # Make the event the active event
+        AGActiveEvent.objects.create(agevent=event).save()
+
+        bad_gauge = self.test_gauge.copy()
+
+        # this map has only 1 field, should be rejected
+        bad_gauge["field-names"] = ["x", "y", "z"]
+        bad_gauge["data-types"] = ["float", "float", "float"]
+        bad_gauge["units"] = ["", "", ""]
+
+        # Create a sensor through the UI
+        response = self.client.post(
+            reverse(self.sensor_url),
+            data={
+                "submit_new_sensor": "",
+                "sensor-name": bad_gauge["name"],
+                "field-names": bad_gauge["field-names"],
+                "data-types": bad_gauge["data-types"],
+                "units": bad_gauge["units"],
+                "sensor-graph-type": bad_gauge["graph_type"],
+            },
+        )
+
+        self.assertEquals(AGSensor.objects.count(), 0)
+
+        expected_message = (
+            "Gauge panels must have exactly 1 field. "
+            "Update the sensor fields or change the Graph Type."
+        )
+
+        messages = list(response.context["messages"])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), expected_message)
