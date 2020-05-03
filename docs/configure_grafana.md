@@ -16,8 +16,7 @@ The instructions below will explain how to set up a new Grafana instance and man
  
 ### Contents</h3>
 
-1. Grafana Set-Up
-
+1. [Grafana Set-Up](#1.-Grafana-Set-Up)
     - A. Install Grafana 
     - B. Install TrackMap Plug-in
     
