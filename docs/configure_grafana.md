@@ -22,10 +22,6 @@ or an API key.
  also be updated to reflect those changes.
 - If you delete a Grafana host from Mercury, the Grafana host will be wiped
  clean of its datasources and dashboards and then the credentials will be deleted.
--    
-
-- From Mercury, you can directly access and manage your Grafana dashboards. 
-
 
 The instructions below will explain how to set up a new Grafana instance and manage
  event dashboards and sensor panels. 
