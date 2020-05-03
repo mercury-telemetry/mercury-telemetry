@@ -1,9 +1,30 @@
 # Configure Grafana
-Access and manage your Grafana dashboards directly from the Configure Grafana view.
+### What is Grafana?
+- Grafana is the time-series visualization tool that we have integrated into Mercury
+ to allow you to visualize your sensor data. 
+- Grafana can be hosted (by a service like AWS, Heroku, or Grafana) or run locally
+ without
+ internet connectivity.   
+- To learn more about Grafana: https://www.grafana.com/
 
-Mercury is integrated directly with the Grafana time-series visualization tool, so:
-- Each time you create an event in Mercury, a dashboard will be created in Grafana
- with sensor panels for all of your sensors at that time.
+### Configure Grafana Features
+- From Mercury, you can directly access and manage your Grafana dashboards. 
+
+#### An Example - The Test Event Dashboard
+- Here is the "Test Event" Dashboard in Grafana:  
+![Grafana Dashboard](imgs/grafana_dashboard.png)
+- Here is the same "Test Event" dashboard in Mercury:
+![dashboard in mercury](imgs/grafana-dashboard-in-mercury.png)
+
+In Grafana, we see 3 panels:
+1. **gps**: A `map` panel displaying coordinates.
+2. **temperature**: A `graph` panel displaying a time-series.
+3. **speed**: A `gauge` panel displaying the most recent value recorded.
+
+In Mercury, we see the same 3 panels listed below `Sensor Panels`. 
+
+The instructions below will explain how to set up a new Grafana instance and manage
+ event dashboards and sensor panels. 
  
 ### Contents</h3>
 
@@ -55,25 +76,30 @@ Use the Existing Grafana Hosts view to manage all of your configured Grafana
  - Delete: Deletes the GFConfig. Wipes the Grafana instance of all dashboards and datasources. 
 
 ### Manage Event Dashboards 
+- **Note:** Each time you create an event in Mercury, a dashboard will be created in
+ Grafana
+ automatically 
+ with sensor panels for all of your sensors at that time.
 
-- (Fig 2b):
-- Delete Dashboard: Deletes the entire dashboard from Grafana.
-(Once you delete a dashboard, you can create it again, but 
-any of your previous setting changes will be lost.)
-- Update Panels: For choosing which sensor panels to display 
-in the dashboard. Choose from the Sensor Panels list. All of
-the panels will be restored to their default settings.
-- Reset Panels: Reset the dashboard to include all of the 
-currently available sensors. All of the panels will be 
-restored to their default settings. 
-- View Dashboard in Grafana: View and edit the dashboard 
-in your Grafana instance.
 ![Fig 2b - View Grafana Host](imgs/view_grafana_host.png) 
  > Fig 2b. The Local Grafana instance has one event, Baja.
  The Baja dashboard has 3 sensor panels: GPS, temperature, and speed.
 
+- `Delete Dashboard`: Deletes the entire dashboard from Grafana.
+(Once you delete a dashboard, you can create it again, but 
+any of your previous setting changes will be lost.)
+- `Update Panels`: For choosing which sensor panels to display 
+in the dashboard. Choose from the Sensor Panels list. All of
+the panels will be restored to their default settings.
+- `Reset Panels`: Reset the dashboard to include all of the 
+currently available sensors. All of the panels will be 
+restored to their default settings. 
+- `View Dashboard in Grafana`: View and edit the dashboard 
+in your Grafana instance.
+
+
 #### Add an Event Dashboard (Fig 3)
-1. Create an Event (if you haven't already).
+1. Create an Event (if you haven't already, see `Configure Events` to learn how).
 2. Go to `Existing Grafana Hosts`--> `Show Dashboards` for the 
 Grafana host you are trying to add the dashboard to.
 3. If the event dashboard doesn't already exist in Grafana, 
@@ -86,17 +112,17 @@ you will see an option to add a dashboard (Fig 3).
 
 #### Graph Types
 Sensor panels may be displayed as:
-- Time-series: 
+1. **Time-series**: 
 <img src="imgs/graph.png" width="500"/>
-    - This is the default graph type for sensor panels. 
-    - This graph type is appropriate sensor types with any number of fields (1
+- This is the default graph type for sensor panels. 
+- This graph type is appropriate sensor types with any number of fields (1
     +). Each field will be graphed as a separate line with a different color.
 
-- Gauge:
+2. Gauge:
 <img src="imgs/gauge.png" width="500"/>
-    - Used to display the **current** value of a sensor. 
-    - Note: This gauge will display the
-     most recent value in the current time range you are viewing in the Grafana UI
+- Used to display the **current** value of a sensor. 
+- **Note**: This gauge will display the most recent value in the current time range
+ you are viewing in the Grafana UI
      . Make sure your time range is set for `<some time>-now`, so that you are
       getting the most recent value (we set the dashboard to this level of zoom for
        you by default, but users who need to change the zoom will need to be
@@ -105,11 +131,12 @@ Sensor panels may be displayed as:
     
     - This graph type can only be used for sensor types with a **single
     value**.
-- Map:
+3. Map:
 <img src="imgs/map.png" width="500"/>
-
 > TrackMap panel for displaying GPS (latitude/longitude)
 data. 
 
-As you add, remove, and update your sensors and events in
+- As you add, remove, and update your sensors and events in
  Mercury, you will see the changes in Grafana.
+- For details on how to create different sensor types, see the `Configure Sensors
+` documentation. 
