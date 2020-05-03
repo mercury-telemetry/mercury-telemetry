@@ -1,4 +1,5 @@
 # Configure Grafana
+![Grafana Dashboard](imgs/grafana_dashboard.png)
 ### What is Grafana?
 - Grafana is the time-series visualization tool that we have integrated into Mercury
  to allow you to visualize your sensor data. 
@@ -9,19 +10,6 @@
 
 ### Configure Grafana Features
 - From Mercury, you can directly access and manage your Grafana dashboards. 
-
-#### An Example - The Test Event Dashboard
-- Here is the "Test Event" Dashboard in Grafana:  
-![Grafana Dashboard](imgs/grafana_dashboard.png)
-- Here is the same "Test Event" dashboard in Mercury:
-![dashboard in mercury](imgs/grafana-dashboard-in-mercury.png)
-
-In Grafana, we see 3 panels:
-1. **gps**: A `map` panel displaying coordinates.
-2. **temperature**: A `graph` panel displaying a time-series.
-3. **speed**: A `gauge` panel displaying the most recent value recorded.
-
-In Mercury, we see the same 3 panels listed below `Sensor Panels`. 
 
 The instructions below will explain how to set up a new Grafana instance and manage
  event dashboards and sensor panels. 
@@ -38,6 +26,7 @@ The instructions below will explain how to set up a new Grafana instance and man
 4. Manage Event Dashboards
 5. Manage Sensor Panels
     - Graph types
+6. An Example 
 
 ### 1. Grafana Set-Up
 #### A. Install Grafana
@@ -118,7 +107,23 @@ username: admin
 password: admin
 ``` 
 
-#### 3. Create an admin API token
+#### 3. Use the admin API token to create a Grafana instance in the app
+1. Launch local version of app (`python3 manage.py runserver`) or go to deployment. 
+2. Go to Configure Grafana page
+3. Create a new Grafana instance by filling out the form: 
+
+- **Label**: Whatever you like (e.g. 'local')
+- **Hostname**: http://localhost:3000
+
+- **Username**: Grafana username (default is `admin`)
+- **Password**: Grafana password (default is `admin`)
+
+**OR**
+
+- **API token**: Generate an admin API token through the Grafana UI and then paste it
+ here (instructions directly below)
+
+#### How to Create an Admin API Token (not needed if using username and password!)
 1. Go to http://localhost:3000/org/apikeys
 2. Create a new administrative API key: 
 
@@ -128,15 +133,6 @@ password: admin
     - Leave **"time to live"** empty
 -  Click **Add**: 
     - Copy the generated admin API key (e.g. `eyJrIjoiR2R5cERqY0NHVm9tZXhZMU11anlkaVFXVXJ2Rkc1MTAiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ==`) and store it somewhere.
-
-#### 4. Use the admin API token to create a Grafana instance in the app
-1. Launch local version of app (`python3 manage.py runserver`) or go to deployment. 
-2. Go to Configure Grafana page
-3. Create a new Grafana instance by filling out the form: 
-
-- **Label**: Whatever you like (e.g. 'local')
-- **Hostname**: http://localhost:3000
-- **API token**: Paste the admin API key you generated in (3) 
 
 4. You should now see a Grafana instance listed in the table or an error message indicating what went wrong.  
 
@@ -162,6 +158,7 @@ password: admin
 
 ![Fig 1. Add Grafana Host form](imgs/add_grafana_host.png)
 > Fig 1. Add Grafana Host form
+
 - **Label:** A name for this grafana host (e.g. Local,
 Remote).
 - **Hostname:** The Grafana hostname for this host (e.g.
@@ -170,6 +167,24 @@ http://localhost:3000, http://abc123.grafana.net).
 username is admin.
 - **Password:** Your Grafana password. (Grafana's default 
 password is admin.)
+- **API key**: An admin API key for this Grafana instance.
+
+- You may provide either:
+    - Username/password, OR
+    - API key
+- BUT, when using a Grafana instance **hosted by Grafana Cloud**, you will need to
+ use an API key. Otherwise, we recommend just using your Grafana username and password. 
+ 
+To create an admin API token: 
+1. Go to http://localhost:3000/org/apikeys
+2. Create a new administrative API key:
+    - Click `Add API key`
+    - Provide a key name (anything you like)
+    - Change role from Viewer to Admin
+    - Leave "time to live" empty
+    - Click `Add`
+    - Copy the generated admin API key (e.g
+        . eyJrIjoiR2R5cERqY0NHVm9tZXhZMU11anlkaVFXVXJ2Rkc1MTAiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ==) and store it somewhere.
 
 ### 3. Manage Grafana Hosts
 Use the Existing Grafana Hosts view to manage all of your configured Grafana
@@ -249,3 +264,53 @@ data.
  Mercury, you will see the changes in Grafana.
 - For details on how to create different sensor types, see the `Configure Sensors
 ` documentation. 
+
+### 6. A Walkthrough Example
+- Although you may set up Grafana, events, and sensors in any order in Mercury, below
+ is an
+ example sequence of set-up steps to create a Grafana dashboard for a new event and
+  fill the dashboard with sensor panels.
+
+1. We created 3 sensor panels in Mercury by going to `Configure Sensors` and filling
+ out the `Add New Sensor` form three times. (See the `Configure Sensors` documentation
+  for instructions on how to create a new sensor.)
+  Here is what
+  the
+  new sensors  look
+  like: 
+![graph](imgs/test-sensor-graph.png) 
+![gps](imgs/test-sensor-gps.png) 
+![gauge](imgs/test-sensor-gauge.png) 
+
+2. We create a new event called "Test Event" in Mercury by going to `Manage Events
+` and filling out the `Create Event` form. (See the `Configure Events` documentation
+  for instructions on how to create a new event.) Here is the newly created event:
+![test event](imgs/test-event.png)
+
+3. We create a new Grafana instance called "Local" to Mercury by going to
+ `Configure
+ Grafana` --> `Add Grafana Host` and filling out the form. (See the `Add Grafana Host
+ ` section of this documentation
+  for instructions on how to add a new Grafana host.): 
+![add grafana host](imgs/add_grafana_host.png)
+
+4. When the Grafana instance is built, Mercury will automatically check whether any
+ events exist. The "Test Event" exists, so a dashboard will be created with the same
+  name. Next, Mercury will check whether any sensors exist. 3 panels exist, so 3
+   sensor panels will be created and added to the "Test Event" dashboard
+   
+5. We can view
+    the new "Test Event" dashboard by going to `Configure Grafana` --> `Existing
+     Grafana Hosts` --> `Show Dashboards`: 
+     
+![example dashboard](imgs/test-grafana-host.png)
+
+6. We can view the new "Test Event" Dashboard in Grafana by following the
+ `View Dashboard in Grafana` link below the name of the event. 
+
+7. Here is the "Test Event" Dashboard in Grafana:  
+![Grafana Dashboard](imgs/grafana_dashboard.png)
+- In Grafana, we see the same 3 panels that we created previously in Mercury:
+1. **gps**: A `map` panel displaying coordinates.
+2. **temperature**: A `graph` panel displaying a time-series.
+3. **speed**: A `gauge` panel displaying the most recent value recorded.
