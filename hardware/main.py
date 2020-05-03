@@ -5,16 +5,12 @@ import json
 from dotenv import load_dotenv
 from hardware.Utils.logger import Logger
 
-logger = Logger(name="main.log", filename="main.log")
-logger.info("Started hardware main.py")
-
 PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 dotenv_file = os.path.join(PI_DIR, "hardware/env")
 if os.path.isfile(dotenv_file):  # pragma: no cover
     load_dotenv(dotenv_path=dotenv_file)
 else:  # pragma: no cover
     print("dotenv_file was not a file")
-    logger.info("dotenv_file was not a file")
 
 from hardware.CommunicationsPi.radio_transceiver import Transceiver  # noqa: E402
 from hardware.CommunicationsPi.comm_pi import CommPi  # noqa: E402
@@ -26,6 +22,8 @@ from hardware.gpsPi.gps_reader import GPSReader  # noqa: E402
 
 
 def main():
+    logger = Logger(name="main.log", filename="main.log")
+    logger.info("Started hardware main.py")
     if os.environ["HARDWARE_TYPE"] == "commPi":
         logger.info("CommunicationsPi")
         handleComm()
@@ -74,7 +72,7 @@ def handleSense():
         orie = sensePi.get_orientation()
         all = sensePi.get_all()
 
-        data = [temp, pres, hum, acc, orie, all]
+        dataArr = [temp, pres, hum, acc, orie, all]
 
         for payload in dataArr:
             payload = json.dumps(payload)
@@ -104,9 +102,9 @@ def handleGps():
         if coords is not None:
             data = [coords, speed]
             for i in data:
-                payload = json.dumps(i)
+                payload = json.loads(json.dumps(i))
                 try:
-                    client.ping_lan_server(payload)
+                    client.send(payload)
                 except Exception as err:
                     print("Error transmitting gps data: {}".format(str(err)))
                     raise

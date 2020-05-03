@@ -30,7 +30,9 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
-        with patch.dict(os.environ, {"HARDWARE_TYPE": "commPi"}):
+        with patch.dict(
+            os.environ, {"HARDWARE_TYPE": "commPi", "LOG_DIRECTORY": "logs"}
+        ):
             main.main()
             com_mock.assert_called_once()
 
@@ -43,7 +45,9 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
-        with patch.dict(os.environ, {"HARDWARE_TYPE": "sensePi"}):
+        with patch.dict(
+            os.environ, {"HARDWARE_TYPE": "sensePi", "LOG_DIRECTORY": "logs"}
+        ):
             main.main()
             sense_mock.assert_called_once()
 
@@ -56,7 +60,9 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
-        with patch.dict(os.environ, {"HARDWARE_TYPE": "gpsPi"}):
+        with patch.dict(
+            os.environ, {"HARDWARE_TYPE": "gpsPi", "LOG_DIRECTORY": "logs"}
+        ):
             main.main()
             gps_mock.assert_called_once()
 
@@ -69,7 +75,7 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
-        with patch.dict(os.environ, {"HARDWARE_TYPE": ""}):
+        with patch.dict(os.environ, {"HARDWARE_TYPE": "", "LOG_DIRECTORY": "logs"}):
             main.main()
             local_mock.assert_called_once()
 
@@ -122,23 +128,24 @@ class HardwareTests(SimpleTestCase):
         mock_sense.return_value.get_all.return_value = all_data
 
         send_data_mock = MagicMock()
-        mock_web.return_value.ping_lan_server = send_data_mock
+        mock_web.return_value.send = send_data_mock
 
         with self.assertRaises(Exception):
             main.handleSense()
 
+        print(f"call list: {send_data_mock.call_args_list}")
         mock_sense.assert_called_with(sensor_ids=expected_sensor_keys)  # assert init
         mock_web.assert_called()  # assert init
 
         self.assertEqual(6, send_data_mock.call_count)
         send_data_mock.assert_has_calls(
             [
-                call(json.dumps(temp_data)),
-                call(json.dumps(pres_data)),
-                call(json.dumps(hum_data)),
-                call(json.dumps(acc_data)),
-                call(json.dumps(orient_data)),
-                call(json.dumps(all_data)),
+                call(temp_data),
+                call(pres_data),
+                call(hum_data),
+                call(acc_data),
+                call(orient_data),
+                call(all_data),
             ],
             any_order=True,
         )
@@ -172,9 +179,7 @@ class HardwareTests(SimpleTestCase):
         mock_sense.return_value.get_orientation.return_value = orient_data
         mock_sense.return_value.get_all.return_value = all_data
 
-        mock_web.return_value.ping_lan_server.side_effect = CallableExhausted(
-            "exhausted"
-        )
+        mock_web.return_value.send.side_effect = CallableExhausted("exhausted")
 
         with self.assertRaises(Exception):
             main.handleSense()
@@ -200,7 +205,7 @@ class HardwareTests(SimpleTestCase):
         mock_gps.return_value.get_speed_mph.return_value = speed_data
 
         send_data_mock = MagicMock()
-        mock_web.return_value.ping_lan_server = send_data_mock
+        mock_web.return_value.send = send_data_mock
 
         with self.assertRaises(CallableExhausted):
             main.handleGps()
@@ -209,7 +214,7 @@ class HardwareTests(SimpleTestCase):
         mock_web.assert_called_once()  # assert init
         self.assertEquals(2, send_data_mock.call_count)
         send_data_mock.assert_has_calls(
-            [call(json.dumps(gps_data)), call(json.dumps(speed_data))], any_order=True
+            [call(gps_data), call(speed_data)], any_order=True
         )
 
     def test_handle_gps_with_exception(
@@ -223,7 +228,7 @@ class HardwareTests(SimpleTestCase):
 
         mock_gps.return_value.get_geolocation.return_value = gps_data
 
-        mock_web.return_value.ping_lan_server.side_effect = Exception("ex")
+        mock_web.return_value.send.side_effect = Exception("ex")
 
         with self.assertRaises(Exception):
             main.handleGps()
@@ -245,8 +250,8 @@ class HardwareTests(SimpleTestCase):
             mock_trans.return_value.listen.return_value = str_data
 
             send_data_mock = MagicMock()
-            mock_web.return_value.ping_lan_server = send_data_mock
-            mock_web.return_value.ping_lan_server.side_effect = ErrorAfter(0)
+            mock_web.return_value.send = send_data_mock
+            mock_web.return_value.send.side_effect = ErrorAfter(0)
 
             with self.assertRaises(CallableExhausted):
                 main.handleLocal()
@@ -289,7 +294,7 @@ class HardwareTests(SimpleTestCase):
             mock_trans.return_value.listen.side_effect = ErrorAfter(1)
 
             send_data_mock = MagicMock()
-            mock_web.return_value.ping_lan_server = send_data_mock
+            mock_web.return_value.send = send_data_mock
 
             with self.assertRaises(CallableExhausted):
                 main.handleLocal()
