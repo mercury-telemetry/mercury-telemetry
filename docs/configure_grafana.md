@@ -25,7 +25,9 @@ The instructions below will explain how to set up a new Grafana instance and man
 4. [Manage Event Dashboards](#4-manage-event-dashboards)
 5. [Manage Sensor Panels](#5-manage-sensor-panels)
     - Graph types
-6. [An Example](#6-a-walkthrough-example)
+6. [An Example](#6-a-walkthrough-example) - **HELPFUL: This section will give you an
+ idea of the big picture: all the steps you need to complete to view your sensor data
+  in Grafana.**
 
 ### 1. Grafana Set Up 
 #### A. Install Grafana
