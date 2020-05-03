@@ -30,8 +30,8 @@ The instructions below will explain how to set up a new Grafana instance and man
 
 1. Grafana Set-Up
 
-    - Install Grafana 
-    - Install TrackMap Plug-in
+    - A. Install Grafana 
+    - B. Install TrackMap Plug-in
     
 2. Add a Grafana Host to Mercury</a></li>
 3. Manage Grafana Hosts
@@ -39,8 +39,8 @@ The instructions below will explain how to set up a new Grafana instance and man
 5. Manage Sensor Panels
     - Graph types
 
-### Grafana Set-Up
-#### Install Grafana
+### 1. Grafana Set-Up
+#### A. Install Grafana
 - You can install Grafana on your local machine or host Grafana.
 - Options for hosting include:
     - GrafanaCloud Hosted Grafana: Hosting is done directly by Grafana. (Note: For
@@ -140,7 +140,7 @@ password: admin
 
 4. You should now see a Grafana instance listed in the table or an error message indicating what went wrong.  
 
-#### Install TrackMap Plug-in
+#### B. Install TrackMap Plug-in
 - This set-up step is required if you want to use GPS panels. 
 - If you are running local grafana:
     - Invoke:
@@ -152,7 +152,7 @@ password: admin
     - Navigate to the [TrackMap plugin](https://grafana.com/grafana/plugins/pr0ps-trackmap-panel)
     - `Install Plugin`
 
-### Add a Grafana Host
+### 2. Add a Grafana Host
 1. Go to the Add Grafana Host tab.
 2. Fill out the Add Grafana Host form (Fig 1):
 3. Hit Submit.
@@ -171,7 +171,7 @@ username is admin.
 - **Password:** Your Grafana password. (Grafana's default 
 password is admin.)
 
-### Manage Grafana Hosts
+### 3. Manage Grafana Hosts
 Use the Existing Grafana Hosts view to manage all of your configured Grafana
  instances (Fig 2a)
 1. Go to the Configure Grafana --> Existing Grafana Hosts
@@ -184,7 +184,7 @@ Use the Existing Grafana Hosts view to manage all of your configured Grafana
 > dashboards` to see a Grafana host's dashboards.
  - Delete: Deletes the GFConfig. Wipes the Grafana instance of all dashboards and datasources. 
 
-### Manage Event Dashboards 
+### 4. Manage Event Dashboards 
 - **Note:** Each time you create an event in Mercury, a dashboard will be created in
  Grafana
  automatically 
@@ -217,7 +217,7 @@ you will see an option to add a dashboard (Fig 3).
 ![Fig 3](imgs/add_dashboard.png)
 > Fig 3. Create Dashboard form for the Baja event.
 
-### Manage Sensor Panels
+### 5. Manage Sensor Panels
 
 #### Graph Types
 Sensor panels may be displayed as:
@@ -227,7 +227,7 @@ Sensor panels may be displayed as:
 - This graph type is appropriate sensor types with any number of fields (1
     +). Each field will be graphed as a separate line with a different color.
 
-2. Gauge:
+2. **Gauge**:
 <img src="imgs/gauge.png" width="500"/>
 - Used to display the **current** value of a sensor. 
 - **Note**: This gauge will display the most recent value in the current time range
@@ -240,7 +240,7 @@ Sensor panels may be displayed as:
     
     - This graph type can only be used for sensor types with a **single
     value**.
-3. Map:
+3. **Map**:
 <img src="imgs/map.png" width="500"/>
 > TrackMap panel for displaying GPS (latitude/longitude)
 data. 
