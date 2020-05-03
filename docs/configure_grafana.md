@@ -172,18 +172,21 @@ password: admin
     . `eyJrIjoiR2R5cERqY0NHVm9tZXhZMU11anlkaVFXVXJ2Rkc1MTAiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ==`), store a copy of it somewhere.
 
 ### 2. Add a Grafana Host
-1. Go to the Add Grafana Host tab.
-2. Fill out the Add Grafana Host form (Fig 1)
-3. Hit Submit.
+1. Go to the `Add Grafana Host` tab.
+2. Fill out the `Add Grafana Host` form using either username/password [(Fig 1a)
+](#fig-1a) or API token [(Fig 1b)](#fig-1b).
+3. Hit `Submit`.
 4. Once we validate your Grafana details, we will:
     - Create an Event Dashboard for each of your events.
     - Fill each dashboard with Sensor Panels.
 
+#### Fig 1a
 ![Fig 1a. Add Grafana Host form - username/password](imgs/add_grafana_host.png)
-> Fig 1a. Add Grafana Host form using Username/Password Authentication
+Add Grafana Host form using Username/Password Authentication
 
+#### Fig 1b
 ![Fig 1b. Add Grafana Host form - API key](imgs/add_grafana_host_api_key.png)
-> Fig 1b. Add Grafana Host form using API key
+Add Grafana Host form using API key
 
 - **Label:** A name for this grafana host (e.g. Local,
 Remote).
@@ -205,16 +208,16 @@ password is `admin`.)
  
 ### 3. Manage Grafana Hosts
 Use the `Existing Grafana Hosts` view to manage all of your configured Grafana
- instances (Fig 2a)
-1. Go to `Configure Grafana` --> `Existing Grafana Hosts`
+ instances [Fig 2a](#fig-2a).
+1. Go to `Configure Grafana` --> `Existing Grafana Hosts`.
 2. Choose `Show Dashboards` to view and manage the dashboards and panels for a host
- (Fig 2b)
- 
+ [Fig 2b](#fig-2b).
+
+#### Fig 2a
  ![Fig 2a - Grafana Host Table](imgs/existing_gf_hosts.png)
- > Fig 2a.Grafana host table - displays all of the active grafana instances. Hit
-> `Show
-> dashboards` to see a Grafana host's dashboards.
- - **Delete**: Deletes the GFConfig. Wipes the Grafana instance of all dashboards and
+- Displays all of the active grafana instances. 
+- Hit `Show dashboards` to see a Grafana host's dashboards.
+- `Delete`: Deletes the GFConfig. Wipes the Grafana instance of all dashboards and
   datasources. 
 
 ### 4. Manage Event Dashboards 
@@ -238,16 +241,18 @@ restored to their default settings.
 in your Grafana instance.
 
 
-#### Add an Event Dashboard (Fig 3)
+#### Add an Event Dashboard
 1. Create an Event (if you haven't already, see the [`Configure Events` docs
 ](./configure_events.md) to learn how).
 2. Go to `Existing Grafana Hosts`--> `Show Dashboards` for the 
 Grafana host you are trying to add the dashboard to.
 3. If the event dashboard doesn't already exist in Grafana, 
-you will see an option to add a dashboard (Fig 3). 
+you will see an option to add a dashboard [Fig 3](#fig-3). 
 4. Select an event from the dropdown and `Add Dashboard for this Event`
+
+#### Fig 3
 ![Fig 3](imgs/add_dashboard.png)
-> Fig 3. Create Dashboard form for the Baja event.
+Create Dashboard form for the Baja event.
 
 ### 5. Manage Sensor Panels
 
@@ -279,8 +284,8 @@ data.
 
 - As you add, remove, and update your sensors and events in
  Mercury, you will see the changes in Grafana.
-- For details on how to create different sensor types, see the `Configure Sensors
-` documentation. 
+- For details on how to create different sensor types, see the [`Configure Sensors
+` documentation](./configure_sensors.md). 
 
 ### 6. A Walkthrough Example
 - Although you may set up Grafana, events, and sensors in any order in Mercury, below
@@ -289,7 +294,8 @@ data.
   fill the dashboard with sensor panels.
 
 1. We created 3 sensor panels in Mercury by going to `Configure Sensors` and filling
- out the `Add New Sensor` form three times. (See the `Configure Sensors` documentation
+ out the `Add New Sensor` form three times. (See the [Configure Sensors
+   documentation](./configure_sensors.md)
   for instructions on how to create a new sensor.)
   Here is what
   the
@@ -300,15 +306,16 @@ data.
 ![gauge](imgs/test-sensor-gauge.png) 
 
 2. We create a new event called "Test Event" in Mercury by going to `Manage Events
-` and filling out the `Create Event` form. (See the `Configure Events` documentation
+` and filling out the `Create Event` form. (See the [Configure Events documentation
+](./configure_events.md)
   for instructions on how to create a new event.) Here is the newly created event:
 ![test event](imgs/test-event.png)
 
 3. We create a new Grafana instance called "Local" to Mercury by going to
  `Configure
- Grafana` --> `Add Grafana Host` and filling out the form. (See the `Add Grafana Host
- ` section of this documentation
-  for instructions on how to add a new Grafana host.): 
+ Grafana` --> `Add Grafana Host` and filling out the form. (See the [`Add a Grafana Host
+ ` section](#2-add-a-grafana-host) of this documentation for instructions on how to
+  add a new Grafana host): 
 ![add grafana host](imgs/add_grafana_host.png)
 
 4. When the Grafana instance is built, Mercury will automatically check whether any
