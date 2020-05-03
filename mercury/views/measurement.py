@@ -47,15 +47,15 @@ def add_measurement(request):
         )
 
     try:
-        sensor = AGSensor.objects.get(pk=sensor_id)
+        sensor = AGSensor.objects.get(serial=sensor_id)
     except models.ObjectDoesNotExist:
         record.save_error(
             raw_data=json.dumps(json_data),
             error_code=record.ERROR_CODE["INVALID_COL_VL"],
-            error_description=f"Sensor_id:{sensor_id} unknown",
+            error_description=f"sensor serial:{sensor_id} unknown",
         )
         return Response(
-            build_error(f"No sensor for given sensor_id={sensor_id}"),
+            build_error(f"No sensor for given sensor serial (sensor_id: {sensor_id})"),
             status=status.HTTP_400_BAD_REQUEST,
         )
 
