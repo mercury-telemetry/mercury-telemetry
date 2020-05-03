@@ -28,20 +28,129 @@ The instructions below will explain how to set up a new Grafana instance and man
  
 ### Contents</h3>
 
-1. Install Grafana
+1. Grafana Set-Up
+
+    - Install Grafana 
+    - Install TrackMap Plug-in
+    
 2. Add a Grafana Host to Mercury</a></li>
 3. Manage Grafana Hosts
 4. Manage Event Dashboards
 5. Manage Sensor Panels
-- Graph types
+    - Graph types
 
-### Install Grafana
+### Grafana Set-Up
+#### Install Grafana
 - You can install Grafana on your local machine or host Grafana.
 - Options for hosting include:
     - GrafanaCloud Hosted Grafana: Hosting is done directly by Grafana. (Note: For
      free accounts, there is a limit of 5 dashboards.)
     - Deploy Grafana in a docker container using a hosting service like AWS Elastic
      Beanstalk or Heroku.
+     
+##### 1. Install Grafana on your machine and start the Grafana server
+
+[Grafana installation guides](https://grafana.com/docs/grafana/latest/installation/)
+
+##### MacOS:
+- [MacOS instructions](https://grafana.com/docs/grafana/latest/installation/mac/)
+```
+brew update
+brew install grafana
+brew services start grafana
+```
+
+##### Debian/Ubuntu:
+- [Debian/Ubuntu instructions](https://grafana.com/docs/grafana/latest/installation/debian/)  
+1. Install Grafana: 
+```
+sudo apt-get install -y apt-transport-https
+sudo apt-get install -y software-properties-common wget
+
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+sudo apt-get update
+sudo apt-get install grafana
+```
+2. Start the Grafana service using `systemd`, `init.d`, or by executing the binary:
+
+- Use `systemd`:
+
+```
+# To start the service and verify that the service has started:
+sudo systemctl daemon-reload
+sudo systemctl start grafana-server
+sudo systemctl status grafana-server
+
+# Configure the Grafana server to start at boot:
+sudo systemctl enable grafana-server.service
+```
+
+- Use `init.d`:
+
+```
+# To start the service and verify that the service has started:
+sudo service grafana-server start
+sudo service grafana-server status
+
+# Configure the Grafana server to start at boot:
+sudo update-rc.d grafana-server defaults
+```
+
+- Execute the binary
+
+```
+# Note: The grafana-server binary .tar.gz needs the working directory to be the root install directory where the binary and the public folder are located.
+./bin/grafana-server web
+```
+
+##### Windows:
+[Windows instructions](https://grafana.com/docs/grafana/latest/installation/windows/)
+1. [Download Open Source Edition of Grafana for Windows](https://grafana.com/grafana/download?platform=windows)
+2. Install with Windows installer or install the standalone Windows binary (the instructions provide links for each).
+3. To run Grafana, open your browser and go to the Grafana port (http://localhost:3000/ is default) and then follow the instructions in [Getting Started](https://grafana.com/docs/grafana/latest/guides/getting_started/).
+
+#### 2. Login to Grafana
+- The default location of grafana is http://localhost:3000/
+- The default login is:
+```
+username: admin
+password: admin
+``` 
+
+#### 3. Create an admin API token
+1. Go to http://localhost:3000/org/apikeys
+2. Create a new administrative API key: 
+
+- Click **Add API key**:
+    - Provide a **key name** (anything you like)
+    - Change **role** from Viewer to **Admin**
+    - Leave **"time to live"** empty
+-  Click **Add**: 
+    - Copy the generated admin API key (e.g. `eyJrIjoiR2R5cERqY0NHVm9tZXhZMU11anlkaVFXVXJ2Rkc1MTAiLCJuIjoiYXBpX2tleSIsImlkIjoxfQ==`) and store it somewhere.
+
+#### 4. Use the admin API token to create a Grafana instance in the app
+1. Launch local version of app (`python3 manage.py runserver`) or go to deployment. 
+2. Go to Configure Grafana page
+3. Create a new Grafana instance by filling out the form: 
+
+- **Label**: Whatever you like (e.g. 'local')
+- **Hostname**: http://localhost:3000
+- **API token**: Paste the admin API key you generated in (3) 
+
+4. You should now see a Grafana instance listed in the table or an error message indicating what went wrong.  
+
+#### Install TrackMap Plug-in
+- This set-up step is required if you want to use GPS panels. 
+- If you are running local grafana:
+    - Invoke:
+    ```
+    grafana-cli plugins install pr0ps-trackmap-panel
+    ```
+    - Restart the grafana server (see the specific instruction for your OS above)
+- If you're on remote grafana:
+    - Navigate to the [TrackMap plugin](https://grafana.com/grafana/plugins/pr0ps-trackmap-panel)
+    - `Install Plugin`
 
 ### Add a Grafana Host
 1. Go to the Add Grafana Host tab.
