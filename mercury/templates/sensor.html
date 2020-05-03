@@ -405,10 +405,8 @@
                                 class="grafana-btn-green">
                             Delete anyway
                         </button>
-                        <button type="button" id="{{ sensor.id }}-delete-export"
-                                class="grafana-btn-yellow">
-                            Export the existing data first
-                        </button>
+                        <a class="grafana-btn grafana-btn-yellow" href="export/{{ sensor.id }}/csv">Export CSV</a>
+                        <a class="grafana-btn grafana-btn-yellow" href="export/{{ sensor.id }}/json">Export JSON</a>
                         <button type="button"
                                 id="{{ sensor.id }}-delete-cancel"
                                 class="grafana-btn-red">
