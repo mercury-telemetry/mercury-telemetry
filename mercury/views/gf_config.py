@@ -278,7 +278,7 @@ class GFConfigView(TemplateView):
             )
             return redirect("/gfconfig")
 
-        # a test is calling this with known gf_token
+        # user providing username/pasword, generate API key automatically
         if not gf_token:
             auth_url = make_auth_url(gf_host, gf_username, gf_password)
             try:
@@ -291,13 +291,13 @@ class GFConfigView(TemplateView):
                 )
                 return redirect("/gfconfig")
 
-            # the user is submitting an update form
-            if "update-config" in request.POST:
-                existing_host.update(
-                    gf_username=gf_username, gf_password=gf_password, gf_token=gf_token,
-                )
-                messages.success(request, "Updated Grafana host: {}".format(gf_host))
-                return redirect("/gfconfig")
+        # the user is submitting an update form with username/password
+        if "update-config" in request.POST and gf_username and gf_password:
+            existing_host.update(
+                gf_username=gf_username, gf_password=gf_password, gf_token=gf_token
+            )
+            messages.success(request, "Updated Grafana host: {}".format(gf_host))
+            return redirect("/gfconfig")
 
         # new gfconfig record
         config_data = GFConfig(
@@ -317,13 +317,23 @@ class GFConfigView(TemplateView):
 
         try:
             grafana.validate_credentials()
+        except ValueError as error:
+            messages.error(request, error)
+            return redirect("/gfconfig")
+
+        # the user is submitting an update form with a validated API key
+        if "update-config" in request.POST:
+            existing_host.update(gf_token=gf_token)
+            messages.success(request, "Updated Grafana host: {}".format(gf_host))
+            return redirect("/gfconfig")
+
+        try:
             grafana.create_postgres_datasource()
         except ValueError as error:
             messages.error(request, error)
-        try:
 
-            config_data.gf_current = True  # Deprecated
-            # Only save the config if credentials were validated
+        try:
+            config_data.gf_current = True
             config_data.save()
 
             # If any events exist, add a dashboard for each event
@@ -336,7 +346,7 @@ class GFConfigView(TemplateView):
                     grafana.add_panel(sensor, event)
 
         except ValueError as error:
-            messages.error(request, f"Grafana initial set up failed: {error}")
+            messages.warning(request, f"Warning: {error}")
 
         messages.success(request, "Created Grafana Host: {}".format(gf_name))
         return redirect("/gfconfig")
