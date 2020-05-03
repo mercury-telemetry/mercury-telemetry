@@ -239,7 +239,8 @@ in your Grafana instance.
 
 
 #### Add an Event Dashboard (Fig 3)
-1. Create an Event (if you haven't already, see `Configure Events` to learn how).
+1. Create an Event (if you haven't already, see the [`Configure Events` docs
+](./configure_events.md) to learn how).
 2. Go to `Existing Grafana Hosts`--> `Show Dashboards` for the 
 Grafana host you are trying to add the dashboard to.
 3. If the event dashboard doesn't already exist in Grafana, 
