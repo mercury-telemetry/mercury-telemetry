@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from unittest.mock import patch, MagicMock, call
 
-# from testfixtures import TempDirectory, LogCapture
+from testfixtures import TempDirectory
 
 import os
 import sys
@@ -21,6 +21,12 @@ from hardware.CommunicationsPi.comm_pi import CommPi  # noqa : E402
 @patch("hardware.main.SensePi")
 @patch("hardware.main.GPSReader")
 class HardwareTests(SimpleTestCase):
+    def setUp(self):
+        self.temp_dir = TempDirectory()
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
     @patch("hardware.main.handleComm")
     def test_main_comm_pi(
         self,
@@ -31,7 +37,7 @@ class HardwareTests(SimpleTestCase):
         mock_trans=MagicMock(),
     ):
         with patch.dict(
-            os.environ, {"HARDWARE_TYPE": "commPi", "LOG_DIRECTORY": "logs"}
+            os.environ, {"HARDWARE_TYPE": "commPi", "LOG_DIRECTORY": self.temp_dir.path}
         ):
             main.main()
             com_mock.assert_called_once()
@@ -46,7 +52,8 @@ class HardwareTests(SimpleTestCase):
         mock_trans=MagicMock(),
     ):
         with patch.dict(
-            os.environ, {"HARDWARE_TYPE": "sensePi", "LOG_DIRECTORY": "logs"}
+            os.environ,
+            {"HARDWARE_TYPE": "sensePi", "LOG_DIRECTORY": self.temp_dir.path},
         ):
             main.main()
             sense_mock.assert_called_once()
@@ -61,7 +68,7 @@ class HardwareTests(SimpleTestCase):
         mock_trans=MagicMock(),
     ):
         with patch.dict(
-            os.environ, {"HARDWARE_TYPE": "gpsPi", "LOG_DIRECTORY": "logs"}
+            os.environ, {"HARDWARE_TYPE": "gpsPi", "LOG_DIRECTORY": self.temp_dir.path}
         ):
             main.main()
             gps_mock.assert_called_once()
@@ -75,7 +82,9 @@ class HardwareTests(SimpleTestCase):
         mock_web=MagicMock(),
         mock_trans=MagicMock(),
     ):
-        with patch.dict(os.environ, {"HARDWARE_TYPE": "", "LOG_DIRECTORY": "logs"}):
+        with patch.dict(
+            os.environ, {"HARDWARE_TYPE": "", "LOG_DIRECTORY": self.temp_dir.path}
+        ):
             main.main()
             local_mock.assert_called_once()
 
