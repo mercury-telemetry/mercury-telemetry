@@ -83,7 +83,14 @@ source $SCRIPT_DIR/../.env
 
 echo ""
 __system "Checking postgres connection..."
-psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT -c "" || exit 1
+if ! psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT -c "" ; then
+  __error "[ERR] No postgres running on postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT"
+  echo ""
+  __system "Make sure you have PostgreSQL installed and running."
+  __system "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide"
+  exit 1
+fi
+
 __success "postgres connection"
 
 if ! psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT -c "CREATE DATABASE mercury;" 2> /dev/null; then # if it already exists, an error occurs. ignore it

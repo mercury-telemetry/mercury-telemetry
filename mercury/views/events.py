@@ -174,11 +174,11 @@ def export_all_event(request, sensor_id=None):
 def create_event_csv(writer, response, event_object, venue_object, measurements_object):
     i = 0
     if len(measurements_object) > 0:
-        sensor = AGSensor.objects.get(id=measurements_object[0].sensor_id.id)
+        sensor = AGSensor.objects.get(uuid=measurements_object[0].sensor_id.uuid)
         for measurement in measurements_object:
             i += 1
-            if sensor.id != measurement.sensor_id:
-                sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+            if sensor.uuid != measurement.sensor_id:
+                sensor = AGSensor.objects.get(uuid=measurement.sensor_id.uuid)
             writer.writerow(
                 [
                     str(i),
@@ -221,10 +221,10 @@ def create_event_json(event_object, venue_object, measurements_object):
 
     measurement_info = []
     if len(measurements_object) > 0:
-        sensor = AGSensor.objects.get(id=measurements_object[0].sensor_id.id)
+        sensor = AGSensor.objects.get(uuid=measurements_object[0].sensor_id.uuid)
         for measurement in measurements_object:
-            if sensor.id != measurement.sensor_id:
-                sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+            if sensor.uuid != measurement.sensor_id:
+                sensor = AGSensor.objects.get(uuid=measurement.sensor_id.uuid)
             temp = {
                 "sensor name": sensor.name,
                 "timestamp": str(measurement.timestamp),
@@ -278,10 +278,10 @@ def export_event(request, event_uuid=None, file_format="CSV"):
 
             measurement_info = []
             if measurement_data:
-                sensor = AGSensor.objects.get(id=measurement_data[0].sensor_id.id)
+                sensor = AGSensor.objects.get(uuid=measurement_data[0].sensor_id.uuid)
                 for measurement in measurement_data:
-                    if sensor.id != measurement.sensor_id:
-                        sensor = AGSensor.objects.get(id=measurement.sensor_id.id)
+                    if sensor.uuid != measurement.sensor_id:
+                        sensor = AGSensor.objects.get(uuid=measurement.sensor_id.uuid)
                     temp = {
                         "sensor name": sensor.name,
                         "timestamp": str(measurement.timestamp),

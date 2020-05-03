@@ -124,7 +124,7 @@ def update_dashboard(request, gf_id=None):
         sensors = request.POST.getlist("sensors")
         sensor_objects = []
         for sensor in sensors:
-            sensor = AGSensor.objects.filter(id=sensor).first()
+            sensor = AGSensor.objects.filter(uuid=sensor).first()
             sensor_objects.append(sensor)
         try:
             grafana.update_dashboard_panels(dashboard_name, sensor_objects)
