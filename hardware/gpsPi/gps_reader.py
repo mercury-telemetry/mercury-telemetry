@@ -64,7 +64,7 @@ class GPSReader:
         if nmeaType == "b'$GPRMC" and nmeaSentence[2] == "A":
 
             speed_in_knots = nmeaSentence[7]
-            speed_in_mph = speed_in_knots * 1.151
+            speed_in_mph = float(speed_in_knots) * 1.151
 
             self.logging.info("speed: " + str(speed_in_mph))
 
