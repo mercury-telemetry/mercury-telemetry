@@ -654,6 +654,23 @@ class TestGrafana(TestCase):
         self.assertTrue(dashboard["dashboard"])
         self.assertEquals(len(dashboard["dashboard"]["panels"]), 0)
 
+    def test_delete_sensor_fails_sensor_not_found(self):
+        # Create a dashboard, confirm it was created
+        dashboard = self.grafana.create_dashboard(self.event_name)
+        self.assertTrue(dashboard)
+
+        sensor_name = "foo"
+
+        # Delete sensor
+        response = self.client.post(
+            reverse(self.delete_sensor_url, kwargs={"sensor_name": sensor_name}),
+            follow=True,
+        )
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'foo not found')
+
     def test_add_panel_fail_no_dashboard_exists_for_event(self):
         # Create an event
         event = self.create_venue_and_event(self.event_name)
