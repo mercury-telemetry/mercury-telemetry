@@ -16,9 +16,9 @@ The instructions below will explain how to set up a new Grafana instance and man
  
 ### Contents</h3>
 
-1. [Grafana Set-Up](#1.-Grafana-Set-Up)
-    - A. Install Grafana 
-    - B. Install TrackMap Plug-in
+1. [Grafana Set-Up](#1-grafana-set-up)
+    - A. [Install Grafana](a-install-grafana) 
+    - B. [Install TrackMap Plug-in](b-install-trackmap-plug-in)
     
 2. Add a Grafana Host to Mercury</a></li>
 3. Manage Grafana Hosts
@@ -27,7 +27,7 @@ The instructions below will explain how to set up a new Grafana instance and man
     - Graph types
 6. An Example 
 
-### 1. Grafana Set-Up
+### 1. Grafana Set Up 
 #### A. Install Grafana
 - You can install Grafana on your local machine or host Grafana.
 - Options for hosting include:
