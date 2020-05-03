@@ -13,7 +13,8 @@
 - In case of setting up synchronization, no whitespace is allowed in the path to the project directory.
 
 # Setup
-1. For Ubuntu,
+### For Ubuntu,
+1. Do
 ```
 sudo apt install python3-dev libpq-dev
 ```
@@ -31,6 +32,20 @@ sudo apt install python3-dev libpq-dev
     1. Run `scripts/setup.sh`.
     2. Fix errors if any.
     3. Go to step 1.
+    
+### For Windows,
+1. Install [python](https://www.python.org/downloads/)  and [pip](https://www.liquidweb.com/kb/install-pip-windows/). Python version should be **3.6 or later**.
+
+2. [Create a virtual environment](https://www.geeksforgeeks.org/creating-python-virtual-environment-windows-linux/). You can replace `myenv` with whatever you want to name the environment. This is to make sure that any other python related projects on your machinne are not affected by our application. This is highly recommended.
+
+3. Install [git for windows](https://gitforwindows.org/). It's likely you'll need a bash environment to run our scripts and this is the easiest to setup for windows. Remember to [add path of installation to environment variable](https://stackoverflow.com/Questions/4492979/git-is-not-recognized-as-an-internal-or-external-command). There are better alternatives like activating [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) but it's more complicated to setup.
+
+
+4. Install the follwoing dependencies:
+
+- [PostgreSQL Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide)
+- [Geckodriver Install Instruction](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Geckodriver---Install-instructions)
+- [Grafana Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Grafana-Set-Up-Guide)
 
 ## Setup Synchronization (Optional)
 _Please make sure there is no whitespace in the path to the cloned repository. SymmetricDS doesn't work with a path with whitespaces._
