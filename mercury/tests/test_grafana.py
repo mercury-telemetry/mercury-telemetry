@@ -1132,3 +1132,33 @@ class TestGrafana(TestCase):
         messages = list(response.context["messages"])
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), expected_message)
+
+    def test_create_dashboard_update_dict_invalid_dashboard(self):
+        dashboard_info = dict()
+        panels = []
+
+        expected_message = "Dashboard is missing expected fields. dashboard_info:"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.create_dashboard_update_dict(dashboard_info, panels)
+
+    def test_create_panel_dict_no_fields(self):
+        event = self.create_venue_and_event(self.event_name)
+        self.grafana.create_dashboard(event.name)
+
+        sensor_type = AGSensorType.objects.create(
+            name=self.test_sensor_type,
+            processing_formula=0,
+            format=self.test_sensor_format,
+            graph_type=self.test_sensor_graph_type,
+        )
+        sensor_type.save()
+        sensor = AGSensor.objects.create(
+            name=self.test_sensor_name, type_id=sensor_type
+        )
+        sensor.save()
+
+        sensor_type.format = ""
+
+        expected_message = "Sensor field names are missing"
+        with self.assertRaisesMessage(ValueError, expected_message):
+            self.grafana.add_panel(sensor, event)
