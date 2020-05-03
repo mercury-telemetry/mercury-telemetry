@@ -52,7 +52,7 @@ python manage.py test
 
 # HOWTO Contribute to this repo
 
-Refer to our contributing guidelines [here. - insert link to contributing.md once it is in master]()
+Refer to our contributing guidelines [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/CONTRIBUTING.md)
 
 # Fix issues
 Running into issues with modules not find? Did `requirements.txt` update from your last `git pull` command? Run `pip install -r requirements.txt` to install missing modules.
