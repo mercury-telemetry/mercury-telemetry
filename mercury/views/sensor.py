@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from ..event_check import require_event_code, require_event_code_function
-from ag_data.models import AGSensor, AGSensorType, AGEvent, AGActiveEvent, AGMeasurement
+from ag_data.models import AGSensor, AGSensorType, AGEvent, AGMeasurement
 from mercury.models import GFConfig
 from django.contrib import messages
 from mercury.grafanaAPI.grafana_api import Grafana
@@ -134,6 +134,13 @@ class CreateSensorView(TemplateView):
                     "the sensor fields or change the Graph Type.",
                 )
                 valid = False
+            if graph_type == "gauge" and len(field_names) != 1:
+                messages.error(
+                    request,
+                    "Gauge panels must have exactly 1 field. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
             new_format = generate_sensor_format(field_names, field_types, field_units)
             if valid:
                 sensor_to_update = AGSensor.objects.get(name=sensor_name)
@@ -204,6 +211,22 @@ class CreateSensorView(TemplateView):
                 field_names, field_types, field_units
             )
             graph_type = request.POST.get("sensor-graph-type")
+            if graph_type == "map" and len(field_names) != 2:
+                messages.error(
+                    request,
+                    "Map panels must have exactly 2 fields for "
+                    "latitude and longitude GPS coordinates. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
+            if graph_type == "gauge" and len(field_names) != 1:
+                messages.error(
+                    request,
+                    "Gauge panels must have exactly 1 field. Update "
+                    "the sensor fields or change the Graph Type.",
+                )
+                valid = False
+
             if valid:
                 """1) The structure of the models (database API) is confusing and we hide
                  the confusing details from the user. 2) Note that we have to first
@@ -231,22 +254,18 @@ class CreateSensorView(TemplateView):
                 # instances
                 gfconfigs = GFConfig.objects.all()
 
-                # Retrieve the active event
-                active_events_ref = AGActiveEvent.objects.first()
-                active_event = None
+                # Retrieve the events
+                events = AGEvent.objects.all()
 
-                if isinstance(active_events_ref, AGActiveEvent):
-                    active_event = active_events_ref.agevent
-
-                if isinstance(active_event, AGEvent):
+                for event in events:
                     # Add panel to each grafana instance
                     for gfconfig in gfconfigs:
                         # Grafana instance using current GFConfig
                         grafana = Grafana(gfconfig)
 
-                        # Add the Sensor Panel to the Active Event
+                        # Add the Sensor Panel to each event
                         try:
-                            grafana.add_panel(new_sensor, active_event)
+                            grafana.add_panel(new_sensor, event)
                         except ValueError as error:
                             messages.error(
                                 request,

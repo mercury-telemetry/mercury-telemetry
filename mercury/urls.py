@@ -3,7 +3,6 @@ from .views import (
     views,
     sensor,
     events,
-    radioreceiver,
     gf_config,
     measurement,
     sensor_data,
@@ -21,7 +20,24 @@ urlpatterns = [
         name="delete_sensor",
     ),
     path(
-        "sensor_data_exists/<int:sensor_id>", sensor_data.get, name="sensor_data_exists"
+        "sensor_data_exists/<int:sensor_id>",
+        sensor_data.sensor_data_exists,
+        name="sensor_data_exists",
+    ),
+    path(
+        "sensor/export/<int:sensor_id>/csv",
+        events.export_all_event,
+        name="export_all_csv",
+    ),
+    path(
+        "sensor/export/<int:sensor_id>/json",
+        events.export_all_event,
+        name="export_all_json",
+    ),
+    path(
+        "event_data_exists/<uuid:event_uuid>",
+        sensor_data.event_data_exists,
+        name="event_data_exists",
     ),
     path("events/", events.CreateEventsView.as_view(), name="events"),
     path("events/delete/<uuid:event_uuid>", events.delete_event, name="delete_event"),
@@ -45,11 +61,6 @@ urlpatterns = [
         "events/export/<uuid:event_uuid>/json", events.export_event, name="export_json"
     ),
     path("events/export/all/json", events.export_all_event, name="export_all_json"),
-    path(
-        "radioreceiver/<uuid:event_uuid>",
-        radioreceiver.RadioReceiverView.as_view(),
-        name="radioreceiver",
-    ),
     path("gfconfig/", gf_config.GFConfigView.as_view(), name="gfconfig"),
     path(
         "gfconfig/delete/<int:gf_id>", gf_config.delete_config, name="gfconfig_delete"

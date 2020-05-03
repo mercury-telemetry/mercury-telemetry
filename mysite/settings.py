@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "ee@v))dd&_+-29rp@nmpl0jnqccj@us-u!nrd1+n9n#*r2^rrf"
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = [
     "nyu-mercury.herokuapp.com",
     "nyu-mercury-prod.herokuapp.com",
@@ -166,3 +166,7 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 if "OPTIONS" in DATABASES["default"]:
     del DATABASES["default"]["OPTIONS"]["sslmode"]  # pragma: no cover
+
+GITHUB_DOCS_ROOT = (
+    "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/docs"
+)
