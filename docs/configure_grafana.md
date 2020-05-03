@@ -17,15 +17,15 @@ The instructions below will explain how to set up a new Grafana instance and man
 ### Contents</h3>
 
 1. [Grafana Set-Up](#1-grafana-set-up)
-    - A. [Install Grafana](a-install-grafana) 
-    - B. [Install TrackMap Plug-in](b-install-trackmap-plug-in)
+    - A. [Install Grafana](#a-install-grafana) 
+    - B. [Install TrackMap Plug-in](#b-install-trackmap-plug-in)
     
-2. Add a Grafana Host to Mercury</a></li>
-3. Manage Grafana Hosts
-4. Manage Event Dashboards
-5. Manage Sensor Panels
+2. [Add a Grafana Host to Mercury](#2-add-a-grafana-host)
+3. [Manage Grafana Hosts](#3-manage-grafana-hosts)
+4. [Manage Event Dashboards](#4-manage-event-dashboards)
+5. [Manage Sensor Panels](#5-manage-sensor-panels)
     - Graph types
-6. An Example 
+6. [An Example](#6-a-walkthrough-example)
 
 ### 1. Grafana Set Up 
 #### A. Install Grafana
