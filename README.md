@@ -9,10 +9,12 @@
 [![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-class/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-class?branch=master&service=github)
 
 # Requirements
-- python 3.6 or above
+- Python 3.6 or above
+- Git
 - In case of setting up synchronization, no whitespace is allowed in the path to the project directory.
 
-# Setup
+
+## Local Setup
 ### For Unix-like OS
 1. Install python and psycopg2 dependencies
 ```
@@ -48,7 +50,7 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
     2. Fix errors if any.
     3. Go to step 1.
     
-### For Windows,
+### For Windows
 1. Install [python](https://www.python.org/downloads/)  and [pip](https://www.liquidweb.com/kb/install-pip-windows/). Python version should be **3.6 or later**. Make sure that python installation is in your PATH environment variable.
 
 2. [Create a virtual environment](https://www.geeksforgeeks.org/creating-python-virtual-environment-windows-linux/). You can replace `myenv` with whatever you want to name the environment. This is to make sure that any other python related projects on your machinne are not affected by our application. This is highly recommended.
@@ -68,7 +70,26 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 
 8. Now run `python manage.py runserver`. Go to http://127.0.0.1:8000/ in your browser. You should be able to access our project.
 
+## Cloud Deployment On Heroku
+1. Install Heroku CLI
+   1. Instructions can be found here: https://devcenter.heroku.com/articles/heroku-cli
+       * For macOS: `brew tap heroku/brew && brew install heroku`
+       * For Ubuntu/Debian `curl https://cli-assets.heroku.com/install-ubuntu.sh | sh`
+       * For Arch Linux `yay -S heroku-cli`
+       * For Windows: Use this link address to install 64bit installer https://cli-assets.heroku.com/heroku-x64.exe OR Use this link address to install 32 bit installer https://cli-assets.heroku.com/heroku-x86.exe
+   2.  Verify your installation: Running `heroku --version`, output should be like `heroku/x.y.z`
+
+2. Heroku Deployment
+   1. Create an account in [Heroku.](https://signup.heroku.com/) 
+   2. Login your Heroku account in terminal by using `heroku login`
+   3. Go to http://dashboard.heroku.com/new-app to create a new Heroku instance
+   4. Go to new created instance page, then choose "Resources", in the add-ons search postgres, choose Heroku-Postgres, then click "Provision" to add it.
+   5. Add a remote to local project, using comand `heroku git :remote -a <heroku-project-name>` .
+   6. Deploy to Heroku `git push heroku master`
+3. Visit remote site: \<heroku-project-name\>.herokuapp.com
+
 ## Setup Synchronization (Optional)
+
 _Please make sure there is no whitespace in the path to the cloned repository. SymmetricDS doesn't work with a path with whitespaces._
 
 To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) In case you are on windows, please also refer to the wiki on the topic by going [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Setting-up-SymmetricDS-on-Windows) Windows support is not streamlined and is very error prone but this should be enough to get you started. In case you want to help us make this better please refer below as to how you can contribute to the project.
