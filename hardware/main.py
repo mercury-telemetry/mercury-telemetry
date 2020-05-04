@@ -3,12 +3,13 @@ import time
 import json
 
 from dotenv import load_dotenv
+from hardware.Utils.logger import Logger
 
 PI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 dotenv_file = os.path.join(PI_DIR, "hardware/env")
 if os.path.isfile(dotenv_file):  # pragma: no cover
     load_dotenv(dotenv_path=dotenv_file)
-else:
+else:  # pragma: no cover
     print("dotenv_file was not a file")
 
 from hardware.CommunicationsPi.radio_transceiver import Transceiver  # noqa: E402
@@ -20,11 +21,37 @@ from hardware.Utils.utils import get_sensor_keys  # noqa: E402
 from hardware.gpsPi.gps_reader import GPSReader  # noqa: E402
 
 
-if os.environ["HARDWARE_TYPE"] == "commPi":
-    print("CommunicationsPi")
+def main():
+    logger = Logger(name="main.log", filename="main.log")
+    logger.info("Started hardware main.py")
+    if os.environ["HARDWARE_TYPE"] == "commPi":
+        logger.info("CommunicationsPi")
+        handleComm()
+    elif os.environ["HARDWARE_TYPE"] == "sensePi":
+        logger.info("SensePi")
+        handleSense()
+    elif os.environ["HARDWARE_TYPE"] == "gpsPi":
+        logger.info("gpsPi")
+        handleGps()
+    else:
+        logger.info("Local Django Server")
+        handleLocal()
+
+
+def handleComm():
+    """
+    Starts up the CommunicationsPi server and starts listening for
+    traffic
+    """
     runServer(handler_class=CommPi)
-elif os.environ["HARDWARE_TYPE"] == "sensePi":
-    print("SensePi")
+
+
+def handleSense():
+    """
+    Starts up the SensorPi runtime, begins listening for SenseHat input,
+    establishing a connection to a local CommPi via LAN, and sending data
+    for transmission to the CommPi
+    """
     sensor_keys = get_sensor_keys()
     sensor_ids = {}
     sensor_ids[sensor_keys["TEMPERATURE"]] = 2
@@ -33,7 +60,7 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
     sensor_ids[sensor_keys["ACCELERATION"]] = 5
     sensor_ids[sensor_keys["ORIENTATION"]] = 6
     sensePi = SensePi(sensor_ids=sensor_ids)
-    gpsPi = GPSReader()
+
     client = WebClient()
 
     while True:
@@ -44,24 +71,51 @@ elif os.environ["HARDWARE_TYPE"] == "sensePi":
         acc = sensePi.get_acceleration()
         orie = sensePi.get_orientation()
         all = sensePi.get_all()
-        coords = gpsPi.get_geolocation()
 
-        if coords is not None:
-            data = [temp, pres, hum, acc, orie, coords, all]
-        else:
-            data = [temp, pres, hum, acc, orie, all]
+        dataArr = [temp, pres, hum, acc, orie, all]
 
-        for i in data:
-            payload = json.dumps(i)
+        for payload in dataArr:
+            payload = json.dumps(payload)
+            payload = json.loads(payload)
             print(payload)
             try:
-                client.ping_lan_server(payload)
+                client.send(payload)
             except Exception as err:
                 print("error occurred: {}".format(str(err)))
                 raise
             time.sleep(1)
-else:
-    print("Local Django Server")
+
+
+def handleGps():
+    """
+    Starts up the GPSPi runtime, begins listening for GPS Hat input,
+    establishing a connection to a local CommPi via LAN, and sending data
+    for transmission to the CommPi
+    """
+    gpsPi = GPSReader()
+    client = WebClient()
+
+    while True:
+        print("gps loop")
+        coords = gpsPi.get_geolocation()
+        speed = gpsPi.get_speed_mph()
+        if coords is not None:
+            data = [coords, speed]
+            for i in data:
+                payload = json.loads(json.dumps(i))
+                try:
+                    client.send(payload)
+                except Exception as err:
+                    print("Error transmitting gps data: {}".format(str(err)))
+                    raise
+                time.sleep(1)
+
+
+def handleLocal():
+    """
+    starts listening on the defined serial port and passing
+    received data along to the web client when received
+    """
     transceiver = Transceiver()
     url = os.environ.get("DJANGO_SERVER_API_ENDPOINT")
     if url:
@@ -69,7 +123,12 @@ else:
         while True:
             data = transceiver.listen()
             if data:
-                print(data)
-                client.ping_lan_server(json.loads(data))
+                print(data, type(data))
+                payload = json.loads(data)
+                client.send(payload)
     else:
         print("DJANGO_SERVER_API_ENDPOINT not set")
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()
