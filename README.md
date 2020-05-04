@@ -54,16 +54,9 @@ sudo apt install python3-dev libpq-dev
 
 8. Now run `python manage.py runserver`. Go to http://127.0.0.1:8000/ in your browser. You should be able to access our project.
 
-## Setup Synchronization (Optional)
-
-### SymmetricDS
-_Please make sure there is no whitespace in the path to the cloned repository. SymmetricDS doesn't work with a path with whitespaces._
-
-To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) In case you are on windows, please also refer to the wiki on the topic by going [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Setting-up-SymmetricDS-on-Windows) Windows support is not streamlined and is very error prone but this should be enough to get you started. In case you want to help us make this better please refer below as to how you can contribute to the project.
-
-### Heroku Deployment
+## Heroku Deployment
 1. Install Heroku CLI
-   1.  Instructions can be found here:https://devcenter.heroku.com/articles/heroku-cli
+   1. Instructions can be found here: https://devcenter.heroku.com/articles/heroku-cli
        * For macOS: `brew tap heroku/brew && brew install heroku`
        * For Ubuntu/Debian `curl https://cli-assets.heroku.com/install-ubuntu.sh | sh`
        * For Arch Linux `yay -S heroku-cli`
@@ -71,13 +64,19 @@ To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-n
    2.  Verify your installation: Running `heroku --version`, output should be like `heroku/x.y.z`
 
 2. Heroku Deployment
-   1. Create an account in Heroku 
-   2. Login your heroku account in terminal by using `heroku login`
-   3. Go to http://dashboard.heroku.com/new-app to create a new heroku instance
+   1. Create an account in [Heroku.](https://signup.heroku.com/) 
+   2. Login your Heroku account in terminal by using `heroku login`
+   3. Go to http://dashboard.heroku.com/new-app to create a new Heroku instance
       * In the instance page, go to "Resources", in the add-ons search postgres, choose Heroku-Postgres, then click "Provision" to add it.
    4. Add a remote to local project, using comand `heroku git :remote -a <heroku-project-name>` .
-   5. Deploy to heroku `git push heroku master`
+   5. Deploy to Heroku `git push heroku master`
 3. Visit remote site: \<heroku-project-name\>.herokuapp.com
+
+## Setup Synchronization (Optional)
+
+_Please make sure there is no whitespace in the path to the cloned repository. SymmetricDS doesn't work with a path with whitespaces._
+
+To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) In case you are on windows, please also refer to the wiki on the topic by going [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Setting-up-SymmetricDS-on-Windows) Windows support is not streamlined and is very error prone but this should be enough to get you started. In case you want to help us make this better please refer below as to how you can contribute to the project.
 
 # Run
 ```
