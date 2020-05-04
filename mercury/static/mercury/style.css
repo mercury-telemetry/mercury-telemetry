@@ -646,9 +646,6 @@ width: 47%;
 .sensor-fields-table {
 border: none;
 border-collapse: collapse;
-table-layout: fixed ;
-width: 100% ;
-height: 100%;
 }
 
 .sensor-fields-table-th{
