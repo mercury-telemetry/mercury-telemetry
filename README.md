@@ -64,8 +64,8 @@ To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-n
 ### Heroku Deployment
 1. Install Heroku CLI
    1.  Instructions can be found here:https://devcenter.heroku.com/articles/heroku-cli
-       * For Macos: `brew tap heroku/brew && brew install heroku`
-       * For Ubuntu/Debin `curl https://cli-assets.heroku.com/install-ubuntu.sh | sh`
+       * For macOS: `brew tap heroku/brew && brew install heroku`
+       * For Ubuntu/Debian `curl https://cli-assets.heroku.com/install-ubuntu.sh | sh`
        * For Arch Linux `yay -S heroku-cli`
        * For Windows: Use this link address to install 64bit installer https://cli-assets.heroku.com/heroku-x64.exe OR Use this link address to install 32 bit installer https://cli-assets.heroku.com/heroku-x86.exe
    2.  Verify your installation: Running `heroku --version`, output should be like `heroku/x.y.z`
