@@ -26,21 +26,25 @@ In order to add a sensor to your Mercury instance, you must use the following Ad
 - Once you've added all of your sensor fields and chosen the default graph type for Grafana, hit the "Add New Sensor" button at the bottom of the form. The sensor will then be saved in the database and a panel with the graph type you chose will be created automatically in Grafana.
 
 ### Adding GPS Sensor
-The GPS sensor receives special treatment in Mercury. In order to add a GPS Sensor, you must give exactly two fields with the names "latitude" and "longitude". You also must choose "Map" as your graph type. The sensor name can be whatever you wish, so long as it complies with the restrictions listed above. An example of a properly formatted GPS sensor can be seen below:
+The GPS sensor receives special treatment in Mercury. In order to add a GPS Sensor, you must give exactly two fields, the first representing latitude and the second representing longitude. These fields can be named whatever you wish. You also must choose "Map" as your graph type. The sensor name can be whatever you wish, so long as it complies with the restrictions listed above. An example of a properly formatted GPS sensor can be seen below:
 ![Addding GPS Sensor](imgs/add_sensor_gps.png)
+
+### Adding a Gauge Sensor
+In order to add a sensor with a gauge panel in Grafana, your sensor can only have one field. When creating this sensor, you can simply choose "Gauge" as your graph type and the sensor will be automatically added to Grafana as a gauge. If your sensor has more than one field, Mercury will not let you create it as a gauge.
+![Addding Gauge Sensor](imgs/add_sensor_gauge.png)
 
 
 ## Viewing Existing Sensors
 In order to view your existing sensors, navigate to the configure sensors page and scroll beneath the add sensor form. If you have any existing sensors, they will appear here, as seen below.
 ![Existing Sensors](imgs/existing_sensors.png)
 
-Notice that each sensors has a unique, auto-generated ID number. This ID number is critical as it allows you to link the sensor you create through the UI with the actual physical sensor hardware. Sensor ID is not editable.
+Notice that each sensor has a unique, auto-generated ID number. This ID number is critical as it allows you to link the sensor you create through the UI with the actual physical sensor hardware. Sensor ID is not editable.
 
 ### Updating/Deleting Existing Sensors
 With Mercury, the sensors you make are entirely customizable after creation. In order to modify an existing sensor, scroll down on the webpage until you find the sensor you want to edit. Once there, hit the "Modify Sensor" button toward the top-right of the sensor's panel, as pictured below.
 ![Modify Sensor](imgs/modify_sensor.png)
 
-Once you hit the button, all of the sensors fields will become customizable, including the sensor name itself, as pictured below.
+Once you hit the button, all of the sensor's fields will become customizable, including the sensor name itself, as pictured below.
 
 ![Modify Sensor](imgs/modify_sensor_clicked.png)
 
