@@ -10,12 +10,14 @@ from django.contrib import messages
 from ..event_check import require_event_code, require_event_code_function
 import os
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 GITHUB_DOCS_ROOT = settings.GITHUB_DOCS_ROOT
 CONFIGURE_GRAFANA_HELP_DOC = "configure_grafana.md"
+
 
 # Deprecated
 # Sets the GFConfig's current status to True
@@ -214,7 +216,6 @@ def make_auth_url(gf_host, gf_username, gf_password):
 
 
 class GFConfigView(TemplateView):
-
     template_name = "gf_configs.html"
 
     @require_event_code
@@ -278,6 +279,10 @@ class GFConfigView(TemplateView):
             )
             return redirect("/gfconfig")
 
+        configure_grafana_github_url = os.path.join(
+            GITHUB_DOCS_ROOT, CONFIGURE_GRAFANA_HELP_DOC
+        )
+
         # user providing username/pasword, generate API key automatically
         if not gf_token:
             auth_url = make_auth_url(gf_host, gf_username, gf_password)
@@ -287,7 +292,22 @@ class GFConfigView(TemplateView):
                 )
             except ValueError as error:
                 messages.error(
-                    request, "Failed to create API token: {}".format(error),
+                    request,
+                    mark_safe(
+                        "Failed to create API token: {}. If this "
+                        "problem persists, please provide "
+                        "an admin API key directly with the 'Use API "
+                        "Key' option in the `Add Grafana Host` form. "
+                        'See <a target="_blank" '
+                        'href="{}">Configure Grafana: How to Create an '
+                        "API Token </a> to learn how to create an "
+                        "API "
+                        "key.".format(
+                            error,
+                            configure_grafana_github_url
+                            + "#c-how-to-create-an-api-token",
+                        )
+                    ),
                 )
                 return redirect("/gfconfig")
 
