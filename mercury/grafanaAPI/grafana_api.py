@@ -627,9 +627,12 @@ class Grafana:
             raise ValueError(f"Sensor panel not added: {error}")
 
         # Build a panel dict for the new panel
-        panel = self.create_panel_dict(
-            new_panel_id, field_array, panel_sql_query, title, x, y, panel_type
-        )
+        try:
+            panel = self.create_panel_dict(
+                new_panel_id, field_array, panel_sql_query, title, x, y, panel_type
+            )
+        except ValueError as error:
+            raise ValueError(f"Sensor panel not added: {error}")
 
         # Add new panel to list of panels
         panels.append(panel)
@@ -910,7 +913,7 @@ class Grafana:
         :return:
         """
         if len(fields) == 0:
-            return  # error
+            raise ValueError("Sensor field names are missing")
         first_field = fields[0]
 
         panel = {
@@ -1038,7 +1041,10 @@ class Grafana:
             version = dashboard_info["meta"]["version"]
             folder_id = dashboard_info["meta"]["folderId"]
         except (KeyError, TypeError):
-            raise ValueError(f"dashboard_info object is invalid: {dashboard_info}")
+            raise ValueError(
+                f"Dashboard is missing expected fields. dashboard_info:"
+                f" {dashboard_info}"
+            )
 
         # Prepare updated_dashboard object
         updated_dashboard = {

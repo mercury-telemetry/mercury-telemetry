@@ -1,5 +1,6 @@
 function toggleButton(button_name){
     resetButtons();
+    resetRadio();
 
     if (button_name == "existing-gf-hosts"){
         $('#existing-gf-hosts').removeClass("hide-display");
@@ -11,6 +12,56 @@ function toggleButton(button_name){
         $('#help-gf-config').removeClass("hide-display");
     }
 }
+
+function radioSelect(selection){
+    var usernames = document.querySelectorAll("#div_id_gf_username");
+    var passwords = document.querySelectorAll("#div_id_gf_password");
+    var tokens = document.querySelectorAll("#div_id_gf_token");
+    if (selection == "api"){
+        for (var i = 0; i < usernames.length; i++) {
+            usernames[i].classList.add("hide-display");
+        }
+        for (var i = 0; i < passwords.length; i++) {
+            passwords[i].classList.add("hide-display");
+        }
+        for (var i = 0; i < tokens.length; i++) {
+            tokens[i].classList.remove("hide-display");
+        }
+    } else if (selection == "login") {
+        for (var i = 0; i < usernames.length; i++) {
+            usernames[i].classList.remove("hide-display");
+        }
+        for (var i = 0; i < passwords.length; i++) {
+            passwords[i].classList.remove("hide-display");
+        }
+        for (var i = 0; i < tokens.length; i++) {
+            tokens[i].classList.add("hide-display");
+        }
+    }
+}
+
+
+function resetRadio() {
+    var usernames = document.querySelectorAll("#div_id_gf_username");
+    var passwords = document.querySelectorAll("#div_id_gf_password");
+    var tokens = document.querySelectorAll("#div_id_gf_token");
+    for (var i = 0; i < usernames.length; i++) {
+        usernames[i].classList.remove("hide-display");
+    }
+    for (var i = 0; i < passwords.length; i++) {
+        passwords[i].classList.remove("hide-display");
+    }
+    for (var i = 0; i < tokens.length; i++) {
+        tokens[i].classList.add("hide-display");
+    }
+    if (document.getElementById("radioLogin") !== null) {
+        document.getElementById("radioLogin").checked = true;
+    }
+    if (document.getElementById("radioLogin2") !== null) {
+        document.getElementById("radioLogin2").checked = true;
+    }
+}
+
 
 $(document).ready(function(){
 
@@ -24,6 +75,7 @@ $(document).ready(function(){
        $(`iframe#dashboard_${event.target.id}`).removeClass("hide-display");
 
     });
+    resetRadio();
 });
 
 
