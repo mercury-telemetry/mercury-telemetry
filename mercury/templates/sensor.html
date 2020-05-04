@@ -1,3 +1,10 @@
+{% load bootstrap4 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -65,6 +72,7 @@
                             </tr>
 
                             <tr class="sensor-fields-table-tr">
+                                <td class="sensor-fields-table-td"></td>
                                 <td class="sensor-fields-table-td"></td>
                                 <td class="sensor-fields-table-td"></td>
                                 <td class="sensor-fields-table-td">
@@ -383,16 +391,16 @@
                             data.
                         </h5>
                         <button type="button" id="{{ sensor.id }}-update-continue"
-                                class="grafana-btn-green">
+                                class="grafana-btn grafana-btn-green">
                             Update anyway
                         </button>
                         <button type="button" id="{{ sensor.id }}-update-export"
-                                class="grafana-btn-yellow">
+                                class="grafana-btn grafana-btn-yellow">
                             Export the existing data first
                         </button>
                         <button type="button"
                                 id="{{ sensor.id }}-update-cancel"
-                                class="grafana-btn-red">
+                                class="grafana-btn grafana-btn-red">
                             Cancel
                         </button>
                     </div>
@@ -402,14 +410,14 @@
                         <h5>Deleting this sensor will delete its measurement data.
                         </h5>
                         <button type="button" id="{{ sensor.id }}-delete-continue"
-                                class="grafana-btn-green">
+                                class="grafana-btn grafana-btn-green">
                             Delete anyway
                         </button>
                         <a class="grafana-btn grafana-btn-yellow" href="export/{{ sensor.id }}/csv">Export CSV</a>
                         <a class="grafana-btn grafana-btn-yellow" href="export/{{ sensor.id }}/json">Export JSON</a>
                         <button type="button"
                                 id="{{ sensor.id }}-delete-cancel"
-                                class="grafana-btn-red">
+                                class="grafana-btn grafana-btn-red">
                             Cancel
                         </button>
                     </div>
