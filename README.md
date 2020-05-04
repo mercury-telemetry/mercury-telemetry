@@ -13,10 +13,15 @@
 - In case of setting up synchronization, no whitespace is allowed in the path to the project directory.
 
 # Setup
-### For Unix-like
+### For Unix-like OS
 1. Do
 ```
+## Ubuntu/Debian
 sudo apt install python3-dev libpq-dev
+
+## RPM-based Linux
+# dnf is yum's successor. In Fedora31/32, you can still use yum as package manager
+sudo dnf install python-devel libpq-devel
 ```
 
 2. Install the follwoing dependencies:
@@ -52,28 +57,6 @@ sudo apt install python3-dev libpq-dev
 7. Using command prompt, `cd` into `scripts` folder of our project repository then simply type `setup.sh`. Git bash should automatically open (assuming it was added to PATH) and should automaticallly install requirements as well as ask if you need to install test requirements. Say yes. If you get some errors, fix them.
 
 8. Now run `python manage.py runserver`. Go to http://127.0.0.1:8000/ in your browser. You should be able to access our project.
-
-### For RPM-based Linux
-1. Do
-```
-# dnf is yum's successor. In Fedora31/32, you can still use yum as package manager
-sudo dnf install python-devel libpq-devel
-sudo dnf install gcc
-```
-
-2. Install the follwoing dependencies:
-
-    - [PostgreSQL Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide)
-    - [Geckodriver Install Instruction](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Geckodriver---Install-instructions)
-    - [Grafana Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Grafana-Set-Up-Guide)
-
-3. We recommend to set up `venv`. For creating/activating venv, follow [this instruction](https://docs.python.org/3/library/venv.html#creating-virtual-environments).
-
-4. After you activated `venv`, iterate the following steps.
-
-    1. Run `scripts/setup.sh`.
-    2. Fix errors if any.
-    3. Go to step 1.
 
 ## Setup Synchronization (Optional)
 _Please make sure there is no whitespace in the path to the cloned repository. SymmetricDS doesn't work with a path with whitespaces._
