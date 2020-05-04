@@ -292,20 +292,24 @@ class GFConfigView(TemplateView):
                 )
             except ValueError as error:
                 messages.error(
-                    request, mark_safe("Failed to create API token: {}. If this "
-                                       "problem persists, please provide "
-                                       "an admin API key directly with the 'Use API "
-                                       "Key' option in the `Add Grafana Host` form. "
-                                       "See <a target=\"_blank\" "
-                                       "href=\"{}\">Configure Grafana: How to Create an "
-                                       "API Token </a> to learn how to create an "
-                                       "API "
-                                       "key.".format(error,
-                                                     configure_grafana_github_url +
-                                                     "#c-how-to-create-an-api-token")
-                                       ),
+                    request,
+                    mark_safe(
+                        "Failed to create API token: {}. If this "
+                        "problem persists, please provide "
+                        "an admin API key directly with the 'Use API "
+                        "Key' option in the `Add Grafana Host` form. "
+                        'See <a target="_blank" '
+                        'href="{}">Configure Grafana: How to Create an '
+                        "API Token </a> to learn how to create an "
+                        "API "
+                        "key.".format(
+                            error,
+                            configure_grafana_github_url
+                            + "#c-how-to-create-an-api-token",
+                        )
+                    ),
                 )
-            return redirect("/gfconfig")
+                return redirect("/gfconfig")
 
         # the user is submitting an update form with username/password
         if "update-config" in request.POST and gf_username and gf_password:
