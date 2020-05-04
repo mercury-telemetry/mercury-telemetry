@@ -27,15 +27,20 @@ class WebClient:
         return url
 
     # Function to ping the LAN server
-    # Accepts payload as a python dictionary
-    def ping_lan_server(self, payload):
-        self.logging.info("Pinging")
+    # Accepts payload as a python dictionary or json object
+    def send(self, payload, is_json=True):
+        self.logging.info("Pinging: " + self.url)
 
         try:
-            self.logging.info("data: " + payload)
-            response = requests.post(self.url, data=payload)
-            response.raise_for_status()
-            return response
+            self.logging.info("data: " + str(payload))
+            if is_json:
+                response = requests.post(self.url, json=payload)
+                response.raise_for_status()
+                return response
+            else:
+                response = requests.post(self.url, data=payload)
+                response.raise_for_status()
+                return response
 
         except HTTPError as http_err:
             self.logging.error("HTTP error occurred: {}".format(str(http_err)))
