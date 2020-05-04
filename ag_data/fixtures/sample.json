@@ -41,7 +41,7 @@
     },
     {
         "model": "ag_data.agsensortype",
-        "pk": 0,
+        "pk": "3c764e23-4218-4088-8390-afb9aefc44a7",
         "fields": {
             "name": "Coin Side Sensor",
             "processing_formula": 0,
@@ -58,7 +58,7 @@
     },
     {
         "model": "ag_data.agsensortype",
-        "pk": 1,
+        "pk": "945a0719-93f8-4f70-ba62-2e205cd46547",
         "fields": {
             "name": "Simple Temperature Sensor",
             "processing_formula": 2,
@@ -75,7 +75,7 @@
     },
     {
         "model": "ag_data.agsensortype",
-        "pk": 2,
+        "pk": "40b955c2-b74e-4c4b-81af-6c0aab0e2ccb",
         "fields": {
             "name": "Dual Temperature Sensor",
             "processing_formula": 4,
@@ -105,7 +105,7 @@
     },
     {
         "model": "ag_data.agsensortype",
-        "pk": 3,
+        "pk": "4a31ee9f-85f9-4120-b114-9fd674f6e60e",
         "fields": {
             "name": "Gas Flow Sensor",
             "processing_formula": 6,

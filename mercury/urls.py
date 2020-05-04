@@ -20,17 +20,17 @@ urlpatterns = [
         name="delete_sensor",
     ),
     path(
-        "sensor_data_exists/<int:sensor_id>",
+        "sensor_data_exists/<uuid:sensor_id>",
         sensor_data.sensor_data_exists,
         name="sensor_data_exists",
     ),
     path(
-        "sensor/export/<int:sensor_id>/csv",
+        "sensor/export/<uuid:sensor_id>/csv",
         events.export_all_event,
         name="export_all_csv",
     ),
     path(
-        "sensor/export/<int:sensor_id>/json",
+        "sensor/export/<uuid:sensor_id>/json",
         events.export_all_event,
         name="export_all_json",
     ),

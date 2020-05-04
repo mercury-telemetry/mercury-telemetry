@@ -178,11 +178,12 @@ class CreateSensorView(TemplateView):
                     messages.success(
                         request, f"Grafana panels updated based on sensor changes"
                     )
+
                 elif format_changed or graph_type_changed:
                     if format_changed:
                         # Delete any existing measurement data for the sensor
                         AGMeasurement.objects.filter(
-                            sensor_id=sensor_to_update.id
+                            sensor_id=sensor_to_update.uuid
                         ).delete()
 
                     for gfconfig in gfconfigs:

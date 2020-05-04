@@ -432,7 +432,7 @@ class TestGFConfig(TestCase):
         sensors = AGSensor.objects.all()
         sensor_ids = []
         for sensor in sensors:
-            sensor_ids.append(sensor.id)
+            sensor_ids.append(sensor.uuid)
 
         self.client.post(
             reverse(
@@ -483,7 +483,7 @@ class TestGFConfig(TestCase):
         sensor_ids = []
         sensors = AGSensor.objects.all()
         for i in range(2):
-            sensor_ids.append(sensors[i].id)
+            sensor_ids.append(sensors[i].uuid)
 
         # Post to update the dashboard with 2 sensor panels
         self.client.post(
@@ -539,7 +539,7 @@ class TestGFConfig(TestCase):
         sensor_ids_partial = []
         sensors = AGSensor.objects.all()
         for i in range(2):
-            sensor_ids_partial.append(sensors[i].id)
+            sensor_ids_partial.append(sensors[i].uuid)
 
         # Post to update the dashboard with 2 sensor panels
         self.client.post(
@@ -564,7 +564,7 @@ class TestGFConfig(TestCase):
         sensor_ids = []
         sensors = AGSensor.objects.all()
         for sensor in sensors:
-            sensor_ids.append(sensor.id)
+            sensor_ids.append(sensor.uuid)
 
         # Post to reset the dashboard with all sensor panels
         self.client.post(

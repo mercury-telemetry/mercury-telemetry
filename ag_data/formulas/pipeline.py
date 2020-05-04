@@ -10,7 +10,7 @@ def preprocess(sensor, formula, timestamp, measurement):
         measurement["prevGasLevel"] = None
         measurement["prevTimestamp"] = None
 
-        measurements = AGMeasurement.objects.filter(sensor_id=sensor.id)
+        measurements = AGMeasurement.objects.filter(sensor_id=sensor.uuid)
         if measurements:
             latest = measurements.latest("timestamp")
             if latest:
