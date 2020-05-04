@@ -13,10 +13,25 @@
 - In case of setting up synchronization, no whitespace is allowed in the path to the project directory.
 
 # Setup
-### For Ubuntu,
-1. Do
+### For Unix-like OS
+1. Install python and psycopg2 dependencies
 ```
+## Ubuntu/Debian
 sudo apt install python3-dev libpq-dev
+
+## RPM-based Linux
+# Now we only tested on Fedora 31 successfully, 
+# but there should be very little differences on other RPM-based Linux systems. 
+# If you can test on centOS/RedHat/OpenSuse and other versions of Fedora, please give us some feedback.
+# Thanks for your help!
+#
+# dnf is yum's successor. In Fedora 31/32, you can still use yum as package manager
+sudo dnf install python-devel libpq-devel
+
+## macOS
+# Detailed step is comming soon
+# If you receive errors when installing psycopg2, try using:
+env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2
 ```
 
 2. Install the follwoing dependencies:
