@@ -35,7 +35,7 @@
                    onclick="toggleButton('add-gf-host');" value="Add Grafana Host">
             <input class="grafana-btn grafana-btn-green" type="submit"
                    onclick="toggleButton('update-gf-config');"
-                   value="Update Grafana Login">
+                   value="Update Grafana Credentials">
             <input class="grafana-btn grafana-btn-green" type="submit"
                    onclick="toggleButton('help-gf-config');" value="Help">
             <br><br>
@@ -100,10 +100,22 @@
 
         <div id="add-gf-host" class="mt-50 hide-display">
             <h2>Add Grafana Host</h2>
-            <p>Add a new Grafana host. We will create
+            <p>Add a new Grafana host using username/password or an API key. We will create
                 Grafana dashboards for all of your current events and populate the
                 dashboards with your sensors. </p>
+            
             {% if config_form %}
+            <form>
+                <label class="radio-inline">
+                    <input type="radio" name="optradio" id="radioLogin" 
+                    onchange="radioSelect('login');"> Use Login&nbsp;
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="optradio" 
+                    onchange="radioSelect('api');"> Use API Key
+                </label>
+            </form>
+
             <form method="POST" action="" id="GFConfigForm">
                 {% csrf_token %} {% load crispy_forms_tags %} {{ config_form|crispy }}
                 <br>
@@ -119,9 +131,20 @@
 
         {% if configs %}
         <div id="update-gf-config" class="mt-50 hide-display">
-            <h2>Update Grafana Login</h2>
-            <p>Update username and password for an existing Grafana instance.</p>
+            <h2>Update Grafana Credentials</h2>
+            <p>Update username/password or API key for an existing Grafana instance.</p>
             {% if config_form_update %}
+            <form>
+                <label class="radio-inline">
+                    <input type="radio" name="optradio" id="radioLogin2" 
+                    onChange="radioSelect('login');">Update Login&nbsp;
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="optradio" id="radioAPI"
+                    onChange="radioSelect('api');">Update API Key
+                </label>
+            </form>
+
             <form method="POST" action="" id="GFConfigFormUpdate">
                 {% csrf_token %} {% load crispy_forms_tags %}
                 {{ config_form_update|crispy }}

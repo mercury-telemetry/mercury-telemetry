@@ -49,8 +49,8 @@ def validate_inputs(sensor_name, field_names, request, new=False):
 @require_event_code_function
 def delete_sensor(request, sensor_name):
     """This deletes a sensor from the database based on a button click"""
-    sensor_to_delete = AGSensor.objects.get(name=sensor_name)
-    sensor_type_to_delete = AGSensorType.objects.get(name=sensor_name)
+    sensor_to_delete = AGSensor.objects.filter(name=sensor_name).first()
+    sensor_type_to_delete = AGSensorType.objects.filter(name=sensor_name).first()
     if sensor_type_to_delete:
 
         # delete any sensor panels from grafana
@@ -71,7 +71,7 @@ def delete_sensor(request, sensor_name):
         sensor_to_delete.delete()
         sensor_type_to_delete.delete()
     else:
-        messages.error(request, sensor_name, " not found!!!")
+        messages.error(request, f"{sensor_name} not found")
     return redirect("/sensor")
 
 

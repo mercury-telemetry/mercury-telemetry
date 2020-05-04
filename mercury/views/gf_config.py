@@ -10,12 +10,14 @@ from django.contrib import messages
 from ..event_check import require_event_code, require_event_code_function
 import os
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
 GITHUB_DOCS_ROOT = settings.GITHUB_DOCS_ROOT
 CONFIGURE_GRAFANA_HELP_DOC = "configure_grafana.md"
+
 
 # Deprecated
 # Sets the GFConfig's current status to True
@@ -214,7 +216,6 @@ def make_auth_url(gf_host, gf_username, gf_password):
 
 
 class GFConfigView(TemplateView):
-
     template_name = "gf_configs.html"
 
     @require_event_code
@@ -278,7 +279,11 @@ class GFConfigView(TemplateView):
             )
             return redirect("/gfconfig")
 
-        # a test is calling this with known gf_token
+        configure_grafana_github_url = os.path.join(
+            GITHUB_DOCS_ROOT, CONFIGURE_GRAFANA_HELP_DOC
+        )
+
+        # user providing username/pasword, generate API key automatically
         if not gf_token:
             auth_url = make_auth_url(gf_host, gf_username, gf_password)
             try:
@@ -287,17 +292,32 @@ class GFConfigView(TemplateView):
                 )
             except ValueError as error:
                 messages.error(
-                    request, "Failed to create API token: {}".format(error),
+                    request,
+                    mark_safe(
+                        "Failed to create API token: {}. If this "
+                        "problem persists, please provide "
+                        "an admin API key directly with the 'Use API "
+                        "Key' option in the `Add Grafana Host` form. "
+                        'See <a target="_blank" '
+                        'href="{}">Configure Grafana: How to Create an '
+                        "API Token </a> to learn how to create an "
+                        "API "
+                        "key.".format(
+                            error,
+                            configure_grafana_github_url
+                            + "#c-how-to-create-an-api-token",
+                        )
+                    ),
                 )
                 return redirect("/gfconfig")
 
-            # the user is submitting an update form
-            if "update-config" in request.POST:
-                existing_host.update(
-                    gf_username=gf_username, gf_password=gf_password, gf_token=gf_token,
-                )
-                messages.success(request, "Updated Grafana host: {}".format(gf_host))
-                return redirect("/gfconfig")
+        # the user is submitting an update form with username/password
+        if "update-config" in request.POST and gf_username and gf_password:
+            existing_host.update(
+                gf_username=gf_username, gf_password=gf_password, gf_token=gf_token
+            )
+            messages.success(request, "Updated Grafana host: {}".format(gf_host))
+            return redirect("/gfconfig")
 
         # new gfconfig record
         config_data = GFConfig(
@@ -317,13 +337,23 @@ class GFConfigView(TemplateView):
 
         try:
             grafana.validate_credentials()
+        except ValueError as error:
+            messages.error(request, error)
+            return redirect("/gfconfig")
+
+        # the user is submitting an update form with a validated API key
+        if "update-config" in request.POST:
+            existing_host.update(gf_token=gf_token)
+            messages.success(request, "Updated Grafana host: {}".format(gf_host))
+            return redirect("/gfconfig")
+
+        try:
             grafana.create_postgres_datasource()
         except ValueError as error:
             messages.error(request, error)
-        try:
 
-            config_data.gf_current = True  # Deprecated
-            # Only save the config if credentials were validated
+        try:
+            config_data.gf_current = True
             config_data.save()
 
             # If any events exist, add a dashboard for each event
@@ -336,7 +366,7 @@ class GFConfigView(TemplateView):
                     grafana.add_panel(sensor, event)
 
         except ValueError as error:
-            messages.error(request, f"Grafana initial set up failed: {error}")
+            messages.warning(request, f"Warning: {error}")
 
         messages.success(request, "Created Grafana Host: {}".format(gf_name))
         return redirect("/gfconfig")

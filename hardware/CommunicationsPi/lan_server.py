@@ -15,7 +15,6 @@ class Server(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-
         self.log.info(
             "GET request,\nPath: %s\nHeaders:\n%s\n"
             + str(self.path)
@@ -25,7 +24,6 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write("GET request for {}".format(self.path).encode("utf-8"))
 
     def do_POST(self):
-
         content_length = int(
             self.headers["Content-Length"]
         )  # <--- Gets the size of data
