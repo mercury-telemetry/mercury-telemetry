@@ -1,5 +1,5 @@
 # Contributing guidelines
-This document contains everything you need in order to contribute to our project. We welcome everyone to collaborate and help us improve our product. In addition to all the information present in this document, make sure to take a look at our [Wiki.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki)
+This document contains everything you need in order to contribute to our project. We welcome everyone to collaborate and help us improve our product. In addition to all the information present in this document, make sure to take a look at our [Wiki.](https://github.com/mercury-telemetry/mercury-telemetry/wiki)
 
 ## Code of Conduct
 You can access our code of conduct [here - add link to our code of conduct](). 
@@ -9,7 +9,7 @@ Note: This project comes under the [MIT license. - add link to our license file]
 ## Reporting Bugs
 This section guides you through reporting an issue. Following these guidelines will help maintainers to understand your issue and in case you are reporting a bug, reproduce the behavior.
 
-  * Check the [Wiki.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki) and make sure you followed all the steps to install and configure our application accurately. 
+  * Check the [Wiki.](https://github.com/mercury-telemetry/mercury-telemetry/wiki) and make sure you followed all the steps to install and configure our application accurately. 
 
   * Search to see if the problem has already been reported. If it has and is still open, add a comment to the existing issue instead of opening a new one.
 
@@ -33,7 +33,7 @@ You can contribute in the following two ways:
 
 ### 2. Contributing your time in other ways
 
-  1. **Writing / improving documentation**: Our documentation exists solely on GitHub, majorly in the [Wiki section.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki) If you see a misspelling, adding some missing documentation or any other ways to improve it please free to edit it and submit a PR. Refer to guidelines below on how to make a PR. 
+  1. **Writing / improving documentation**: Our documentation exists solely on GitHub, majorly in the [Wiki section.](https://github.com/mercury-telemetry/mercury-telemetry/wiki) If you see a misspelling, adding some missing documentation or any other ways to improve it please free to edit it and submit a PR. Refer to guidelines below on how to make a PR. 
 
   2. **Reviewing Pull Requests**: Another useful way to contribute to our project is to review other peoples PR. Having feedback from multiple people is really helpful and since this project was made as part of a graduate course and is not a product of a company, it would be a massive help to have volunteers helping us improve and maintain this project.
 
