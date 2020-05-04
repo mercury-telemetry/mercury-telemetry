@@ -21,7 +21,7 @@ class GPSReader:
         # print(nmeaSentence)
         nmeaType = nmeaSentence[0]
 
-        # verify if nmeaSentence type and valid data
+        # verify nmeaSentence type and verify if gps has valid data
         if nmeaType == "b'$GPRMC" and nmeaSentence[2] == "A":
             latitude_hours = float(nmeaSentence[3][0:2])
             latitude_minutes = float(nmeaSentence[3][2:])
@@ -47,6 +47,31 @@ class GPSReader:
             data["values"] = {
                 "latitude": latitude_decimal,
                 "longitude": longitude_decimal,
+            }
+            data["date"] = date_str_with_current_timezone()
+            return data
+        else:
+            return None
+
+    def get_speed_mph(self):
+        while self.gps.inWaiting() == 0:
+            pass
+
+        nmeaSentence = str(self.gps.readline()).split(",")
+        nmeaType = nmeaSentence[0]
+
+        # verify nmeaSentence type and verify if gps has valid data
+        if nmeaType == "b'$GPRMC" and nmeaSentence[2] == "A":
+
+            speed_in_knots = nmeaSentence[7]
+            speed_in_mph = float(speed_in_knots) * 1.151
+
+            self.logging.info("speed: " + str(speed_in_mph))
+
+            data = {}
+            data["sensor_id"] = GPS_ID
+            data["values"] = {
+                "speed": speed_in_mph,
             }
             data["date"] = date_str_with_current_timezone()
             return data

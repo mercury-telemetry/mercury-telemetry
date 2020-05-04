@@ -51,14 +51,18 @@ class Transceiver:
         timeout = int(os.environ["TRANSCEIVER_TIMEOUT"])
 
         self.logging.info("Opening serial on: " + str(self.port))
-        self.serial = serial.Serial(
-            port=self.port,
-            baudrate=baudrate,
-            parity=parity,
-            stopbits=stopbits,
-            bytesize=bytesize,
-            timeout=timeout,
-        )
+        try:
+            self.serial = serial.Serial(
+                port=self.port,
+                baudrate=baudrate,
+                parity=parity,
+                stopbits=stopbits,
+                bytesize=bytesize,
+                timeout=timeout,
+            )
+        except Exception as err:
+            self.logging.error("error occurred: {}".format(str(err)))
+            raise
 
     def find_port(self):
         for port in serial.tools.list_ports.comports():
