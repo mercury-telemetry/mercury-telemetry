@@ -51,7 +51,8 @@ class SensePi:
             }
 
             if type == "ALL":
-                # ToDo: implement all sensor data access
+                # ToDo: implement get all sensor data
+                # This is just example
                 data["values"] = sensor_data
             elif sensor_keys[type] in sensor_data:
                 key = sensor_keys[type]
