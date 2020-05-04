@@ -38,9 +38,9 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 
 2. Install the follwoing dependencies:
 
-    - [PostgreSQL Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide)
-    - [Geckodriver Install Instruction](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Geckodriver---Install-instructions)
-    - [Grafana Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Grafana-Set-Up-Guide)
+    - [PostgreSQL Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/PostgreSQL-Setup-Guide)
+    - [Geckodriver Install Instruction](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver-Install-instructions)
+    - [Grafana Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Grafana-Set-Up-Guide)
 
 3. We recommend to set up `venv`. For creating/activating venv, follow [this instruction](https://docs.python.org/3/library/venv.html#creating-virtual-environments).
 
@@ -58,9 +58,9 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 3. Install [git for windows](https://gitforwindows.org/). It's likely you'll need a bash environment to run our scripts and this is the easiest to setup for windows. Remember to [add path of installation to PATH environment variable](https://stackoverflow.com/Questions/4492979/git-is-not-recognized-as-an-internal-or-external-command). There are better alternatives like activating [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) but it's more complicated to setup.
 
 4. Install the follwoing dependencies:
-    - [PostgreSQL Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide)
-    - [Geckodriver Install Instruction](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Geckodriver---Install-instructions)
-    - [Grafana Setup Guide](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Grafana-Set-Up-Guide)
+    - [PostgreSQL Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/PostgreSQL-Setup-Guide)
+    - [Geckodriver Install Instruction](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver-Install-instructions)
+    - [Grafana Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Grafana-Set-Up-Guide)
     
 5. Since our scripts use linux commands for automation, you will need to install them on your windows machine. It's quite easy to do so. Install [curl for windows](https://curl.haxx.se/windows/), choose 32 or 64 bit according to your machine. Extract downloaded zip file to a folder named `curl`, wherver you wish to have it installed. Install [zip.exe and unzip.exe](http://stahlworks.com/dev/index.php?tool=zipunzip). Place these 2 in your curl folder. **Add the path of your curl folder to windows PATH environment variable**. Lastly, download and install [coreutils for windows](http://gnuwin32.sourceforge.net/downlinks/coreutils.php).  
 
@@ -92,7 +92,7 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 
 _Please make sure there is no whitespace in the path to the cloned repository. SymmetricDS doesn't work with a path with whitespaces._
 
-To setup SymmetricsDs on your machine, click [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/symmetricds/README.md) In case you are on windows, please also refer to the wiki on the topic by going [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Setting-up-SymmetricDS-on-Windows) Windows support is not streamlined and is very error prone but this should be enough to get you started. In case you want to help us make this better please refer below as to how you can contribute to the project.
+To setup SymmetricsDs on your machine, click [here.](https://github.com/mercury-telemetry/mercury-telemetry/edit/master/README.md) In case you are on windows, please also refer to the wiki on the topic by going [here.](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Setting-up-SymmetricDS-on-Windows) Windows support is not streamlined and is very error prone but this should be enough to get you started. In case you want to help us make this better please refer below as to how you can contribute to the project.
 
 # Run
 ```
@@ -108,7 +108,7 @@ python manage.py test
 
 # HOWTO Contribute to this repo
 
-Refer to our contributing guidelines [here.](https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/blob/master/CONTRIBUTING.md)
+Refer to our contributing guidelines [here.](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/CONTRIBUTING.md)
 
 # Fix issues
 Running into issues with modules not find? Did `requirements.txt` update from your last `git pull` command? Run `pip install -r requirements.txt` to install missing modules.
