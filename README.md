@@ -14,7 +14,8 @@
 - In case of setting up synchronization, no whitespace is allowed in the path to the project directory.
 
 # Setup
-### For Ubuntu,
+## Local Setup
+### For Ubuntu
 1. Do
 ```
 sudo apt install python3-dev libpq-dev
@@ -34,7 +35,7 @@ sudo apt install python3-dev libpq-dev
     2. Fix errors if any.
     3. Go to step 1.
     
-### For Windows,
+### For Windows
 1. Install [python](https://www.python.org/downloads/)  and [pip](https://www.liquidweb.com/kb/install-pip-windows/). Python version should be **3.6 or later**. Make sure that python installation is in your PATH environment variable.
 
 2. [Create a virtual environment](https://www.geeksforgeeks.org/creating-python-virtual-environment-windows-linux/). You can replace `myenv` with whatever you want to name the environment. This is to make sure that any other python related projects on your machinne are not affected by our application. This is highly recommended.
@@ -54,7 +55,7 @@ sudo apt install python3-dev libpq-dev
 
 8. Now run `python manage.py runserver`. Go to http://127.0.0.1:8000/ in your browser. You should be able to access our project.
 
-## Heroku Deployment
+## Cloud Deployment On Heroku
 1. Install Heroku CLI
    1. Instructions can be found here: https://devcenter.heroku.com/articles/heroku-cli
        * For macOS: `brew tap heroku/brew && brew install heroku`
