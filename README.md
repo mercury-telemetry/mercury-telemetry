@@ -68,9 +68,9 @@ sudo apt install python3-dev libpq-dev
    1. Create an account in [Heroku.](https://signup.heroku.com/) 
    2. Login your Heroku account in terminal by using `heroku login`
    3. Go to http://dashboard.heroku.com/new-app to create a new Heroku instance
-      * In the instance page, go to "Resources", in the add-ons search postgres, choose Heroku-Postgres, then click "Provision" to add it.
-   4. Add a remote to local project, using comand `heroku git :remote -a <heroku-project-name>` .
-   5. Deploy to Heroku `git push heroku master`
+   4. Go to new created instance page, then choose "Resources", in the add-ons search postgres, choose Heroku-Postgres, then click "Provision" to add it.
+   5. Add a remote to local project, using comand `heroku git :remote -a <heroku-project-name>` .
+   6. Deploy to Heroku `git push heroku master`
 3. Visit remote site: \<heroku-project-name\>.herokuapp.com
 
 ## Setup Synchronization (Optional)
