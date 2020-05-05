@@ -109,3 +109,9 @@ Refer to our contributing guidelines [here.](https://github.com/mercury-telemetr
 Running into issues with modules not find? Did `requirements.txt` update from your last `git pull` command? Run `pip install -r requirements.txt` to install missing modules.
 
 Are you missing staticfiles when trying to run or test locally? Run `python manage.py collectstatic` to regenerate them.
+
+## License
+
+Copyright (c) Mercury Telemetry. All rights reserved.
+
+Licensed under the [MIT](LICENSE.txt) license.
