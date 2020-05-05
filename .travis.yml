@@ -131,3 +131,4 @@ jobs:
           script: docker push nyumotorsportstelemetryorg/mercury
           on:
             branch: master
+            repo: mercury-telemetry/mercury-telemetry
