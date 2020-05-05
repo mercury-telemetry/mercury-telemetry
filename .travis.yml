@@ -102,7 +102,7 @@ jobs:
         env:
           - REGISTRY_USER=nyutelemetryrobot
           # REGISTRY_PASS=...
-          - secure: "tzd1LpQ4MzCHB2FMSDjJec0hEi9SLrZHnILvNb1pj7P/agnFtUduC37aCcGSyrecfC4VF84wQNMYfndWn0L+M5XG1VWUuHcRYxJF7/F9ytkT91ZbZaUzaUy1m29up4C+jQdvYL4bR5WAMn330/SZiWF1Qr9N2DsLqGj4oYHOD6eOK9P1skmYK2CU5i1tjcjz0OOn2rxdGKTPxOwSg+8/OINYLVMkcK0iTAvPMXqR9UQjZqNmD+Z60HWEBF2xZuGXFXQ43sOilXrEY9FxrnQEFVeAJ5KzK9YSX38rJdTWasc0BFkyjSagFUCD9tvdQTc6+NOK4U7MLDCWJsMVwYnbV2tTmEA5bjPgocRsyX2+uBhEuSUW1RKP2MWtq0EmyYwnDHgpIWsuqnZlshtoA+ZEa7TcQsZqjjPqC6hBxVU32dVJDsUSwOLZ+xO+eyfb203az6PXldbetl48D5UN+qDRWlyr2T++IaZAGJHBNzkCMeyOURVhFnIxkFMEKB075PkKWf2M9cmN4hB3UTCNmo820Wpw1Cn2j/shMZ4KgKtnCXFDchGEpLzyUzdLeBZple5bPOGuw9xWUCn+V04kDewO0m/53DUz8xu+7bG7QFi4cFhqguPGge35ULnWPYgi+NkAW3BO1eAj8wgYB1gfZ10YNAjG4XYyaIrgTFh3h+SNwgk="
+          - secure: "qg8hTw5HJKUkrp0xJDmbhvXyvkfQyUrs/INjfn2qtPfn+VEeRC7ffud7/697LmILr1wBTxluXmqA31IvzwP7FvFg35ultvdMXzUQjZpsBcFK9bpu9jvnPAIcpK+jc/4l6wQCikpht+sZA+lgHSHvp+u/ZobSkNht6jP2gUzPbUzTqsMZhA6CNrIWfp6QusIE/G+aKEnBM04DjFYkEGAnb53qLUkmHtCyCE16Bthb2oy3cc1hoOtRgnAGVdvnyMxsnxLIHTIHzbKDQS0pX2eO3cL/0IUIVpuyVWmZxfKZksNFvae/KKl5KJchHYVUCCfSYMCXgt74qNNUuH+GPA6d3VjVhcBsW97CaYTGORBTdWV3xQ639Yn9Q5+r0GJkzkhX5gc6J2sUFv+HFW5/WoP1r8+oppUrontBnsyQ5t0MukkBK9woc4zuTGWyq66cyAgPA3dZVLSUdOlNf7cPFkN+sY24zHf9+FcFi/WAeS0pQ4g5wdgdyvm2FtNcxfvg5J8Jo34TzXTCfbXoaVc2FiwQQZnsCZtnUAzG2lNGj8uFT77d5T8+lXlDmxCZk4soNZp1Ax9AZiPmkRdwzkUYdAFKKoyO3V/3Ro5lhX+y1UVFoKyjka+h7qsD2r0hGxv2vFw2S1vlkql+69Oc5G9srlHSnbgqS7MOxsAq5SzhHxZi0Q8="
 
         install:
           - docker pull nyumotorsportstelemetryorg/mercury || true
