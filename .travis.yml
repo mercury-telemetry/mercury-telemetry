@@ -102,7 +102,7 @@ jobs:
         env:
           - REGISTRY_USER=nyutelemetryrobot
           # REGISTRY_PASS=...
-          - secure: "tzd1LpQ4MzCHB2FMSDjJec0hEi9SLrZHnILvNb1pj7P/agnFtUduC37aCcGSyrecfC4VF84wQNMYfndWn0L+M5XG1VWUuHcRYxJF7/F9ytkT91ZbZaUzaUy1m29up4C+jQdvYL4bR5WAMn330/SZiWF1Qr9N2DsLqGj4oYHOD6eOK9P1skmYK2CU5i1tjcjz0OOn2rxdGKTPxOwSg+8/OINYLVMkcK0iTAvPMXqR9UQjZqNmD+Z60HWEBF2xZuGXFXQ43sOilXrEY9FxrnQEFVeAJ5KzK9YSX38rJdTWasc0BFkyjSagFUCD9tvdQTc6+NOK4U7MLDCWJsMVwYnbV2tTmEA5bjPgocRsyX2+uBhEuSUW1RKP2MWtq0EmyYwnDHgpIWsuqnZlshtoA+ZEa7TcQsZqjjPqC6hBxVU32dVJDsUSwOLZ+xO+eyfb203az6PXldbetl48D5UN+qDRWlyr2T++IaZAGJHBNzkCMeyOURVhFnIxkFMEKB075PkKWf2M9cmN4hB3UTCNmo820Wpw1Cn2j/shMZ4KgKtnCXFDchGEpLzyUzdLeBZple5bPOGuw9xWUCn+V04kDewO0m/53DUz8xu+7bG7QFi4cFhqguPGge35ULnWPYgi+NkAW3BO1eAj8wgYB1gfZ10YNAjG4XYyaIrgTFh3h+SNwgk="
+          - secure: "imfO22PPQO0TrLfEKYyOGjVjKQI3OTT+cB50I9pY0cj99Exclo+Kl8PRZEivy3TO8c8Er9mF/huQ5hrIBo7n/xwnRplHRYZRhrk4zHQr8ircBLQcsZ9+r+g6FTZ0BG1x9oFUDa0Fq0a/DeJpdCE3XRruHNAw3JtvUfaMcNXZxYpc6VpblxuziVqXtWT6GoqJoNR8RcTQ68bDHBkgLKbcIRaRrg/T72o91xHJG8WQg7AkStVoO7jZP5fVykwxplILWFgjDqt0/U5+04FueI6snH7hhql9P+uKWM2mNVDQsWN0qL0jNat2PIy7Z4HzWeltVwzg9Bzr7QbC8YSKGRlEUNxdhohWfMhHV6rXgLz943YGP7KqzMh5/PcFt9Btau3xk/FnGtRCBAu3M3FUCILvYe9Y1QLlufWLiYSit87R8ymVi9ayKVwbDSkL2ratNb3ocoe/AYVxPooIJZNx2DBtbTYJIiqVWQDL2BXry1YCk2uBxvxQUTyLjWrUMBbSm33NjFxkd4dqJHtYeeEQm7RfnilsFK7ktN2HxlgxPeFduZtjlP5l86xoIsY7FLt/3D4wHJoTtKFd5qAmVZ2UqjsypEJs+6YRPN45s6T+FOlDS3mvOYE2GaeZlB0t0p4PpoZ/8NxZgAq8xYeGENPfcRPMXMzrRjIuZJFw/283b3MOLVA="
 
         install:
           - docker pull nyumotorsportstelemetryorg/mercury || true
@@ -131,3 +131,4 @@ jobs:
           script: docker push nyumotorsportstelemetryorg/mercury
           on:
             branch: master
+            repo: mercury-telemetry/mercury-telemetry
