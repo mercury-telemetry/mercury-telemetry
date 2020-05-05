@@ -1,12 +1,7 @@
-`develop`
-
-[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class.svg?branch=develop&service=github)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-class/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-class?branch=develop&service=github)
-
 `master`
 
-[![Build Status](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class.svg?branch=master&service=github)](https://travis-ci.com/gcivil-nyu-org/spring2020-cs-gy-9223-class)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/spring2020-cs-gy-9223-class/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/spring2020-cs-gy-9223-class?branch=master&service=github)
+[![Build Status](https://travis-ci.com/mercury-telemetry/mercury-telemetry.svg?branch=master)](https://travis-ci.com/mercury-telemetry/mercury-telemetry)
+[![Coverage Status](https://coveralls.io/repos/github/mercury-telemetry/mercury-telemetry/badge.svg?branch=master)](https://coveralls.io/github/mercury-telemetry/mercury-telemetry?branch=master)
 
 # Requirements
 - Python 3.6 or above
