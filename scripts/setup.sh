@@ -39,7 +39,7 @@ else
   __success "virtualenv activated"
 fi
 
-__assert_exist psql "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide#install"
+__assert_exist psql "https://github.com/mercury-telemetry/mercury-telemetry/wiki/PostgreSQL-Setup-Guide#install"
 
 ENV_SAMPLE=$SCRIPT_DIR/env.sample
 if [[ ! -f ".env" ]]; then
@@ -69,7 +69,7 @@ echo -e $RESET
 case $yn in
   n ) ;;
   * )
-    __assert_exist geckodriver "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/Geckodriver---Install-instructions"
+    __assert_exist geckodriver "https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver---Install-instructions"
     pip3 install -r test-requirements.txt || exit 1
     __success "pip install -r test-requirements.txt"
     ;;
@@ -87,7 +87,7 @@ if ! psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT -c "" ; then
   __error "[ERR] No postgres running on postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT"
   echo ""
   __system "Make sure you have PostgreSQL installed and running."
-  __system "https://github.com/gcivil-nyu-org/spring2020-cs-gy-9223-class/wiki/PostgreSQL-Setup-Guide"
+  __system "https://github.com/mercury-telemetry/mercury-telemetry/wiki/PostgreSQL-Setup-Guide"
   exit 1
 fi
 
