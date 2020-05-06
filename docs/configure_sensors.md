@@ -3,11 +3,11 @@ To navigate to the configure sensors page, click on the "Configure Sensors" icon
 
 # Contents</h3>
 
-1. [Adding New Sensors](#1-adding-new-sensors)
-    - A. [Adding GPS Sensor](#a-adding-gps-sensor) 
-    - B. [Adding a Gauge Sensor](#b-adding-a-gauge-sensor)
-2. [Viewing Existing Sensors](#2-viewing-existing-sensors)
-    - A. [Updating/Deleting Existing Sensors](#a-updating/deleting-existing-sensors)
+1. [Adding New Sensors](#adding-new-sensors)
+    - A. [Adding GPS Sensor](#adding-gps-sensor) 
+    - B. [Adding a Gauge Sensor](#adding-a-gauge-sensor)
+2. [Viewing Existing Sensors](#viewing-existing-sensors)
+    - A. [Updating/Deleting Existing Sensors](#updating/deleting-existing-sensors)
 
 ## Adding New Sensors
 In order to add a sensor to your Mercury instance, you must use the following Add Sensor Form, which can be found at the top of the configure sensors page.
