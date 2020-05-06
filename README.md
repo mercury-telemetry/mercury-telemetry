@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.com/mercury-telemetry/mercury-telemetry.svg?branch=master)](https://travis-ci.com/mercury-telemetry/mercury-telemetry)
 [![Coverage Status](https://coveralls.io/repos/github/mercury-telemetry/mercury-telemetry/badge.svg?branch=master)](https://coveralls.io/github/mercury-telemetry/mercury-telemetry?branch=master)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
 # Mercury
 Mercury is a telemetry system that provides software and instructions that will allow you to: 
@@ -139,7 +140,7 @@ Running into issues with modules not find? Did `requirements.txt` update from yo
 
 Are you missing staticfiles when trying to run or test locally? Run `python manage.py collectstatic` to regenerate them.
 
-## License
+# License
 
 Copyright (c) Mercury Telemetry. All rights reserved.
 

@@ -2,7 +2,7 @@
 This document contains everything you need in order to contribute to our project. We welcome everyone to collaborate and help us improve our product. In addition to all the information present in this document, make sure to take a look at our [Wiki.](https://github.com/mercury-telemetry/mercury-telemetry/wiki)
 
 ## Code of Conduct
-You can access our code of conduct [here - add link to our code of conduct](). 
+This project and everyone participating in it is governed by the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
 Note: This project comes under the [MIT license](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/LICENSE.txt)
 
