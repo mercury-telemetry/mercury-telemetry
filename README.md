@@ -34,11 +34,11 @@ Mercury consists of the following components:
 
 # Documentation
 - Mercury
-    - [Configure Sensors](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_sensors.md)
-    - [Manage Events](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_events.md)
-    - [Configure Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md)
-
-# Install Mercury
+    - We recommend that you start by [installing Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md#a-install-grafana), then look at our [walkthrough](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md#6-a-walkthrough-example), which will give you an idea of the sequence of steps needed to visualize sensor data live in Grafana.
+    - [Configure Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md): A guide for installing Grafana and connecting a Grafana host to your Mercury deployment. Once Grafana is hooked up to Mercury, the two will remain in sync, and all of the sensors you add/update/remove in Mercury will be updated in Grafana.
+    - [Configure Sensors](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_sensors.md): A guide for creating and managing your sensors in Mercury. These sensors will be used to generate Sensor Panels in Grafana.  
+    - [Manage Events](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_events.md): A guide for creating, managing, and exporting data from events. Mercury organizes sensor data collection into Events, so whenever you have a new recording session, create a new Event. All incoming sensor data transmissions will be stored under the **Active Event**, which can be toggled through the Mercury web app. This will allow you to keep your measurement data organized. Each Event will have an Event Dashboard in Grafana, which will display only the data recorded for that Event. 
+    
 ## Local Setup
 ### For Unix-like OS
 1. Install python and psycopg2 dependencies
