@@ -556,7 +556,7 @@ class Grafana:
                 SELECT \"timestamp\" AS \"time\",
                 {fields_query}
                 FROM ag_data_agmeasurement
-                WHERE $__timeFilter(\"timestamp\") AND sensor_id_id=\'{sensor.uuid}\' 
+                WHERE $__timeFilter(\"timestamp\") AND sensor_id_id=\'{sensor.uuid}\'
                 AND "event_uuid_id"='{event.uuid}'
                 ORDER BY timestamp
                 \n
