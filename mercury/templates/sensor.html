@@ -158,7 +158,7 @@
                                         grafana-btn-red" style="display:none;">
                                     Delete Sensor </button>
                                 <input type="hidden" name="sensor-id"
-                                value="{{sensor.id}}"/>
+                                value="{{sensor.serial}}"/>
                                 <input type="hidden" name="sensor-name"
                                 value="{{sensor.name}}"/>
                             </form>
@@ -169,7 +169,7 @@
                     <div class="{{ sensor.name }}-view">
                         <div class="name-box">
                             <p class = "big-text" id="{{ sensor.name }}" > Sensor Name: {{ sensor.name }}</p>
-                            <p id="{{ sensor_type.id }}" > ID Number: {{ sensor.id }} </p>
+                            <p id="{{ sensor_type.id }}" > ID Number: {{ sensor.serial }} </p>
                         </div> 
 
                         <table id="{{ sensor.name }}-fields-table" class="sensor-fields-table">
