@@ -27,22 +27,22 @@ jobs:
           - docker pull grafana/grafana
           - docker run -d -p 3000:3000 grafana/grafana
           - docker ps -a
-        
+
         install:
           - pip3 install --upgrade pip
           - pip3 install -r requirements.txt
           - pip3 install -r test-requirements.txt
-        
+
         before_script:
           - psql -c 'create database mercury;' -U postgres
           - python3 manage.py migrate
           - python3 manage.py collectstatic --noinput
-        
+
         script:
           - black --check --diff .
           - flake8 . # modify .flake8 env file to update flake8 configuration
           - coverage run manage.py test # modify .coveragerc env file to update test configuration
-        
+
         after_script:
           - coveralls
           - cat geckodriver.log
@@ -71,64 +71,22 @@ jobs:
           - pg_ctl -w start -l postgres.log --pgdata ${PG_DATA}
           - createuser -s postgres
           - cat postgres.log
-        
+
         install:
           - pip3 install --upgrade pip
           - pip3 install -r requirements.txt
           - pip3 install -r test-requirements.txt
-        
+
         before_script:
           - psql -c 'create database mercury;' -U postgres
           - python3 manage.py migrate
           - python3 manage.py collectstatic --noinput
-        
+
         script:
           - black --check --diff .
           - flake8 . # modify .flake8 env file to update flake8 configuration
           - coverage run manage.py test # modify .coveragerc env file to update test configuration
-        
+
         after_script:
           - coveralls
           - cat geckodriver.log
-      
-      - name: "Onboard software tests for R-Pi"
-      
-        language: shell
-
-        services:
-            - docker
-            - postgresql
-
-        env:
-          - REGISTRY_USER=nyutelemetryrobot
-          # REGISTRY_PASS=...
-          - secure: "imfO22PPQO0TrLfEKYyOGjVjKQI3OTT+cB50I9pY0cj99Exclo+Kl8PRZEivy3TO8c8Er9mF/huQ5hrIBo7n/xwnRplHRYZRhrk4zHQr8ircBLQcsZ9+r+g6FTZ0BG1x9oFUDa0Fq0a/DeJpdCE3XRruHNAw3JtvUfaMcNXZxYpc6VpblxuziVqXtWT6GoqJoNR8RcTQ68bDHBkgLKbcIRaRrg/T72o91xHJG8WQg7AkStVoO7jZP5fVykwxplILWFgjDqt0/U5+04FueI6snH7hhql9P+uKWM2mNVDQsWN0qL0jNat2PIy7Z4HzWeltVwzg9Bzr7QbC8YSKGRlEUNxdhohWfMhHV6rXgLz943YGP7KqzMh5/PcFt9Btau3xk/FnGtRCBAu3M3FUCILvYe9Y1QLlufWLiYSit87R8ymVi9ayKVwbDSkL2ratNb3ocoe/AYVxPooIJZNx2DBtbTYJIiqVWQDL2BXry1YCk2uBxvxQUTyLjWrUMBbSm33NjFxkd4dqJHtYeeEQm7RfnilsFK7ktN2HxlgxPeFduZtjlP5l86xoIsY7FLt/3D4wHJoTtKFd5qAmVZ2UqjsypEJs+6YRPN45s6T+FOlDS3mvOYE2GaeZlB0t0p4PpoZ/8NxZgAq8xYeGENPfcRPMXMzrRjIuZJFw/283b3MOLVA="
-
-        install:
-          - docker pull nyumotorsportstelemetryorg/mercury || true
-
-          # prepare qemu for arm emulation on x64 hardware
-          - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
-          # build image
-          - docker build --pull --cache-from nyumotorsportstelemetryorg/mercury --tag nyumotorsportstelemetryorg/mercury .
-
-          - docker run -d --name test_pi nyumotorsportstelemetryorg/mercury
-          
-        script:
-          # ensure that the server started up as expected
-          - docker ps -a
-          - docker ps | grep -q test_pi
-        
-        after_script:
-          - docker images
-        
-        before_deploy:
-          - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-        
-        deploy:
-          provider: script
-          script: docker push nyumotorsportstelemetryorg/mercury
-          on:
-            branch: master
-            repo: mercury-telemetry/mercury-telemetry
