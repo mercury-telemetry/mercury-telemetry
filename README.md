@@ -64,7 +64,7 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 2. Install the following dependencies:
 
     - [PostgreSQL Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/PostgreSQL-Setup-Guide)
-    - [Geckodriver Install Instruction](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver---Install-instructions)
+    - [Geckodriver Install Instruction](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver-Install-instructions)
     - [Grafana Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Grafana-Set-Up-Guide)
 
 3. We recommend to set up `venv`. For creating/activating venv, follow [this instruction](https://docs.python.org/3/library/venv.html#creating-virtual-environments).
