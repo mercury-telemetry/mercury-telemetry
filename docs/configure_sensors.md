@@ -1,6 +1,14 @@
 # Configure Sensors
 To navigate to the configure sensors page, click on the "Configure Sensors" icon on the left side of the webpage. The configure sensors page is broken into two components: adding new sensors and managing existing sensors. 
 
+# Contents</h3>
+
+1. [Adding New Sensors](#adding-new-sensors)
+    - A. [Adding GPS Sensor](#adding-gps-sensor) 
+    - B. [Adding a Gauge Sensor](#adding-a-gauge-sensor)
+2. [Viewing Existing Sensors](#viewing-existing-sensors)
+    - A. [Updating-and-Deleting Existing Sensors](#updating-and-deleting-existing-sensors)
+
 ## Adding New Sensors
 In order to add a sensor to your Mercury instance, you must use the following Add Sensor Form, which can be found at the top of the configure sensors page.
 ![Add Sensor Form](imgs/add_sensor_form.png)
@@ -40,7 +48,7 @@ In order to view your existing sensors, navigate to the configure sensors page a
 
 Notice that each sensor has a unique, auto-generated ID number. This ID number is critical as it allows you to link the sensor you create through the UI with the actual physical sensor hardware. Sensor ID is not editable.
 
-### Updating/Deleting Existing Sensors
+### Updating and Deleting Existing Sensors
 With Mercury, the sensors you make are entirely customizable after creation. In order to modify an existing sensor, scroll down on the webpage until you find the sensor you want to edit. Once there, hit the "Modify Sensor" button toward the top-right of the sensor's panel, as pictured below.
 ![Modify Sensor](imgs/modify_sensor.png)
 
