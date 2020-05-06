@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/mercury-telemetry/mercury-telemetry.svg?branch=master)](https://travis-ci.com/mercury-telemetry/mercury-telemetry)
 [![Coverage Status](https://coveralls.io/repos/github/mercury-telemetry/mercury-telemetry/badge.svg?branch=master)](https://coveralls.io/github/mercury-telemetry/mercury-telemetry?branch=master)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 # Mercury
 Mercury is a telemetry system that provides software and instructions that will allow you to: 
