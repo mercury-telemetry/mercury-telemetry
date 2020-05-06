@@ -4,7 +4,7 @@ This document contains everything you need in order to contribute to our project
 ## Code of Conduct
 You can access our code of conduct [here - add link to our code of conduct](). 
 
-Note: This project comes under the [MIT license. - add link to our license file]() 
+Note: This project comes under the [MIT license](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/LICENSE.txt)
 
 ## Reporting Bugs
 This section guides you through reporting an issue. Following these guidelines will help maintainers to understand your issue and in case you are reporting a bug, reproduce the behavior.
