@@ -27,11 +27,11 @@ Mercury consists of the following components:
 **Fig 1**: Grafana dashboard with 3 sensor panels: GPS, temperature, and speed.
 
 # Installation Overview
-- [Install Mercury](#install-mercury)
-    - [Local Set-Up](#local-set-up)
+- Install Mercury
+    - [Local Setup](#local-setup)
     - [Cloud Deployment On Heroku](#cloud-deployment-on-heroku)
-- [Install Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md#a-install-grafana)
-	- [Set-up Database Synchronization](#setup-synchronization)
+- [Install Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md#1-grafana-set-up)
+- [Set Up Database Synchronization](#setup-synchronization-optional)
 
 # Documentation
 - Mercury
