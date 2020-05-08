@@ -27,11 +27,11 @@ Mercury consists of the following components:
 **Fig 1**: Grafana dashboard with 3 sensor panels: GPS, temperature, and speed.
 
 # Installation Overview
-- [Install Mercury](#install-mercury)
-    - [Local Set-Up](#local-set-up)
+- Install Mercury
+    - [Local Setup](#local-setup)
     - [Cloud Deployment On Heroku](#cloud-deployment-on-heroku)
-- [Install Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md#a-install-grafana)
-	- [Set-up Database Synchronization](#setup-synchronization)
+- [Install Grafana](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/docs/configure_grafana.md#1-grafana-set-up)
+- [Set Up Database Synchronization](#setup-synchronization-optional)
 
 # Documentation
 - Mercury
@@ -85,7 +85,7 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 
 4. Install the following dependencies:
     - [PostgreSQL Setup Guide](https://github.com/mercury-telemetry/mercury-telemetry/wiki/PostgreSQL-Setup-Guide)
-    - [Geckodriver Install Instruction](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver---Install-instructions)
+    - [Geckodriver Install Instruction](https://github.com/mercury-telemetry/mercury-telemetry/wiki/Geckodriver-Install-instructions)
     
 5. Since our scripts use linux commands for automation, you will need to install them on your windows machine. It's quite easy to do so. Install [curl for windows](https://curl.haxx.se/windows/), choose 32 or 64 bit according to your machine. Extract downloaded zip file to a folder named `curl`, wherever you wish to have it installed. Install [zip.exe and unzip.exe](http://stahlworks.com/dev/index.php?tool=zipunzip). Place these 2 in your curl folder. **Add the path of your curl folder to windows PATH environment variable**. Lastly, download and install [coreutils for windows](http://gnuwin32.sourceforge.net/downlinks/coreutils.php).  
 
