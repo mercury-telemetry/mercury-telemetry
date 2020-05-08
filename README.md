@@ -135,10 +135,18 @@ python manage.py test
 
 Refer to our contributing guidelines [here.](https://github.com/mercury-telemetry/mercury-telemetry/blob/master/CONTRIBUTING.md)
 
-# Fix issues
-Running into issues with modules not find? Did `requirements.txt` update from your last `git pull` command? Run `pip install -r requirements.txt` to install missing modules.
+# F.A.Q.
+* Running into issue with modules not find?
 
-Are you missing staticfiles when trying to run or test locally? Run `python manage.py collectstatic` to regenerate them.
+    Run `git pull` to fetch latest update of `requirements.txt`. Then run `pip install -r requirements.txt` to install missing modules.
+
+* Missing staticfiles when running or testing locally?
+
+    Run `python manage.py collectstatic` to regenerate them.
+
+* Deploying to Heroku with `setting.DATABASES is improperly configured` error?
+
+    Make sure your (Heroku-Postgres)[https://elements.heroku.com/addons/heroku-postgresql] add-on is installed.
 
 # License
 
