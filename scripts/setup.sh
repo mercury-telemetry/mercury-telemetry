@@ -57,6 +57,10 @@ else
     esac
 fi
 
+# Install wheel first to avoid issue 
+# https://stackoverflow.com/questions/34819221/why-is-python-setup-py-saying-invalid-command-bdist-wheel-on-travis-ci
+pip3 install wheel
+
 echo ""
 __system "Running pip3 install -r requirements.txt..."
 pip3 install -r requirements.txt || exit 1
