@@ -144,10 +144,6 @@ Refer to our contributing guidelines [here.](https://github.com/mercury-telemetr
 
     Run `python manage.py collectstatic` to regenerate them.
 
-* Deploying to Heroku with `setting.DATABASES is improperly configured` error?
-
-    Make sure your (Heroku-Postgres)[https://elements.heroku.com/addons/heroku-postgresql] add-on is installed.
-
 # License
 
 Copyright (c) Mercury Telemetry. All rights reserved.
